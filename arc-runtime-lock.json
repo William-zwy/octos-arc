@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "source_baseline_only",
+  "status": "runtime_implementation_unreleased",
   "repository": "octos-org/octos-arc-runtime",
   "upstream": {
     "repository": "octos-org/octos",

@@ -1,6 +1,24 @@
 use std::process::Command;
 
 fn main() {
+    let source_commit = Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .output()
+        .ok()
+        .filter(|output| output.status.success())
+        .map(|output| String::from_utf8_lossy(&output.stdout).trim().to_owned())
+        .unwrap_or_default();
+    let source_dirty = Command::new("git")
+        .args(["status", "--porcelain", "--untracked-files=no"])
+        .output()
+        .map(|output| !output.status.success() || !output.stdout.is_empty())
+        .unwrap_or(true);
+    println!("cargo:rustc-env=OCTOS_GIT_SHA={source_commit}");
+    println!("cargo:rustc-env=OCTOS_SOURCE_DIRTY={source_dirty}");
+    println!(
+        "cargo:rustc-env=OCTOS_BUILD_TARGET={}",
+        std::env::var("TARGET").unwrap_or_default()
+    );
     // Git short hash
     let hash = Command::new("git")
         .args(["rev-parse", "--short", "HEAD"])

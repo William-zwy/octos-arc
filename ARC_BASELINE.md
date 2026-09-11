@@ -16,7 +16,9 @@ their Git history; it is not a GitHub fork-network repository.
 - `legacy-adapter-20260910` names the preserved legacy snapshot.
 
 The upstream README describes upstream capabilities, not completed ARC modifications.
-At this checkpoint there are no kernel behavior changes, compiled downstream releases,
+The initial source checkpoint contained no behavior changes. The second phase
+adds the native `octos arc` workflow in `crates/octos-arc`, reusing the existing
+Octos coding runtime. There are still no compiled downstream releases,
 new ARC submissions, or new evaluation scores.
 
 ## Release and submission policy
@@ -48,8 +50,13 @@ Add and review a dedicated downstream build workflow before selectively enabling
 The `legacy` branch is historical reference only. Its old downloader and execution
 behavior have intentionally not been modernized; it is not the new competition runtime.
 
-## Next phase, not started
+## Current implementation and next phase
 
-Use the official ARC Counter task first, then its Evolution task with the prior generated
-project as input. Implement honest execution evidence and incremental changes before
-building and submitting the fixed downstream runtime. Do not fabricate test results.
+The Rust workflow now supports explicit create/evolve modes, requirement deltas,
+fixed binary verification and honest local execution evidence. See
+`crates/octos-arc/README.md` for limitations and validation commands.
+
+Next, verify the full CLI build, publish a fixed downstream artifact and finish
+the platform launcher/traceability contract. Then run official ARC Counter and
+its Evolution task with the prior generated project as input. No benchmark score
+is implied by the crate's unit tests. Do not fabricate test results.
