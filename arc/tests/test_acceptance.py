@@ -1,0 +1,136 @@
+import subprocess
+import tempfile
+import unittest
+from pathlib import Path
+
+from acceptance import (
+    failure_summaries,
+    map_specs_to_nodes,
+    nodes_for_failures,
+    restore_worktree,
+    snapshot_worktree,
+    spec_node_id,
+    summarize_report,
+)
+
+
+class SpecIdTests(unittest.TestCase):
+    def test_should_extract_leading_requirement_id(self):
+        self.assertEqual(spec_node_id("REQ-1.spec.ts"), "REQ-1")
+        self.assertEqual(spec_node_id("REQ-1.1-user-registration.spec.ts"), "REQ-1.1")
+        self.assertEqual(spec_node_id("sub/REQ-12.3.4-x.spec.ts"), "REQ-12.3.4")
+        self.assertIsNone(spec_node_id("support/e2e.ts"))
+        self.assertIsNone(spec_node_id("smoke.spec.ts"))
+
+
+class MappingTests(unittest.TestCase):
+    def test_should_match_exact_ids(self):
+        mapping, aliases = map_specs_to_nodes(["REQ-1.spec.ts", "REQ-2.spec.ts"], ["REQ-1", "REQ-2"])
+        self.assertEqual(mapping, {"REQ-1": ["REQ-1.spec.ts"], "REQ-2": ["REQ-2.spec.ts"], None: []})
+        self.assertEqual(aliases, {})
+
+    def test_should_map_in_order_when_spec_ids_differ_but_counts_match(self):
+        specs = ["REQ-1.1-user-registration.spec.ts", "REQ-1.2-user-login.spec.ts", "support/e2e.ts"]
+        mapping, aliases = map_specs_to_nodes(specs, ["REQ-1", "REQ-2"])
+        self.assertEqual(mapping["REQ-1"], ["REQ-1.1-user-registration.spec.ts"])
+        self.assertEqual(mapping["REQ-2"], ["REQ-1.2-user-login.spec.ts"])
+        self.assertEqual(aliases, {"REQ-1.1": "REQ-1", "REQ-1.2": "REQ-2"})
+
+    def test_should_fall_back_to_parent_prefix_and_leave_rest_unassigned(self):
+        specs = ["REQ-1.1-a.spec.ts", "REQ-1.2-b.spec.ts", "REQ-9.spec.ts"]
+        mapping, aliases = map_specs_to_nodes(specs, ["REQ-1", "REQ-2"])
+        self.assertEqual(mapping["REQ-1"], ["REQ-1.1-a.spec.ts", "REQ-1.2-b.spec.ts"])
+        self.assertEqual(mapping["REQ-2"], [])
+        self.assertEqual(mapping[None], ["REQ-9.spec.ts"])
+        self.assertEqual(aliases, {"REQ-1.1": "REQ-1", "REQ-1.2": "REQ-1"})
+
+    def test_should_sort_spec_ids_numerically_when_mapping_in_order(self):
+        specs = ["REQ-1.10-x.spec.ts", "REQ-1.2-y.spec.ts"]
+        mapping, _ = map_specs_to_nodes(specs, ["A", "B"])
+        self.assertEqual(mapping["A"], ["REQ-1.2-y.spec.ts"])
+        self.assertEqual(mapping["B"], ["REQ-1.10-x.spec.ts"])
+
+
+def report(*tests):
+    specs = []
+    for title, status, error, steps, duration in tests:
+        result = {"status": status, "duration": duration, "steps": [{"title": s, "category": "pw:api"} for s in steps]}
+        if error:
+            result["error"] = {"message": error, "location": {"file": "/w/tests/REQ-1.spec.ts", "line": 12}}
+            result["errors"] = [result["error"]]
+        specs.append({"title": title, "file": "REQ-1.spec.ts", "tests": [{"status": "expected" if status == "passed" else "unexpected", "results": [result]}]})
+    return {"suites": [{"title": "REQ-1.spec.ts", "specs": specs}]}
+
+
+class ReportTests(unittest.TestCase):
+    def test_should_count_passed_and_collect_durations(self):
+        summary = summarize_report(report(("a", "passed", None, [], 800), ("b", "failed", "boom", [], 10500)))
+        self.assertEqual((summary.passed, summary.total), (1, 2))
+        self.assertEqual([r.title for r in summary.results if not r.ok], ["b"])
+        self.assertEqual(summary.slow(3000), ["b"])
+
+    def test_should_treat_missing_report_as_zero_of_zero(self):
+        summary = summarize_report({})
+        self.assertEqual((summary.passed, summary.total), (0, 0))
+
+    def test_should_build_four_field_summary_without_ansi_and_with_last_steps(self):
+        msg = "\x1b[31mError: expect(locator).toHaveText(expected)\x1b[39m\n\nLocator: getByTestId('count')\nExpected string: \"2\"\nReceived string: \"1\""
+        steps = ["page.goto(/)", "locator.click", "locator.click", "expect.toHaveText"]
+        summary = summarize_report(report(("REQ-1: increments", "failed", msg, steps, 5000)))
+        text = failure_summaries(summary, max_steps=3)
+        self.assertIn("Feature: REQ-1: increments", text)
+        self.assertIn("Failed at: REQ-1.spec.ts:12", text)
+        self.assertIn("Observation: Error: expect(locator).toHaveText(expected)", text)
+        self.assertNotIn("\x1b", text)
+        self.assertIn("Steps: locator.click -> locator.click -> expect.toHaveText", text)
+
+    def test_should_use_call_log_lines_when_no_step_trace(self):
+        msg = "Error: page.goto: net::ERR_CONNECTION_REFUSED\nCall log:\n  - navigating to \"http://x/\", waiting until \"load\"\n\nmore"
+        summary = summarize_report(report(("t", "failed", msg, [], 100)))
+        self.assertIn('Steps: navigating to "http://x/", waiting until "load"', failure_summaries(summary))
+
+    def test_should_mark_timeouts_as_performance_observations(self):
+        summary = summarize_report(report(("slow one", "timedOut", "Test timeout of 10000ms exceeded.", ["page.reload"], 10000)))
+        text = failure_summaries(summary)
+        self.assertIn("timed out", text.lower())
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+class WorktreeSnapshotTests(unittest.TestCase):
+    def test_should_undo_test_run_mutations_but_keep_uncommitted_edits(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            run = lambda args: subprocess.run(["git", *args], cwd=root, check=False, capture_output=True,  # noqa: E731
+                                              env={"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@x", "GIT_COMMITTER_NAME": "t",
+                                                   "GIT_COMMITTER_EMAIL": "t@x", "PATH": "/usr/bin:/bin:/opt/homebrew/bin"})
+            run(["init", "-q"])
+            (root / "backend").mkdir()
+            (root / "backend" / "db.json").write_text('{"count": 0}')
+            (root / "backend" / "server.js").write_text("v1")
+            run(["add", "-A"]); run(["commit", "-qm", "init"])
+            (root / "backend" / "server.js").write_text("v2 (repair edit, uncommitted)")
+            snapshot_worktree(run)
+            # the test run mutates the store and creates a new file
+            (root / "backend" / "db.json").write_text('{"count": -1}')
+            (root / "backend" / "uploads.json").write_text("[]")
+            restore_worktree(run)
+            self.assertEqual((root / "backend" / "db.json").read_text(), '{"count": 0}')
+            self.assertEqual((root / "backend" / "server.js").read_text(), "v2 (repair edit, uncommitted)")
+            self.assertFalse((root / "backend" / "uploads.json").exists())
+
+
+class FailureGroupingTests(unittest.TestCase):
+    def test_should_group_failed_tests_by_owning_node_via_spec_basename(self):
+        summary = summarize_report({"suites": [
+            {"title": "a", "file": "REQ-1.spec.ts", "specs": [
+                {"title": "one", "file": "REQ-1.spec.ts", "tests": [{"status": "unexpected", "results": [{"status": "failed", "duration": 1,
+                    "error": {"message": "x", "location": {"file": "/w/tests/REQ-1.spec.ts", "line": 3}}}]}]}]},
+            {"title": "b", "file": "sub/REQ-2.spec.ts", "specs": [
+                {"title": "two", "file": "sub/REQ-2.spec.ts", "tests": [{"status": "expected", "results": [{"status": "passed", "duration": 1}]}]},
+                {"title": "three", "file": "sub/REQ-2.spec.ts", "tests": [{"status": "unexpected", "results": [{"status": "timedOut", "duration": 1}]}]}]},
+        ]})
+        grouped = nodes_for_failures(summary.results, {"REQ-1": ["REQ-1.spec.ts"], "REQ-2": ["sub/REQ-2.spec.ts"], None: []})
+        self.assertEqual({k: [r.title for r in v] for k, v in grouped.items()}, {"REQ-1": ["one"], "REQ-2": ["three"]})
