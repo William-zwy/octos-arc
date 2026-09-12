@@ -11,10 +11,10 @@
 //! see a single [`TieredCompactionRunner`] surface:
 //!
 //! 1. [`MicroCompactionPolicy`] — per-iteration stale tool-result pruning.
-//!    Cheap, synchronous, in-place. Oversized current results retain their
-//!    head and tail; older results become a typed [`ToolResultPlaceholder`]
-//!    so the `tool_call_id` (and therefore the assistant/tool pairing) stays
-//!    intact.
+//!    Cheap, synchronous, in-place. Oversized current results are replaced by
+//!    typed placeholders during the cache-friendly per-iteration pass; the
+//!    full pass retains their head and tail. The `tool_call_id` (and therefore
+//!    the assistant/tool pairing) stays intact.
 //! 2. [`ApiMicroCompactionConfig`] — a *builder*, not a runtime loop.
 //!    Emits the opaque `context_management` JSON payload that Anthropic's
 //!    server-side `clear_tool_uses_20250919` mechanism expects.  The
@@ -61,10 +61,11 @@ pub enum Tier1Pass {
 
 /// Per-iteration stale tool-result pruning policy (tier 1).
 ///
-/// Runs in-place over the conversation. Current oversized results are bounded
-/// to the configured byte limit while retaining both ends; stale or
-/// superseded results are replaced with a typed [`ToolResultPlaceholder`] when
-/// either:
+/// Runs in-place over the conversation. The full pass bounds current oversized
+/// results to the configured byte limit while retaining both ends; the
+/// cache-friendly oversized-only pass replaces them with typed placeholders.
+/// Stale or superseded results are also replaced with a typed
+/// [`ToolResultPlaceholder`] when either:
 ///
 /// * the tool result is older than `max_age_turns` user-message boundaries, or
 /// * the tool result's content is larger than `max_size_bytes_per_result`.
@@ -180,7 +181,9 @@ impl MicroCompactionPolicy {
 
     /// [`Self::prune`] with an explicit [`Tier1Pass`]: `OversizedOnly` skips
     /// the age-based (stale) condition so per-iteration runs never rewrite
-    /// deep history (KV-cache friendliness); `Full` behaves like `prune`.
+    /// deep history (KV-cache friendliness), and uses a compact placeholder
+    /// for oversized results; `Full` behaves like `prune` and retains their
+    /// head and tail.
     pub fn prune_with_pass(
         &self,
         messages: &mut [Message],
@@ -281,6 +284,7 @@ impl MicroCompactionPolicy {
             let Some(reason) = reason else { continue };
 
             let replacement = if reason == "tier1_oversized"
+                && matches!(pass, Tier1Pass::Full)
                 && !stale
                 && !superseded
                 && working_set.pinned_ids.is_empty()
