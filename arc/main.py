@@ -61,8 +61,8 @@ from arcbench_agent_runtime import AgentRuntime  # noqa: E402
 from acceptance import (  # noqa: E402
     AcceptanceRunner, AppServer, RunSummary, acceptance_work_dir, ensure_playwright,
     failure_summaries, find_playwright_by_search, find_playwright_root, map_specs_to_nodes,
-    nodes_for_failures, playwright_candidates, playwright_version_hint, restore_worktree,
-    snapshot_worktree,
+    nodes_for_failures, playwright_candidates, playwright_version_hint, restore_tree,
+    restore_worktree, snapshot_worktree, tree_digest,
 )
 from guard import TurnMonitor  # noqa: E402
 from requirement_order import ancestors_of, node_fingerprint, topo_order  # noqa: E402
@@ -384,8 +384,42 @@ def find_octos() -> str:
     return _download_octos(cache_dir)
 
 
-def build_octos_env(config_dir: Path) -> dict:
-    """Prepare env + minimal config.json for non-interactive octos."""
+def protected_hooks(protected_dirs: list[Path] | None) -> list[dict]:
+    """before_tool_call hook denying file writes into the official tests /
+    requirements directories (exit 1 = deny). Shell commands are redacted by
+    the kernel and cannot be checked here; the harness restores the trees
+    after every turn as the second layer."""
+    hook_script = BUNDLE_DIR / "hooks" / "deny_protected.py"
+    if not protected_dirs or not hook_script.is_file():
+        return []
+    return [{
+        "event": "before_tool_call",
+        "command": [sys.executable, str(hook_script), *[str(p) for p in protected_dirs]],
+        "timeout_ms": 4000,
+        "tool_filter": ["write_file", "edit_file", "diff_edit", "apply_patch", "create_file", "append_file"],
+    }]
+
+
+def write_profile_defaults(data_dir: Path, config_dir: Path, hooks: list[dict]) -> None:
+    """Belt and braces: the solo ProfileRuntime builds its HookExecutor from
+    the profile's own config (the stdio driver patches `hooks` into the
+    profile registry file — the mechanism verified to deny with a real turn);
+    a `profile-defaults.json` covers code paths that merge store defaults."""
+    if not hooks:
+        return
+    for root in (data_dir, config_dir):
+        try:
+            root.mkdir(parents=True, exist_ok=True)
+            (root / "profile-defaults.json").write_text(json.dumps({"hooks": hooks}, indent=2), encoding="utf-8")
+        except OSError:
+            pass
+
+
+def build_octos_env(config_dir: Path, protected_dirs: list[Path] | None = None) -> dict:
+    """Prepare env + minimal config.json for non-interactive octos.
+
+    `protected_dirs` (official tests, requirements) get a before_tool_call
+    hook that denies write_file/edit_file into them (exit 1 = deny)."""
     env = os.environ.copy()
     api_key = env.get("OPENAI_API_KEY", "")
     base_url = env.get("OPENAI_BASE_URL", "")
@@ -416,6 +450,9 @@ def build_octos_env(config_dir: Path) -> dict:
         config["base_url"] = base_url
     if provider == "deepseek":
         config["gateway"]["reasoning_effort"] = "low"
+    hooks = protected_hooks(protected_dirs)
+    if hooks:
+        config["hooks"] = hooks
     config_dir.mkdir(parents=True, exist_ok=True)
     (config_dir / "config.json").write_text(json.dumps(config, indent=2), encoding="utf-8")
     env["OCTOS_CONFIG_DIR"] = str(config_dir)
@@ -509,6 +546,7 @@ class OctosDriver:
         self.events_log = events_log
         self._session = None
         self.monitor: TurnMonitor | None = None
+        self.hooks: list = []  # profile hooks (protected-directory deny), set by the flow
 
     def _log_event(self, method: str, params: dict) -> None:
         if method == "core/marker":
@@ -534,6 +572,7 @@ class OctosDriver:
                 model=self.env.get("_ARC_MODEL", ""),
                 base_url=self.env.get("_ARC_BASE_URL") or None,
                 api_key_env=self.env.get("_ARC_KEY_ENV") or None,
+                hooks=self.hooks,
             )
             self._session.open()
         return self._session
@@ -643,9 +682,9 @@ UI contract (the hidden Playwright tests depend on these; a violation scores 0):
 PERFORMANCE_CONTRACT = """\
 Performance & robustness (the grader is a slow container, tests run in parallel, EACH TEST HAS A 10 s BUDGET including reloads):
 - Zero external requests: no CDN scripts, web fonts, analytics, or images from other hosts; every asset is same-origin and small, so `load` fires within ~200 ms.
-- Password hashing: crypto.scryptSync(password, salt, 64) with the DEFAULT cost (N=16384) or pbkdf2 <= 100000 iterations — never more; every API request finishes in < 100 ms.
+- The grader CPU is 5–10x slower than a laptop and runs 4 browsers at once, so budget CPU per request at 30 ms: hash passwords with crypto.scryptSync(password, salt, 64, {N: 4096, r: 8, p: 1}) or pbkdf2Sync with <= 10000 iterations — never the default scrypt cost, never bcrypt; keep the JSON store small and rewrite it only on mutation.
 - Session cookie: HttpOnly; Path=/; SameSite=Lax; Max-Age at least 7 days; NO `Secure`, NO `Domain` attribute (tests run on http://127.0.0.1). On reload restore the signed-in header from that cookie with at most ONE same-origin request (or render it server-side).
-- No setTimeout delays, polling, service workers, beforeunload handlers, or debounced writes. Persist by writing the whole JSON file synchronously (write temp file, then rename).
+- Persistence: the in-memory store is the single source of truth; never re-read the JSON file per request. Mutations update memory first and then write the whole file synchronously (writeFileSync to a temp file, then rename) — never an async read-modify-write, because the grader runs 2–4 test files in parallel against ONE backend and a concurrent register/login pair must never lose a user. No setTimeout delays, polling, service workers, beforeunload handlers, or debounced writes.
 """
 
 ARCHITECTURE_CONTRACT = """\
@@ -888,6 +927,11 @@ class Flow:
             log(f"[guard] {label}: {c[:160]}")
             if self.guard_enabled:
                 self.pending_corrections.append(c)
+        restored = self.restore_protected()
+        if restored:
+            self.pending_corrections.append(
+                "You changed official test/requirement files; the harness restored them: "
+                + ", ".join(restored[:5]) + ". They are read-only ground truth — fix the app instead.")
         return ok, text
 
     def perf_text(self) -> str:
@@ -974,6 +1018,31 @@ class Flow:
                                        workers=int(os.environ.get("OCTOS_ARC_TEST_WORKERS", "2")),
                                        env_extra=env_extra)
         log(f"[acceptance] using Playwright at {root}")
+
+    def snapshot_protected(self) -> None:
+        """Copy the official tests dir (and requirements) so any edit the model
+        sneaks past the hook (e.g. via a shell redirect) is undone after the
+        turn — the platform grades with THESE files."""
+        self.protected_snapshots = []
+        for live in (self.tests_dir, self.req_dir):
+            if not live or not live.is_dir():
+                continue
+            snap = Path(tempfile.mkdtemp(prefix="octos-protected-"))
+            shutil.copytree(live, snap / "tree", ignore=shutil.ignore_patterns("node_modules"))
+            self.protected_snapshots.append((live, snap / "tree", tree_digest(live)))
+
+    def restore_protected(self) -> list[str]:
+        fixed_all: list[str] = []
+        for live, snap, digest in getattr(self, "protected_snapshots", []):
+            try:
+                fixed = restore_tree(live, snap, digest)
+            except OSError as exc:
+                log(f"[guard] could not restore {live}: {exc}")
+                continue
+            if fixed:
+                log(f"[guard] restored {len(fixed)} protected file(s) under {live}: {fixed[:5]}")
+                fixed_all.extend(f"{live}/{rel}" for rel in fixed)
+        return fixed_all
 
     def cleanup_playwright(self) -> None:
         private = getattr(self, "private_playwright", None)
@@ -1221,8 +1290,9 @@ class Flow:
         all_specs = sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.spec.ts"))
         if len(all_specs) < 2:
             return
-        rounds = int(os.environ.get("OCTOS_FINAL_REPAIR_ROUNDS", "3"))
+        rounds = int(os.environ.get("OCTOS_FINAL_REPAIR_ROUNDS", "2"))
         workers = int(os.environ.get("OCTOS_ARC_FINAL_WORKERS", "4"))
+        previous_failing: set[str] | None = None
         for attempt in range(rounds + 1):
             summary = self.run_specs(all_specs, workers=workers, grader_like=True)
             if summary.error:
@@ -1248,6 +1318,11 @@ class Flow:
             if not grouped:
                 self.commit(f"chore: full acceptance suite {summary.passed}/{summary.total} pass (parallel)")
                 return
+            failing_titles = {r.title for rs in grouped.values() for r in rs}
+            if previous_failing is not None and failing_titles == previous_failing:
+                log("[acceptance] full suite: same failures as the previous round; stopping repairs")
+                break
+            previous_failing = failing_titles
             if attempt == rounds or self.remaining() < 240:
                 break
             failing = sorted(k for k in grouped if k) or ["all nodes"]
@@ -1349,11 +1424,16 @@ class Flow:
             octos_bin = find_octos()
             log(f"[octos] binary {octos_bin}")
             data_dir = Path(tempfile.mkdtemp(prefix="octos-data-"))
-            env = build_octos_env(Path(tempfile.mkdtemp(prefix="octos-config-")))
+            protected = [p for p in (self.tests_dir, self.req_dir) if p and p.is_dir()]
+            config_dir = Path(tempfile.mkdtemp(prefix="octos-config-"))
+            env = build_octos_env(config_dir, protected)
+            write_profile_defaults(data_dir, config_dir, protected_hooks(protected))
+            self.snapshot_protected()
             env["PORT"] = str(self.smoke_port)  # a bare `npm start` inside a turn must not hit the grading port
             self.driver = OctosDriver(octos_bin, self.output_dir, env, data_dir,
                                       int(os.environ.get("OCTOS_MAX_ITERATIONS", "500")),
                                       events_log=self.output_dir / ".arc" / "octos-events.jsonl")
+            self.driver.hooks = protected_hooks(protected)
             threading.Thread(target=_port_watchdog, args=(self.web_port, self.output_dir, watchdog_stop),
                              daemon=True).start()
             try:

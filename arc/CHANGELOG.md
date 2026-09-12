@@ -152,3 +152,24 @@ C 的其余发现与本分支已有改动的对应：轮超时被当瞬时错误
 2. 真要自装时完全隔离：版本钉死（tests 目录的 package-lock/package.json 声明的版本，否则 1.63.0；绝不 latest），`npm_config_cache` 与 `PLAYWRIGHT_BROWSERS_PATH` 都指向本次运行的私有临时目录，浏览器用 `node_modules/.bin/playwright install` 而不是 `npx`，所有验收运行带同一 `PLAYWRIGHT_BROWSERS_PATH`，运行结束（含异常路径）删除整个私有目录。
 3. 本机验证：私有安装 24 s 完成，chromium-1243 落在私有目录，登录节点 4/4；安装前后 `~/Library/Caches/ms-playwright` 与 `~/.npm` 均未变化，私有目录已删除。
 4. 云端 d116ad5e3aa0（wf-adapter-2@71040c6c）15 s 崩溃：`setup_playwright` 的一处文本替换未生效，仍把 `(root, env)` 元组当 Path 用，且缺 `cleanup_playwright`。`e3c1197f` 整段重写并加回归测试 `SetupPlaywrightTests`；本机把 local-grader 藏起来强制走该分支跑 Counter（r10-counter-privatepw）：私有安装 25 s → 验收 1/1 → 演练通过 → 私有目录已删除，公开测试 1/1，¥0.0306，374 s。**云端未评测**，等 C 用 e3c1197f 打包再跑一次 smoke-evolution 后合入。
+
+## 第三轮 · 保护官方测试与空报告（C 回流，云端 a6ccc437539f，`wf-adapter-3`）
+
+**云端现象**：main@40a629a8 的 TB 云端 0/10、¥10.22、3,376 s。日志里 `[guard] You modified protected files … /workspace/tests/*` 之后紧跟 `[acceptance] 0/0 passed (REQ-1.1-…)`：模型改了 `/workspace/tests`，复制过来的 spec 不再能加载，「0/0」被当成判定，之后的修复轮都在盲修；REQ-1 实现轮 900 s 超时；容器里 4 并行全套 2/10（10 s 超时）。
+
+**改法**：
+1. **拒绝写入官方测试目录**（`arc/hooks/deny_protected.py`）：内核 `before_tool_call` hook，对 write_file / edit_file 等按 `arguments.path` 判定，落在 tests 或 requirements 目录内即 exit 1（模型看到 `[HOOK DENIED]`）。接线要点：`octos serve --solo` 的 ProfileRuntime 只从 profile 自身 config 取 hooks（`config_from_profile`），host `config.json` 与 `profile-defaults.json` 都不生效——用真实 stdio 轮验证过两次都放行；改为在 `profile/local/create` 之后、`profile/llm/upsert` 之前把 `hooks` 写进 `data/profiles/<id>.json`，第三次验证：写保护目录被拒（spec 内容不变），写普通文件正常。shell 命令的参数被内核脱敏，hook 看不到，所以还有第 2 层。
+2. **每轮结束还原受保护目录**：启动时把 tests / requirements 目录快照到私有临时目录并记 sha256，每轮结束比对，改动/删除的文件恢复、新增的删除，并把恢复列表作为纠正句喂给下一轮。平台评测用的正是这些文件，任何改动既破坏本地验收也触碰红线。
+3. **空报告不是判定**：Playwright 收集到 0 条测试时返回 error，附顶层 `errors`（编译/加载错误）或 stdout 尾部，进入修复摘要并记日志。
+4. **全套修复早停**：失败集合与上一轮相同即停止（默认最多 2 轮，`OCTOS_FINAL_REPAIR_ROUNDS`）。
+5. **A4 哈希预算**：明确评测 CPU 慢 5–10 倍且 4 个浏览器并行，scrypt 用 `{N: 4096, r: 8, p: 1}` 或 pbkdf2 ≤ 10,000 次，单请求 CPU ≤ 30 ms。
+
+本机验证：`SetupPlaywright`/hook/tree-restore 共 34 个单元测试；r12-counter 1/1、¥0.0386、91 s（ROOT 状态已写）。
+
+| 运行 | 轮数 | tokens_in | tokens_out | 费用 ¥ | 耗时 s | 公开测试 | 节点状态 |
+|---|---:|---:|---:|---:|---:|---|---|
+| r11-tb | 7 | 192,910 | 109,919 | 0.6697 | 1,141 | 10/10（按评测方式启动） | REQ-1、REQ-2、REQ-1.1、REQ-1.2、ROOT PASSED |
+
+r11-tb 逐轮：骨架 89 s → REQ-1 设计 139 s → 实现 312 s → 验收 0/6（首页有两个 `a[href="/register"]`，strict mode）→ 修复 174 s → 6/6 → REQ-2 设计 60 s → 实现 196 s → 验收 0/4（`getByLabel(/用户名/)` 命中两个输入框）→ 修复 152 s → 4/4 → 全套并行 10/10 → 演练通过。两处都是四字段摘要直接点名的 strict-mode 错，各一轮修好；改前基线 ¥0.765 / 2,508 s。
+
+**C 对 main@f3f113e6 的云端对比**（0a3cd1d66042 TB 7/10、¥4.45、981 s，生成阶段自跑 10/10）：平台 2 个 worker 并行打同一后端时，「注册后保持登录」超时、「用户名密码登录」登录后看不到用户名、「大小写邮箱登录」超时——两个 spec 各自注册再登录，异步「读文件-改-整写」的持久化在并发下会丢用户。本轮补充：性能契约明确「内存为唯一真源、变更先改内存再同步整写、禁止异步 read-modify-write」；`OCTOS_ARC_FULLY_PARALLEL=1` 可让本地验收在文件内也并行（比平台更严）。功能率 0/2 的原因是平台按测试标题前缀（REQ-1.1）匹配需求 id（REQ-1），与适配层无关，需向平台反馈。
