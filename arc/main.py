@@ -110,6 +110,65 @@ def _postflight_structure_check(output_dir: Path) -> None:
     log("[postflight] WARNING: no frontend/+backend/ found anywhere; runner will reject the template")
 
 
+def _reap_stray_processes(tag: str) -> None:
+    """Log memory + the fattest processes, then kill whatever the agent left
+    behind (browsers it launched to run the specs itself, servers, the
+    octos runtime). Cloud runs 0764e8d77c54 / e60fb3545eae (2026-09-12):
+    generation finished cleanly, then the grader's Playwright process was
+    SIGKILLed one second after spawning 4 workers and every test was
+    reported as skipped — the container had no memory left for it."""
+    me = os.getpid()
+    def _run(cmd: list[str]) -> str:
+        try:
+            return subprocess.run(cmd, capture_output=True, text=True,
+                                  timeout=20).stdout
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            return f"<{cmd[0]} unavailable: {exc}>"
+    log(f"[reap:{tag}] memory:\n" + _run(["free", "-m"]).rstrip())
+    # `free` shows the host, not the container's cgroup limit — that limit
+    # is what SIGKILLs the grader's 4-worker Playwright run.
+    cg = []
+    for f in ("/sys/fs/cgroup/memory.max", "/sys/fs/cgroup/memory.current",
+              "/sys/fs/cgroup/memory.peak", "/sys/fs/cgroup/memory.events",
+              "/sys/fs/cgroup/memory/memory.limit_in_bytes",
+              "/sys/fs/cgroup/memory/memory.max_usage_in_bytes",
+              "/sys/fs/cgroup/memory/memory.failcnt", "/sys/fs/cgroup/pids.max"):
+        try:
+            cg.append(f"{f}={Path(f).read_text().strip().replace(chr(10), ' ')}")
+        except OSError:
+            pass
+    log(f"[reap:{tag}] cgroup: " + ("; ".join(cg) or "<no cgroup files>"))
+    ps = _run(["ps", "-eo", "pid,ppid,rss,etime,args", "--sort=-rss"])
+    log(f"[reap:{tag}] top processes by RSS:\n"
+        + "\n".join(ps.splitlines()[:20]))
+    victims: list[int] = []
+    for line in ps.splitlines()[1:]:
+        parts = line.split(None, 4)
+        if len(parts) < 5:
+            continue
+        pid, args_ = int(parts[0]), parts[4]
+        if pid == me or pid == os.getppid():
+            continue
+        low = args_.lower()
+        if any(k in low for k in ("chrom", "headless_shell", "playwright",
+                                  "octos serve", "node ", "npm ", "/node")):
+            victims.append(pid)
+    for sig in (signal.SIGTERM, signal.SIGKILL):
+        for pid in victims:
+            try:
+                os.kill(pid, sig)
+            except OSError:
+                pass
+        time.sleep(2 if sig == signal.SIGTERM else 0)
+    if victims:
+        log(f"[reap:{tag}] killed {len(victims)} stray process(es): {victims}")
+        log(f"[reap:{tag}] memory after:\n" + _run(["free", "-m"]).rstrip())
+    else:
+        log(f"[reap:{tag}] nothing to kill")
+
+
+
+
 def _free_web_port(web_port: int) -> None:
     """Best-effort kill of whatever still listens on the app port."""
     try:
@@ -1353,6 +1412,7 @@ class Flow:
                 self.events.mark_run_completed(f"completed; nodes not verified: {', '.join(failed)}")
             else:
                 self.events.mark_run_completed("all requirement nodes implemented and verified")
+            _reap_stray_processes("postflight")
             _postflight_structure_check(self.output_dir)
             _free_web_port(self.web_port)
             self.write_preview_ready()
@@ -1371,6 +1431,7 @@ class Flow:
                 self.mark_folders()
             except Exception:  # noqa: BLE001
                 pass
+            _reap_stray_processes("exception")
             _postflight_structure_check(self.output_dir)
             _free_web_port(self.web_port)
             self.events.mark_run_failed(str(exc)[:1000])
