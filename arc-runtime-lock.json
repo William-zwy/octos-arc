@@ -22,7 +22,7 @@
     "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18) (Homebrew)",
     "command": "cargo build --locked -p octos-cli --no-default-features --features api",
     "binary": "target/debug/octos",
-    "binary_sha256": "7e1c74fa391315946d5bfe7bff2ef02868c344b453ce3690491d9913669e2c89"
+    "binary_sha256": "a60e1b775072a97695e13c3359234e395c9b167e59cdd00d2f990b72a88fcbc8"
   },
   "model_configuration": null,
   "arc_submission": null,
