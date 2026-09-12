@@ -69,6 +69,7 @@ DeepSeek V4 默认输出上限提高到 provider 级安全值；当 `finish_reas
 改动位置：`crates/octos-agent/src/agent/{detection,llm_call,mod}.rs`。
 
 识别 SSE/streaming 不支持错误后，同一 session 记录 provider/model，后续请求直接走非流式路径；当前错误回合也自动回退一次。新增错误识别测试。Counter 运行期间平台请求成功，未再依赖适配层的 `OCTOS_DISABLE_STREAMING=1`。
+即使当前 LLM 调用处于 FailFast 策略，明确的 SSE 不支持错误仍保留这一次非流式回退；其他传输错误继续按 FailFast 直接返回。该边界由单测覆盖。
 
 ## P1-5：环境事实前置注入
 
