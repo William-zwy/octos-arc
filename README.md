@@ -1,4 +1,4 @@
-> **这是 Octos 参加 ARC-Bench 的比赛版仓库。** 内核源码在 `crates/`，参赛所需的全部外围（平台适配包、公开验收测试、本机做题与打分、打包上传）在 [`arc/`](arc/README.md)。学员只需要这一个仓库、这一个分支（`main`）。固定基底：上游 octos-org/octos 提交 8558a3bf（标签 arc-base-20260910）；版本约束见 `arc-runtime-lock.json`。
+> **这是 Octos 参加 ARC-Bench 的比赛版仓库。** 内核源码在 `crates/`，参赛所需的全部外围（平台适配包、公开验收测试、本机做题与打分、打包上传）在 [`arc/`](arc/README.md)。学员只需要这一个仓库。分支：`main` 是魔改版全量源码加 `arc/`；`adapter` 分支只有适配包，给想搭配官方 Octos 或别的 agent 使用的人。固定基底：上游 octos-org/octos 提交 8558a3bf（标签 arc-base-20260910）；版本约束见 `arc-runtime-lock.json`。
 
 <div align="center">
 
