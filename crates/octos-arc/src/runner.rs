@@ -1094,6 +1094,49 @@ mod tests {
 
     #[cfg(unix)]
     #[test]
+    fn acceptance_hook_runs_playwright_and_records_pass() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp = tempfile::tempdir().unwrap();
+        let project = temp.path().join("project");
+        let specs = project.join("acceptance");
+        let runner = project.join("node_modules/.bin/playwright");
+        fs::create_dir_all(&specs).unwrap();
+        fs::create_dir_all(runner.parent().unwrap()).unwrap();
+        fs::write(specs.join("smoke.spec.ts"), "test('smoke', () => {})").unwrap();
+        let capture = temp.path().join("hook-env");
+        fs::write(
+            &runner,
+            format!(
+                "#!/bin/sh\nprintf '%s' \"$E2E_BASE_URL\" > '{}'\nprintf '1 passed\\n'\n",
+                capture.display()
+            ),
+        )
+        .unwrap();
+        fs::set_permissions(&runner, fs::Permissions::from_mode(0o700)).unwrap();
+
+        let mut evidence = Vec::new();
+        run_acceptance_hook(
+            &project,
+            Some(&specs),
+            Some("http://127.0.0.1:43100"),
+            &[],
+            Instant::now() + Duration::from_secs(5),
+            &mut evidence,
+        )
+        .unwrap();
+
+        assert_eq!(
+            fs::read_to_string(capture).unwrap(),
+            "http://127.0.0.1:43100"
+        );
+        assert_eq!(evidence[0]["kind"], "acceptance_hook");
+        assert_eq!(evidence[0]["status"], "passed");
+        assert_eq!(evidence[0]["base_url"], "http://127.0.0.1:43100");
+    }
+
+    #[cfg(unix)]
+    #[test]
     #[ignore = "HTTP server fixture launched only by the supervisor test"]
     fn http_server_fixture() {
         if std::env::var("OCTOS_ARC_TEST_SERVER").as_deref() != Ok("1") {

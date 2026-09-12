@@ -65,7 +65,7 @@ DeepSeek V4 默认输出上限提高到 provider 级安全值；当 `finish_reas
 
 改动位置：`crates/octos-arc/src/runner.rs`。
 
-轮次结束的本地验证会发现显式目录或工作区内的 `*.spec.ts`，从项目及 spec 目录祖先查找 Playwright；存在时运行 `playwright test --reporter=line`，失败内容以 `[hook]` 错误回传。没有 spec 或 Playwright 时记录 skipped 并继续。目录和基址可由 CLI 参数或 `OCTOS_ARC_SPEC_DIR`、`OCTOS_ARC_BASE_URL` 指定。
+轮次结束的本地验证会发现显式目录或工作区内的 `*.spec.ts`，从项目及 spec 目录祖先查找 Playwright；存在时运行 `playwright test --reporter=line`，失败内容以 `[hook]` 错误回传。没有 spec 或 Playwright 时记录 skipped 并继续。目录和基址可由 CLI 参数或 `OCTOS_ARC_SPEC_DIR`、`OCTOS_ARC_BASE_URL` 指定。单测用临时 spec 和 fake runner 验证了实际执行、基址注入及 passed 证据记录。
 
 ## P2-7：按节点预算
 
@@ -81,7 +81,7 @@ DeepSeek V4 默认输出上限提高到 provider 级安全值；当 `finish_reas
 cargo build --locked -p octos-cli --no-default-features --features api
 ```
 
-产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check` 和完整工作区 `cargo clippy --locked --all-targets -- -D warnings` 通过；完整 workspace `cargo test --locked` 在链接阶段因 26 GB 的测试临时产物耗尽磁盘而中止，随后分 crate 的 `octos-agent --lib` 测试完成但有 4 个既有 Docker 后端测试失败。
+产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check` 和完整工作区 `cargo clippy --locked --all-targets -- -D warnings` 通过；`octos-arc` 测试为 21 passed / 1 ignored，`octos-llm` 为 687 passed / 3 ignored。完整 workspace `cargo test --locked` 在链接阶段因 26 GB 的测试临时产物耗尽磁盘而中止，随后分 crate 的 `octos-agent --lib` 测试完成但有 4 个既有 Docker 后端测试失败。
 
 最终产物：`octos 2.0.3-rc.11 (fbbf5772 2026-09-11)`；SHA-256 为 `2c5e3dfd9fa7f67139bfec80d17c9e3bf7561bbb7c6001f618044faf66fe00db`，对应 `aarch64-apple-darwin` 和 Homebrew `rustc 1.98.0`。
 
