@@ -17,12 +17,12 @@
   },
   "runtime_release": null,
   "build": {
-    "source_commit": "dc0f6be01a509320f6f957f2812658672ef4f833",
+    "source_commit": "34b2625ea086960d4ec571e3a9a0589a967e6aa8",
     "target": "aarch64-apple-darwin",
     "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18) (Homebrew)",
     "command": "cargo build --locked -p octos-cli --no-default-features --features api",
     "binary": "target/debug/octos",
-    "binary_sha256": "fead32d4bc7c75d12e5ccb5ec8ee9bf6e191deaab92bbfa4ab58b79a41b1a4b2"
+    "binary_sha256": "b0cad459fdd41d72df8afcb77d87df1a492b6816c2868f8b41b9a83dbcbcb418"
   },
   "model_configuration": null,
   "arc_submission": null,
