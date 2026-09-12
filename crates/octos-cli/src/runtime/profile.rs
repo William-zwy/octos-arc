@@ -10,6 +10,7 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 use eyre::{Result, WrapErr};
 use octos_agent::plugins::LoadedSkillAction;
@@ -32,6 +33,25 @@ use crate::qos_catalog::{ExporterMode, build_adaptive_provider_chain};
 use crate::skills_scope::{
     build_account_skills_loader, discover_ominix_url, push_runtime_plugin_env,
 };
+
+static STDIO_SOLO_LEAN_DEFAULTS: AtomicBool = AtomicBool::new(false);
+
+pub(crate) fn enable_stdio_solo_lean_defaults() {
+    STDIO_SOLO_LEAN_DEFAULTS.store(true, Ordering::Release);
+}
+
+fn stdio_solo_lean_defaults_enabled() -> bool {
+    STDIO_SOLO_LEAN_DEFAULTS.load(Ordering::Acquire)
+        || std::env::var("OCTOS_SKIP_BUNDLED_SKILLS").ok().as_deref() == Some("1")
+}
+
+fn is_bundled_skill_directory(path: &Path) -> bool {
+    matches!(
+        path.file_name().and_then(|name| name.to_str()),
+        Some(octos_agent::bootstrap::BUNDLED_APP_SKILLS_DIR)
+            | Some(octos_agent::bootstrap::PLATFORM_SKILLS_DIR)
+    )
+}
 
 /// Immutable inputs needed to rebuild only a profile's plugin-derived layer.
 /// Long-lived stores, providers, schedulers, and profile services are reused
@@ -1154,6 +1174,9 @@ impl ProfileRuntime {
         if platform_dir.exists() && !plugin_dirs.contains(&platform_dir) {
             plugin_dirs.push(platform_dir);
         }
+        if stdio_solo_lean_defaults_enabled() {
+            plugin_dirs.retain(|path| !is_bundled_skill_directory(path));
+        }
         let profile_skills_dir = data_dir.join("skills");
         if !plugin_dirs.contains(&profile_skills_dir) {
             plugin_dirs.push(profile_skills_dir);
@@ -1477,6 +1500,19 @@ impl ProfileRuntime {
             tools.apply_policy(policy);
         }
 
+        // `serve --stdio --solo` is the headless coding transport used by
+        // ARC-Bench. Apply the same built-in allow-list as
+        // `chat --profile coding`, including to profiles created after serve
+        // startup (the lazy runtime path checks this same process setting).
+        let agent_profile = if stdio_solo_lean_defaults_enabled() {
+            let (profile, _) = octos_agent::profile::ProfileDefinition::load("coding")
+                .wrap_err("failed to load built-in coding profile for stdio/solo")?;
+            profile.apply_to_registry(&mut tools);
+            Some(Arc::new(profile))
+        } else {
+            None
+        };
+
         // RFC-0 (#1289): LRU tool deferral + the `activate_tools` meta-tool
         // were removed. Every enabled tool is now emitted every turn (full
         // schema), so the former auto-defer-non-core-groups pass is gone.
@@ -1639,7 +1675,7 @@ impl ProfileRuntime {
             default_sandbox,
             max_iterations: config.max_iterations,
             session_defaults: None,
-            agent_profile: None,
+            agent_profile,
             format_after_edit: config.format_after_edit,
             snapshots: config.snapshots.clone(),
             tool_specs: Arc::new(tools),
@@ -1723,6 +1759,14 @@ mod tests {
     #[cfg(unix)]
     use octos_core::SessionKey;
     use std::collections::HashMap;
+
+    #[test]
+    fn stdio_lean_defaults_exclude_only_bundled_skill_layers() {
+        assert!(is_bundled_skill_directory(Path::new("bundled-app-skills")));
+        assert!(is_bundled_skill_directory(Path::new("platform-skills")));
+        assert!(!is_bundled_skill_directory(Path::new("skills")));
+        assert!(!is_bundled_skill_directory(Path::new("plugins")));
+    }
 
     /// Build a minimal `UserProfile` with no LLM contract. M11-D
     /// bootstrap must reject this with a clear error, not panic.
