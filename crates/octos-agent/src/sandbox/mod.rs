@@ -1044,7 +1044,7 @@ pub fn create_sandbox(config: &SandboxConfig) -> Box<dyn Sandbox> {
         {
             tracing::warn!(
                 backend = choice.label(),
-                "container already supplies the outer isolation boundary; +                 skipping nested Docker sandbox and degrading auto mode to +                 explicitly logged unconfined execution"
+                "container already supplies the outer isolation boundary; skipping nested Docker sandbox and degrading auto mode to explicitly logged unconfined execution"
             );
             warn_fence_unenforced(config);
             Box::new(NoSandbox)
