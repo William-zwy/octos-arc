@@ -79,6 +79,7 @@
 | 09-12 | smoke-evolution | counter | 37fb13835049 | eac9779a931c（main 82e3bef3 适配包，官方 v2.0.2 runtime） | 2/2 | 2/2 | ¥0.55 | 177 s | 平台自动以 Smoke 最高分应用为模板；ARCBENCH_TEMPLATE_DIR 实际未设置，模板在 /workspace/template |
 | 09-12 | smoke-evolution | dice | a02d29a7064a | 同上 | 2/2 | 2/2 | ¥0.60 | 204 s | |
 | 09-12 | arc-bench-web | keep | 0764e8d77c54 | 735d162dfc23（wf-tracks 2a7433ac：按节点数放大时限） | 0/32（全部 skipped） | 0/32 | ¥17.94 | 3482 s | 骨架轮 656 s 只读不写→nudge 轮超时后重试写出应用；32 节点轮共 1837 s；终检、演练通过。评测阶段 Playwright 启动 4 worker 后 1 秒被 `Killed`，与 bookstack 同一模式；归因：环境（容器内存被生成阶段残留进程耗尽，推测为模型自测留下的 chromium/node）。Token 8256 万 |
+| 09-12 | ticket-booking | ticket-booking | 818d1de00d96 | 794b480cc15b（main 82e3bef3 原样适配包，官方 v2.0.2 runtime，C2 基线） | 未评测（运行中） | | | | |
 | 09-12 | arc-bench-web | keep（重跑） | aa5e8af70cbb | 0ce3a2667c94（wf-tracks 7a06359a：+残留进程清理与内存诊断） | 0/32（全部 skipped） | 0/32 | ¥6.05 | 2799 s | 生成阶段正常；清理时 `free` 显示 30 GB/可用 24 GB，只剩僵尸进程；评测阶段仍在 4 worker 启动 1 秒后 `Killed`。对照 Ticket Booking：2 个 spec 文件→2 worker→正常。结论：平台评测步骤对 ≥4 个 spec 文件的题用 4 worker 起 Chromium 时被 cgroup 内存限制 SIGKILL（`free` 看不到 cgroup 上限），非应用问题；榜上唯一另一条 web 记录也是 0 分 |
 | 09-12 | arc-bench-web | bookstack | e60fb3545eae | 同上 | 0/34（全部 skipped） | 0/34 | ¥14.10 | 2259 s | 生成阶段正常结束（34 节点、终检、演练通过），评测阶段 Playwright 进程启动 4 个 worker 后 1 秒被 `Killed`（容器 OOM），34 条测试全部 skipped；归因：环境。Token 6079 万，官方 runtime 单会话累积上下文所致 |
 
