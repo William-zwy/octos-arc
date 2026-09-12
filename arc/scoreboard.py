@@ -39,6 +39,7 @@ BASE = "https://arc-bench.com/api"
 TRACKS = ["smoke", "smoke-evolution", "ticket-booking", "arc-bench-web"]
 PREGEN_COST_CNY = 0.01
 PREGEN_SECONDS = 10
+NOTES_MARKER = "<!-- notes: everything below this line is kept across regenerations -->"
 
 
 # ------------------------------------------------------------------ http
@@ -257,8 +258,14 @@ def main() -> int:
     text = render(boards, runs, me, args.top)
     print(text)
     if args.out:
+        # Keep any hand-written section after the marker across regenerations.
+        notes = ""
+        if os.path.isfile(args.out):
+            prev = open(args.out, encoding="utf-8").read()
+            if NOTES_MARKER in prev:
+                notes = prev[prev.index(NOTES_MARKER):]
         with open(args.out, "w", encoding="utf-8") as f:
-            f.write(text + "\n")
+            f.write(text + "\n" + (notes if notes else NOTES_MARKER + "\n"))
         print(f"[scoreboard] wrote {args.out}", file=sys.stderr)
     if args.json:
         with open(args.json, "w", encoding="utf-8") as f:
