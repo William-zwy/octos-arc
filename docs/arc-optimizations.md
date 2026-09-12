@@ -34,7 +34,19 @@
 
 启动时检测 `/.dockerenv` 及 docker/containerd/kubepods/podman/libpod cgroup 标记；容器中无可用隔离后端时记录明确 warning 并按容器策略降级，探测函数保持纯函数便于测试。新增 dockerenv、cgroup 和误判排除测试。
 
-本机未运行 Docker 容器验证：本机 Docker 不可用，因此未声称完成 Linux 容器实测。复核步骤是使用无特权 Ubuntu 容器运行 Linux 构建产物，比较 `/.dockerenv` 和 `/proc/1/cgroup` 下的启动日志及 exec 结果。
+本机未运行 Docker 容器验证：本机 Docker 不可用，因此未声称完成 Linux 容器实测。可在 Linux 主机或 ARC 容器中按以下步骤复核：
+
+```bash
+docker run --rm --security-opt=no-new-privileges --cap-drop=ALL \
+  -v "$PWD":/src -w /src rust:1.98.0-bookworm \
+  bash -lc 'cargo build --locked -p octos-cli --no-default-features --features api'
+docker run --rm --security-opt=no-new-privileges --cap-drop=ALL \
+  -v "$PWD":/src -w /src rust:1.98.0-bookworm \
+  bash -lc 'test -f /.dockerenv; cat /proc/1/cgroup; \
+    /src/target/debug/octos --version'
+```
+
+在第二个容器内再驱动一次 `serve --stdio --solo` 并执行 `shell`/`exec`，应看到容器标记和明确的降级 warning；若隔离后端仍不可用，结果必须是无沙箱执行或包含 `sandbox denied` 与 `--danger-full-access` 建议的结构化错误。
 
 ## P0-2：上下文与 Token 控制
 
