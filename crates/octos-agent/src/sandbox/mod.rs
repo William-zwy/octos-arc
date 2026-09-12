@@ -1039,6 +1039,16 @@ fn warn_fence_unenforced(config: &SandboxConfig) {
 pub fn create_sandbox(config: &SandboxConfig) -> Box<dyn Sandbox> {
     let in_container = running_in_container();
     match decide_sandbox(config, HostOs::current(), &RealHostProbe) {
+        SandboxDecision::Confine(choice)
+            if should_degrade_nested_docker(in_container, &config.mode, choice) =>
+        {
+            tracing::warn!(
+                backend = choice.label(),
+                "container already supplies the outer isolation boundary; +                 skipping nested Docker sandbox and degrading auto mode to +                 explicitly logged unconfined execution"
+            );
+            warn_fence_unenforced(config);
+            Box::new(NoSandbox)
+        }
         SandboxDecision::Confine(choice) => build_backend(choice, config),
         SandboxDecision::Unconfined(reason) => {
             match reason {
@@ -1107,6 +1117,14 @@ fn running_in_container() -> bool {
     let dockerenv = Path::new("/.dockerenv").exists();
     let cgroup = std::fs::read_to_string("/proc/1/cgroup").unwrap_or_default();
     container_markers_present(dockerenv, &cgroup)
+}
+
+fn should_degrade_nested_docker(
+    in_container: bool,
+    mode: &SandboxMode,
+    choice: SandboxBackendChoice,
+) -> bool {
+    in_container && matches!(mode, SandboxMode::Auto) && choice == SandboxBackendChoice::Docker
 }
 
 /// Which backend [`SandboxMode::Auto`] would select on this host — a stable
@@ -1331,6 +1349,30 @@ mod tests {
         assert!(!container_markers_present(
             false,
             "0::/user.slice/user-1000.slice"
+        ));
+    }
+
+    #[test]
+    fn container_auto_skips_nested_docker_but_explicit_docker_does_not() {
+        assert!(should_degrade_nested_docker(
+            true,
+            &SandboxMode::Auto,
+            SandboxBackendChoice::Docker
+        ));
+        assert!(!should_degrade_nested_docker(
+            false,
+            &SandboxMode::Auto,
+            SandboxBackendChoice::Docker
+        ));
+        assert!(!should_degrade_nested_docker(
+            true,
+            &SandboxMode::Docker,
+            SandboxBackendChoice::Docker
+        ));
+        assert!(!should_degrade_nested_docker(
+            true,
+            &SandboxMode::Auto,
+            SandboxBackendChoice::Bwrap
         ));
     }
 
