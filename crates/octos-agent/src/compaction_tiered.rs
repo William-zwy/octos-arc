@@ -11,9 +11,10 @@
 //! see a single [`TieredCompactionRunner`] surface:
 //!
 //! 1. [`MicroCompactionPolicy`] — per-iteration stale tool-result pruning.
-//!    Cheap, synchronous, in-place.  Replaces oversized or stale tool
-//!    results with a typed [`ToolResultPlaceholder`] so the `tool_call_id`
-//!    (and therefore the assistant/tool pairing) stays intact.
+//!    Cheap, synchronous, in-place. Oversized current results retain their
+//!    head and tail; older results become a typed [`ToolResultPlaceholder`]
+//!    so the `tool_call_id` (and therefore the assistant/tool pairing) stays
+//!    intact.
 //! 2. [`ApiMicroCompactionConfig`] — a *builder*, not a runtime loop.
 //!    Emits the opaque `context_management` JSON payload that Anthropic's
 //!    server-side `clear_tool_uses_20250919` mechanism expects.  The
@@ -42,6 +43,9 @@ pub const DEFAULT_TIER1_MAX_AGE_TURNS: u32 = 5;
 /// Default byte threshold for immediate content-clearing (regardless of age).
 pub const DEFAULT_TIER1_MAX_SIZE_BYTES_PER_RESULT: u32 = 8 * 1024;
 
+const TOOL_OUTPUT_TRUNCATION_MARKER: &str =
+    "\n...[tool output truncated; head and tail preserved]...\n";
+
 /// Which tier-1 conditions a pass may apply. Split for provider prefix-cache
 /// (KV) friendliness: oversized results just landed near the prefix tail —
 /// rewriting them is cheap for the cache — while stale results sit deep in
@@ -57,8 +61,10 @@ pub enum Tier1Pass {
 
 /// Per-iteration stale tool-result pruning policy (tier 1).
 ///
-/// Runs in-place over the conversation and replaces a tool result's content
-/// with a typed [`ToolResultPlaceholder`] when either:
+/// Runs in-place over the conversation. Current oversized results are bounded
+/// to the configured byte limit while retaining both ends; stale or
+/// superseded results are replaced with a typed [`ToolResultPlaceholder`] when
+/// either:
 ///
 /// * the tool result is older than `max_age_turns` user-message boundaries, or
 /// * the tool result's content is larger than `max_size_bytes_per_result`.
@@ -103,6 +109,36 @@ fn default_pin_recent_files() -> u32 {
 
 fn default_dedup_duplicate_reads() -> bool {
     true
+}
+
+/// Bound one tool result without destroying the most useful context: command
+/// headers and diagnostics tend to be at the front, while exit status and
+/// final assertions tend to be at the end. The result is byte-bounded and
+/// always cuts at UTF-8 boundaries.
+fn truncate_tool_output_head_tail(input: &str, max_bytes: usize) -> String {
+    if input.len() <= max_bytes {
+        return input.to_owned();
+    }
+    if max_bytes <= TOOL_OUTPUT_TRUNCATION_MARKER.len() {
+        return octos_core::truncated_utf8(input, max_bytes, "…");
+    }
+    let available = max_bytes - TOOL_OUTPUT_TRUNCATION_MARKER.len();
+    let head_budget = available / 2;
+    let tail_budget = available - head_budget;
+    let mut head_end = head_budget.min(input.len());
+    while head_end > 0 && !input.is_char_boundary(head_end) {
+        head_end -= 1;
+    }
+    let mut tail_start = input.len().saturating_sub(tail_budget);
+    while tail_start < input.len() && !input.is_char_boundary(tail_start) {
+        tail_start += 1;
+    }
+    format!(
+        "{}{}{}",
+        &input[..head_end],
+        TOOL_OUTPUT_TRUNCATION_MARKER,
+        &input[tail_start..]
+    )
 }
 
 impl Default for MicroCompactionPolicy {
@@ -244,15 +280,19 @@ impl MicroCompactionPolicy {
             };
             let Some(reason) = reason else { continue };
 
-            let placeholder = ToolResultPlaceholder {
-                schema_version: TOOL_RESULT_PLACEHOLDER_SCHEMA_VERSION,
-                tool_name,
-                tool_call_id: id.clone(),
-                turn_id: Some(turn_id),
-                original_byte_len: Some(content_len as u64),
-                reason: reason.to_string(),
+            let replacement = if reason == "tier1_oversized" && !stale && !superseded {
+                truncate_tool_output_head_tail(&msg.content, size_threshold)
+            } else {
+                let placeholder = ToolResultPlaceholder {
+                    schema_version: TOOL_RESULT_PLACEHOLDER_SCHEMA_VERSION,
+                    tool_name,
+                    tool_call_id: id.clone(),
+                    turn_id: Some(turn_id),
+                    original_byte_len: Some(content_len as u64),
+                    reason: reason.to_string(),
+                };
+                placeholder.to_placeholder_content()
             };
-            let replacement = placeholder.to_placeholder_content();
             bytes_reclaimed += content_len.saturating_sub(replacement.len()) as u64;
             msg.content = replacement;
             results_pruned += 1;
@@ -833,11 +873,16 @@ mod tests {
     }
 
     #[test]
-    fn should_clear_oversized_tool_results_to_placeholder() {
+    fn should_truncate_oversized_tool_results_and_keep_head_and_tail() {
+        let head = "HEAD diagnostics: ";
+        let tail = "\nTAIL exit status: 0";
         let mut messages = vec![
             user_msg("q"),
             assistant_tool_call("shell", "call_big"),
-            tool_result("call_big", &"x".repeat(50_000)),
+            tool_result(
+                "call_big",
+                &format!("{}{tail}", format!("{head}{}", "x".repeat(50_000))),
+            ),
         ];
         // Disable the age-based pruning so only the size path fires.
         let policy = MicroCompactionPolicy::default()
@@ -847,11 +892,15 @@ mod tests {
         assert_eq!(report.results_pruned, 1);
         assert!(report.bytes_reclaimed > 45_000);
         let tool = &messages[2];
-        let parsed = ToolResultPlaceholder::from_placeholder_content(&tool.content)
-            .expect("placeholder round-trips");
-        assert_eq!(parsed.tool_call_id, "call_big");
-        assert_eq!(parsed.original_byte_len, Some(50_000));
-        assert_eq!(parsed.reason, "tier1_oversized");
+        assert!(tool.content.len() <= 1024);
+        assert!(tool.content.starts_with(head));
+        assert!(tool.content.contains("head and tail preserved"));
+        assert!(tool.content.ends_with(tail));
+        assert!(
+            !tool
+                .content
+                .contains(crate::compaction::TOOL_RESULT_PLACEHOLDER_PREFIX)
+        );
     }
 
     #[test]
