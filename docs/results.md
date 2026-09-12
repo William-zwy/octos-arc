@@ -1,13 +1,13 @@
 # ARC-Bench 成绩看板
 
-生成时间：2026-09-12 17:31 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
+生成时间：2026-09-12 17:40 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
 
 ## 各赛道我们的位置
 
 | 赛道 | 名次 | 通过率 | 功能率 | 费用 | 耗时 | 运行编号（有效） |
 |---|---|---|---|---|---|---|
-| smoke | 34/47（真实 agent 内 27/33，预生成 14） | 100% | 100% | ¥2.66 | 3m54s | bd8418c88535, 0491d2a6f510, 50d049b049bd |
-| smoke-evolution | 未上榜（榜共 23 条，其中预生成 15） | — | — | — | — | — |
+| smoke | 35/48（真实 agent 内 28/34，预生成 14） | 100% | 100% | ¥2.66 | 3m54s | bd8418c88535, 0491d2a6f510, 50d049b049bd |
+| smoke-evolution | 17/24（真实 agent 内 6/9，预生成 15） | 100% | 100% | ¥1.15 | 3m10s | a02d29a7064a, 37fb13835049 |
 | ticket-booking | 5/149（真实 agent 内 3/110，预生成 39） | 80% | 0% | ¥2.41 | 20m59s | a74a5ac5afbd |
 | arc-bench-web | 未上榜（榜共 1 条，其中预生成 1） | — | — | — | — | — |
 
@@ -15,6 +15,8 @@
 
 | 运行编号 | 赛道 | 题目 | 状态 | 通过 | 功能 | 费用 | Token | 耗时 | 创建(UTC) | 提交名 |
 |---|---|---|---|---|---|---|---|---|---|---|
+| a02d29a7064a | smoke-evolution | smoke-evolution--dice | PASSED | 2/2 | 2/2 | ¥0.60 | 2.24M | 3m24s | 2026-09-12 17:32 | Octos main@0b1b937c evo-trial (official v2.0.2 runtime) |
+| 37fb13835049 | smoke-evolution | smoke-evolution--counter | PASSED | 2/2 | 2/2 | ¥0.55 | 2.04M | 2m57s | 2026-09-12 17:32 | Octos main@0b1b937c evo-trial (official v2.0.2 runtime) |
 | a74a5ac5afbd | ticket-booking | ticket-booking--ticket-booking | FAILED | 8/10 | 0/2 | ¥2.41 | 4.90M | 20m59s | 2026-09-12 04:13 | Octos v2.0.2 tuned-v3 (specs+dual-port) |
 | bd8418c88535 | smoke | smoke--dice | PASSED | 1/1 | 1/1 | ¥1.42 | 3.93M | 4m27s | 2026-09-12 03:53 | Octos v2.0.2 tuned-v2 (specs+zero-deps) |
 | 0491d2a6f510 | smoke | smoke--counter | PASSED | 1/1 | 1/1 | ¥1.24 | 3.19M | 3m21s | 2026-09-12 03:52 | Octos v2.0.2 tuned-v2 (specs+zero-deps) |
@@ -24,7 +26,7 @@
 | f031f20d1558 | smoke | smoke--counter | FAILED | — | 0/0 | — | — | — | 2026-09-11 07:02 | Octos 官方 v2.0.2 · 实操演示 |
 | 50d049b049bd | smoke | smoke--counter | PASSED | 1/1 | 1/1 | ¥0.63 | 3.80M | 16m41s | 2026-09-11 02:07 | Octos 适配包 |
 
-## 榜单 · smoke（47 条，预生成 14 条，显示前 5 名与我们）
+## 榜单 · smoke（48 条，预生成 14 条，显示前 5 名与我们）
 
 | # | 真实# | 队伍 | 通过率 | 功能率 | 费用 | 耗时 | 级别 |
 |---|---|---|---|---|---|---|---|
@@ -33,9 +35,9 @@
 | 3 | — | 你也秃对不队 ⚠预生成 | 100% | 100% | ¥0.0031 | 2s | senior |
 | 4 | — | Orchestra ⚠预生成 | 100% | 100% | ¥0.0037 | 4s | senior |
 | 5 | — | VOLO AI ⚠预生成 | 100% | 100% | ¥0.0046 | 2s | senior |
-| 34 | 27 | **李尧** | 100% | 100% | ¥2.66 | 3m54s | senior |
+| 35 | 28 | **李尧** | 100% | 100% | ¥2.66 | 3m54s | senior |
 
-## 榜单 · smoke-evolution（23 条，预生成 15 条，显示前 5 名与我们）
+## 榜单 · smoke-evolution（24 条，预生成 15 条，显示前 5 名与我们）
 
 | # | 真实# | 队伍 | 通过率 | 功能率 | 费用 | 耗时 | 级别 |
 |---|---|---|---|---|---|---|---|
@@ -44,6 +46,7 @@
 | 3 | — | VOLO AI ⚠预生成 | 100% | 100% | ¥0.0043 | 14s | senior |
 | 4 | — | Orchestra ⚠预生成 | 100% | 100% | ¥0.0046 | 4s | senior |
 | 5 | — | VOLO AI ⚠预生成 | 100% | 100% | ¥0.0080 | 4s | senior |
+| 17 | 6 | **李尧** | 100% | 100% | ¥1.15 | 3m10s | senior |
 
 ## 榜单 · ticket-booking（149 条，预生成 39 条，显示前 5 名与我们）
 
