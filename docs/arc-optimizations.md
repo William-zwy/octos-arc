@@ -56,7 +56,7 @@ docker run --rm --security-opt=no-new-privileges --cap-drop=ALL \
 
 Counter 事件流的输入 Token 从 64,658 降到 36,384；这是同一平台一次运行的真实结果，不把它解释成仅由单个改动独立贡献的因果实验。
 
-Counter 的 arc-opt 费用高于官方这次记录（0.11239816 对 0.01474648）；费用字段按事件流原样保留，不能据此推断成本优化。Ticket Booking 的前两次 arc-opt 尝试在骨架首轮中断，第三次使用相同最终二进制并给足节点时间后完成，公开测试为 10/10。官方 `grade-local.py` 原始脚本的 Playwright 配置缺少 `baseURL`，Counter 本地对照时仅临时补入 `baseURL: process.env.E2E_BASE_URL` 后执行公开测试，随后恢复了脚本。
+Counter 的 arc-opt 费用高于官方这次记录（0.11239816 对 0.01474648）；费用字段按事件流原样保留，不能据此推断成本优化。Ticket Booking 的前两次 arc-opt 尝试在骨架首轮中断，第三次使用当时已构建的 arc-opt 二进制并给足节点时间后完成，公开测试为 10/10；该次成功运行早于最后的容器沙箱提示和 FailFast 流式回退边界修正，因此不能当作当前最终二进制的回归结果。官方 `grade-local.py` 原始脚本的 Playwright 配置缺少 `baseURL`，Counter 本地对照时仅临时补入 `baseURL: process.env.E2E_BASE_URL` 后执行公开测试，随后恢复了脚本。
 
 ## P0-3：推理模型空回合恢复
 
