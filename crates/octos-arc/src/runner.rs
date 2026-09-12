@@ -260,6 +260,17 @@ fn probe_command(
 /// Gather stable, low-cardinality facts once per ARC session. The resulting
 /// line is deliberately short so it can be part of the stable prompt prefix
 /// and costs well below the 200-token ARC contract.
+const ENVIRONMENT_FACTS_MAX_CHARS: usize = 768;
+
+fn bound_fact(value: impl AsRef<str>, max_chars: usize) -> String {
+    let value = value.as_ref();
+    let mut bounded: String = value.chars().take(max_chars).collect();
+    if value.chars().count() > max_chars {
+        bounded.push_str("…");
+    }
+    bounded
+}
+
 fn environment_facts(project: &Path, env: &[(OsString, OsString)], deadline: Instant) -> String {
     let node = probe_command(Path::new("node"), &["--version"], project, env, deadline);
     let npm = probe_command(Path::new("npm"), &["--version"], project, env, deadline);
@@ -312,9 +323,9 @@ fn environment_facts(project: &Path, env: &[(OsString, OsString)], deadline: Ins
     } else {
         "platform default".into()
     };
+    let cwd = bound_fact(project.display().to_string(), 128);
     format!(
-        "node={node}; npm={npm}; python={python}; cwd={}; registry={registry} ({registry_ok}); container={in_container}; sandbox={sandbox}",
-        project.display()
+        "node={node}; npm={npm}; python={python}; cwd={cwd}; registry={registry} ({registry_ok}); container={in_container}; sandbox={sandbox}",
     )
 }
 
@@ -1164,6 +1175,7 @@ mod tests {
         assert!(facts.contains("python=Python 3.13.0"));
         assert!(facts.contains("registry=https://registry.example.test (yes)"));
         assert!(facts.contains("container=false"));
+        assert!(facts.len() <= ENVIRONMENT_FACTS_MAX_CHARS);
         assert!(facts.split_whitespace().count() <= 200);
     }
 
