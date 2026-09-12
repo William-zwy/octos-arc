@@ -610,6 +610,16 @@ impl ServeCommand {
         } else {
             Config::load_with_context_path(&cwd, &ctx)?
         };
+        // ARC-Bench drives the local single-user stdio transport. Keep that
+        // transport aligned with `octos chat --profile coding`: its default
+        // tool envelope is intentionally lean and bundled app/platform skills
+        // are opt-in, rather than model-visible startup baggage.
+        if self.stdio && self.solo {
+            crate::runtime::profile::enable_stdio_solo_lean_defaults();
+            tracing::info!(
+                "stdio/solo defaulting to the coding tool profile and skipping bundled skills"
+            );
+        }
         tracing::info!(data_dir = %data_dir.display(), "data directory resolved");
 
         // Single-writer guard: redb is single-process, so a second `octos serve`
@@ -854,14 +864,18 @@ impl ServeCommand {
         // deep-search) and zero platform skills (voice). Doing it once
         // at process startup matches the gateway flow and keeps the
         // per-profile loop free of redundant disk writes.
-        octos_agent::bootstrap::bootstrap_bundled_skills(&data_dir);
-        octos_agent::bootstrap::bootstrap_platform_skills(&data_dir);
+        if self.stdio && self.solo {
+            tracing::info!("stdio/solo: bundled app-skills and platform-skills bootstrap disabled");
+        } else {
+            octos_agent::bootstrap::bootstrap_bundled_skills(&data_dir);
+            octos_agent::bootstrap::bootstrap_platform_skills(&data_dir);
+        }
         // Preflight: if the sibling app-skill binaries are missing beside the
         // running `octos` executable, bootstrap silently skipped them and the
         // affected tools (get_weather, etc.) will NOT register. Warn loudly so
         // a bare-binary deploy is diagnosable instead of a silent plugin_count=0.
         let missing = octos_agent::bootstrap::missing_bundled_skill_binaries();
-        if !missing.is_empty() {
+        if !(self.stdio && self.solo) && !missing.is_empty() {
             tracing::warn!(
                 missing = ?missing,
                 "bundled skill binaries missing beside the octos executable — this looks like a bare-binary install; app-skill tools (get_weather, etc.) will NOT register. Deploy the full bundle (scripts/build-local-bundle.sh / scripts/install.sh), not just the octos binary."
