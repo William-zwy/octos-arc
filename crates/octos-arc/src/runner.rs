@@ -1137,6 +1137,38 @@ mod tests {
 
     #[cfg(unix)]
     #[test]
+    fn environment_facts_probe_is_bounded_and_uses_session_environment() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp = tempfile::tempdir().unwrap();
+        let project = temp.path().join("project");
+        fs::create_dir_all(&project).unwrap();
+        for (name, body) in [
+            ("node", "#!/bin/sh\nprintf 'v24.0.0\\n'\n"),
+            (
+                "npm",
+                "#!/bin/sh\ncase \"$1 $2\" in\n  '--version ') printf '10.0.0\\n' ;;\n  'config get') printf 'https://registry.example.test\\n' ;;\n  'ping '|'ping --silent') exit 0 ;;\n  *) exit 1 ;;\nesac\n",
+            ),
+            ("python3", "#!/bin/sh\nprintf 'Python 3.13.0\\n'\n"),
+        ] {
+            let path = temp.path().join(name);
+            fs::write(&path, body).unwrap();
+            fs::set_permissions(&path, fs::Permissions::from_mode(0o700)).unwrap();
+        }
+
+        let env = vec![(OsString::from("PATH"), temp.path().as_os_str().to_owned())];
+        let facts = environment_facts(&project, &env, Instant::now() + Duration::from_secs(30));
+
+        assert!(facts.contains("node=v24.0.0"));
+        assert!(facts.contains("npm=10.0.0"));
+        assert!(facts.contains("python=Python 3.13.0"));
+        assert!(facts.contains("registry=https://registry.example.test (yes)"));
+        assert!(facts.contains("container=false"));
+        assert!(facts.split_whitespace().count() <= 200);
+    }
+
+    #[cfg(unix)]
+    #[test]
     #[ignore = "HTTP server fixture launched only by the supervisor test"]
     fn http_server_fixture() {
         if std::env::var("OCTOS_ARC_TEST_SERVER").as_deref() != Ok("1") {

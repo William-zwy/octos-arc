@@ -63,6 +63,7 @@ DeepSeek V4 默认输出上限提高到 provider 级安全值；当 `finish_reas
 改动位置：`crates/octos-arc/src/runner.rs`。
 
 `octos arc` 每次 session 仅探测一次 node/npm/python、cwd、npm registry 连通性、容器标记和 sandbox 状态，并将短行事实加入稳定基础提示，声明上限为 200 Token。
+单测用隔离的 node/npm/python3 fixture 验证版本、registry 连通性、容器标记和 200 Token 上限。
 
 ## P1-6：Playwright 验收 hook
 
@@ -84,7 +85,7 @@ DeepSeek V4 默认输出上限提高到 provider 级安全值；当 `finish_reas
 cargo build --locked -p octos-cli --no-default-features --features api
 ```
 
-产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check` 和完整工作区 `cargo clippy --locked --all-targets -- -D warnings` 通过；`octos-arc` 测试为 21 passed / 1 ignored，`octos-llm` 为 687 passed / 3 ignored。完整 workspace `cargo test --locked` 在链接阶段因 26 GB 的测试临时产物耗尽磁盘而中止，随后分 crate 的 `octos-agent --lib` 测试完成但有 4 个既有 Docker 后端测试失败。
+产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check` 和完整工作区 `cargo clippy --locked --all-targets -- -D warnings` 通过；`octos-arc` 测试为 22 passed / 1 ignored，`octos-llm` 为 687 passed / 3 ignored。完整 workspace `cargo test --locked` 已在清理构建产物后完整执行，结果为 2893 passed / 3 failed / 3 ignored；3 个失败均为本机没有 Docker 后端导致的既有环境测试。
 
 最终产物：`octos 2.0.3-rc.11 (7cabec39 2026-09-12)`；SHA-256 为 `6336c766616707e6b57544e0478431eb6b97b14f53f2ee92392d0670a54ea296`，对应 `aarch64-apple-darwin` 和 Homebrew `rustc 1.98.0`。
 
