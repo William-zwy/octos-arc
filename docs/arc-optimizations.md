@@ -87,6 +87,6 @@ cargo build --locked -p octos-cli --no-default-features --features api
 
 产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check` 和完整工作区 `cargo clippy --locked --all-targets -- -D warnings` 通过；`octos-arc` 测试为 22 passed / 1 ignored，`octos-llm` 为 687 passed / 3 ignored。完整 workspace `cargo test --locked` 已在清理构建产物后完整执行，结果为 2893 passed / 3 failed / 3 ignored；3 个失败均为本机没有 Docker 后端导致的既有环境测试。
 
-最终产物：`octos 2.0.3-rc.11 (7cabec39 2026-09-12)`；SHA-256 为 `6336c766616707e6b57544e0478431eb6b97b14f53f2ee92392d0670a54ea296`，对应 `aarch64-apple-darwin` 和 Homebrew `rustc 1.98.0`。
+最终产物：`octos 2.0.3-rc.11 (1e91bf1a 2026-09-12)`；SHA-256 为 `31b46e4b28e6f3e0e0b0bc74417eba0a42344bb48fdeb274fecfa6be6e093df1`，对应 `aarch64-apple-darwin` 和 Homebrew `rustc 1.98.0`。
 
 `runtime_release` 仍为 `null`，因为没有 GitHub Release；锁文件的 `build` 只记录真实产物元数据。
