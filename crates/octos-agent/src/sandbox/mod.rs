@@ -1037,6 +1037,7 @@ fn warn_fence_unenforced(config: &SandboxConfig) {
 ///   refuses with the typed [`SandboxUnavailable`] instead of running
 ///   unconfined (fail closed).
 pub fn create_sandbox(config: &SandboxConfig) -> Box<dyn Sandbox> {
+    let in_container = running_in_container();
     match decide_sandbox(config, HostOs::current(), &RealHostProbe) {
         SandboxDecision::Confine(choice) => build_backend(choice, config),
         SandboxDecision::Unconfined(reason) => {
@@ -1045,7 +1046,7 @@ pub fn create_sandbox(config: &SandboxConfig) -> Box<dyn Sandbox> {
                     tracing::info!("sandbox disabled, shell commands run without isolation");
                 }
                 UnconfinedReason::ExplicitNone => {}
-                UnconfinedReason::AutoNoBackend => warn_auto_unconfined_once(),
+                UnconfinedReason::AutoNoBackend => warn_auto_unconfined_once(in_container),
             }
             warn_fence_unenforced(config);
             Box::new(NoSandbox)
@@ -1070,10 +1071,11 @@ pub fn create_sandbox(config: &SandboxConfig) -> Box<dyn Sandbox> {
 /// Never silent: `octos doctor` reports the same resolution on demand
 /// ([`auto_sandbox_kind`]), and `sandbox.fail_closed` upgrades this
 /// degradation to a refusal.
-fn warn_auto_unconfined_once() {
+fn warn_auto_unconfined_once(in_container: bool) {
     static WARNED: std::sync::Once = std::sync::Once::new();
     WARNED.call_once(|| {
         tracing::warn!(
+            in_container,
             "no sandbox backend found (bwrap, Landlock/seccomp helper, sandbox-exec, \
              AppContainer helper, or docker): shell commands run WITHOUT isolation. \
              Install a backend (Linux: bubblewrap · macOS: sandbox-exec · Windows: the \
@@ -1083,6 +1085,28 @@ fn warn_auto_unconfined_once() {
              resolved backend."
         );
     });
+}
+
+/// Detect the container environments in which namespace and Landlock probes
+/// commonly fail even though the helper binary is installed. This is kept
+/// separate from backend selection: `decide_sandbox` remains a pure matrix,
+/// while the production constructor can explain why its Auto fallback is
+/// intentional. We never infer containment from a single vendor-specific
+/// marker only; cgroup v1/v2 names cover Docker, Podman and Kubernetes.
+fn container_markers_present(dockerenv_exists: bool, cgroup: &str) -> bool {
+    dockerenv_exists
+        || cgroup.lines().any(|line| {
+            let line = line.to_ascii_lowercase();
+            ["docker", "containerd", "kubepods", "podman", "libpod"]
+                .iter()
+                .any(|marker| line.contains(marker))
+        })
+}
+
+fn running_in_container() -> bool {
+    let dockerenv = Path::new("/.dockerenv").exists();
+    let cgroup = std::fs::read_to_string("/proc/1/cgroup").unwrap_or_default();
+    container_markers_present(dockerenv, &cgroup)
 }
 
 /// Which backend [`SandboxMode::Auto`] would select on this host — a stable
@@ -1288,6 +1312,23 @@ mod tests {
         assert_eq!(prog, "cmd");
         #[cfg(not(windows))]
         assert_eq!(prog, "sh");
+    }
+
+    #[test]
+    fn container_detection_accepts_dockerenv_marker() {
+        assert!(container_markers_present(true, "0::/"));
+    }
+
+    #[test]
+    fn container_detection_accepts_common_cgroup_markers() {
+        for marker in ["docker", "containerd", "kubepods", "libpod"] {
+            assert!(container_markers_present(false, &format!("0::/{marker}/x")));
+        }
+    }
+
+    #[test]
+    fn container_detection_does_not_guess_from_an_unrelated_cgroup() {
+        assert!(!container_markers_present(false, "0::/user.slice/user-1000.slice"));
     }
 
     #[test]
