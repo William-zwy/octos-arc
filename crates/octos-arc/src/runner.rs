@@ -266,7 +266,7 @@ fn bound_fact(value: impl AsRef<str>, max_chars: usize) -> String {
     let value = value.as_ref();
     let mut bounded: String = value.chars().take(max_chars).collect();
     if value.chars().count() > max_chars {
-        bounded.push_str("…");
+        bounded.push('…');
     }
     bounded
 }
