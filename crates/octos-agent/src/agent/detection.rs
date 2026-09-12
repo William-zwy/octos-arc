@@ -222,6 +222,20 @@ pub(super) fn empty_max_tokens_recovery_config(
     })
 }
 
+/// Return whether a completed response consumed its output allowance without
+/// producing anything the agent can deliver. Keeping this predicate beside
+/// the recovery-config builder prevents the call loop from accidentally
+/// retrying a truncated response that already contains useful content or a
+/// native tool call.
+pub(super) fn is_empty_max_tokens_response(response: &ChatResponse) -> bool {
+    response.stop_reason == StopReason::MaxTokens
+        && response
+            .content
+            .as_ref()
+            .is_none_or(|content| content.trim().is_empty())
+        && response.tool_calls.is_empty()
+}
+
 fn extract_inline_invokes(content: &str) -> (String, Vec<ToolCall>) {
     let mut cleaned = content.to_string();
     let mut calls: Vec<ToolCall> = Vec::new();
@@ -969,5 +983,26 @@ mod tests {
             ..ChatConfig::default()
         };
         assert!(empty_max_tokens_recovery_config(&config, 32_768).is_none());
+    }
+
+    #[test]
+    fn empty_max_tokens_response_requires_length_and_no_deliverable() {
+        let empty = make_response_with_stop(None, vec![], 100, StopReason::MaxTokens);
+        assert!(is_empty_max_tokens_response(&empty));
+
+        let ended = make_response_with_stop(None, vec![], 100, StopReason::EndTurn);
+        assert!(!is_empty_max_tokens_response(&ended));
+
+        let content = make_response_with_stop(Some("partial"), vec![], 100, StopReason::MaxTokens);
+        assert!(!is_empty_max_tokens_response(&content));
+
+        let tool = ToolCall {
+            id: "length-tool".into(),
+            name: "check".into(),
+            arguments: serde_json::json!({}),
+            metadata: None,
+        };
+        let with_tool = make_response_with_stop(None, vec![tool], 100, StopReason::MaxTokens);
+        assert!(!is_empty_max_tokens_response(&with_tool));
     }
 }

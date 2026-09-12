@@ -350,13 +350,7 @@ impl Agent {
                     // no usable content or tool call. Give it exactly one
                     // provider-aware recovery request; repeated empty rounds
                     // are an explicit error, never a successful no-op turn.
-                    let empty_max_tokens = response.stop_reason == StopReason::MaxTokens
-                        && response
-                            .content
-                            .as_ref()
-                            .is_none_or(|content| content.trim().is_empty())
-                        && response.tool_calls.is_empty();
-                    if empty_max_tokens {
+                    if super::detection::is_empty_max_tokens_response(&response) {
                         if reasoning_recovery_attempted {
                             return Err(eyre::eyre!(
                                 "reasoning model exhausted its output budget twice without content or tool calls; reduce reasoning_effort or increase max_tokens"
