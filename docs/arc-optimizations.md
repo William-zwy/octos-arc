@@ -6,7 +6,7 @@
 
 | 项目 | 改前 | 改后 | 证据 |
 |---|---:|---:|---|
-| stdio/solo `Reply OK` 输入 Token | 17,205 | 5,713 | `turn/completed`，`/private/tmp/arc-stdio-probe-events.jsonl` |
+| stdio/solo `Reply OK` 输入 Token | 17,205 | 5,714 | `turn/completed`，`/private/tmp/arc-stdio-probe-events.jsonl` |
 | stdio/solo 模型可见工具数 | 62 | 12 | serve 日志 `tool_count` |
 | Counter 轮数 | 3 | 3 | 两个 `.arc/octos-events.jsonl` |
 | Counter 输入 Token | 64,658 | 36,384 | 两个 `.arc/octos-events.jsonl` |
@@ -23,7 +23,7 @@
 
 `serve --stdio --solo` 启动时默认启用 coding profile，严格保留 12 个编码工具；bundled app-skills/platform-skills 不再自动 bootstrap。空 memory 不生成策略段或 `memory-snapshot`，无 active goal 不生成 `session-goal-snapshot`。panes 树仍只属于 `session/open` 的协议返回，不会追加到模型历史。
 
-验证：CLI 单测 `p0_0_tests`、profile 白名单单测；真实 arm64 二进制用同一 API 配置和同一句 `Reply OK` 运行，得到 5,713 输入 Token、12 工具、成功回复 `OK`。
+验证：CLI 单测 `p0_0_tests`、profile 白名单单测；真实 arm64 二进制用同一 API 配置和同一句 `Reply OK` 运行，得到 5,714 输入 Token、12 工具、成功回复 `OK`。
 
 ## P0-1：容器沙箱显式降级
 
