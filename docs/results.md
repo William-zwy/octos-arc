@@ -1,6 +1,6 @@
 # ARC-Bench 成绩看板
 
-生成时间：2026-09-12 20:41 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
+生成时间：2026-09-12 21:39 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
 
 ## 各赛道我们的位置
 
@@ -15,6 +15,7 @@
 
 | 运行编号 | 赛道 | 题目 | 状态 | 通过 | 功能 | 费用 | Token | 耗时 | 创建(UTC) | 提交名 |
 |---|---|---|---|---|---|---|---|---|---|---|
+| aa5e8af70cbb | arc-bench-web | arc-bench-web--keep | FAILED | 0/32 | 0/32 | ¥6.05 | 31.77M | 46m39s | 2026-09-12 20:42 | Octos wf-tracks@7a06359a (scaled budgets + process reaper, official v2.0.2 runtime) |
 | e60fb3545eae | arc-bench-web | arc-bench-web--bookstack | FAILED | 0/34 | 0/34 | ¥14.10 | 60.79M | 37m39s | 2026-09-12 19:41 | Octos wf-tracks@2a7433ac (scaled budgets, official v2.0.2 runtime) |
 | 0764e8d77c54 | arc-bench-web | arc-bench-web--keep | FAILED | 0/32 | 0/32 | ¥17.94 | 82.56M | 58m02s | 2026-09-12 19:34 | Octos wf-tracks@2a7433ac (scaled budgets, official v2.0.2 runtime) |
 | a02d29a7064a | smoke-evolution | smoke-evolution--dice | PASSED | 2/2 | 2/2 | ¥0.60 | 2.24M | 3m24s | 2026-09-12 17:32 | Octos main@0b1b937c evo-trial (official v2.0.2 runtime) |
@@ -78,7 +79,7 @@
 | 09-12 | smoke-evolution | counter | 37fb13835049 | eac9779a931c（main 82e3bef3 适配包，官方 v2.0.2 runtime） | 2/2 | 2/2 | ¥0.55 | 177 s | 平台自动以 Smoke 最高分应用为模板；ARCBENCH_TEMPLATE_DIR 实际未设置，模板在 /workspace/template |
 | 09-12 | smoke-evolution | dice | a02d29a7064a | 同上 | 2/2 | 2/2 | ¥0.60 | 204 s | |
 | 09-12 | arc-bench-web | keep | 0764e8d77c54 | 735d162dfc23（wf-tracks 2a7433ac：按节点数放大时限） | 0/32（全部 skipped） | 0/32 | ¥17.94 | 3482 s | 骨架轮 656 s 只读不写→nudge 轮超时后重试写出应用；32 节点轮共 1837 s；终检、演练通过。评测阶段 Playwright 启动 4 worker 后 1 秒被 `Killed`，与 bookstack 同一模式；归因：环境（容器内存被生成阶段残留进程耗尽，推测为模型自测留下的 chromium/node）。Token 8256 万 |
-| 09-12 | arc-bench-web | keep（重跑） | aa5e8af70cbb | 0ce3a2667c94（wf-tracks 7a06359a：+残留进程清理与内存诊断） | 未评测（运行中） | | | | |
+| 09-12 | arc-bench-web | keep（重跑） | aa5e8af70cbb | 0ce3a2667c94（wf-tracks 7a06359a：+残留进程清理与内存诊断） | 0/32（全部 skipped） | 0/32 | ¥6.05 | 2799 s | 生成阶段正常；清理时 `free` 显示 30 GB/可用 24 GB，只剩僵尸进程；评测阶段仍在 4 worker 启动 1 秒后 `Killed`。对照 Ticket Booking：2 个 spec 文件→2 worker→正常。结论：平台评测步骤对 ≥4 个 spec 文件的题用 4 worker 起 Chromium 时被 cgroup 内存限制 SIGKILL（`free` 看不到 cgroup 上限），非应用问题；榜上唯一另一条 web 记录也是 0 分 |
 | 09-12 | arc-bench-web | bookstack | e60fb3545eae | 同上 | 0/34（全部 skipped） | 0/34 | ¥14.10 | 2259 s | 生成阶段正常结束（34 节点、终检、演练通过），评测阶段 Playwright 进程启动 4 个 worker 后 1 秒被 `Killed`（容器 OOM），34 条测试全部 skipped；归因：环境。Token 6079 万，官方 runtime 单会话累积上下文所致 |
 
 ### 本机试跑（魔改内核 2.0.3-rc.11，见 evidence/local-keep-*）
@@ -86,3 +87,9 @@
 |---|---|---|---|---|---|
 | arc-bench-web--keep 试跑 1 | 2.0.3-rc.11 | 单轮 900 s | 未完成：骨架轮两次超时，只写 2 个文件 | 30 min 后中止 | evidence/local-keep-1-timeout |
 | arc-bench-web--keep 试跑 2 | 2.0.3-rc.11 | 单轮 3600 s / 总 14400 s | **26/32（81%）** | 83 min | evidence/local-keep-2 |
+
+### ARC-Bench Web 结论（2026-09-12）
+- 三次云端运行（keep ×2、bookstack ×1，共 ¥38.09）生成阶段均正常结束并通过启动演练，评测阶段 Playwright 进程都在「Running N tests using 4 workers」后 1 秒被 SIGKILL，全部测试记为 skipped、0 分。
+- 本机同题同适配包（魔改内核）官方评分 26/32，证明不是应用本身的问题。
+- 剩余四题（12306 / ctrip / prestashop / stackoverflow）未提交：在评测步骤问题解决前提交只会重复 0 分并花费约 ¥30–50 一题。
+- 费用估算（官方 v2.0.2 runtime、单会话累积上下文）：keep ¥6–18、bookstack ¥14；按测试数线性外推六题合计约 ¥150–300；若 A5（每轮新会话）与 B 的裁剪合入，预计降至 1/3 以下。时长：小题 45–60 分钟，大题受 6 小时预算上限约束。
