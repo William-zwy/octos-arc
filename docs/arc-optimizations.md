@@ -64,7 +64,7 @@ DeepSeek V4 默认输出上限提高到 provider 级安全值；当 `finish_reas
 
 改动位置：`crates/octos-arc/src/runner.rs`。
 
-新增 `--node-budget-seconds`（默认 300）和 `--node-token-budget`（默认 20,000）。每次运行按依赖拓扑生成 `node-budgets.json`，写入报告并前置到 coding prompt；模型被要求节点超限即停止当前节点并保留已完成部分。依赖排序和预算边界有单测。
+新增 `--node-budget-seconds`（默认 300）和 `--node-token-budget`（默认 20,000）。每次运行按依赖拓扑逐节点启动 coding turn：进程 deadline 绑定到当前节点，配置中的输出上限绑定到节点 Token 预算；超时或回合失败时记录 `skipped_budget`，继续后续节点并保留已完成部分。预算计划写入 `node-budgets.json`、报告并前置到 coding prompt。依赖排序和预算边界有单测。
 
 ## 构建与测试
 
@@ -77,4 +77,3 @@ cargo build --locked -p octos-cli --no-default-features --features api
 产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check`、`cargo clippy`（涉及 crate 的 all-targets/lib 目标）通过；完整 workspace `cargo test --locked` 在链接阶段因 26 GB 的测试临时产物耗尽磁盘而中止，随后分 crate 的 `octos-agent --lib` 测试完成但有 4 个既有 Docker 后端测试失败。
 
 `runtime_release` 仍为 `null`，因为没有 GitHub Release；锁文件的 `build` 只记录真实产物元数据。
-

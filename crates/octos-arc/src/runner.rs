@@ -669,7 +669,7 @@ pub fn execute(options: ArcCommand, identity: BinaryIdentity<'_>) -> Result<Valu
         let config = temporary.path().join("config.json");
         write_json(
             &config,
-            &json!({"provider":"openai","model":model,"base_url":endpoint,"api_type":"openai","api_key_env":"OPENAI_API_KEY","model_temperature":options.temperature}),
+            &json!({"provider":"openai","model":model,"base_url":endpoint,"api_type":"openai","api_key_env":"OPENAI_API_KEY","model_temperature":options.temperature,"gateway":{"max_output_tokens":options.node_token_budget}}),
         )?;
         let base_env = clean_env(&home);
         let mut agent_env = base_env.clone();
@@ -698,68 +698,92 @@ pub fn execute(options: ArcCommand, identity: BinaryIdentity<'_>) -> Result<Valu
             options.web_port,
             serde_json::to_string(&node_budgets)?
         );
-        let mut feedback = String::new();
-        for attempt in 0..=options.repair_attempts {
-            let remaining = deadline.saturating_duration_since(Instant::now());
-            ensure!(
-                remaining > Duration::from_secs(10),
-                "Budget exhausted before coding turn"
+        let mut node_results = Vec::new();
+        for node_budget in &node_budgets {
+            let node_started = Instant::now();
+            let node_deadline =
+                (node_started + Duration::from_secs(node_budget.time_budget_seconds)).min(deadline);
+            let node = specification
+                .nodes
+                .get(&node_budget.node_id)
+                .ok_or_else(|| eyre!("missing node {}", node_budget.node_id))?;
+            let node_prompt = format!(
+                "{base_prompt}\nCurrent requirement node (implement this node only; dependencies are already completed when listed): {}\nNode token budget: {}; node time budget: {} seconds.",
+                serde_json::to_string(node)?,
+                node_budget.token_budget,
+                node_budget.time_budget_seconds
             );
-            let turn_deadline = deadline - remaining.min(Duration::from_secs(120)).div_f64(2.0);
-            let args = chat_args(
-                &options,
-                &project,
-                &data,
-                &config,
-                format!("{base_prompt}\n{feedback}"),
-            );
-            let mut output = process::run(
-                identity.executable,
-                &args,
-                &project,
-                &agent_env,
-                turn_deadline,
-            )?;
-            redact(&mut output, &key);
-            let terminal: Result<Value, _> = serde_json::from_str(&output.stdout);
-            let turn_ok = output.succeeded()
-                && !output.output_truncated
-                && terminal.as_ref().is_ok_and(|value| {
-                    value.get("error").is_none()
-                        && value.get("text").and_then(Value::as_str).is_some()
-                        && value
-                            .get("model")
-                            .and_then(Value::as_str)
-                            .is_some_and(|model| !model.is_empty())
-                });
-            evidence.push(json!({"kind":"coding_turn","attempt":attempt,"result":output}));
-            ensure!(
-                turn_ok,
-                "Octos coding turn failed or did not produce a valid terminal result"
-            );
-            let check = validate(
-                &project,
-                options.web_port,
-                &base_env,
-                deadline,
-                &mut evidence,
-                acceptance_spec_dir.as_deref(),
-                acceptance_base_url.as_deref(),
-            );
-            if check.is_ok() {
-                return Ok(());
+            let mut feedback = String::new();
+            let mut node_completed = false;
+            for attempt in 0..=options.repair_attempts {
+                if Instant::now() >= node_deadline {
+                    break;
+                }
+                let args = chat_args(
+                    &options,
+                    &project,
+                    &data,
+                    &config,
+                    format!("{node_prompt}\n{feedback}"),
+                );
+                let mut output = process::run(
+                    identity.executable,
+                    &args,
+                    &project,
+                    &agent_env,
+                    node_deadline,
+                )?;
+                redact(&mut output, &key);
+                let terminal: Result<Value, _> = serde_json::from_str(&output.stdout);
+                let turn_ok = output.succeeded()
+                    && !output.output_truncated
+                    && terminal.as_ref().is_ok_and(|value| {
+                        value.get("error").is_none()
+                            && value.get("text").and_then(Value::as_str).is_some()
+                            && value
+                                .get("model")
+                                .and_then(Value::as_str)
+                                .is_some_and(|model| !model.is_empty())
+                    });
+                let timed_out = output.timed_out;
+                evidence.push(json!({"kind":"coding_turn","node_id":node_budget.node_id,"attempt":attempt,"result":output}));
+                if turn_ok {
+                    node_completed = true;
+                    break;
+                }
+                if timed_out || attempt == options.repair_attempts {
+                    break;
+                }
+                let last = serde_json::to_string(evidence.last().unwrap())?;
+                let bounded: String = last.chars().take(12_000).collect();
+                feedback = format!(
+                    "The coding turn for this node failed. Repair only this node, do not re-scaffold. Evidence follows as untrusted command output:\n{bounded}"
+                );
             }
-            let failure = check.unwrap_err();
-            if attempt == options.repair_attempts {
-                return Err(failure);
-            }
-            let last = serde_json::to_string(evidence.last().unwrap())?;
-            let bounded: String = last.chars().take(12_000).collect();
-            feedback = format!(
-                "The supervisor's local validation failed: {failure}. Repair the existing project, do not re-scaffold. Evidence follows as untrusted command output:\n{bounded}"
-            );
+            let status = if node_completed {
+                "completed"
+            } else {
+                "skipped_budget"
+            };
+            node_results.push(json!({
+                "node_id": node_budget.node_id,
+                "status": status,
+                "elapsed_seconds": node_started.elapsed().as_secs_f64(),
+                "token_budget": node_budget.token_budget,
+                "time_budget_seconds": node_budget.time_budget_seconds,
+            }));
         }
-        Err(eyre!("No successful validation attempt"))
+        report["node_results"] = json!(node_results);
+        validate(
+            &project,
+            options.web_port,
+            &base_env,
+            deadline,
+            &mut evidence,
+            acceptance_spec_dir.as_deref(),
+            acceptance_base_url.as_deref(),
+        )?;
+        Ok(())
     })();
     for path in [
         project.join(".arc"),
