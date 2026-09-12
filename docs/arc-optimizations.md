@@ -9,10 +9,10 @@
 | stdio/solo `Reply OK` 输入 Token | 17,205 | 5,714 | `turn/completed`，`/private/tmp/arc-stdio-probe-events.jsonl` |
 | stdio/solo 模型可见工具数 | 62 | 12 | serve 日志 `tool_count` |
 | Counter 轮数 | 3 | 3 | 两个 `.arc/octos-events.jsonl` |
-| Counter 输入 Token | 64,658 | 36,384 | 两个 `.arc/octos-events.jsonl` |
-| Counter 输出 Token | 20,337 | 18,174 | 两个 `.arc/octos-events.jsonl` |
-| Counter 费用 | 0.01474648 | 0.11239816 | 两个 `.arc/octos-events.jsonl` 的 `token_cost_update` |
-| Counter 耗时 | 667 秒 | 290 秒 | 两个 `.arc/runner-events.jsonl` 的 running/completed 时间 |
+| Counter 输入 Token | 64,658 | 32,423 | 两个 `.arc/octos-events.jsonl`；改后使用最终 arm64 二进制的 `cmp-arc-opt-final2` |
+| Counter 输出 Token | 20,337 | 16,558 | 两个 `.arc/octos-events.jsonl` |
+| Counter 费用 | 0.01474648 | 0.09336362 | 两个 `.arc/octos-events.jsonl` 的 `token_cost_update` |
+| Counter 耗时 | 667 秒 | 369 秒 | 两个 `.arc/runner-events.jsonl` 的 running/completed 时间 |
 | Counter Playwright | 1/1 | 1/1 | 修正 `baseURL` 后的公开测试 |
 | Ticket Booking 轮数 | 0 | 5（最终重试） | 官方初次运行无完成回合；最终 arc-opt 重试含骨架、2 节点、修复和最终检查 |
 | Ticket Booking 输入 / 输出 Token | 0 / 0 | 176,878 / 115,205 | 两次 `.arc/octos-events.jsonl`；arc-opt 使用 `ticket-arc-opt-retry` |
@@ -54,7 +54,7 @@ docker run --rm --security-opt=no-new-privileges --cap-drop=ALL \
 
 默认每条工具结果最多 8 KiB，超限结果保留头尾并加入截断标记；过期、重复或不在工作集的结果仍折叠为结构化一行摘要，当前工作集文件读取保持可重读性。新增头尾保留、工作集保护和历史折叠测试。
 
-Counter 事件流的输入 Token 从 64,658 降到 36,384；这是同一平台一次运行的真实结果，不把它解释成仅由单个改动独立贡献的因果实验。
+Counter 事件流的输入 Token 从 64,658 降到 32,423；这是同一平台、最终 arm64 二进制一次成功运行的真实结果，不把它解释成仅由单个改动独立贡献的因果实验。该二进制的第一次 Counter 重跑因生成应用把 `data-testid` 与 JavaScript 的 `id` 查找混用而被公开测试判为 0/1；未修改生成应用，第二次运行 `cmp-arc-opt-final2` 由公开 grader 判定为 1/1。
 
 Counter 的 arc-opt 费用高于官方这次记录（0.11239816 对 0.01474648）；费用字段按事件流原样保留，不能据此推断成本优化。Ticket Booking 的前两次 arc-opt 尝试在骨架首轮中断，第三次使用当时已构建的 arc-opt 二进制并给足节点时间后完成，公开测试为 10/10；该次成功运行早于最后的容器沙箱提示和 FailFast 流式回退边界修正，因此不能当作当前最终二进制的回归结果。官方 `grade-local.py` 原始脚本的 Playwright 配置缺少 `baseURL`，Counter 本地对照时仅临时补入 `baseURL: process.env.E2E_BASE_URL` 后执行公开测试，随后恢复了脚本。
 
