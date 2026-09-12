@@ -70,19 +70,20 @@ DeepSeek V4 默认输出上限提高到 provider 级安全值；当 `finish_reas
 
 识别 SSE/streaming 不支持错误后，同一 session 记录 provider/model，后续请求直接走非流式路径；当前错误回合也自动回退一次。新增错误识别测试。Counter 运行期间平台请求成功，未再依赖适配层的 `OCTOS_DISABLE_STREAMING=1`。
 即使当前 LLM 调用处于 FailFast 策略，明确的 SSE 不支持错误仍保留这一次非流式回退；其他传输错误继续按 FailFast 直接返回。该边界由单测覆盖。
+provider/model 的 session key 使用不可歧义分隔符，避免 provider 或 model 名称含冒号时错误共享回退状态。
 
 ## P1-5：环境事实前置注入
 
 改动位置：`crates/octos-arc/src/runner.rs`。
 
-`octos arc` 每次 session 仅探测一次 node/npm/python、cwd、npm registry 连通性、容器标记和 sandbox 状态，并将短行事实加入稳定基础提示，声明上限为 200 Token。
+`octos arc` 每次 session 仅探测一次 node/npm/python、cwd、npm registry 连通性、容器标记和 sandbox 状态，并将短行事实加入稳定基础提示；生产路径同时对 cwd 和整段事实做字符上限保护，保持在 200 Token 量级以内。
 单测用隔离的 node/npm/python3 fixture 验证版本、registry 连通性、容器标记和 200 Token 上限。
 
 ## P1-6：Playwright 验收 hook
 
 改动位置：`crates/octos-arc/src/runner.rs`。
 
-轮次结束的本地验证会发现显式目录或工作区内的 `*.spec.ts`，从项目及 spec 目录祖先查找 Playwright；存在时运行 `playwright test --reporter=line`，失败内容以 `[hook]` 错误回传。没有 spec 或 Playwright 时记录 skipped 并继续。目录和基址可由 CLI 参数或 `OCTOS_ARC_SPEC_DIR`、`OCTOS_ARC_BASE_URL` 指定。单测用临时 spec 和 fake runner 验证了实际执行、基址注入及 passed 证据记录。
+轮次结束的本地验证会发现显式目录或工作区内的 `*.spec.ts`，从项目及 spec 目录祖先查找 Playwright；存在时运行 `playwright test --reporter=line`，stdout/stderr 的失败断言以 `[hook]` 错误回传。没有 spec 或 Playwright 时记录 skipped 并继续。目录和基址可由 CLI 参数或 `OCTOS_ARC_SPEC_DIR`、`OCTOS_ARC_BASE_URL` 指定。单测用临时 spec 和 fake runner 验证了实际执行、基址注入及 passed/failed 证据记录。
 
 ## P2-7：按节点预算
 
@@ -98,8 +99,23 @@ DeepSeek V4 默认输出上限提高到 provider 级安全值；当 `finish_reas
 cargo build --locked -p octos-cli --no-default-features --features api
 ```
 
-产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check`、完整工作区 `cargo clippy --locked --all-targets -- -D warnings` 和完整工作区 `cargo test --locked` 均通过。当前相关 crate 的测试结果为：`octos-agent` 2,898 passed / 3 ignored，`octos-arc` 22 passed / 1 ignored，`octos-llm` 687 passed / 3 ignored，`octos-pipeline` 355 passed / 1 ignored，`octos-cli` 单元测试 3,680 passed / 10 ignored；工作区测试命令最终退出码为 0。此前本机无 Docker 时出现的 3 个环境相关失败已改为按 Docker 可用性断言，当前不再失败。
+产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check`、完整工作区 `cargo clippy --locked --all-targets -- -D warnings` 和完整工作区 `cargo test --locked` 均通过。当前相关 crate 的测试结果为：`octos-agent` 2,900 passed / 3 ignored，`octos-arc` 23 passed / 1 ignored，`octos-llm` 687 passed / 3 ignored，`octos-pipeline` 355 passed / 1 ignored，`octos-cli` 单元测试 3,680 passed / 10 ignored；工作区测试命令最终退出码为 0。此前本机无 Docker 时出现的 3 个环境相关失败已改为按 Docker 可用性断言，当前不再失败。
 
-最终产物：`octos 2.0.3-rc.11 (bdad888d 2026-09-12)`；SHA-256 为 `a1799e99410b8308f1b0a787492aa5d5b7201c214e8088804102338661d213ae`，对应 `aarch64-apple-darwin` 和 Homebrew `rustc 1.98.0`。
+最终产物：`octos 2.0.3-rc.11 (0cdaad0a 2026-09-12)`；SHA-256 为 `14f71f33d4ad07f59fb17dd2ce3c822a94aaf2e8373e9625bdfb905c9e40964`，对应 `aarch64-apple-darwin` 和 Homebrew `rustc 1.98.0`。
 
 `runtime_release` 仍为 `null`，因为没有 GitHub Release；锁文件的 `build` 只记录真实产物元数据。
+
+## 独立提交索引
+
+每条优化都有至少一个独立的实现或回归提交，提交信息包含现象和改法：
+
+| 优化 | 提交 |
+|---|---|
+| P0-0 | `840007d2` |
+| P0-1 | `a422b473` |
+| P0-2 | `f8cb7efb` |
+| P0-3 | `7ccdab08` |
+| P1-4 | `3a662235` |
+| P1-5 | `9011052c` |
+| P1-6 | `37d38bae` |
+| P2-7 | `dc0f6be0` |
