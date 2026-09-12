@@ -3248,7 +3248,6 @@ impl AsyncWrite for FailingWriter {
         _cx: &mut std::task::Context<'_>,
         _buf: &[u8],
     ) -> std::task::Poll<std::io::Result<usize>> {
-        self.write_failed.notify_waiters();
         std::task::Poll::Ready(Err(std::io::Error::new(
             std::io::ErrorKind::BrokenPipe,
             "writer closed",
@@ -3267,6 +3266,15 @@ impl AsyncWrite for FailingWriter {
         _cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<std::io::Result<()>> {
         std::task::Poll::Ready(Ok(()))
+    }
+}
+
+impl Drop for FailingWriter {
+    fn drop(&mut self) {
+        // The production writer marks the connection failed after poll_write
+        // returns its error. Notify the test input only after the writer has
+        // unwound, so the second frame cannot race ahead of that latch.
+        self.write_failed.notify_waiters();
     }
 }
 
