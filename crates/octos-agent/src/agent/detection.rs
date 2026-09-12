@@ -193,6 +193,13 @@ impl Agent {
     }
 }
 
+/// Build the session-local key used to remember that one provider/model pair
+/// rejected SSE. A delimiter outside the provider/model grammar keeps pairs
+/// such as (`acme:edge`, `chat`) distinct from (`acme`, `edge:chat`).
+pub(super) fn streaming_provider_key(provider: &str, model: &str) -> String {
+    format!("{provider}\u{001f}{model}")
+}
+
 /// Build the one-shot recovery request for a reasoning model that consumed its
 /// entire output allowance without producing text or a tool call. Prefer
 /// reducing reasoning first (it preserves the request's bounded size); when
@@ -899,6 +906,15 @@ mod tests {
         assert!(Agent::should_fallback_after_stream_error(true, &sse));
         assert!(!Agent::should_fallback_after_stream_error(true, &transport));
         assert!(Agent::should_fallback_after_stream_error(false, &transport));
+    }
+
+    #[test]
+    fn streaming_provider_key_keeps_provider_and_model_boundaries() {
+        let left = streaming_provider_key("acme:edge", "chat");
+        let right = streaming_provider_key("acme", "edge:chat");
+        assert_ne!(left, right);
+        assert_eq!(left, streaming_provider_key("acme:edge", "chat"));
+        assert!(left.contains('\u{001f}'));
     }
 
     // ──────────────────────────────────────────────────────────────────────

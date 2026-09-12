@@ -196,7 +196,7 @@ impl Agent {
         let mut bumped_config: Option<ChatConfig> = None;
         let mut reasoning_recovery_attempted = false;
         let streaming_provider_key =
-            format!("{}:{}", self.llm.provider_name(), self.llm.model_id());
+            super::detection::streaming_provider_key(self.llm.provider_name(), self.llm.model_id());
 
         // All unsuccessful exits settle the rejected responses exactly once.
         // Keep success settlement with the caller: successful responses below
