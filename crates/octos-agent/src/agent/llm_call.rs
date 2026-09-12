@@ -593,7 +593,7 @@ impl Agent {
                         });
                         self.llm.report_late_failure();
 
-                        if fail_fast {
+                        if !Self::should_fallback_after_stream_error(fail_fast, &e) {
                             // FailFast: skip the non-streaming fallback, return error directly.
                             return Err(e);
                         }

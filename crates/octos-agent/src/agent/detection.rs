@@ -174,6 +174,13 @@ impl Agent {
             || msg.contains("sse not supported")
     }
 
+    /// A provider that rejects SSE still gets one ordinary-completion attempt,
+    /// even under the latency-oriented FailFast policy. Other transport and
+    /// provider errors retain FailFast's direct-return behavior.
+    pub(super) fn should_fallback_after_stream_error(fail_fast: bool, err: &eyre::Report) -> bool {
+        !fail_fast || Self::is_streaming_unsupported_error(err)
+    }
+
     /// Whether an error is specifically a truncated tool call (`#1712`): the
     /// turn hit the output cap mid-call. The retry loop uses this to raise the
     /// output budget for the next attempt (a plain retry at the same cap would
@@ -869,6 +876,15 @@ mod tests {
         assert!(!Agent::is_streaming_unsupported_error(&eyre::eyre!(
             "503 server error"
         )));
+    }
+
+    #[test]
+    fn fail_fast_still_allows_sse_fallback_but_not_other_errors() {
+        let sse = eyre::eyre!("failed to send streaming request to OpenAI");
+        let transport = eyre::eyre!("connection reset by peer");
+        assert!(Agent::should_fallback_after_stream_error(true, &sse));
+        assert!(!Agent::should_fallback_after_stream_error(true, &transport));
+        assert!(Agent::should_fallback_after_stream_error(false, &transport));
     }
 
     // ──────────────────────────────────────────────────────────────────────
