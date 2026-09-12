@@ -52,7 +52,7 @@ docker run --rm --security-opt=no-new-privileges --cap-drop=ALL \
 
 改动位置：`crates/octos-agent/src/compaction_tiered.rs`。
 
-默认每条工具结果最多 8 KiB，超限结果保留头尾并加入截断标记；过期、重复或不在工作集的结果仍折叠为结构化一行摘要，当前工作集文件读取保持可重读性。新增头尾保留、工作集保护和历史折叠测试。
+默认每条工具结果最多 8 KiB；完整 compaction pass 对超限结果保留头尾并加入截断标记，旧结果的 oversized-only pass 则替换为结构化一行摘要。过期、重复或不在工作集的结果仍折叠为结构化一行摘要，当前工作集文件读取保持可重读性。新增头尾保留、工作集保护和历史折叠测试。
 
 Counter 事件流的输入 Token 从 64,658 降到 32,423；这是同一平台、最终 arm64 二进制一次成功运行的真实结果，不把它解释成仅由单个改动独立贡献的因果实验。该二进制的第一次 Counter 重跑因生成应用把 `data-testid` 与 JavaScript 的 `id` 查找混用而被公开测试判为 0/1；未修改生成应用，第二次运行 `cmp-arc-opt-final2` 由公开 grader 判定为 1/1。
 
@@ -98,8 +98,8 @@ DeepSeek V4 默认输出上限提高到 provider 级安全值；当 `finish_reas
 cargo build --locked -p octos-cli --no-default-features --features api
 ```
 
-产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check` 和完整工作区 `cargo clippy --locked --all-targets -- -D warnings` 通过；`octos-arc` 测试为 22 passed / 1 ignored，`octos-llm` 为 687 passed / 3 ignored。完整 workspace `cargo test --locked` 已在清理构建产物后完整执行，结果为 2895 passed / 3 failed / 3 ignored；3 个失败均为本机没有 Docker 后端导致的环境相关测试。
+产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check`、完整工作区 `cargo clippy --locked --all-targets -- -D warnings` 和完整工作区 `cargo test --locked` 均通过。当前相关 crate 的测试结果为：`octos-agent` 2,898 passed / 3 ignored，`octos-arc` 22 passed / 1 ignored，`octos-llm` 687 passed / 3 ignored，`octos-pipeline` 355 passed / 1 ignored，`octos-cli` 单元测试 3,680 passed / 10 ignored；工作区测试命令最终退出码为 0。此前本机无 Docker 时出现的 3 个环境相关失败已改为按 Docker 可用性断言，当前不再失败。
 
-最终产物：`octos 2.0.3-rc.11 (0333abbc 2026-09-12)`；SHA-256 为 `fe8db22778c140d948f8315172ecb6adf2a8b6e527f0ab70e1e9ee3cc839e944`，对应 `aarch64-apple-darwin` 和 Homebrew `rustc 1.98.0`。
+最终产物：`octos 2.0.3-rc.11 (bdad888d 2026-09-12)`；SHA-256 为 `a1799e99410b8308f1b0a787492aa5d5b7201c214e8088804102338661d213ae`，对应 `aarch64-apple-darwin` 和 Homebrew `rustc 1.98.0`。
 
 `runtime_release` 仍为 `null`，因为没有 GitHub Release；锁文件的 `build` 只记录真实产物元数据。
