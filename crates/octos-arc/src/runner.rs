@@ -324,9 +324,10 @@ fn environment_facts(project: &Path, env: &[(OsString, OsString)], deadline: Ins
         "platform default".into()
     };
     let cwd = bound_fact(project.display().to_string(), 128);
-    format!(
+    let facts = format!(
         "node={node}; npm={npm}; python={python}; cwd={cwd}; registry={registry} ({registry_ok}); container={in_container}; sandbox={sandbox}",
-    )
+    );
+    bound_fact(facts, ENVIRONMENT_FACTS_MAX_CHARS)
 }
 
 fn has_playwright_spec(path: &Path, depth: usize) -> bool {
