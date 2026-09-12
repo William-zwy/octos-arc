@@ -123,3 +123,32 @@ Counter（1 节点）与 Ticket Booking（REQ-2 依赖 REQ-1，文档顺序本�
 ## A7 · 守护规则
 
 `guard.TurnMonitor` 订阅每轮的 `tool/started` / `tool/completed` 事件：写了文件、结束语宣称完成却没有执行过 build/start/curl/node 类命令（设计轮不适用）；同一错误（数字归一化后）连续 ≥3 次；写入保护路径（spec 目录、需求目录、`.arc/`，但允许 `.arc/design/`）。命中的纠正句附在同一节点下一轮提示词开头（`OCTOS_GUARD=0` 只记日志不注入）。预算：整体 `OCTOS_TIME_BUDGET`，节点预算 = min(1500, 剩余时间 / 剩余节点)，实现轮 ≤ 60%，修复轮剩余不足 90 s 即停止并保留最优 commit；整体预算耗尽的节点直接标 `implementation_failed`；任何异常都在 `finally` 段给未判定节点补 `test_failed`。
+
+## 第二轮 · 吸收工作流 C 的回流（`bd3c56ca`）
+
+C 用旧 main（`82e3bef3`）适配包在 `arc-bench-web--keep` 本机跑到 26/32、83 分钟，回流三点已吸收：
+
+1. **FOLDER 节点也计入平台需求数**（keep 记「45 requirements and 32 scenarios」）。`mark_folders()` 在收尾时给每个非 ATOMIC 节点按其 ATOMIC 后代推导 design/implement/test 状态：全部子节点通过才 `test_passed`，否则 `test_failed` 并列出未通过的子节点；异常路径同样补齐。
+2. **骨架轮不再读全部 spec**。旧 `ACCEPTANCE_TESTS_PROMPT` 在骨架轮列出全部 spec 文件并要求「写代码前全部读完」，模型因此在一轮里把 32 个功能全做完（70 分钟、单会话 40–130 万字符推理）。现在骨架轮只给 spec 目录、共享 helper 和「最多读两个 spec 学约定，不实现功能」，spec 文件在各自节点轮才出现。
+3. **整体预算按节点数放大**：未显式设 `OCTOS_TIME_BUDGET` 时取 max(3600, 480 × ATOMIC 节点数)（`OCTOS_SECONDS_PER_NODE`），keep 为 15,360 s；节点预算仍是 min(1500, 剩余/剩余节点)。
+
+第二轮代码的本机验证：
+
+| 运行 | 轮数 | tokens_in | tokens_out | 费用 ¥ | 耗时 s | 公开测试 | 节点状态 |
+|---|---:|---:|---:|---:|---:|---|---|
+| r9-counter | 1 | 25,242 | 7,757 | 0.0327 | 331 | 1/1 | REQ-1、ROOT PASSED |
+| **r9-tb** | 5 | 213,602 | 127,660 | **0.5768** | **1,346** | 10/10（按评测方式启动） | REQ-1、REQ-2、REQ-1.1、REQ-1.2、ROOT PASSED |
+
+r9-tb 逐轮：骨架 211 s（不再读全部 spec）→ REQ-1 设计 167 s → 实现 504 s → 6/6 → REQ-2 设计 213 s → 实现 238 s → 4/4 → 全套并行 10/10 → 演练通过，零修复轮。相对改前：费用 −25%、耗时 −46%。
+
+C 的其余发现与本分支已有改动的对应：轮超时被当瞬时错误重放 → `d5f9dccb` 已修；骨架超时但盘上已有 frontend/backend 则继续 → `skeleton()` 已按盘上状态判定；单会话累积上下文（keep 云端 8,256 万 token、¥17.94）→ 默认按节点新开 session；云端评测阶段 Playwright 用 4 workers 1 秒后被 SIGKILL 是平台侧问题，适配层无法影响；Evolution 在平台上 `ARCBENCH_TEMPLATE_DIR` 未设置而模板在 `/workspace/template`，本分支按输出目录里是否已有 frontend/backend 判定，与 C 观察到的 2/2 一致。
+
+## 紧急修正 · 云端 Smoke Evolution 0/2（C 回流，运行 da9a64b32c09 / 16ea5178359a）
+
+**现象**：main@40a629a8 的适配包在生成阶段 `[acceptance]` 自跑 2/2，但平台评测阶段 `npx playwright test` 报 `browserType.launch: Executable doesn't exist at /ms-playwright/chromium-1200/...`，2 条全失败；同题旧适配包 2/2。日志顺序是 `no Playwright install found; trying to install one` → `playwright installed into /tmp/octos-arc-playwright`。即镜像里其实有预装的 Playwright 但我们没找到，随后未隔离的安装改变了平台自己 `npx playwright` 的解析结果。
+
+**改法**（`acceptance.py` / `main.py`）：
+1. 先找预装：候选路径加上 `npm root -g` 的上级、/workspace、/workspace/tests、/app、/runner、/opt/playwright、/usr/local/lib、/usr/lib、$HOME；再做一次 25 s 内的 `find / -maxdepth 6 -path '*/node_modules/@playwright/test'`（排除 /proc /sys /tmp）。
+2. 真要自装时完全隔离：版本钉死（tests 目录的 package-lock/package.json 声明的版本，否则 1.63.0；绝不 latest），`npm_config_cache` 与 `PLAYWRIGHT_BROWSERS_PATH` 都指向本次运行的私有临时目录，浏览器用 `node_modules/.bin/playwright install` 而不是 `npx`，所有验收运行带同一 `PLAYWRIGHT_BROWSERS_PATH`，运行结束（含异常路径）删除整个私有目录。
+3. 本机验证：私有安装 24 s 完成，chromium-1243 落在私有目录，登录节点 4/4；安装前后 `~/Library/Caches/ms-playwright` 与 `~/.npm` 均未变化，私有目录已删除。
+4. 云端 d116ad5e3aa0（wf-adapter-2@71040c6c）15 s 崩溃：`setup_playwright` 的一处文本替换未生效，仍把 `(root, env)` 元组当 Path 用，且缺 `cleanup_playwright`。`e3c1197f` 整段重写并加回归测试 `SetupPlaywrightTests`；本机把 local-grader 藏起来强制走该分支跑 Counter（r10-counter-privatepw）：私有安装 25 s → 验收 1/1 → 演练通过 → 私有目录已删除，公开测试 1/1，¥0.0306，374 s。**云端未评测**，等 C 用 e3c1197f 打包再跑一次 smoke-evolution 后合入。

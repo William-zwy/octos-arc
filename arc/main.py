@@ -26,7 +26,8 @@ Environment (all optional):
     OPENAI_API_KEY / OPENAI_BASE_URL / MODEL   OpenAI-compatible endpoint
     OCTOS_BIN                 octos binary (default: ./bin/octos, PATH, download)
     OCTOS_NODE_TIMEOUT        seconds per model turn (default 1200)
-    OCTOS_TIME_BUDGET         seconds for the whole generation (default 3600)
+    OCTOS_TIME_BUDGET         seconds for the whole generation (default max(3600, 480 x nodes))
+    OCTOS_SECONDS_PER_NODE    per-node allowance used for that default (480)
     OCTOS_NODE_TIME_BUDGET    cap per node incl. repairs (default 1500)
     OCTOS_REPAIR_ROUNDS       K, acceptance repair rounds per node (default 5)
     OCTOS_DESIGN_TURN         "0" disables the design turn
@@ -59,8 +60,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from arcbench_agent_runtime import AgentRuntime  # noqa: E402
 from acceptance import (  # noqa: E402
     AcceptanceRunner, AppServer, RunSummary, acceptance_work_dir, ensure_playwright,
-    failure_summaries, find_playwright_root, map_specs_to_nodes, nodes_for_failures,
-    playwright_candidates, restore_worktree, snapshot_worktree,
+    failure_summaries, find_playwright_by_search, find_playwright_root, map_specs_to_nodes,
+    nodes_for_failures, playwright_candidates, playwright_version_hint, restore_worktree,
+    snapshot_worktree,
 )
 from guard import TurnMonitor  # noqa: E402
 from requirement_order import ancestors_of, node_fingerprint, topo_order  # noqa: E402
@@ -186,6 +188,27 @@ def describe_node(node: dict) -> str:
     if deps:
         lines.append(f"Depends on: {', '.join(map(str, deps))}")
     return "\n".join(lines)
+
+
+def folder_descendants(tree: dict) -> dict[str, list[str]]:
+    """Non-atomic node id -> ids of its ATOMIC descendants (document order)."""
+    out: dict[str, list[str]] = {}
+
+    def walk(node: dict) -> list[str]:
+        children = [c for c in (node.get("children") or []) if isinstance(c, dict)]
+        node_type = str(node.get("type") or "").upper()
+        node_id = str(node.get("id") or "")
+        if node_type == "ATOMIC" or (not children and node_type != "FOLDER"):
+            return [node_id]
+        ids: list[str] = []
+        for child in children:
+            ids.extend(walk(child))
+        if node_id:
+            out[node_id] = ids
+        return ids
+
+    walk(tree)
+    return out
 
 
 def previous_requirement_records(output_dir: Path) -> dict[str, dict]:
@@ -738,7 +761,9 @@ class Flow:
             self.smoke_port += 1
         self.node_timeout = int(os.environ.get("OCTOS_NODE_TIMEOUT", "1200"))
         self.design_timeout = int(os.environ.get("OCTOS_DESIGN_TIMEOUT", "420"))
-        self.budget = int(os.environ.get("OCTOS_TIME_BUDGET", "3600"))
+        self.budget = int(os.environ["OCTOS_TIME_BUDGET"]) if os.environ.get("OCTOS_TIME_BUDGET") else 3600
+        self.budget_explicit = bool(os.environ.get("OCTOS_TIME_BUDGET"))
+        self.seconds_per_node = int(os.environ.get("OCTOS_SECONDS_PER_NODE", "480"))
         self.node_budget_cap = int(os.environ.get("OCTOS_NODE_TIME_BUDGET", "1500"))
         self.repair_rounds = int(os.environ.get("OCTOS_REPAIR_ROUNDS", "5"))
         self.design_enabled = os.environ.get("OCTOS_DESIGN_TURN", "1") != "0"
@@ -763,6 +788,7 @@ class Flow:
         self.impl_failed: list[str] = []
         self.pending_corrections: list[str] = []
         self.evolution = False
+        self.folder_children: dict[str, list[str]] = {}
 
     # -- helpers ----------------------------------------------------------
     def remaining(self) -> float:
@@ -808,9 +834,18 @@ class Flow:
     def perf_text(self) -> str:
         return PERFORMANCE_CONTRACT if self.perf_contract else ""
 
-    def tests_prompt_for(self, node_id: str | None) -> str:
+    def tests_prompt_for(self, node_id: str | None, skeleton: bool = False) -> str:
         if not self.tests_dir:
             return ""
+        if skeleton:
+            support = sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.ts")
+                             if not p.name.endswith(".spec.ts"))
+            n_specs = len(list(self.tests_dir.rglob("*.spec.ts")))
+            return (f"The official Playwright specs ({n_specs} files) live under {self.tests_dir}; each later turn "
+                    f"receives the spec files for its own node. In THIS turn read only the shared helpers "
+                    f"({', '.join(support[:10]) or 'none'}) and at most two spec files to learn the base URL, "
+                    f"navigation and header conventions; do not implement the features yet.\n"
+                    + acceptance_tests_prompt(self.tests_dir, self.web_port, self.smoke_port, []).split("\n", 1)[-1])
         files = list(self.spec_map.get(node_id) or [])
         support = sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.ts")
                          if not p.name.endswith(".spec.ts"))
@@ -853,19 +888,39 @@ class Flow:
 
     # -- acceptance -------------------------------------------------------
     def setup_playwright(self) -> None:
+        """Prefer the Playwright already on the machine (the runner image ships
+        one). A private install is the last resort and never touches shared
+        state: own npm cache, own browser dir, pinned version, removed at exit.
+        Run da9a64b32c09: an unisolated install made the platform's own
+        `npx playwright test` resolve a different version whose chromium build
+        was missing, and every graded test failed."""
         if not self.tests_dir:
             return
+        env_extra: dict = {}
         root = find_playwright_root(playwright_candidates(BUNDLE_DIR, self.tests_dir, self.output_dir))
+        if root is None:
+            root = find_playwright_by_search(log)
         if root is None and os.environ.get("OCTOS_ARC_INSTALL_PLAYWRIGHT", "1") != "0":
-            log("[acceptance] no Playwright install found; trying to install one (bounded)")
-            root = ensure_playwright(Path(tempfile.gettempdir()) / "octos-arc-playwright", log)
+            version = playwright_version_hint(self.tests_dir)
+            log(f"[acceptance] no preinstalled Playwright found; private install of @playwright/test@{version}")
+            self.private_playwright = Path(tempfile.mkdtemp(prefix="octos-arc-playwright-"))
+            installed = ensure_playwright(self.private_playwright, log, version=version)
+            if installed:
+                root, env_extra = installed
         if root is None:
             log("[acceptance] Playwright unavailable; nodes will be judged by the final check only")
             return
         self.runner = AcceptanceRunner(root, self.tests_dir, acceptance_work_dir(root), log,
                                        timeout_ms=int(os.environ.get("OCTOS_ARC_TEST_TIMEOUT_MS", "10000")),
-                                       workers=int(os.environ.get("OCTOS_ARC_TEST_WORKERS", "2")))
+                                       workers=int(os.environ.get("OCTOS_ARC_TEST_WORKERS", "2")),
+                                       env_extra=env_extra)
         log(f"[acceptance] using Playwright at {root}")
+
+    def cleanup_playwright(self) -> None:
+        private = getattr(self, "private_playwright", None)
+        if private and Path(private).exists():
+            shutil.rmtree(private, ignore_errors=True)
+            log(f"[acceptance] removed private Playwright install {private}")
 
     def app_server(self, grader_like: bool) -> AppServer:
         return AppServer(self.output_dir, self.smoke_port, log, grader_like=grader_like,
@@ -1152,7 +1207,7 @@ class Flow:
     def skeleton(self, tree: dict) -> None:
         log("[flow] skeleton turn starting")
         prompt = SKELETON_PROMPT.format(req_dir=self.req_dir, port=self.web_port, smoke=self.smoke_port,
-                                        tests=self.tests_prompt_for(None))
+                                        tests=self.tests_prompt_for(None, skeleton=True))
         for attempt in range(1, 5):
             if self.time_up():
                 raise RuntimeError("time budget exhausted before the skeleton existed")
@@ -1207,7 +1262,11 @@ class Flow:
             if not ordered:
                 raise ValueError("no ATOMIC requirement nodes found")
             node_ids = [str(n.get("id")) for n in ordered]
-            log(f"[flow] {len(ordered)} atomic nodes in dependency order: {node_ids}")
+            if not self.budget_explicit:
+                # 32-node trees need hours, not the 1-hour smoke default.
+                self.budget = max(self.budget, self.seconds_per_node * len(ordered))
+            log(f"[flow] {len(ordered)} atomic nodes in dependency order: {node_ids}; time budget {self.budget}s")
+            self.folder_children = folder_descendants(tree)
 
             self.evolution = self.has_app()
             unchanged: set[str] = set()
@@ -1281,11 +1340,13 @@ class Flow:
                 watchdog_stop.set()
                 if self.driver:
                     self.driver.close()
+                self.cleanup_playwright()
             for node_id in node_ids:  # final per-node verdicts (full-suite run may have changed them)
                 if self.test_verdict.get(node_id) is True:
                     self.mark("test_passed", node_id, "acceptance specs pass (node run and full parallel suite)")
                 elif self.test_verdict.get(node_id) is False:
                     self.mark("test_failed", node_id, "acceptance specs failing")
+            self.mark_folders()
             self.commit("chore: traceability and acceptance state")
             failed = [i for i in node_ids if self.test_verdict.get(i) is not True]
             if failed:
@@ -1301,14 +1362,42 @@ class Flow:
             watchdog_stop.set()
             if self.driver:
                 self.driver.close()
+            self.cleanup_playwright()
             for node in ordered:
                 node_id = str(node.get("id"))
                 if node_id not in self.test_verdict:
                     self.mark("test_failed", node_id, f"run aborted: {str(exc)[:200]}")
+            try:
+                self.mark_folders()
+            except Exception:  # noqa: BLE001
+                pass
             _postflight_structure_check(self.output_dir)
             _free_web_port(self.web_port)
             self.events.mark_run_failed(str(exc)[:1000])
             return 0
+
+    def mark_folders(self) -> None:
+        """The platform counts FOLDER nodes as requirements too ("45 requirements
+        and 32 scenarios" for a 32-leaf tree); derive their state from their
+        atomic descendants so the functional-rate denominator is covered."""
+        for folder_id, leaves in self.folder_children.items():
+            if not leaves:
+                continue
+            verdicts = [self.test_verdict.get(leaf) for leaf in leaves]
+            self.events.mark_design_started(folder_id)
+            self.events.mark_design_done(folder_id, f"{len(leaves)} atomic children designed")
+            self.events.mark_implementation_started(folder_id)
+            if all(v is not None for v in verdicts) or any(leaf in self.impl_failed for leaf in leaves):
+                done = [leaf for leaf in leaves if leaf not in self.impl_failed]
+                if done:
+                    self.events.mark_implementation_done(folder_id, f"{len(done)}/{len(leaves)} atomic children implemented")
+                else:
+                    self.events.mark_implementation_failed(folder_id, "no atomic child implemented")
+            if all(v is True for v in verdicts):
+                self.events.mark_test_passed(folder_id, f"all {len(leaves)} atomic children pass")
+            else:
+                failing = [leaf for leaf, v in zip(leaves, verdicts) if v is not True]
+                self.events.mark_test_failed(folder_id, f"children not verified: {', '.join(failing)}")
 
     def write_preview_ready(self) -> None:
         artifacts_dir = os.environ.get("ARCBENCH_ARTIFACTS_DIR")
