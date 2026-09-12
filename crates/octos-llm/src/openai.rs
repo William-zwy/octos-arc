@@ -700,16 +700,31 @@ impl OpenAIProvider {
                 _ => (None, None),
             };
 
+        let effective_max_tokens = match config.max_tokens {
+            // ChatConfig::default() is provider-neutral. Let a known
+            // reasoning-heavy provider use its safer default, while explicit
+            // operator values remain exact.
+            Some(value) if value == crate::context::default_max_tokens() => Some(
+                crate::context::provider_default_max_tokens(&self.model)
+                    .min(self.max_output_tokens()),
+            ),
+            Some(value) => Some(value),
+            None => Some(
+                crate::context::provider_default_max_tokens(&self.model)
+                    .min(self.max_output_tokens()),
+            ),
+        };
+
         OpenAIRequest {
             model: &self.model,
             messages: openai_messages,
             max_tokens: if self.hints.uses_completion_tokens {
                 None
             } else {
-                config.max_tokens
+                effective_max_tokens
             },
             max_completion_tokens: if self.hints.uses_completion_tokens {
-                config.max_tokens.or(Some(4096))
+                effective_max_tokens
             } else {
                 None
             },
