@@ -883,10 +883,7 @@ mod tests {
         let mut messages = vec![
             user_msg("q"),
             assistant_tool_call("shell", "call_big"),
-            tool_result(
-                "call_big",
-                &format!("{}{tail}", format!("{head}{}", "x".repeat(50_000))),
-            ),
+            tool_result("call_big", &format!("{head}{}{tail}", "x".repeat(50_000))),
         ];
         // Disable the age-based pruning so only the size path fires.
         let policy = MicroCompactionPolicy::default()
