@@ -14,8 +14,11 @@
 | Counter 费用 | 0.01474648 | 0.11239816 | 两个 `.arc/octos-events.jsonl` 的 `token_cost_update` |
 | Counter 耗时 | 667 秒 | 290 秒 | 两个 `.arc/runner-events.jsonl` 的 running/completed 时间 |
 | Counter Playwright | 1/1 | 1/1 | 修正 `baseURL` 后的公开测试 |
-| Ticket Booking 轮数 / Token / 费用 | 0 / 0 / 无记录 | 0 / 0 / 无记录 | 两次运行均在首轮长时间停留后人工中断 |
-| Ticket Booking 耗时 / Playwright | >10 分钟 / 未执行 | 约 3 分钟 / 未执行 | 两次均无 `turn/completed`，不能算评测通过 |
+| Ticket Booking 轮数 | 0 | 5（最终重试） | 官方初次运行无完成回合；最终 arc-opt 重试含骨架、2 节点、修复和最终检查 |
+| Ticket Booking 输入 / 输出 Token | 0 / 0 | 176,878 / 115,205 | 两次 `.arc/octos-events.jsonl`；arc-opt 使用 `ticket-arc-opt-retry` |
+| Ticket Booking 费用 | 无记录 | 0.63454608 | `token_cost_update` |
+| Ticket Booking 耗时 | >10 分钟后中断 | 1,943 秒 | `runner-events.jsonl` 起止时间 |
+| Ticket Booking Playwright | 未执行 | 10/10 | `grade-local.py` 公开测试 |
 
 ## P0-0：stdio/solo 提示与工具面瘦身
 
@@ -41,7 +44,7 @@
 
 Counter 事件流的输入 Token 从 64,658 降到 36,384；这是同一平台一次运行的真实结果，不把它解释成仅由单个改动独立贡献的因果实验。
 
-Counter 的 arc-opt 费用高于官方这次记录（0.11239816 对 0.01474648）；费用字段按事件流原样保留，不能据此推断成本优化。官方 `grade-local.py` 原始脚本的 Playwright 配置缺少 `baseURL`，本地对照时仅临时补入 `baseURL: process.env.E2E_BASE_URL` 后执行公开测试，随后恢复了脚本，故这里报告的是修正配置后的 1/1，而不是把原始脚本失败冒充产品评测结果。
+Counter 的 arc-opt 费用高于官方这次记录（0.11239816 对 0.01474648）；费用字段按事件流原样保留，不能据此推断成本优化。Ticket Booking 的前两次 arc-opt 尝试在骨架首轮中断，第三次使用相同最终二进制并给足节点时间后完成，公开测试为 10/10。官方 `grade-local.py` 原始脚本的 Playwright 配置缺少 `baseURL`，Counter 本地对照时仅临时补入 `baseURL: process.env.E2E_BASE_URL` 后执行公开测试，随后恢复了脚本。
 
 ## P0-3：推理模型空回合恢复
 
