@@ -361,6 +361,21 @@ fn find_playwright_runner(project: &Path, spec_dir: &Path) -> Option<PathBuf> {
     candidates.into_iter().find(|path| path.is_file())
 }
 
+fn acceptance_failure_tail(output: &process::Output) -> String {
+    output
+        .stdout
+        .lines()
+        .chain(output.stderr.lines())
+        .filter(|line| !line.trim().is_empty())
+        .rev()
+        .take(8)
+        .collect::<Vec<_>>()
+        .into_iter()
+        .rev()
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
 fn run_acceptance_hook(
     project: &Path,
     spec_dir: Option<&Path>,
@@ -399,16 +414,7 @@ fn run_acceptance_hook(
         deadline,
     )?;
     let success = output.succeeded();
-    let failure_tail = output
-        .stderr
-        .lines()
-        .rev()
-        .take(8)
-        .collect::<Vec<_>>()
-        .into_iter()
-        .rev()
-        .collect::<Vec<_>>()
-        .join("\n");
+    let failure_tail = acceptance_failure_tail(&output);
     evidence.push(json!({"kind":"acceptance_hook","status":if success {"passed"} else {"failed"},"base_url":base_url,"spec_dir":spec_dir,"result":output}));
     ensure!(
         success,
@@ -1144,6 +1150,40 @@ mod tests {
         assert_eq!(evidence[0]["kind"], "acceptance_hook");
         assert_eq!(evidence[0]["status"], "passed");
         assert_eq!(evidence[0]["base_url"], "http://127.0.0.1:43100");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn acceptance_hook_returns_playwright_assertions_from_stdout() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp = tempfile::tempdir().unwrap();
+        let project = temp.path().join("project");
+        let specs = project.join("acceptance");
+        let runner = project.join("node_modules/.bin/playwright");
+        fs::create_dir_all(&specs).unwrap();
+        fs::create_dir_all(runner.parent().unwrap()).unwrap();
+        fs::write(specs.join("smoke.spec.ts"), "test('smoke', () => {})").unwrap();
+        fs::write(
+            &runner,
+            "#!/bin/sh\nprintf 'expect(locator).toHaveText(2)\\n'\nexit 1\n",
+        )
+        .unwrap();
+        fs::set_permissions(&runner, fs::Permissions::from_mode(0o700)).unwrap();
+
+        let mut evidence = Vec::new();
+        let error = run_acceptance_hook(
+            &project,
+            Some(&specs),
+            Some("http://127.0.0.1:43100"),
+            &[],
+            Instant::now() + Duration::from_secs(5),
+            &mut evidence,
+        )
+        .unwrap_err();
+
+        assert!(error.to_string().contains("expect(locator).toHaveText(2)"));
+        assert_eq!(evidence[0]["status"], "failed");
     }
 
     #[cfg(unix)]
