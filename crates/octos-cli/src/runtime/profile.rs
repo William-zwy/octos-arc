@@ -53,6 +53,29 @@ fn is_bundled_skill_directory(path: &Path) -> bool {
     )
 }
 
+// The profile manifest uses groups for the interactive coding CLI. Their
+// compatibility aliases and long-term-memory tools are useful there, but are
+// redundant in the unauthenticated ARC stdio transport. Keep the canonical
+// coding loop, with the same allow-list intent, at the schema boundary.
+const STDIO_SOLO_CODING_TOOLS: &[&str] = &[
+    "ask_user_question",
+    "check",
+    "diff_edit",
+    "edit_file",
+    "glob",
+    "grep",
+    "list_dir",
+    "read_file",
+    "shell",
+    "tool_search",
+    "update_plan",
+    "write_file",
+];
+
+fn is_stdio_solo_coding_tool(name: &str) -> bool {
+    STDIO_SOLO_CODING_TOOLS.contains(&name)
+}
+
 /// Immutable inputs needed to rebuild only a profile's plugin-derived layer.
 /// Long-lived stores, providers, schedulers, and profile services are reused
 /// from the existing [`ProfileRuntime`].
@@ -1508,6 +1531,7 @@ impl ProfileRuntime {
             let (profile, _) = octos_agent::profile::ProfileDefinition::load("coding")
                 .wrap_err("failed to load built-in coding profile for stdio/solo")?;
             profile.apply_to_registry(&mut tools);
+            tools.retain(is_stdio_solo_coding_tool);
             Some(Arc::new(profile))
         } else {
             None
@@ -1766,6 +1790,9 @@ mod tests {
         assert!(is_bundled_skill_directory(Path::new("platform-skills")));
         assert!(!is_bundled_skill_directory(Path::new("skills")));
         assert!(!is_bundled_skill_directory(Path::new("plugins")));
+        assert_eq!(STDIO_SOLO_CODING_TOOLS.len(), 12);
+        assert!(is_stdio_solo_coding_tool("shell"));
+        assert!(!is_stdio_solo_coding_tool("run_pipeline"));
     }
 
     /// Build a minimal `UserProfile` with no LLM contract. M11-D

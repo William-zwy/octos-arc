@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use octos_core::ToolCall;
-use octos_llm::{ChatResponse, StopReason};
+use octos_llm::{ChatConfig, ChatResponse, ReasoningEffort, StopReason};
 use regex::Regex;
 
 use super::Agent;
@@ -160,6 +160,25 @@ impl Agent {
             || msg.contains("stream error")
             || msg.contains("connection reset")
             || msg.contains("broken pipe")
+            || Self::is_streaming_unsupported_error(err)
+    }
+
+    /// Detect the stable error shape returned when a provider accepts normal
+    /// chat completions but rejects SSE. Only this narrow class disables
+    /// streaming for the rest of the current agent session.
+    pub(super) fn is_streaming_unsupported_error(err: &eyre::Report) -> bool {
+        let msg = err.to_string().to_lowercase();
+        msg.contains("failed to send streaming request")
+            || msg.contains("streaming not supported")
+            || msg.contains("text/event-stream")
+            || msg.contains("sse not supported")
+    }
+
+    /// A provider that rejects SSE still gets one ordinary-completion attempt,
+    /// even under the latency-oriented FailFast policy. Other transport and
+    /// provider errors retain FailFast's direct-return behavior.
+    pub(super) fn should_fallback_after_stream_error(fail_fast: bool, err: &eyre::Report) -> bool {
+        !fail_fast || Self::is_streaming_unsupported_error(err)
     }
 
     /// Whether an error is specifically a truncated tool call (`#1712`): the
@@ -172,6 +191,56 @@ impl Agent {
             Some(octos_llm::StreamError::TruncatedToolCall { .. })
         )
     }
+}
+
+/// Build the session-local key used to remember that one provider/model pair
+/// rejected SSE. A delimiter outside the provider/model grammar keeps pairs
+/// such as (`acme:edge`, `chat`) distinct from (`acme`, `edge:chat`).
+pub(super) fn streaming_provider_key(provider: &str, model: &str) -> String {
+    format!("{provider}\u{001f}{model}")
+}
+
+/// Build the one-shot recovery request for a reasoning model that consumed its
+/// entire output allowance without producing text or a tool call. Prefer
+/// reducing reasoning first (it preserves the request's bounded size); when
+/// no effort was configured, increase the output allowance up to the provider
+/// ceiling. The caller deliberately invokes this at most once per model turn.
+pub(super) fn empty_max_tokens_recovery_config(
+    config: &ChatConfig,
+    provider_max_output_tokens: u32,
+) -> Option<ChatConfig> {
+    let mut retry = config.clone();
+    if let Some(effort) = config.reasoning_effort {
+        retry.reasoning_effort = Some(match effort {
+            ReasoningEffort::Max => ReasoningEffort::High,
+            ReasoningEffort::High => ReasoningEffort::Medium,
+            ReasoningEffort::Medium => ReasoningEffort::Low,
+            ReasoningEffort::Low => ReasoningEffort::Disabled,
+            ReasoningEffort::Disabled => return None,
+        });
+        return Some(retry);
+    }
+
+    let current = config.max_tokens.unwrap_or(1_024);
+    let raised = current.saturating_mul(2).min(provider_max_output_tokens);
+    (raised > current).then(|| {
+        retry.max_tokens = Some(raised);
+        retry
+    })
+}
+
+/// Return whether a completed response consumed its output allowance without
+/// producing anything the agent can deliver. Keeping this predicate beside
+/// the recovery-config builder prevents the call loop from accidentally
+/// retrying a truncated response that already contains useful content or a
+/// native tool call.
+pub(super) fn is_empty_max_tokens_response(response: &ChatResponse) -> bool {
+    response.stop_reason == StopReason::MaxTokens
+        && response
+            .content
+            .as_ref()
+            .is_none_or(|content| content.trim().is_empty())
+        && response.tool_calls.is_empty()
 }
 
 fn extract_inline_invokes(content: &str) -> (String, Vec<ToolCall>) {
@@ -820,6 +889,34 @@ mod tests {
         assert!(!Agent::is_retryable_stream_error(&err));
     }
 
+    #[test]
+    fn streaming_unsupported_error_is_session_fallback_signal() {
+        let err = eyre::eyre!("failed to send streaming request to OpenAI");
+        assert!(Agent::is_streaming_unsupported_error(&err));
+        assert!(Agent::is_retryable_stream_error(&err));
+        assert!(!Agent::is_streaming_unsupported_error(&eyre::eyre!(
+            "503 server error"
+        )));
+    }
+
+    #[test]
+    fn fail_fast_still_allows_sse_fallback_but_not_other_errors() {
+        let sse = eyre::eyre!("failed to send streaming request to OpenAI");
+        let transport = eyre::eyre!("connection reset by peer");
+        assert!(Agent::should_fallback_after_stream_error(true, &sse));
+        assert!(!Agent::should_fallback_after_stream_error(true, &transport));
+        assert!(Agent::should_fallback_after_stream_error(false, &transport));
+    }
+
+    #[test]
+    fn streaming_provider_key_keeps_provider_and_model_boundaries() {
+        let left = streaming_provider_key("acme:edge", "chat");
+        let right = streaming_provider_key("acme", "edge:chat");
+        assert_ne!(left, right);
+        assert_eq!(left, streaming_provider_key("acme:edge", "chat"));
+        assert!(left.contains('\u{001f}'));
+    }
+
     // ──────────────────────────────────────────────────────────────────────
     // Codex round (PR #1355): typed StreamError downcast — these tests
     // pin the boundary contract. Without the downcast path, MalformedArgs
@@ -870,5 +967,58 @@ mod tests {
         };
         let err = eyre::Report::new(typed);
         assert!(Agent::is_retryable_stream_error(&err));
+    }
+
+    #[test]
+    fn empty_max_tokens_recovery_lowers_reasoning_once() {
+        let config = ChatConfig {
+            reasoning_effort: Some(ReasoningEffort::Max),
+            max_tokens: Some(32_768),
+            ..ChatConfig::default()
+        };
+        let retry = empty_max_tokens_recovery_config(&config, 384_000).unwrap();
+        assert_eq!(retry.reasoning_effort, Some(ReasoningEffort::High));
+        assert_eq!(retry.max_tokens, config.max_tokens);
+    }
+
+    #[test]
+    fn empty_max_tokens_recovery_raises_output_when_effort_is_unset() {
+        let config = ChatConfig {
+            max_tokens: Some(4_096),
+            ..ChatConfig::default()
+        };
+        let retry = empty_max_tokens_recovery_config(&config, 32_768).unwrap();
+        assert_eq!(retry.max_tokens, Some(8_192));
+    }
+
+    #[test]
+    fn empty_max_tokens_recovery_stops_when_no_safe_change_exists() {
+        let config = ChatConfig {
+            reasoning_effort: Some(ReasoningEffort::Disabled),
+            max_tokens: Some(32_768),
+            ..ChatConfig::default()
+        };
+        assert!(empty_max_tokens_recovery_config(&config, 32_768).is_none());
+    }
+
+    #[test]
+    fn empty_max_tokens_response_requires_length_and_no_deliverable() {
+        let empty = make_response_with_stop(None, vec![], 100, StopReason::MaxTokens);
+        assert!(is_empty_max_tokens_response(&empty));
+
+        let ended = make_response_with_stop(None, vec![], 100, StopReason::EndTurn);
+        assert!(!is_empty_max_tokens_response(&ended));
+
+        let content = make_response_with_stop(Some("partial"), vec![], 100, StopReason::MaxTokens);
+        assert!(!is_empty_max_tokens_response(&content));
+
+        let tool = ToolCall {
+            id: "length-tool".into(),
+            name: "check".into(),
+            arguments: serde_json::json!({}),
+            metadata: None,
+        };
+        let with_tool = make_response_with_stop(None, vec![tool], 100, StopReason::MaxTokens);
+        assert!(!is_empty_max_tokens_response(&with_tool));
     }
 }

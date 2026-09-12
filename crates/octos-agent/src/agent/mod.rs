@@ -26,6 +26,7 @@ pub mod turn_failure;
 mod turn_state;
 pub mod verifier;
 
+use std::collections::HashSet;
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::{Arc, RwLock};
@@ -586,6 +587,11 @@ pub struct Agent {
     /// must not persist them itself (doing so at drain time gave the steer a
     /// lower durable sequence than the turn's own rows).
     pub(super) steer_drained_callback: Option<crate::steering::SteerDrainedCallback>,
+    /// Provider/model identities that failed to establish a streaming
+    /// response during this session. Once recorded, later turns use the
+    /// ordinary completion endpoint directly instead of paying another SSE
+    /// failure timeout.
+    pub(super) streaming_disabled_providers: std::sync::Mutex<HashSet<String>>,
 }
 
 impl Agent {
@@ -671,6 +677,7 @@ impl Agent {
             snapshot_manager: None,
             steer_buffer: None,
             steer_drained_callback: None,
+            streaming_disabled_providers: std::sync::Mutex::new(HashSet::new()),
         }
     }
 
@@ -757,6 +764,7 @@ impl Agent {
             snapshot_manager: None,
             steer_buffer: None,
             steer_drained_callback: None,
+            streaming_disabled_providers: std::sync::Mutex::new(HashSet::new()),
         }
     }
 

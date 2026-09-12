@@ -882,9 +882,9 @@ async fn command_args_interpolate_output_key() {
 /// mount, and running them on the host instead (the prior behaviour) would
 /// bypass Docker's mount/write/network confinement — the very escape #1607
 /// closes. So the validator must fail closed with a typed error, NOT run on
-/// the host (which would Pass). Host-independent: a Docker sandbox is
-/// constructed regardless of whether the docker binary is present. Unix-only
-/// for parity with the sibling command-validator tests.
+/// the host (which would Pass). On hosts without Docker, the explicit
+/// configuration itself must produce a structured fail-closed refusal.
+/// Unix-only for parity with the sibling command-validator tests.
 #[tokio::test]
 #[cfg(unix)]
 async fn docker_sandbox_fails_command_validator_closed() {
@@ -898,11 +898,13 @@ async fn docker_sandbox_fails_command_validator_closed() {
             ..crate::sandbox::SandboxConfig::default()
         },
     ));
-    assert!(docker.is_docker(), "guard: backend must be Docker");
-    assert!(
-        !docker.is_noop(),
-        "guard: Docker is a real (non-no-op) backend"
-    );
+    let docker_available = docker.is_docker();
+    if !docker_available {
+        let refusal = docker
+            .refusal()
+            .expect("missing Docker must produce a structured refusal");
+        assert_eq!(refusal.requested, "docker");
+    }
 
     let runner = ValidatorRunner::new(Arc::new(ToolRegistry::new()), dir.path().to_path_buf())
         .with_sandbox(docker);
@@ -924,11 +926,30 @@ async fn docker_sandbox_fails_command_validator_closed() {
     let outcomes = runner.run_all(&invocation, &[validator]).await;
     // Fails CLOSED: not run on the host (which would Pass and bypass Docker),
     // and not wrapped in `docker run` either.
-    assert_eq!(outcomes[0].status, ValidatorStatus::Error, "{outcomes:?}");
+    if docker_available {
+        assert_eq!(outcomes[0].status, ValidatorStatus::Error, "{outcomes:?}");
+    } else {
+        assert_eq!(outcomes[0].status, ValidatorStatus::Fail, "{outcomes:?}");
+        assert!(
+            outcomes[0]
+                .stderr
+                .as_deref()
+                .unwrap_or_default()
+                .contains("sandbox unavailable"),
+            "missing Docker must be surfaced as a structured fail-closed result: {}",
+            outcomes[0].stderr.as_deref().unwrap_or_default()
+        );
+    }
+    let reason_and_stderr = format!(
+        "{} {}",
+        outcomes[0].reason,
+        outcomes[0].stderr.as_deref().unwrap_or_default()
+    )
+    .to_ascii_lowercase();
     assert!(
-        outcomes[0].reason.contains("Docker") || outcomes[0].reason.contains("not supported"),
+        reason_and_stderr.contains("docker") || reason_and_stderr.contains("not supported"),
         "expected a fail-closed reason, got: {}",
-        outcomes[0].reason
+        reason_and_stderr
     );
 }
 

@@ -974,9 +974,8 @@ mod tests {
     /// &self.working_dir, create_sandbox(&self.sandbox))`. Lock in that the
     /// sandbox threaded via `with_sandbox` reaches that registry (i.e. it is
     /// NOT the pre-fix hardcoded `with_builtins` / `NoSandbox`). Docker mode is
-    /// chosen because `create_sandbox` returns a `DockerSandbox` unconditionally
-    /// (no docker binary required), so a hardcoded `NoSandbox` would report
-    /// `is_docker() == false` and fail here — host-independent.
+    /// chosen because it gives us a distinct backend when Docker is available,
+    /// and a distinct fail-closed refusal when this host lacks Docker.
     #[tokio::test]
     async fn delegate_threads_configured_sandbox_into_validator_registry() {
         let tool = embedder_probe_tool().await.with_sandbox(SandboxConfig {
@@ -989,15 +988,22 @@ mod tests {
             create_sandbox(tool.sandbox_for_test()),
         );
         let sandbox = registry.sandbox();
-        assert!(
-            sandbox.is_docker(),
-            "delegate child validator registry must inherit the DelegateTool \
-             sandbox (Docker here), not the pre-#1607 hardcoded NoSandbox"
-        );
-        assert!(
-            !sandbox.is_noop(),
-            "a real backend threaded via with_sandbox must not be a no-op"
-        );
+        if let Some(refusal) = sandbox.refusal() {
+            assert_eq!(
+                refusal.requested, "docker",
+                "configured Docker must fail closed when the backend is unavailable"
+            );
+        } else {
+            assert!(
+                sandbox.is_docker(),
+                "delegate child validator registry must inherit the DelegateTool \
+                 sandbox, not the pre-#1607 hardcoded NoSandbox"
+            );
+            assert!(
+                !sandbox.is_noop(),
+                "a real backend threaded via with_sandbox must not be a no-op"
+            );
+        }
 
         // The re-registered deeper-level child must inherit the same sandbox.
         let child = tool.child_tool().expect("depth budget allows a child");

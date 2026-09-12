@@ -192,6 +192,18 @@ pub fn default_max_tokens() -> u32 {
     16_384
 }
 
+/// Provider-aware default output budget. DeepSeek V4's gateway historically
+/// defaulted to 4096 completion tokens, which is too small for reasoning plus
+/// a tool call; keep a bounded 32K default for that family while preserving
+/// the compatibility default for other routes.
+pub fn provider_default_max_tokens(model_id: &str) -> u32 {
+    if model_id.to_ascii_lowercase().contains("deepseek-v4") {
+        32_768
+    } else {
+        default_max_tokens()
+    }
+}
+
 /// Estimate token count from text using character heuristic.
 ///
 /// Uses ~4 chars/token for ASCII (English/code) and ~1.5 chars/token for
@@ -645,6 +657,13 @@ mod tests {
     #[test]
     fn test_max_output_default() {
         assert_eq!(max_output_tokens("unknown-model"), 16_384);
+    }
+
+    #[test]
+    fn provider_default_max_tokens_gives_deepseek_v4_reasoning_room() {
+        assert_eq!(provider_default_max_tokens("deepseek-v4-flash"), 32_768);
+        assert_eq!(provider_default_max_tokens("deepseek-v4-pro"), 32_768);
+        assert_eq!(provider_default_max_tokens("gpt-5"), default_max_tokens());
     }
 
     #[test]

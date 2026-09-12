@@ -315,8 +315,8 @@ fn make_test_config() -> ExecutorConfig {
 /// create_sandbox(&self.config.sandbox))`. Lock in that the sandbox
 /// threaded onto `ExecutorConfig` reaches that registry (i.e. NOT the
 /// pre-fix hardcoded `with_builtins` / `NoSandbox`). Docker mode is chosen
-/// because `create_sandbox` returns a `DockerSandbox` unconditionally
-/// (no docker binary required), so the assertion is host-independent.
+/// because it gives us a distinct backend when Docker is available, and a
+/// distinct fail-closed refusal when this host lacks Docker.
 #[test]
 fn pipeline_threads_configured_sandbox_into_validator_registry() {
     let mut config = make_test_config();
@@ -330,15 +330,22 @@ fn pipeline_threads_configured_sandbox_into_validator_registry() {
         octos_agent::create_sandbox(&config.sandbox),
     );
     let sandbox = registry.sandbox();
-    assert!(
-        sandbox.is_docker(),
-        "pipeline validator registry must inherit the ExecutorConfig \
-             sandbox (Docker here), not the pre-#1607 hardcoded NoSandbox"
-    );
-    assert!(
-        !sandbox.is_noop(),
-        "a real backend threaded onto ExecutorConfig must not be a no-op"
-    );
+    if let Some(refusal) = sandbox.refusal() {
+        assert_eq!(
+            refusal.requested, "docker",
+            "configured Docker must fail closed when the backend is unavailable"
+        );
+    } else {
+        assert!(
+            sandbox.is_docker(),
+            "pipeline validator registry must inherit the ExecutorConfig \
+             sandbox, not the pre-#1607 hardcoded NoSandbox"
+        );
+        assert!(
+            !sandbox.is_noop(),
+            "a real backend threaded onto ExecutorConfig must not be a no-op"
+        );
+    }
 }
 
 /// #1607: an explicit `SandboxMode::None` on `ExecutorConfig` resolves to a

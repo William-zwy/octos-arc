@@ -432,19 +432,27 @@ async fn spawn_threads_configured_sandbox_into_validator_registry() {
     // Reconstruct exactly what the two `execute_with_context` validator
     // blocks build (`with_builtins_and_sandbox(&self.working_dir,
     // create_sandbox(&self.sandbox))`) and assert the backend is the one
-    // we configured, not a hardcoded no-op.
+    // we configured, not a hardcoded no-op. On a host without Docker the
+    // configured backend is represented by a structured fail-closed refusal.
     let registry =
         ToolRegistry::with_builtins_and_sandbox(&tool.working_dir, create_sandbox(&tool.sandbox));
     let sandbox = registry.sandbox();
-    assert!(
-        sandbox.is_docker(),
-        "spawn validator registry must inherit the SpawnTool sandbox \
-             (Docker here), not the pre-#1607 hardcoded NoSandbox"
-    );
-    assert!(
-        !sandbox.is_noop(),
-        "a real backend threaded via with_sandbox must not be a no-op"
-    );
+    if let Some(refusal) = sandbox.refusal() {
+        assert_eq!(
+            refusal.requested, "docker",
+            "configured Docker must fail closed when the backend is unavailable"
+        );
+    } else {
+        assert!(
+            sandbox.is_docker(),
+            "spawn validator registry must inherit the SpawnTool sandbox, \
+             not the pre-#1607 hardcoded NoSandbox"
+        );
+        assert!(
+            !sandbox.is_noop(),
+            "a real backend threaded via with_sandbox must not be a no-op"
+        );
+    }
 }
 
 /// #1607 (codex-review follow-up): the default (unconfigured) SpawnTool

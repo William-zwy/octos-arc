@@ -194,6 +194,9 @@ impl Agent {
         // request would just re-truncate. Only populated on a truncation retry;
         // the happy path never clones the config.
         let mut bumped_config: Option<ChatConfig> = None;
+        let mut reasoning_recovery_attempted = false;
+        let streaming_provider_key =
+            super::detection::streaming_provider_key(self.llm.provider_name(), self.llm.model_id());
 
         // All unsuccessful exits settle the rejected responses exactly once.
         // Keep success settlement with the caller: successful responses below
@@ -208,11 +211,20 @@ impl Agent {
             let input_estimate = (input_bytes / 3) as u32;
 
             let attempt_config: &ChatConfig = bumped_config.as_ref().unwrap_or(&provider_config);
+            let streaming_disabled = self
+                .streaming_disabled_providers
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner())
+                .contains(&streaming_provider_key);
             let build_and_consume = with_prompt_cache_observation_context(
                 attempt_config.prompt_cache_context.as_ref(),
                 iteration,
                 attempt,
                 async {
+                    if streaming_disabled {
+                        let response = self.llm.chat(messages, tools_spec, attempt_config).await?;
+                        return Ok((response, false));
+                    }
                     let stream = self
                         .llm
                         .chat_stream(messages, tools_spec, attempt_config)
@@ -332,6 +344,33 @@ impl Agent {
                     retry_usage.reasoning_tokens += response.usage.reasoning_tokens;
                     retry_usage.cache_read_tokens += response.usage.cache_read_tokens;
                     retry_usage.cache_write_tokens += response.usage.cache_write_tokens;
+
+                    // DeepSeek V4 can spend the whole completion allowance on
+                    // hidden reasoning and return finish_reason=length with
+                    // no usable content or tool call. Give it exactly one
+                    // provider-aware recovery request; repeated empty rounds
+                    // are an explicit error, never a successful no-op turn.
+                    if super::detection::is_empty_max_tokens_response(&response) {
+                        if reasoning_recovery_attempted {
+                            return Err(eyre::eyre!(
+                                "reasoning model exhausted its output budget twice without content or tool calls; reduce reasoning_effort or increase max_tokens"
+                            ));
+                        }
+                        if let Some(retry_config) =
+                            super::detection::empty_max_tokens_recovery_config(
+                                &provider_config,
+                                self.llm.max_output_tokens(),
+                            )
+                        {
+                            reasoning_recovery_attempted = true;
+                            bumped_config = Some(retry_config);
+                            warn!(
+                                iteration,
+                                "empty finish_reason=length response; retrying with provider-aware reasoning/output recovery"
+                            );
+                            continue;
+                        }
+                    }
 
                     if attempt == retry_max {
                         // All streaming retries exhausted.
@@ -481,6 +520,18 @@ impl Agent {
                 }
                 Err(e) => {
                     if attempt < retry_max && Self::is_retryable_stream_error(&e) {
+                        if Self::is_streaming_unsupported_error(&e) {
+                            let mut disabled = self
+                                .streaming_disabled_providers
+                                .lock()
+                                .unwrap_or_else(|poisoned| poisoned.into_inner());
+                            if disabled.insert(streaming_provider_key.clone()) {
+                                info!(
+                                    provider = %streaming_provider_key,
+                                    "provider rejected SSE; retrying with non-streaming completions for this session"
+                                );
+                            }
+                        }
                         let delay = Duration::from_secs(1 << attempt);
                         // #1712: a truncated tool call means the model needed
                         // more output room than the per-turn cap allowed. Retry
@@ -536,7 +587,7 @@ impl Agent {
                         });
                         self.llm.report_late_failure();
 
-                        if fail_fast {
+                        if !Self::should_fallback_after_stream_error(fail_fast, &e) {
                             // FailFast: skip the non-streaming fallback, return error directly.
                             return Err(e);
                         }
