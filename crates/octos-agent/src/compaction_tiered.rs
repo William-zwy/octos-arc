@@ -280,7 +280,11 @@ impl MicroCompactionPolicy {
             };
             let Some(reason) = reason else { continue };
 
-            let replacement = if reason == "tier1_oversized" && !stale && !superseded {
+            let replacement = if reason == "tier1_oversized"
+                && !stale
+                && !superseded
+                && working_set.pinned_ids.is_empty()
+            {
                 truncate_tool_output_head_tail(&msg.content, size_threshold)
             } else {
                 let placeholder = ToolResultPlaceholder {
