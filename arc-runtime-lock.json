@@ -17,7 +17,7 @@
   },
   "runtime_release": null,
   "build": {
-    "source_commit": "10c13371cfa7a456e0d0d1b4b8044602246a614a",
+    "source_commit": "20dc6ed32af85d413ccf37e4650fc780a15defc9",
     "target": "aarch64-apple-darwin",
     "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18) (Homebrew)",
     "command": "cargo build --locked -p octos-cli --no-default-features --features api",
