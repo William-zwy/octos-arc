@@ -98,8 +98,8 @@ DeepSeek V4 默认输出上限提高到 provider 级安全值；当 `finish_reas
 cargo build --locked -p octos-cli --no-default-features --features api
 ```
 
-产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check` 和完整工作区 `cargo clippy --locked --all-targets -- -D warnings` 通过；`octos-arc` 测试为 22 passed / 1 ignored，`octos-llm` 为 687 passed / 3 ignored。完整 workspace `cargo test --locked` 已在清理构建产物后完整执行，结果为 2893 passed / 3 failed / 3 ignored；3 个失败均为本机没有 Docker 后端导致的既有环境测试。
+产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check` 和完整工作区 `cargo clippy --locked --all-targets -- -D warnings` 通过；`octos-arc` 测试为 22 passed / 1 ignored，`octos-llm` 为 687 passed / 3 ignored。完整 workspace `cargo test --locked` 已在清理构建产物后完整执行，结果为 2895 passed / 3 failed / 3 ignored；3 个失败均为本机没有 Docker 后端导致的环境相关测试。
 
-最终产物：`octos 2.0.3-rc.11 (5be78a91 2026-09-12)`；SHA-256 为 `c7110ef8591aff7d420598a61f21cd7078acbb0219a4b6acb61405b82a977b7c`，对应 `aarch64-apple-darwin` 和 Homebrew `rustc 1.98.0`。
+最终产物：`octos 2.0.3-rc.11 (0333abbc 2026-09-12)`；SHA-256 为 `fe8db22778c140d948f8315172ecb6adf2a8b6e527f0ab70e1e9ee3cc839e944`，对应 `aarch64-apple-darwin` 和 Homebrew `rustc 1.98.0`。
 
 `runtime_release` 仍为 `null`，因为没有 GitHub Release；锁文件的 `build` 只记录真实产物元数据。
