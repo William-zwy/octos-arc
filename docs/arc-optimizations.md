@@ -81,7 +81,7 @@ DeepSeek V4 默认输出上限提高到 provider 级安全值；当 `finish_reas
 cargo build --locked -p octos-cli --no-default-features --features api
 ```
 
-产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check`、`cargo clippy`（涉及 crate 的 all-targets/lib 目标）通过；完整 workspace `cargo test --locked` 在链接阶段因 26 GB 的测试临时产物耗尽磁盘而中止，随后分 crate 的 `octos-agent --lib` 测试完成但有 4 个既有 Docker 后端测试失败。
+产物为 macOS arm64 Mach-O。`cargo fmt --all -- --check` 和完整工作区 `cargo clippy --locked --all-targets -- -D warnings` 通过；完整 workspace `cargo test --locked` 在链接阶段因 26 GB 的测试临时产物耗尽磁盘而中止，随后分 crate 的 `octos-agent --lib` 测试完成但有 4 个既有 Docker 后端测试失败。
 
 最终产物：`octos 2.0.3-rc.11 (fbbf5772 2026-09-11)`；SHA-256 为 `2c5e3dfd9fa7f67139bfec80d17c9e3bf7561bbb7c6001f618044faf66fe00db`，对应 `aarch64-apple-darwin` 和 Homebrew `rustc 1.98.0`。
 
