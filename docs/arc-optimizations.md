@@ -8,9 +8,14 @@
 |---|---:|---:|---|
 | stdio/solo `Reply OK` 输入 Token | 17,205 | 5,715 | `turn/completed`，`/private/tmp/arc-stdio-probe-events.jsonl` |
 | stdio/solo 模型可见工具数 | 62 | 12 | serve 日志 `tool_count` |
-| Counter 官方/arc-opt 输入 Token | 64,658 | 36,384 | 两个 `.arc/octos-events.jsonl` |
-| Counter 官方/arc-opt 输出 Token | 20,337 | 18,174 | 两个 `.arc/octos-events.jsonl` |
+| Counter 轮数 | 3 | 3 | 两个 `.arc/octos-events.jsonl` |
+| Counter 输入 Token | 64,658 | 36,384 | 两个 `.arc/octos-events.jsonl` |
+| Counter 输出 Token | 20,337 | 18,174 | 两个 `.arc/octos-events.jsonl` |
+| Counter 费用 | 0.01474648 | 0.11239816 | 两个 `.arc/octos-events.jsonl` 的 `token_cost_update` |
+| Counter 耗时 | 667 秒 | 290 秒 | 两个 `.arc/runner-events.jsonl` 的 running/completed 时间 |
 | Counter Playwright | 1/1 | 1/1 | 修正 `baseURL` 后的公开测试 |
+| Ticket Booking 轮数 / Token / 费用 | 0 / 0 / 无记录 | 0 / 0 / 无记录 | 两次运行均在首轮长时间停留后人工中断 |
+| Ticket Booking 耗时 / Playwright | >10 分钟 / 未执行 | 约 3 分钟 / 未执行 | 两次均无 `turn/completed`，不能算评测通过 |
 
 ## P0-0：stdio/solo 提示与工具面瘦身
 
@@ -35,6 +40,8 @@
 默认每条工具结果最多 8 KiB，超限结果保留头尾并加入截断标记；过期、重复或不在工作集的结果仍折叠为结构化一行摘要，当前工作集文件读取保持可重读性。新增头尾保留、工作集保护和历史折叠测试。
 
 Counter 事件流的输入 Token 从 64,658 降到 36,384；这是同一平台一次运行的真实结果，不把它解释成仅由单个改动独立贡献的因果实验。
+
+Counter 的 arc-opt 费用高于官方这次记录（0.11239816 对 0.01474648）；费用字段按事件流原样保留，不能据此推断成本优化。官方 `grade-local.py` 原始脚本的 Playwright 配置缺少 `baseURL`，本地对照时仅临时补入 `baseURL: process.env.E2E_BASE_URL` 后执行公开测试，随后恢复了脚本，故这里报告的是修正配置后的 1/1，而不是把原始脚本失败冒充产品评测结果。
 
 ## P0-3：推理模型空回合恢复
 
