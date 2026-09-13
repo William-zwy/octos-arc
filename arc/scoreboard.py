@@ -15,7 +15,7 @@ Without a session the leaderboards still print; the "our runs" table says so.
 
 Pre-generated entries: the boards contain uploads of finished apps that
 never ran an agent (cost ~0, runtime 1-2 s). They are flagged when
-total_token_cost < PREGEN_COST_CNY or avg_runtime_seconds < PREGEN_SECONDS,
+total_token_cost < PREGEN_COST_CNY and avg_runtime_seconds < PREGEN_SECONDS,
 and a second rank ("real-agent rank") is computed excluding them.
 
 usage:
@@ -126,7 +126,9 @@ def fetch_runs(c: Client, limit: int = 200) -> list[dict]:
 def is_pregen(entry: dict) -> bool:
     cost = entry.get("total_token_cost") or 0.0
     secs = entry.get("avg_runtime_seconds") or 0
-    return cost < PREGEN_COST_CNY or secs < PREGEN_SECONDS
+    # Both conditions: real agents now finish Smoke in ~8 s at ¥0.02, so runtime
+    # alone no longer separates them from uploaded apps (¥0, 1-2 s).
+    return cost < PREGEN_COST_CNY and secs < PREGEN_SECONDS
 
 
 # ------------------------------------------------------------------ format
@@ -219,7 +221,7 @@ def board_table(track: str, board: list[dict], me: str | None, top: int) -> str:
 def render(boards, runs, me, top) -> str:
     now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     parts = [f"# ARC-Bench 成绩看板\n\n生成时间：{now}；账号：{me or '未登录'}；"
-             f"预生成判定：费用 < ¥{PREGEN_COST_CNY} 或耗时 < {PREGEN_SECONDS}s。\n",
+             f"预生成判定：费用 < ¥{PREGEN_COST_CNY} 且耗时 < {PREGEN_SECONDS}s。\n",
              "## 各赛道我们的位置\n", summary_table(boards, runs, me), ""]
     if runs:
         parts += ["## 我们的全部运行\n", runs_table(runs), ""]
