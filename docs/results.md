@@ -176,6 +176,7 @@
 | 09-12 | ticket-booking | ticket-booking | ab4c98a6cb17 | 4ebb50bb26f5（main@9b0d3009：tests 写保护 + 并行安全持久化 + 哈希降本） | 9/10 | 1/2 | ¥1.99 | 1051 s | 自跑 10/10；唯一失败 REQ-1.2 登录用例注册时 `getByLabel(/证件号码|document number|passport number/)` 找不到可编辑输入框，10 s 超时（代码错：缺字段/label）。功能率首次非零 |
 | 09-12 | ticket-booking | ticket-booking | cbbec51884de | 07b56825e93b（main@0522db48：表单控件服务端直出契约） | 8/10 | 0/2 | ¥2.49 | 1352 s | 自跑 10/10；评测 2 条超时：REQ-1.1 注册后 locator.evaluate 超时（spec:71）、REQ-1.2 `locator.fill: Target crashed`（Chromium 渲染进程崩溃）。归因：环境（平台评测端内存/并行），与上一轮 9/10 同代码路径 |
 | 09-13 | arc-bench-web | keep | 29c840566f36 | 14a0dd892d0a（main@15a6bedf：A1–A7 + 1500 s/节点默认，官方 v2.0.2 runtime） | 0/32（全部 skipped） | 0/32 | **¥57.28** | 15735 s | 生成阶段 32 节点逐个验收全部 1/1（6 个节点用了一轮修复）；容器内全套并行验收 rc=-9、平台评测 4 worker 启动 1 秒被 Killed。reaper 读到 cgroup memory.max=512 MiB、memory.peak=512 MiB、oom 159 次 —— 平台给容器 512 MB 内存，4 个 Chromium 必然 OOM。单次费用超过 ¥50 阈值，已停止 Web 提交 |
+| 09-13 | ticket-booking | ticket-booking | 84444321d4f7 / 3e425ce2ebf6 | main@6bf6b942 round25 速度预算，串行（提交 349543f91559） | 9/10 / 9/10 | 1/2 | ¥0.56 / ¥0.75 | 360 / 577 s | 失败：条款复选框累计 10 s 超时；`page.goto ERR_ABORTED`（平台）。reasoning 涨到 45–50k，费用回升；3e425 首轮 server 启动 rc=1 走 24 请求修复。按「最近一次运行计分」该提交记 ¥0.75，榜取 round24 提交 |
 | 09-13 | ticket-booking | ticket-booking | e79b1160d081 / d24f1c3d1c84 | main@fb957039 round24 codegen + 3301 契约，串行（提交 2335d8a94695） | 9/10 / 9/10 | 1/2 | ¥0.33 / **¥0.25** | 260 / 198 s | 3301 契约生效；失败各一条：REQ-1.2 等「国家/地区代码」label 超时（代码错，已回流）；REQ-1.1 `Target crashed`（平台） |
 | 09-13 | smoke-evolution | counter | d049ec0e4462 / 7bf27008cc42 | main@6d450734 round23 evolution 探测+codegen，串行（提交 436e949eb915） | 2/2 | 2/2 | ¥0.281 / **¥0.0044** | 29 / 29 s | 第一次走多请求（63.9k token），第二次 1 请求 1,058 token |
 | 09-13 | smoke-evolution | dice | f700e26638db / 1b9d0eeeb392 | 同上 | 2/2 | 2/2 | ¥0.060 / **¥0.0042** | 30 / 32 s | 提交取最好合计 ¥0.0086（榜首 ¥0.0188） |
@@ -292,6 +293,8 @@
 | ticket-booking | 7/10 ¥4.73 / 674 s | 9/10 ¥1.99 / 1051 s | 9/10 ¥2.50 / 393 s | 9/10 ¥1.77 / 234 s | 0/0 ¥1.02（回归） | **9/10 ¥0.67 / 334 s** |
 
 ### 榜单规则（2026-09-13 确认）
+- 平台页面原文：「Current task scores use the most recent completed run」——每题按**最近一次完成的运行**计分（不是最好一次）；跨提交取最高。所以每题只在有把握时跑最后一次。
+- 运行产物可取：`/api/runs/<id>/workspace/files`（文件树）、`/api/runs/<id>/source?file_path=<path>&kind=file`（文件内容）。
 - 榜单条目按**提交**聚合：同一提交内每道题取最好一次运行，费用相加。所以拿榜首要在一次提交里把该赛道全部题串行跑干净，而不是分散在多个提交。
 
 ### 计量发现（2026-09-13）
