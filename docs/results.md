@@ -1,14 +1,14 @@
 # ARC-Bench 成绩看板
 
-生成时间：2026-09-13 11:15 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
+生成时间：2026-09-13 11:37 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
 
 ## 各赛道我们的位置
 
 | 赛道 | 名次 | 通过率 | 功能率 | 费用 | 耗时 | 运行编号（有效） |
 |---|---|---|---|---|---|---|
-| smoke | 9/18（真实 agent 内 6/12，预生成 6） | 100% | 100% | ¥0.31 | 34s | 402a9be38707, a04246e9bfc0, 5424432e8276, 53a91acea453, cc066e8e11f6, c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
+| smoke | 10/19（真实 agent 内 7/13，预生成 6） | 100% | 100% | ¥0.31 | 34s | 402a9be38707, a04246e9bfc0, 5424432e8276, 53a91acea453, cc066e8e11f6, c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
 | smoke-evolution | 7/11（真实 agent 内 3/6，预生成 5） | 100% | 100% | ¥0.47 | 32s | fe9600d1c5a1, 65d055f9bd6f, 7cedb3299bd9, 0f03a259f963, efa79e3db00c, 9ba8f915d00b, 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
-| ticket-booking | 5/25（真实 agent 内 3/16，预生成 9） | 90% | 50% | ¥1.77 | 3m54s | 7cc5accdf91e, c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
+| ticket-booking | 5/26（真实 agent 内 3/17，预生成 9） | 90% | 50% | ¥1.77 | 3m54s | 7cc5accdf91e, c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
 | arc-bench-web | 未上榜（榜共 1 条，其中预生成 1） | — | — | — | — | — |
 
 ## 我们的全部运行
@@ -31,7 +31,7 @@
 | 9ba8f915d00b | smoke-evolution | smoke-evolution--counter | PASSED | 2/2 | 2/2 | ¥0.54 | 1.57M | 53s | 2026-09-13 08:53 | Octos main@ade9a56c cost pass (reasoning_effort=low proxy, official v2.0.2 runtime) |
 | c726465310c2 | smoke | smoke--dice | PASSED | 1/1 | 1/1 | ¥0.61 | 1.62M | 49s | 2026-09-13 08:53 | Octos main@ade9a56c cost pass (reasoning_effort=low proxy, official v2.0.2 runtime) |
 | fe02bdc94d77 | smoke | smoke--counter | PASSED | 1/1 | 1/1 | ¥0.45 | 1.21M | 38s | 2026-09-13 08:52 | Octos main@ade9a56c cost pass (reasoning_effort=low proxy, official v2.0.2 runtime) |
-| 29c840566f36 | arc-bench-web | arc-bench-web--keep | RUNNING | — | 0/0 | — | — | — | 2026-09-13 07:05 | Octos main@15a6bedf A1-A7 1500s/node (local keep 32/32), official v2.0.2 runtime |
+| 29c840566f36 | arc-bench-web | arc-bench-web--keep | FAILED | 0/32 | 0/32 | ¥57.28 | 90.91M | 262m15s | 2026-09-13 07:05 | Octos main@15a6bedf A1-A7 1500s/node (local keep 32/32), official v2.0.2 runtime |
 | cbbec51884de | ticket-booking | ticket-booking--ticket-booking | FAILED | 8/10 | 0/2 | ¥2.49 | 6.87M | 22m32s | 2026-09-12 23:48 | Octos main@0522db48 A1-A7 + server-rendered form contract (official v2.0.2 runtime) |
 | ab4c98a6cb17 | ticket-booking | ticket-booking--ticket-booking | FAILED | 9/10 | 1/2 | ¥1.99 | 5.61M | 17m31s | 2026-09-12 23:11 | Octos main@9b0d3009 A1-A7 + tests write-protect + parallel-safe persistence (official v2.0.2 runtime) |
 | 6c9ea2294ff6 | smoke-evolution | smoke-evolution--dice | PASSED | 2/2 | 2/2 | ¥1.48 | 3.39M | 4m43s | 2026-09-12 22:44 | Octos main@f3f113e6 A1-A7+playwright fix (official v2.0.2 runtime) |
@@ -60,7 +60,7 @@
 | f031f20d1558 | smoke | smoke--counter | FAILED | — | 0/0 | — | — | — | 2026-09-11 07:02 | Octos 官方 v2.0.2 · 实操演示 |
 | 50d049b049bd | smoke | smoke--counter | PASSED | 1/1 | 1/1 | ¥0.63 | 3.80M | 16m41s | 2026-09-11 02:07 | Octos 适配包 |
 
-## 榜单 · smoke（18 条，预生成 6 条，显示前 5 名与我们）
+## 榜单 · smoke（19 条，预生成 6 条，显示前 5 名与我们）
 
 | # | 真实# | 队伍 | 通过率 | 功能率 | 费用 | 耗时 | 级别 |
 |---|---|---|---|---|---|---|---|
@@ -69,7 +69,7 @@
 | 3 | — | Orchestra ⚠预生成 | 100% | 100% | ¥0.0037 | 4s | senior |
 | 4 | 1 | niceeeeee | 100% | 100% | ¥0.02 | 10s | senior |
 | 5 | 2 | JustSoSO | 100% | 100% | ¥0.07 | 21s | senior |
-| 9 | 6 | **李尧** | 100% | 100% | ¥0.31 | 34s | senior |
+| 10 | 7 | **李尧** | 100% | 100% | ¥0.31 | 34s | senior |
 
 ## 榜单 · smoke-evolution（11 条，预生成 5 条，显示前 5 名与我们）
 
@@ -82,7 +82,7 @@
 | 5 | 1 | 包子头队 | 100% | 100% | ¥0.10 | 20s | senior |
 | 7 | 3 | **李尧** | 100% | 100% | ¥0.47 | 32s | senior |
 
-## 榜单 · ticket-booking（25 条，预生成 9 条，显示前 5 名与我们）
+## 榜单 · ticket-booking（26 条，预生成 9 条，显示前 5 名与我们）
 
 | # | 真实# | 队伍 | 通过率 | 功能率 | 费用 | 耗时 | 级别 |
 |---|---|---|---|---|---|---|---|
@@ -119,7 +119,7 @@
 | 09-12 | ticket-booking | ticket-booking | 0a3cd1d66042 | main@f3f113e6（A1–A7 + Playwright 修复，改后） | 7/10 | 0/2 | ¥4.45 | 981 s | 生成阶段自跑 10/10；平台评测 7/10：REQ-1.1 注册 10 s 超时、REQ-1.2 登录后用户名不可见（2.3 s）、REQ-1.2 大小写登录 15 s 超时。自跑单 worker 全过而评测 2 worker 并行失败 → 疑为 JSON 文件持久化在并发注册/登录下丢写。功能率 0/2：平台按测试标题前缀（REQ-1.1/REQ-1.2）匹配需求 id（REQ-1/REQ-2）失败，报告里每条 req_id=None，与适配包上报无关 |
 | 09-12 | ticket-booking | ticket-booking | ab4c98a6cb17 | 4ebb50bb26f5（main@9b0d3009：tests 写保护 + 并行安全持久化 + 哈希降本） | 9/10 | 1/2 | ¥1.99 | 1051 s | 自跑 10/10；唯一失败 REQ-1.2 登录用例注册时 `getByLabel(/证件号码|document number|passport number/)` 找不到可编辑输入框，10 s 超时（代码错：缺字段/label）。功能率首次非零 |
 | 09-12 | ticket-booking | ticket-booking | cbbec51884de | 07b56825e93b（main@0522db48：表单控件服务端直出契约） | 8/10 | 0/2 | ¥2.49 | 1352 s | 自跑 10/10；评测 2 条超时：REQ-1.1 注册后 locator.evaluate 超时（spec:71）、REQ-1.2 `locator.fill: Target crashed`（Chromium 渲染进程崩溃）。归因：环境（平台评测端内存/并行），与上一轮 9/10 同代码路径 |
-| 09-13 | arc-bench-web | keep | 29c840566f36 | 14a0dd892d0a（main@15a6bedf：A1–A7 + 1500 s/节点默认，官方 v2.0.2 runtime） | 未评测（运行中） | | | | 本机同适配包 grade-local 32/32 后上云 |
+| 09-13 | arc-bench-web | keep | 29c840566f36 | 14a0dd892d0a（main@15a6bedf：A1–A7 + 1500 s/节点默认，官方 v2.0.2 runtime） | 0/32（全部 skipped） | 0/32 | **¥57.28** | 15735 s | 生成阶段 32 节点逐个验收全部 1/1（6 个节点用了一轮修复）；容器内全套并行验收 rc=-9、平台评测 4 worker 启动 1 秒被 Killed。reaper 读到 cgroup memory.max=512 MiB、memory.peak=512 MiB、oom 159 次 —— 平台给容器 512 MB 内存，4 个 Chromium 必然 OOM。单次费用超过 ¥50 阈值，已停止 Web 提交 |
 | 09-13 | smoke | counter | a04246e9bfc0 | main@78ab6fe4 v4（裁剪 system prompt、小题关推理） | 1/1 | 1/1 | ¥0.22 | 25 s | 供应商 2 次 / 9,632 token / 请求 32.5 KB；平台 141,783 |
 | 09-13 | smoke | dice | 402a9be38707 | 同上 | 1/1 | 1/1 | ¥0.16 | 25 s | 供应商 2 / 9,315；平台 123,780 |
 | 09-13 | smoke-evolution | counter | 65d055f9bd6f | 同上 | 2/2 | 2/2 | ¥0.21 | 30 s | 供应商 5 / 17,306；平台 150,193 |
@@ -147,6 +147,10 @@
 | arc-bench-web--keep 试跑 2 | 2.0.3-rc.11 | 单轮 3600 s / 总 14400 s | **26/32（81%）** | 83 min | evidence/local-keep-2 |
 | arc-bench-web--keep 试跑 3（A 编排器，480 s/节点） | 2.0.3-rc.11 | 节点 ~480 s | 8/32（第 10 节点时中止；16/17 实现轮超时） | 79 min | evidence/local-keep-3-480s-per-node |
 | arc-bench-web--keep 试跑 4（A 编排器，1500 s/节点） | 2.0.3-rc.11 | 节点 1500 s，实现轮 ≤900 s | **32/32（100%）** | 5 h 01 min | evidence/local-keep-4-1500s-per-node |
+
+### ARC-Bench Web 结论（2026-09-13 更新）
+- **根因已定位**：29c840566f36 的 [reap] 诊断显示评测容器 cgroup `memory.max=536870912`（512 MiB）、`memory.peak` 已顶到上限、`memory.events` 记录 159 次 OOM；平台评测用 `--workers=4` 起 4 个 Chromium 必然被 SIGKILL，与 spec 文件数 ≥4 的题都 0 分、Ticket Booking（2 worker）偶发 `Target crashed` 一致。需平台把评测容器内存上限提高到 ≥2 GB 或 worker 数降到 1–2；适配层无法绕过。
+- 该运行生成阶段正常（32 节点逐个 1/1），费用 ¥57.28、9091 万平台 token、4.4 h；本机同适配包 32/32。
 
 ### ARC-Bench Web 结论（2026-09-12）
 - 三次云端运行（keep ×2、bookstack ×1，共 ¥38.09）生成阶段均正常结束并通过启动演练，评测阶段 Playwright 进程都在「Running N tests using 4 workers」后 1 秒被 SIGKILL，全部测试记为 skipped、0 分。
