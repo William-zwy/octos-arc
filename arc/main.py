@@ -712,7 +712,7 @@ Verify briefly before you finish — the harness runs the official acceptance te
 """
 
 VERIFY_MINIMAL = """\
-Do NOT start the server, curl, or write your own tests — the harness builds the frontend, starts the backend and runs the official Playwright spec right after your turn and hands you any failure. Finish in as few tool calls as possible: write each file with one write_file call, do not re-read files you just wrote, run `npm run build` in frontend/ once, then stop.
+Do NOT start the server, curl, run node, or write your own tests — the harness builds the frontend, starts the backend and runs the official Playwright spec right after your turn and hands you any failure. Tool budget for this turn: at most 8 write_file/edit_file calls (one backend file backend/server.js plus at most 4 frontend files; write each file once, complete), at most 2 read_file calls, and exactly one shell command: `cd frontend && npm run build`. Do not list directories or re-read files you just wrote; the file listing above is authoritative.
 """
 
 PORT_RULES = """\
@@ -1109,6 +1109,25 @@ class Flow:
         proxy = getattr(self, "llm_proxy", None)
         if proxy:
             proxy.stop()
+        self.log_usage_summary()
+
+    def log_usage_summary(self) -> None:
+        """Provider-reported usage totals (same numbers the platform bills on),
+        printed so the runner log carries them even when .arc/ is not exported."""
+        path = self.output_dir / ".arc" / "llm-usage.jsonl"
+        if not path.is_file():
+            return
+        tot = {"requests": 0, "prompt_tokens": 0, "completion_tokens": 0, "reasoning_tokens": 0,
+               "prompt_cache_hit_tokens": 0, "total_tokens": 0}
+        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+            try:
+                rec = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            tot["requests"] += 1
+            for k in list(tot)[1:]:
+                tot[k] += int(rec.get(k) or 0)
+        log(f"[usage] provider totals: {json.dumps(tot)}")
 
     def cleanup_playwright(self) -> None:
         private = getattr(self, "private_playwright", None)
@@ -1270,6 +1289,9 @@ class Flow:
             design_text = INLINE_DESIGN_NOTE.format(node_id=node_id)
         if self.evolution:
             design_text = EVOLUTION_NOTE.format(listing=source_listing(self.output_dir)) + design_text
+        elif self.has_app():
+            design_text = ("Current application files (read only backend/server.js and the page you extend):\n"
+                           + source_listing(self.output_dir) + "\n") + design_text
         if self.has_app():
             preamble = NODE_PREAMBLE_EXTEND.format(node_id=node_id)
         else:  # single-node tree without a skeleton turn: create the app in this turn
