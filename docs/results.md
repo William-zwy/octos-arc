@@ -1,20 +1,25 @@
 # ARC-Bench 成绩看板
 
-生成时间：2026-09-13 07:05 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
+生成时间：2026-09-13 09:02 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
 
 ## 各赛道我们的位置
 
 | 赛道 | 名次 | 通过率 | 功能率 | 费用 | 耗时 | 运行编号（有效） |
 |---|---|---|---|---|---|---|
-| smoke | 14/18（真实 agent 内 11/12，预生成 6） | 100% | 100% | ¥2.66 | 3m54s | bd8418c88535, 0491d2a6f510, 50d049b049bd |
-| smoke-evolution | 8/11（真实 agent 内 4/6，预生成 5） | 100% | 100% | ¥1.15 | 3m10s | 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
-| ticket-booking | 5/22（真实 agent 内 3/13，预生成 9） | 90% | 50% | ¥1.99 | 17m31s | cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
+| smoke | 13/18（真实 agent 内 10/12，预生成 6） | 100% | 100% | ¥1.06 | 44s | c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
+| smoke-evolution | 8/11（真实 agent 内 4/6，预生成 5） | 100% | 100% | ¥1.08 | 54s | efa79e3db00c, 9ba8f915d00b, 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
+| ticket-booking | 5/23（真实 agent 内 3/14，预生成 9） | 90% | 50% | ¥1.99 | 17m31s | c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
 | arc-bench-web | 未上榜（榜共 1 条，其中预生成 1） | — | — | — | — | — |
 
 ## 我们的全部运行
 
 | 运行编号 | 赛道 | 题目 | 状态 | 通过 | 功能 | 费用 | Token | 耗时 | 创建(UTC) | 提交名 |
 |---|---|---|---|---|---|---|---|---|---|---|
+| c14ea5c5aa56 | ticket-booking | ticket-booking--ticket-booking | FAILED | 9/10 | 1/2 | ¥2.50 | 5.02M | 6m33s | 2026-09-13 08:53 | Octos main@ade9a56c cost pass (reasoning_effort=low proxy, official v2.0.2 runtime) |
+| efa79e3db00c | smoke-evolution | smoke-evolution--dice | PASSED | 2/2 | 2/2 | ¥0.54 | 1.54M | 54s | 2026-09-13 08:53 | Octos main@ade9a56c cost pass (reasoning_effort=low proxy, official v2.0.2 runtime) |
+| 9ba8f915d00b | smoke-evolution | smoke-evolution--counter | PASSED | 2/2 | 2/2 | ¥0.54 | 1.57M | 53s | 2026-09-13 08:53 | Octos main@ade9a56c cost pass (reasoning_effort=low proxy, official v2.0.2 runtime) |
+| c726465310c2 | smoke | smoke--dice | PASSED | 1/1 | 1/1 | ¥0.61 | 1.62M | 49s | 2026-09-13 08:53 | Octos main@ade9a56c cost pass (reasoning_effort=low proxy, official v2.0.2 runtime) |
+| fe02bdc94d77 | smoke | smoke--counter | PASSED | 1/1 | 1/1 | ¥0.45 | 1.21M | 38s | 2026-09-13 08:52 | Octos main@ade9a56c cost pass (reasoning_effort=low proxy, official v2.0.2 runtime) |
 | 29c840566f36 | arc-bench-web | arc-bench-web--keep | RUNNING | — | 0/0 | — | — | — | 2026-09-13 07:05 | Octos main@15a6bedf A1-A7 1500s/node (local keep 32/32), official v2.0.2 runtime |
 | cbbec51884de | ticket-booking | ticket-booking--ticket-booking | FAILED | 8/10 | 0/2 | ¥2.49 | 6.87M | 22m32s | 2026-09-12 23:48 | Octos main@0522db48 A1-A7 + server-rendered form contract (official v2.0.2 runtime) |
 | ab4c98a6cb17 | ticket-booking | ticket-booking--ticket-booking | FAILED | 9/10 | 1/2 | ¥1.99 | 5.61M | 17m31s | 2026-09-12 23:11 | Octos main@9b0d3009 A1-A7 + tests write-protect + parallel-safe persistence (official v2.0.2 runtime) |
@@ -53,7 +58,7 @@
 | 3 | — | Orchestra ⚠预生成 | 100% | 100% | ¥0.0037 | 4s | senior |
 | 4 | 1 | niceeeeee | 100% | 100% | ¥0.02 | 10s | senior |
 | 5 | 2 | JustSoSO | 100% | 100% | ¥0.07 | 21s | senior |
-| 14 | 11 | **李尧** | 100% | 100% | ¥2.66 | 3m54s | senior |
+| 13 | 10 | **李尧** | 100% | 100% | ¥1.06 | 44s | senior |
 
 ## 榜单 · smoke-evolution（11 条，预生成 5 条，显示前 5 名与我们）
 
@@ -64,9 +69,9 @@
 | 3 | — | Orchestra ⚠预生成 | 100% | 100% | ¥0.0046 | 4s | senior |
 | 4 | — | niceeeeee ⚠预生成 | 100% | 100% | ¥0.02 | 8s | senior |
 | 5 | 1 | 包子头队 | 100% | 100% | ¥0.10 | 20s | senior |
-| 8 | 4 | **李尧** | 100% | 100% | ¥1.15 | 3m10s | senior |
+| 8 | 4 | **李尧** | 100% | 100% | ¥1.08 | 54s | senior |
 
-## 榜单 · ticket-booking（22 条，预生成 9 条，显示前 5 名与我们）
+## 榜单 · ticket-booking（23 条，预生成 9 条，显示前 5 名与我们）
 
 | # | 真实# | 队伍 | 通过率 | 功能率 | 费用 | 耗时 | 级别 |
 |---|---|---|---|---|---|---|---|
@@ -104,6 +109,11 @@
 | 09-12 | ticket-booking | ticket-booking | ab4c98a6cb17 | 4ebb50bb26f5（main@9b0d3009：tests 写保护 + 并行安全持久化 + 哈希降本） | 9/10 | 1/2 | ¥1.99 | 1051 s | 自跑 10/10；唯一失败 REQ-1.2 登录用例注册时 `getByLabel(/证件号码|document number|passport number/)` 找不到可编辑输入框，10 s 超时（代码错：缺字段/label）。功能率首次非零 |
 | 09-12 | ticket-booking | ticket-booking | cbbec51884de | 07b56825e93b（main@0522db48：表单控件服务端直出契约） | 8/10 | 0/2 | ¥2.49 | 1352 s | 自跑 10/10；评测 2 条超时：REQ-1.1 注册后 locator.evaluate 超时（spec:71）、REQ-1.2 `locator.fill: Target crashed`（Chromium 渲染进程崩溃）。归因：环境（平台评测端内存/并行），与上一轮 9/10 同代码路径 |
 | 09-13 | arc-bench-web | keep | 29c840566f36 | 14a0dd892d0a（main@15a6bedf：A1–A7 + 1500 s/节点默认，官方 v2.0.2 runtime） | 未评测（运行中） | | | | 本机同适配包 grade-local 32/32 后上云 |
+| 09-13 | smoke | counter | fe02bdc94d77 | main@ade9a56c 费用版（reasoning_effort=low 代理） | 1/1 | 1/1 | ¥0.45 | 38 s | 改前 0491d2a6f510：¥1.24、201 s |
+| 09-13 | smoke | dice | c726465310c2 | 同上 | 1/1 | 1/1 | ¥0.61 | 49 s | 改前 bd8418c88535：¥1.42、267 s |
+| 09-13 | smoke-evolution | counter | 9ba8f915d00b | 同上 | 2/2 | 2/2 | ¥0.54 | 53 s | |
+| 09-13 | smoke-evolution | dice | efa79e3db00c | 同上 | 2/2 | 2/2 | ¥0.54 | 54 s | |
+| 09-13 | ticket-booking | ticket-booking | c14ea5c5aa56 | 同上 | 9/10 | 1/2 | ¥2.50 | 393 s | 自跑 10/10；失败 REQ-1.2 登录用例 `locator.click: Target crashed`（平台渲染进程崩溃） |
 | 09-12 | smoke-evolution | counter | b76aadf42e9b | 814c2459dfb7（wf-adapter-2@5b93c412，Playwright 隔离修复） | 2/2 | 2/2 | ¥0.60 | 209 s | `found preinstalled Playwright at /opt/arcbench`；评测正常 |
 | 09-12 | arc-bench-web | keep（重跑） | aa5e8af70cbb | 0ce3a2667c94（wf-tracks 7a06359a：+残留进程清理与内存诊断） | 0/32（全部 skipped） | 0/32 | ¥6.05 | 2799 s | 生成阶段正常；清理时 `free` 显示 30 GB/可用 24 GB，只剩僵尸进程；评测阶段仍在 4 worker 启动 1 秒后 `Killed`。对照 Ticket Booking：2 个 spec 文件→2 worker→正常。结论：平台评测步骤对 ≥4 个 spec 文件的题用 4 worker 起 Chromium 时被 cgroup 内存限制 SIGKILL（`free` 看不到 cgroup 上限），非应用问题；榜上唯一另一条 web 记录也是 0 分 |
 | 09-12 | arc-bench-web | bookstack | e60fb3545eae | 同上 | 0/34（全部 skipped） | 0/34 | ¥14.10 | 2259 s | 生成阶段正常结束（34 节点、终检、演练通过），评测阶段 Playwright 进程启动 4 个 worker 后 1 秒被 `Killed`（容器 OOM），34 条测试全部 skipped；归因：环境。Token 6079 万，官方 runtime 单会话累积上下文所致 |
