@@ -1,20 +1,25 @@
 # ARC-Bench 成绩看板
 
-生成时间：2026-09-13 11:47 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
+生成时间：2026-09-13 11:58 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
 
 ## 各赛道我们的位置
 
 | 赛道 | 名次 | 通过率 | 功能率 | 费用 | 耗时 | 运行编号（有效） |
 |---|---|---|---|---|---|---|
-| smoke | 9/19（真实 agent 内 6/13，预生成 6） | 100% | 100% | ¥0.16 | 24s | 3ddbaac0d8e0, 2e5f7cec22a9, 402a9be38707, a04246e9bfc0, 5424432e8276, 53a91acea453, cc066e8e11f6, c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
-| smoke-evolution | 7/11（真实 agent 内 3/6，预生成 5） | 100% | 100% | ¥0.26 | 38s | d28dd2612f94, 17465b7eaa0e, fe9600d1c5a1, 65d055f9bd6f, 7cedb3299bd9, 0f03a259f963, efa79e3db00c, 9ba8f915d00b, 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
-| ticket-booking | 3/26（真实 agent 内 1/17，预生成 9） | 90% | 50% | ¥0.67 | 5m34s | 954a231a3d23, 7cc5accdf91e, c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
+| smoke | 9/19（真实 agent 内 6/13，预生成 6） | 100% | 100% | ¥0.16 | 24s | fab88d27c1d0, 3ddbaac0d8e0, 2e5f7cec22a9, 402a9be38707, a04246e9bfc0, 5424432e8276, 53a91acea453, cc066e8e11f6, c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
+| smoke-evolution | 7/11（真实 agent 内 3/6，预生成 5） | 100% | 100% | ¥0.26 | 38s | b4fed98daae8, 7b6d012e9a0a, d28dd2612f94, 17465b7eaa0e, fe9600d1c5a1, 65d055f9bd6f, 7cedb3299bd9, 0f03a259f963, efa79e3db00c, 9ba8f915d00b, 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
+| ticket-booking | 3/26（真实 agent 内 1/17，预生成 9） | 90% | 50% | ¥0.67 | 5m34s | 2e4802e9cb97, 954a231a3d23, 7cc5accdf91e, c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
 | arc-bench-web | 未上榜（榜共 1 条，其中预生成 1） | — | — | — | — | — |
 
 ## 我们的全部运行
 
 | 运行编号 | 赛道 | 题目 | 状态 | 通过 | 功能 | 费用 | Token | 耗时 | 创建(UTC) | 提交名 |
 |---|---|---|---|---|---|---|---|---|---|---|
+| 2e4802e9cb97 | ticket-booking | ticket-booking--ticket-booking | FAILED | 9/10 | 1/2 | ¥1.67 | 0.84M | 6m23s | 2026-09-13 11:49 | Octos main@2363aadd v6 (single-request file blocks for small tasks, official v2.0.2 runtime) |
+| b4fed98daae8 | smoke-evolution | smoke-evolution--dice | PASSED | 2/2 | 2/2 | ¥0.16 | 0.06M | 32s | 2026-09-13 11:49 | Octos main@2363aadd v6 (single-request file blocks for small tasks, official v2.0.2 runtime) |
+| 7b6d012e9a0a | smoke-evolution | smoke-evolution--counter | PASSED | 2/2 | 2/2 | ¥0.16 | 0.06M | 35s | 2026-09-13 11:49 | Octos main@2363aadd v6 (single-request file blocks for small tasks, official v2.0.2 runtime) |
+| fab88d27c1d0 | smoke | smoke--dice | PASSED | 1/1 | 1/1 | ¥0.06 | 0.01M | 19s | 2026-09-13 11:48 | Octos main@2363aadd v6 (single-request file blocks for small tasks, official v2.0.2 runtime) |
+| 91aaecaf31af | smoke | smoke--counter | FAILED | 0/1 | 0/1 | ¥0.66 | 0.16M | 107s | 2026-09-13 11:48 | Octos main@2363aadd v6 (single-request file blocks for small tasks, official v2.0.2 runtime) |
 | 954a231a3d23 | ticket-booking | ticket-booking--ticket-booking | FAILED | 9/10 | 1/2 | ¥0.67 | 0.47M | 5m34s | 2026-09-13 11:39 | Octos main@1121574e v5 (max_tokens>=32768, per-file rewrite, official v2.0.2 runtime) |
 | d28dd2612f94 | smoke-evolution | smoke-evolution--dice | PASSED | 2/2 | 2/2 | ¥0.12 | 0.06M | 33s | 2026-09-13 11:39 | Octos main@1121574e v5 (max_tokens>=32768, per-file rewrite, official v2.0.2 runtime) |
 | 17465b7eaa0e | smoke-evolution | smoke-evolution--counter | PASSED | 2/2 | 2/2 | ¥0.14 | 0.07M | 44s | 2026-09-13 11:39 | Octos main@1121574e v5 (max_tokens>=32768, per-file rewrite, official v2.0.2 runtime) |
@@ -125,6 +130,11 @@
 | 09-12 | ticket-booking | ticket-booking | ab4c98a6cb17 | 4ebb50bb26f5（main@9b0d3009：tests 写保护 + 并行安全持久化 + 哈希降本） | 9/10 | 1/2 | ¥1.99 | 1051 s | 自跑 10/10；唯一失败 REQ-1.2 登录用例注册时 `getByLabel(/证件号码|document number|passport number/)` 找不到可编辑输入框，10 s 超时（代码错：缺字段/label）。功能率首次非零 |
 | 09-12 | ticket-booking | ticket-booking | cbbec51884de | 07b56825e93b（main@0522db48：表单控件服务端直出契约） | 8/10 | 0/2 | ¥2.49 | 1352 s | 自跑 10/10；评测 2 条超时：REQ-1.1 注册后 locator.evaluate 超时（spec:71）、REQ-1.2 `locator.fill: Target crashed`（Chromium 渲染进程崩溃）。归因：环境（平台评测端内存/并行），与上一轮 9/10 同代码路径 |
 | 09-13 | arc-bench-web | keep | 29c840566f36 | 14a0dd892d0a（main@15a6bedf：A1–A7 + 1500 s/节点默认，官方 v2.0.2 runtime） | 0/32（全部 skipped） | 0/32 | **¥57.28** | 15735 s | 生成阶段 32 节点逐个验收全部 1/1（6 个节点用了一轮修复）；容器内全套并行验收 rc=-9、平台评测 4 worker 启动 1 秒被 Killed。reaper 读到 cgroup memory.max=512 MiB、memory.peak=512 MiB、oom 159 次 —— 平台给容器 512 MB 内存，4 个 Chromium 必然 OOM。单次费用超过 ¥50 阈值，已停止 Web 提交 |
+| 09-13 | smoke | counter | 91aaecaf31af | main@2363aadd v6（单响应文件块） | 0/1 | 0/1 | ¥0.66 | 107 s | 回归：三轮重写 Observation 相同（toHaveText 超时），摘要缺 Expected/Received；已回流 A |
+| 09-13 | smoke | dice | fab88d27c1d0 | 同上 | 1/1 | 1/1 | **¥0.06** | 19 s | 1 次请求 / 2,999 token |
+| 09-13 | smoke-evolution | counter | 7b6d012e9a0a | 同上 | 2/2 | 2/2 | ¥0.16 | 35 s | |
+| 09-13 | smoke-evolution | dice | b4fed98daae8 | 同上 | 2/2 | 2/2 | ¥0.16 | 32 s | |
+| 09-13 | ticket-booking | ticket-booking | 2e4802e9cb97 | 同上 | 9/10 | 1/2 | ¥1.67 | 383 s | 自跑 10/10；失败 REQ-1.2 登录 `locator.evaluate` 超时（spec:16） |
 | 09-13 | smoke | counter | 2e5f7cec22a9 | main@1121574e v5（max_tokens≥32768、按文件重写） | 1/1 | 1/1 | **¥0.08** | 25 s | 供应商 2 次 / 9,675 token（cache 5,120）；平台 29,322 |
 | 09-13 | smoke | dice | 3ddbaac0d8e0 | 同上 | 1/1 | 1/1 | **¥0.09** | 24 s | 供应商 2 / 9,191；平台 36,576 |
 | 09-13 | smoke-evolution | counter | 17465b7eaa0e | 同上 | 2/2 | 2/2 | **¥0.14** | 44 s | 供应商 8 / 31,022；平台 67,484 |
