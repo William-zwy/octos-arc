@@ -157,6 +157,9 @@
 | 09-12 | ticket-booking | ticket-booking | ab4c98a6cb17 | 4ebb50bb26f5（main@9b0d3009：tests 写保护 + 并行安全持久化 + 哈希降本） | 9/10 | 1/2 | ¥1.99 | 1051 s | 自跑 10/10；唯一失败 REQ-1.2 登录用例注册时 `getByLabel(/证件号码|document number|passport number/)` 找不到可编辑输入框，10 s 超时（代码错：缺字段/label）。功能率首次非零 |
 | 09-12 | ticket-booking | ticket-booking | cbbec51884de | 07b56825e93b（main@0522db48：表单控件服务端直出契约） | 8/10 | 0/2 | ¥2.49 | 1352 s | 自跑 10/10；评测 2 条超时：REQ-1.1 注册后 locator.evaluate 超时（spec:71）、REQ-1.2 `locator.fill: Target crashed`（Chromium 渲染进程崩溃）。归因：环境（平台评测端内存/并行），与上一轮 9/10 同代码路径 |
 | 09-13 | arc-bench-web | keep | 29c840566f36 | 14a0dd892d0a（main@15a6bedf：A1–A7 + 1500 s/节点默认，官方 v2.0.2 runtime） | 0/32（全部 skipped） | 0/32 | **¥57.28** | 15735 s | 生成阶段 32 节点逐个验收全部 1/1（6 个节点用了一轮修复）；容器内全套并行验收 rc=-9、平台评测 4 worker 启动 1 秒被 Killed。reaper 读到 cgroup memory.max=512 MiB、memory.peak=512 MiB、oom 159 次 —— 平台给容器 512 MB 内存，4 个 Chromium 必然 OOM。单次费用超过 ¥50 阈值，已停止 Web 提交 |
+| 09-13 | smoke | counter | 1868c77f82cb / c6c35b0d1eab | main@251eea6d v10 幂等 build，串行、key 空闲（提交 854d34e7067d） | 1/1 | 1/1 | **¥0.009 / ¥0.009** | 36 / 19 s | 1 请求、1.9k token |
+| 09-13 | smoke | dice | c967b38e457c / db8980f15123 | 同上 | 1/1 | 1/1 | **¥0.009 / ¥0.009** | 20 / 46 s | 1 请求、无修复轮；提交合计 ¥0.018 |
+| 09-13 | ticket-booking | ticket-booking | 709788da672e | 同上（提交 80e38e28df23） | 8/10 | 0/2 | ¥0.51 | 352 s | 回归（上一版 9/10 ¥0.37）；失败文本见 evidence |
 | 09-13 | smoke | counter | aa1f5a0b981f / 2e03281e9449 | main@a315ca45 v9 紧凑 codegen，串行、key 空闲（提交 3e10955516d7） | 1/1 | 1/1 | **¥0.009 / ¥0.009** | 20 / 19 s | 1 请求、1.9k token |
 | 09-13 | smoke | dice | c17bc1b44d26 / 3a6067ba11b9 | 同上 | 1/1 | 1/1 | ¥0.029 / ¥0.032 | 28 / 27 s | 1.2 万 token：首轮验收未过走了修复轮；已回流 A |
 | 09-13 | smoke-evolution | counter | b400134172bf | 同上（提交 6bd0d84ce1d3） | 2/2 | 2/2 | ¥0.048 | 42 s | |
