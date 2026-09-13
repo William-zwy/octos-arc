@@ -748,6 +748,7 @@ ARCHITECTURE_CONTRACT = """\
 Architecture (the runner depends on this EXACT layout; violation = 0 score):
 - frontend/ — package.json with a working `npm run build` that produces frontend/dist/ (a plain HTML/CSS/JS app plus a tiny Node copy script is ideal; no TypeScript, no framework needed).
 - backend/  — Node.js, package.json with `npm run start`, ZERO npm dependencies: `http.createServer` + a hand-written router, `fs`, `path`, `url`, `crypto` only. It reads PORT (default {port}), serves frontend/dist/ at `/` and JSON APIs under /api/. Persistence is a JSON file (backend/data/db.json) loaded at startup and rewritten on every mutation. Never better-sqlite3/sqlite3/bcrypt or any native module.
+- Crash safety: the process must never exit on a request. Wrap every request handler in try/catch (respond 500 JSON), return 404 for unknown paths and missing static files (browsers request /favicon.ico — an unhandled ENOENT there kills the server and fails every test), and register process.on('uncaughtException') / process.on('unhandledRejection') handlers that log and keep serving.
 - If a package is truly unavoidable, install it only with `npm install --registry=https://registry.npmmirror.com <pkg>` and write `registry=https://registry.npmmirror.com` into that folder's .npmrc.
 """
 
@@ -1317,7 +1318,7 @@ class Flow:
         patching a structurally broken first attempt (v13-tb-a)."""
         if self.runner is None or not specs:
             return None
-        best_passed, best_sha, regressions = -1, self.head(), 0
+        best_passed, best_sha, regressions, stalls = -1, self.head(), 0, 0
         rewrite_used = False
         previous_failures = None
         self.codegen_blocked = False  # same failure twice in codegen mode -> tool mode for this node
@@ -1336,7 +1337,8 @@ class Flow:
                 failures = failure_summaries(summary)
                 self.record_tests(node_id, specs, summary)
             log(f"[acceptance] {node_id} round {attempt}: {passed}/{summary.total}")
-            if failures and failures == previous_failures:
+            normalized = re.sub(r"\d+", "#", failures or "")
+            if normalized and normalized == previous_failures:
                 # Cloud 91aaecaf31af: three codegen rounds, identical observation.
                 self.codegen_blocked = True
                 self.pending_corrections.append(
@@ -1344,7 +1346,12 @@ class Flow:
                     "Expected/Received values in the observation, change the approach (e.g. render the initial state in "
                     "the served HTML instead of after a fetch), and check the spec's locator against your markup.")
                 log(f"[flow] {node_id}: identical failure twice; switching repairs to tool mode")
-            previous_failures = failures
+            previous_failures = normalized
+            if attempt == 0 and passed < summary.total and self.codegen_mode():
+                # Cloud 91aaecaf31af / 5747e6bcf530: codegen repairs re-emit the same files.
+                # Repairs need tools (inspect the served page, targeted edits).
+                self.codegen_blocked = True
+                log(f"[flow] {node_id}: codegen first attempt failed; repairs use tool mode")
             for line in (failures or "").splitlines():
                 if line.strip().startswith("Observation:"):
                     log(f"[acceptance]   {' '.join(line.strip().split())[:360]}")
@@ -1354,7 +1361,13 @@ class Flow:
             if passed > best_passed:
                 if best_passed >= 0:
                     self.commit(f"{node_id} (repair {attempt}): {passed}/{summary.total} pass")
-                best_passed, best_sha, regressions = passed, self.head(), 0
+                best_passed, best_sha, regressions, stalls = passed, self.head(), 0, 0
+            elif passed == best_passed and attempt > 0:
+                stalls += 1
+                if stalls >= 2:
+                    # Cloud f9f0026819f1: six rounds oscillating 4/6 <-> 3/6.
+                    log(f"[flow] {node_id}: no improvement for two repairs; keeping the best state")
+                    break
             elif passed < best_passed:
                 regressions += 1
                 if regressions >= 2 and best_sha:
