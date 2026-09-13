@@ -762,7 +762,12 @@ Rules: texts, button names, labels and test ids exactly as in the test; the init
 """
 
 CODEGEN_SIZE_SMALL = "index.html <= 20 lines, server.js <= 20 lines."
-CODEGEN_SIZE_FULL = "As short as the tests allow; one page file per route is fine."
+CODEGEN_SIZE_FULL = ("As short as the tests allow; one page file per route. Visibility: an element the test expects visible "
+                     "must have a non-empty box (never an empty div/span: give meters and feedback areas text) and the "
+                     "signed-in/out header (username, 退出登录/登录 links) is rendered into the HTML by the server from the "
+                     "session cookie, not by a fetch after load; error feedback stays in the DOM with the role the test queries. "
+                     "No HTML5 validation attributes (required/pattern/minlength/type=email: the browser would block the submit "
+                     "and the test expects the server's message): validate on the server, show its message in the page.")
 
 UI_CONTRACT_DATA = """\
 - Concrete example values in the requirement (seed records, option labels, sample accounts, nationalities, seat classes) are FIXTURE DATA: they must exist verbatim as <option>s / seed rows. When a control's values are described but not listed, offer a broad standard set.
@@ -1418,7 +1423,7 @@ class Flow:
                 self.codegen_blocked = True
                 log(f"[flow] {node_id}: codegen attempt {attempt} still failing; repairs use tool mode")
             for line in (failures or "").splitlines():
-                if line.strip().startswith("Observation:"):
+                if line.strip().startswith(("Failed at:", "Observation:")):
                     log(f"[acceptance]   {' '.join(line.strip().split())[:360]}")
             if summary.total and passed == summary.total:
                 self.commit(f"{node_id} (accepted): {passed}/{summary.total} acceptance tests pass")
@@ -1450,6 +1455,7 @@ class Flow:
                 log(f"[flow] {node_id}: {left:.0f}s left, below the {self.min_repair_seconds}s a repair needs; "
                     f"keeping the best state")
                 break
+            self.snapshot_sources(node_id, attempt)
             slow = summary.slow(int(os.environ.get("OCTOS_ARC_SLOW_MS", "3000")))
             slow_text = ("Also, these tests took over 3 s on this fast machine and will exceed the grader's "
                          "10 s budget: " + "; ".join(slow) + ". Remove the latency.\n" + self.perf_text()) if slow else ""
@@ -1639,6 +1645,32 @@ class Flow:
                 pass
         elif verdict is False:
             self.mark("test_failed", node_id, "acceptance specs still failing after repair rounds")
+
+    def snapshot_sources(self, node_id: str, attempt: int) -> Path | None:
+        """Copy the app sources that the next repair will overwrite into
+        .arc/codegen/<node>-r<attempt>/ (the platform keeps the workspace but not
+        our git history, so the first-pass code was unrecoverable: cloud 27de75de0cd0)."""
+        dest = self.output_dir / ".arc" / "codegen" / f"{node_id}-r{attempt}"
+        try:
+            if dest.exists():
+                shutil.rmtree(dest)
+            count = 0
+            for rel in ("frontend/src", "backend"):
+                src = self.output_dir / rel
+                if not src.is_dir():
+                    continue
+                for path in src.rglob("*"):
+                    if not path.is_file() or "node_modules" in path.parts or path.suffix not in (".html", ".js", ".json", ".css"):
+                        continue
+                    target = dest / path.relative_to(self.output_dir)
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(path, target)
+                    count += 1
+            log(f"[flow] {node_id}: {count} source file(s) snapshotted to {dest.relative_to(self.output_dir)}")
+            return dest
+        except OSError as exc:
+            log(f"[flow] {node_id}: source snapshot failed: {exc}")
+            return None
 
     def already_passing_nodes(self, node_ids: list[str]) -> set[str]:
         """Evolution probe: run each candidate node's specs against the existing app
