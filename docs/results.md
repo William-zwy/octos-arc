@@ -1,6 +1,6 @@
 # ARC-Bench 成绩看板
 
-生成时间：2026-09-13 15:13 UTC；账号：李尧；预生成判定：费用 < ¥0.01 且耗时 < 10s。
+生成时间：2026-09-13 16:37 UTC；账号：李尧；预生成判定：费用 < ¥0.01 且耗时 < 10s。
 
 ## 各赛道我们的位置
 
@@ -8,7 +8,7 @@
 |---|---|---|---|---|---|---|
 | smoke | 4/22（真实 agent 内 1/19，预生成 3） | 100% | 100% | ¥0.0095 | 24s | c8fc443adc45, 4bc6155eaeb6, ef7351eb9396, e5ba35b5574d, ce71b20cd1e9, ceb57c0a9603, db8980f15123, c6c35b0d1eab, c967b38e457c, 1868c77f82cb, 3a6067ba11b9, 2e03281e9449, c17bc1b44d26, aa1f5a0b981f, 549b16afca23, 1365151c2cf7, 783657d3f437, 96e0e4fb2b00, aefc01d1ae3f, bdcf35d968c7, 478a9be4715c, 6ff834e499d8, fab88d27c1d0, 3ddbaac0d8e0, 2e5f7cec22a9, 402a9be38707, a04246e9bfc0, 5424432e8276, 53a91acea453, cc066e8e11f6, c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
 | smoke-evolution | 4/12（真实 agent 内 1/9，预生成 3） | 100% | 100% | ¥0.0086 | 30s | 1b9d0eeeb392, 7bf27008cc42, f700e26638db, d049ec0e4462, 6232223b9863, 9a1b1944a73e, e1b848eec6e2, b400134172bf, 497502f1aefd, 96e2c8aaac3d, ba7ae29d3a46, eefebbdffc4f, 66f9d3d67017, b8f1b3da9208, 265f41f54fe9, 19f60a7de400, ad959cc86495, b4fed98daae8, 7b6d012e9a0a, d28dd2612f94, 17465b7eaa0e, fe9600d1c5a1, 65d055f9bd6f, 7cedb3299bd9, 0f03a259f963, efa79e3db00c, 9ba8f915d00b, 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
-| ticket-booking | 3/28（真实 agent 内 1/25，预生成 3） | 90% | 50% | ¥0.25 | 3m18s | 27de75de0cd0, 3e425ce2ebf6, 84444321d4f7, d24f1c3d1c84, e79b1160d081, 709788da672e, 060a3debc450, 2e4802e9cb97, 954a231a3d23, 7cc5accdf91e, c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
+| ticket-booking | 3/29（真实 agent 内 1/26，预生成 3） | 90% | 50% | ¥0.25 | 3m18s | 27de75de0cd0, 3e425ce2ebf6, 84444321d4f7, d24f1c3d1c84, e79b1160d081, 709788da672e, 060a3debc450, 2e4802e9cb97, 954a231a3d23, 7cc5accdf91e, c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
 | arc-bench-web | 未上榜（榜共 1 条，其中预生成 1） | — | — | — | — | — |
 
 ## 我们的全部运行
@@ -142,16 +142,16 @@
 | 5 | 2 | niceeeeee | 100% | 100% | ¥0.02 | 8s | senior |
 | 6 | 3 | 包子头队 | 100% | 100% | ¥0.10 | 20s | senior |
 
-## 榜单 · ticket-booking（28 条，预生成 3 条，显示前 6 名与我们）
+## 榜单 · ticket-booking（29 条，预生成 3 条，显示前 6 名与我们）
 
 | # | 真实# | 队伍 | 通过率 | 功能率 | 费用 | 耗时 | 级别 |
 |---|---|---|---|---|---|---|---|
 | 1 | — | 你也秃对不队 ⚠预生成 | 80% | 0% | ¥0.0000 | 2s | senior |
 | 2 | — | VOLO AI ⚠预生成 | 90% | 50% | ¥0.0000 | 1s | senior |
 | 3 | 1 | **李尧** | 90% | 50% | ¥0.25 | 3m18s | senior |
-| 4 | 2 | 睿欣达工场 | 90% | 50% | ¥0.81 | 7m30s | senior |
-| 5 | 3 | 非常队 | 90% | 50% | ¥1.11 | 10m07s | senior |
-| 6 | 4 | ARC | 100% | 50% | ¥4.48 | 66m16s | senior |
+| 4 | 2 | 流星队 | 90% | 50% | ¥0.62 | 5m55s | senior |
+| 5 | 3 | 睿欣达工场 | 90% | 50% | ¥0.81 | 7m30s | senior |
+| 6 | 4 | 非常队 | 90% | 50% | ¥1.11 | 10m07s | senior |
 
 ## 榜单 · arc-bench-web（1 条，预生成 1 条，显示前 6 名与我们）
 
@@ -311,3 +311,7 @@
 ### 给工作流 B（会话不可达，请用户转达）
 - 云端已确认跑 v2.0.3-rc.11-arc.11（日志 `[octos] download … v2.0.3-rc.11-arc.11`）。四道小题通过；TB f9f0026819f1 0/10（后端崩溃，见上）且 reasoning 160k token，比官方内核同题（v5，reasoning 24.7k、¥0.67）贵 6 倍——魔改内核下 DeepSeek 推理预算需要压低。
 - 缓存命中：端点在 usage.prompt_tokens_details.cached_tokens 报，TB 一次运行 88% 命中，前缀稳定；固定前缀 ≈10k token（system prompt 25k 字符 + 15 个工具 schema 13.7k 字符），与 ARC 无关的段落可从 coding profile 去掉。
+
+### Ticket Booking 收口决定（2026-09-13 08:30 后）
+- 统筹规则：TB 只在 A 本机连续 5 次首轮 ≥5/6 且 10/10 时才上云；Smoke / Evolution 不再重跑（最近一次运行计分）。
+- A round 28（main@65d73116）本机 20 个样本：首轮 ≥5/6 仅 7/20，最终 10/10 18/20，请求数中位 3，reasoning 6k–48k 为采样噪声；系统性首轮错误（缺 charset、无扩展名路由、换行转义、导航重复）已零 token 修掉。重跑期望值为负（中位 ≈¥0.3，尾部 ¥0.6+），保留现有条目 d24f1c3d1c84（9/10、¥0.2512 / 198 s）不重跑。
