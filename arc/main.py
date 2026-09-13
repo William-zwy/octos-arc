@@ -38,6 +38,8 @@ Environment (all optional):
     OCTOS_SMALL_TASK_NODES    trees up to this size get the minimal self-verification text (2)
     OCTOS_VERIFY_MODE         auto (default) | minimal | full
     OCTOS_ARC_REASONING       low (default) | medium | high | none | passthrough — DeepSeek reasoning via local proxy
+    OCTOS_ARC_INLINE_SPECS    "0" stops quoting the node's spec files into the prompt (default: quote up to 24k chars)
+    OCTOS_ARC_DESTREAM        "0" lets streaming requests reach the platform as SSE (default: one JSON response upstream)
     OCTOS_SESSION_SCOPE       node (default) | turn | run — when a fresh octos session starts
     OCTOS_ARC_INSTALL_PLAYWRIGHT  "0" never installs Playwright on the fly
     OCTOS_ARC_ALIAS_SPEC_IDS  "0" stops mirroring node states onto spec ids
@@ -712,7 +714,7 @@ Verify briefly before you finish — the harness runs the official acceptance te
 """
 
 VERIFY_MINIMAL = """\
-Do NOT start the server, curl, run node, or write your own tests — the harness builds the frontend, starts the backend and runs the official Playwright spec right after your turn and hands you any failure. Tool budget for this turn: at most 8 write_file/edit_file calls (one backend file backend/server.js plus at most 4 frontend files; write each file once, complete), at most 2 read_file calls, and exactly one shell command: `cd frontend && npm run build`. Do not list directories or re-read files you just wrote; the file listing above is authoritative.
+Do NOT start the server, curl, run node, or write your own tests — the harness builds the frontend, starts the backend and runs the official Playwright spec right after your turn and hands you any failure. Tool budget for this turn: at most 8 write_file/edit_file calls (one backend file backend/server.js plus at most 4 frontend files; write each file once, complete), at most 2 read_file calls, and exactly one shell command: `cd frontend && npm run build`. Batch: emit ALL write_file calls together in ONE response (parallel tool calls), then the single build command in the next response, then finish — every extra round trip resends the whole context and is billed. Do not list directories or re-read files you just wrote; the file listing above is authoritative.
 """
 
 PORT_RULES = """\
@@ -762,7 +764,10 @@ Implement requirement node {node_id} in the existing application (frontend/ buil
 NODE_PREAMBLE_CREATE = """\
 Build a full-stack web application in the current working directory that implements requirement node {node_id} (the whole requirement tree is at {req_dir}; further nodes, if any, come in later turns — leave room for them but implement only this one).
 
-""" + ARCHITECTURE_CONTRACT
+""" + ARCHITECTURE_CONTRACT + """
+Mandatory files (all in this turn): frontend/package.json (with the `build` script), the frontend page sources plus the tiny build script that fills frontend/dist/, backend/package.json (with the `start` script, empty dependencies) and backend/server.js.
+"""
+
 
 INLINE_DESIGN_NOTE = """\
 Before writing code, write your design for this node as ONE JSON object to .arc/design/{node_id}.json ({{"routes": [...], "pages": [{{"path", "elements": [{{"role", "name"}}]}}], "data_model": {{}}, "files": [...], "notes": ""}}; accessible names copied verbatim from the specs), then implement it.
@@ -800,8 +805,30 @@ Fix the project so this sequence works (typical causes: a require() path that do
 """
 
 ACCEPTANCE_TESTS_PROMPT = """\
-OFFICIAL ACCEPTANCE TESTS (ground truth; when prose and spec disagree, the spec wins) live under {tests_dir}. Files: {files}. Read them and their support helpers before writing code: they define routes, hrefs, accessible names, option labels, exact texts, error wording and action order. Never modify, copy or delete them.
+OFFICIAL ACCEPTANCE TESTS (ground truth; when prose and spec disagree, the spec wins) live under {tests_dir}. Files: {files}. They define routes, hrefs, accessible names, option labels, exact texts, error wording and action order. Never modify, copy or delete them.
 """
+
+INLINE_SPEC_HEADER = """\
+The spec files are quoted below in full — do NOT spend tool calls reading them or the requirement again:
+"""
+
+
+def inline_spec_text(tests_dir: Path, files: list[str], max_chars: int) -> str:
+    """Quote spec + helper files into the prompt (bounded). Each read_file the
+    model would otherwise issue is a full-context round trip (~11k tokens)."""
+    parts = []
+    total = 0
+    for rel in files:
+        path = tests_dir / rel
+        try:
+            text = path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        if total + len(text) > max_chars:
+            return ""  # too big to inline; let the model read selectively
+        total += len(text)
+        parts.append(f"--- {rel} ---\n{text.rstrip()}\n")
+    return INLINE_SPEC_HEADER + "".join(parts) if parts else ""
 
 
 def locate_acceptance_tests(tree: dict, bundle_dir: Path) -> Path | None:
@@ -849,12 +876,14 @@ def spec_base_ports(tests_dir: Path | None) -> list[int]:
 
 
 def acceptance_tests_prompt(tests_dir: Path | None, web_port: int, smoke_port: int,
-                            files: list[str] | None = None) -> str:
+                            files: list[str] | None = None, inline: bool = False) -> str:
     if not tests_dir:
         return ""
     if files is None:
         files = sorted(str(p.relative_to(tests_dir)) for p in tests_dir.rglob("*.ts"))
     text = ACCEPTANCE_TESTS_PROMPT.format(tests_dir=tests_dir, files=", ".join(files[:40]) or "(none)")
+    if inline:
+        text += inline_spec_text(tests_dir, files, int(os.environ.get("OCTOS_ARC_INLINE_SPEC_CHARS", "24000")))
     extra = [p for p in spec_base_ports(tests_dir) if p != web_port]
     if extra:
         ports = ", ".join(map(str, extra))
@@ -999,7 +1028,8 @@ class Flow:
                          if not p.name.endswith(".spec.ts"))
         if not files:  # node without its own spec: show everything
             files = sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.spec.ts"))
-        return acceptance_tests_prompt(self.tests_dir, self.web_port, self.smoke_port, files + support)
+        return acceptance_tests_prompt(self.tests_dir, self.web_port, self.smoke_port, files + support,
+                                       inline=os.environ.get("OCTOS_ARC_INLINE_SPECS", "1") != "0")
 
     def ancestors_text(self, node_id: str, ordered: list[dict]) -> str:
         anc = ancestors_of(node_id, ordered)
@@ -1098,12 +1128,15 @@ class Flow:
         if mode == "passthrough" or not upstream.startswith("http"):
             return
         try:
-            self.llm_proxy = LlmProxy(upstream, mode, self.output_dir / ".arc" / "llm-usage.jsonl").start()
+            dump = (self.output_dir / ".arc" / "llm-requests") if os.environ.get("OCTOS_ARC_PROXY_DUMP") == "1" else None
+            self.llm_proxy = LlmProxy(upstream, mode, self.output_dir / ".arc" / "llm-usage.jsonl", dump_dir=dump,
+                                      destream=os.environ.get("OCTOS_ARC_DESTREAM", "1") != "0").start()
         except OSError as exc:
             log(f"[proxy] could not start local LLM proxy ({exc}); using the endpoint directly")
             return
         os.environ["OPENAI_BASE_URL"] = self.llm_proxy.base_url
-        log(f"[proxy] LLM requests via {self.llm_proxy.base_url} -> {upstream} (reasoning={mode})")
+        log(f"[proxy] LLM requests via {self.llm_proxy.base_url} -> {upstream} (reasoning={mode}, "
+            f"destream={'on' if self.llm_proxy.destream else 'off'})")
 
     def stop_llm_proxy(self) -> None:
         proxy = getattr(self, "llm_proxy", None)
@@ -1305,7 +1338,12 @@ class Flow:
         ok, text = self.turn(prompt, implement_timeout, f"{node_id} implement")
         timed_out = (not ok) and "timed out" in text.lower()
         if ok and not self.has_app():
-            ok, text = False, "turn ended without frontend/package.json and backend/package.json on disk"
+            # v6-counter: one package.json missing after the turn. Do not give
+            # up — the acceptance loop's build error becomes the repair prompt.
+            log(f"[flow] {node_id}: app layout incomplete after the turn; acceptance loop will drive the repair")
+            self.pending_corrections.append(
+                "Your turn ended without both frontend/package.json and backend/package.json (with `build` and "
+                "`start` scripts) on disk; the harness could not even build the app. Create the missing files.")
         if not ok and not timed_out:
             self.mark("implementation_failed", node_id, text[-500:])
             self.impl_failed.append(node_id)
@@ -1379,8 +1417,10 @@ class Flow:
         if self.runner is None or not self.tests_dir:
             return
         all_specs = sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.spec.ts"))
-        if len(all_specs) < 2:
-            return
+        unverified = [n for n, v in self.test_verdict.items() if v is not True] or \
+            [n for n in self.spec_map if n and self.spec_map[n] and n not in self.test_verdict]
+        if len(all_specs) < 2 and not unverified:
+            return  # single spec already judged by the node run
         rounds = int(os.environ.get("OCTOS_FINAL_REPAIR_ROUNDS", "2"))
         workers = int(os.environ.get("OCTOS_ARC_FINAL_WORKERS", "4"))
         previous_failing: set[str] | None = None
