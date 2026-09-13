@@ -109,6 +109,7 @@
 | 09-12 | ticket-booking | ticket-booking | ab4c98a6cb17 | 4ebb50bb26f5（main@9b0d3009：tests 写保护 + 并行安全持久化 + 哈希降本） | 9/10 | 1/2 | ¥1.99 | 1051 s | 自跑 10/10；唯一失败 REQ-1.2 登录用例注册时 `getByLabel(/证件号码|document number|passport number/)` 找不到可编辑输入框，10 s 超时（代码错：缺字段/label）。功能率首次非零 |
 | 09-12 | ticket-booking | ticket-booking | cbbec51884de | 07b56825e93b（main@0522db48：表单控件服务端直出契约） | 8/10 | 0/2 | ¥2.49 | 1352 s | 自跑 10/10；评测 2 条超时：REQ-1.1 注册后 locator.evaluate 超时（spec:71）、REQ-1.2 `locator.fill: Target crashed`（Chromium 渲染进程崩溃）。归因：环境（平台评测端内存/并行），与上一轮 9/10 同代码路径 |
 | 09-13 | arc-bench-web | keep | 29c840566f36 | 14a0dd892d0a（main@15a6bedf：A1–A7 + 1500 s/节点默认，官方 v2.0.2 runtime） | 未评测（运行中） | | | | 本机同适配包 grade-local 32/32 后上云 |
+| 09-13 | smoke | counter | cc066e8e11f6 | main@0a2ef44f（含 A 的 [usage] 统计） | 1/1 | 1/1 | ¥0.37 | 35 s | 适配层代理统计 4 次请求、prompt 48,065 / completion 2,559 / 合计 50,624 token、cache_hit 0；平台 token_count 613,136（12.1×），费用与平台 token 数非线性 |
 | 09-13 | smoke | counter | fe02bdc94d77 | main@ade9a56c 费用版（reasoning_effort=low 代理） | 1/1 | 1/1 | ¥0.45 | 38 s | 改前 0491d2a6f510：¥1.24、201 s |
 | 09-13 | smoke | dice | c726465310c2 | 同上 | 1/1 | 1/1 | ¥0.61 | 49 s | 改前 bd8418c88535：¥1.42、267 s |
 | 09-13 | smoke-evolution | counter | 9ba8f915d00b | 同上 | 2/2 | 2/2 | ¥0.54 | 53 s | |
@@ -147,3 +148,8 @@
 |---|---|---|
 | counter | 37fb13835049：2/2，¥0.55，177 s | b76aadf42e9b（wf-adapter-2@5b93c412）：2/2，¥0.60，209 s |
 | dice | a02d29a7064a：2/2，¥0.60，204 s | 6c9ea2294ff6：2/2，¥1.48，283 s |
+
+### 给工作流 B 的证据（来自 A 的代理抓包，2026-09-13）
+- 云端与本机 cache_hit 全为 0：每次请求的固定前缀（内核 system prompt 24,978 字符 + 15 个工具 schema 13,735 字符，约 10k token）在会话内逐请求 sha256 一致，所以不是前缀抖动；可能是 arc 代理不回传 prompt_cache_hit_tokens 或平台计费不打缓存折扣。
+- system prompt 绝大部分与 ARC 无关（Research & Search Rules、Rich Card Rendering、Pipelines、Background Tasks、Cron、Queue、Slash Commands、Active Skills 等）；Counter 一次运行 9 个请求、供应商计费 prompt 107k token，其中约 90k 是该前缀重发。建议 stdio/solo 的 coding profile 把 system prompt 砍到约 3k 字符、精简工具 schema。
+- 样本：A 本机 arc/arc-output/v4-counter/.arc/llm-requests/request-01.json（已脱敏）。
