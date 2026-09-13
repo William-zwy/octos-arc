@@ -1,20 +1,28 @@
 # ARC-Bench 成绩看板
 
-生成时间：2026-09-13 13:38 UTC；账号：李尧；预生成判定：费用 < ¥0.01 且耗时 < 10s。
+生成时间：2026-09-13 14:18 UTC；账号：李尧；预生成判定：费用 < ¥0.01 且耗时 < 10s。
 
 ## 各赛道我们的位置
 
 | 赛道 | 名次 | 通过率 | 功能率 | 费用 | 耗时 | 运行编号（有效） |
 |---|---|---|---|---|---|---|
-| smoke | 4/20（真实 agent 内 1/17，预生成 3） | 100% | 100% | ¥0.01 | 46s | ef7351eb9396, e5ba35b5574d, ce71b20cd1e9, ceb57c0a9603, db8980f15123, c6c35b0d1eab, c967b38e457c, 1868c77f82cb, 3a6067ba11b9, 2e03281e9449, c17bc1b44d26, aa1f5a0b981f, 549b16afca23, 1365151c2cf7, 783657d3f437, 96e0e4fb2b00, aefc01d1ae3f, bdcf35d968c7, 478a9be4715c, 6ff834e499d8, fab88d27c1d0, 3ddbaac0d8e0, 2e5f7cec22a9, 402a9be38707, a04246e9bfc0, 5424432e8276, 53a91acea453, cc066e8e11f6, c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
-| smoke-evolution | 5/12（真实 agent 内 2/9，预生成 3） | 100% | 100% | ¥0.08 | 68s | 6232223b9863, 9a1b1944a73e, e1b848eec6e2, b400134172bf, 497502f1aefd, 96e2c8aaac3d, ba7ae29d3a46, eefebbdffc4f, 66f9d3d67017, b8f1b3da9208, 265f41f54fe9, 19f60a7de400, ad959cc86495, b4fed98daae8, 7b6d012e9a0a, d28dd2612f94, 17465b7eaa0e, fe9600d1c5a1, 65d055f9bd6f, 7cedb3299bd9, 0f03a259f963, efa79e3db00c, 9ba8f915d00b, 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
-| ticket-booking | 3/27（真实 agent 内 1/25，预生成 2） | 90% | 50% | ¥0.37 | 3m36s | 709788da672e, 060a3debc450, 2e4802e9cb97, 954a231a3d23, 7cc5accdf91e, c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
+| smoke | 4/21（真实 agent 内 1/18，预生成 3） | 100% | 100% | ¥0.0095 | 24s | c8fc443adc45, 4bc6155eaeb6, ef7351eb9396, e5ba35b5574d, ce71b20cd1e9, ceb57c0a9603, db8980f15123, c6c35b0d1eab, c967b38e457c, 1868c77f82cb, 3a6067ba11b9, 2e03281e9449, c17bc1b44d26, aa1f5a0b981f, 549b16afca23, 1365151c2cf7, 783657d3f437, 96e0e4fb2b00, aefc01d1ae3f, bdcf35d968c7, 478a9be4715c, 6ff834e499d8, fab88d27c1d0, 3ddbaac0d8e0, 2e5f7cec22a9, 402a9be38707, a04246e9bfc0, 5424432e8276, 53a91acea453, cc066e8e11f6, c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
+| smoke-evolution | 4/12（真实 agent 内 1/9，预生成 3） | 100% | 100% | ¥0.0086 | 30s | 1b9d0eeeb392, 7bf27008cc42, f700e26638db, d049ec0e4462, 6232223b9863, 9a1b1944a73e, e1b848eec6e2, b400134172bf, 497502f1aefd, 96e2c8aaac3d, ba7ae29d3a46, eefebbdffc4f, 66f9d3d67017, b8f1b3da9208, 265f41f54fe9, 19f60a7de400, ad959cc86495, b4fed98daae8, 7b6d012e9a0a, d28dd2612f94, 17465b7eaa0e, fe9600d1c5a1, 65d055f9bd6f, 7cedb3299bd9, 0f03a259f963, efa79e3db00c, 9ba8f915d00b, 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
+| ticket-booking | 3/28（真实 agent 内 1/26，预生成 2） | 90% | 50% | ¥0.37 | 3m36s | 709788da672e, 060a3debc450, 2e4802e9cb97, 954a231a3d23, 7cc5accdf91e, c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
 | arc-bench-web | 未上榜（榜共 1 条，其中预生成 1） | — | — | — | — | — |
 
 ## 我们的全部运行
 
 | 运行编号 | 赛道 | 题目 | 状态 | 通过 | 功能 | 费用 | Token | 耗时 | 创建(UTC) | 提交名 |
 |---|---|---|---|---|---|---|---|---|---|---|
+| 784402a777c2 | ticket-booking | ticket-booking--ticket-booking | FAILED | 0/10 | 0/2 | ¥0.62 | 0.19M | 10m00s | 2026-09-13 14:06 | Octos main@6d450734 round23 codegen TB, serial, kernel arc.11 |
+| 3f0124e82113 | ticket-booking | ticket-booking--ticket-booking | FAILED | 0/10 | 0/2 | ¥0.48 | 0.06M | 5m28s | 2026-09-13 14:00 | Octos main@6d450734 round23 codegen TB, serial, kernel arc.11 |
+| c8fc443adc45 | smoke | smoke--dice | PASSED | 1/1 | 1/1 | ¥0.0044 | 0.00M | 28s | 2026-09-13 13:59 | Octos main@6d450734 round23 evolution codegen, serial, kernel arc.11 |
+| 4bc6155eaeb6 | smoke | smoke--counter | PASSED | 1/1 | 1/1 | ¥0.0050 | 0.00M | 19s | 2026-09-13 13:58 | Octos main@6d450734 round23 evolution codegen, serial, kernel arc.11 |
+| 1b9d0eeeb392 | smoke-evolution | smoke-evolution--dice | PASSED | 2/2 | 2/2 | ¥0.0042 | 0.00M | 32s | 2026-09-13 13:57 | Octos main@6d450734 round23 evolution codegen, serial, kernel arc.11 |
+| 7bf27008cc42 | smoke-evolution | smoke-evolution--counter | PASSED | 2/2 | 2/2 | ¥0.0044 | 0.00M | 29s | 2026-09-13 13:56 | Octos main@6d450734 round23 evolution codegen, serial, kernel arc.11 |
+| f700e26638db | smoke-evolution | smoke-evolution--dice | PASSED | 2/2 | 2/2 | ¥0.06 | 0.03M | 30s | 2026-09-13 13:55 | Octos main@6d450734 round23 evolution codegen, serial, kernel arc.11 |
+| d049ec0e4462 | smoke-evolution | smoke-evolution--counter | PASSED | 2/2 | 2/2 | ¥0.28 | 0.06M | 29s | 2026-09-13 13:54 | Octos main@6d450734 round23 evolution codegen, serial, kernel arc.11 |
 | 6232223b9863 | smoke-evolution | smoke-evolution--dice | PASSED | 2/2 | 2/2 | ¥0.04 | 0.02M | 41s | 2026-09-13 13:34 | Octos main@118a0ce1 round22 one-line system prompt, serial, kernel arc.11 |
 | 9a1b1944a73e | smoke-evolution | smoke-evolution--counter | PASSED | 2/2 | 2/2 | ¥0.03 | 0.02M | 94s | 2026-09-13 13:32 | Octos main@118a0ce1 round22 one-line system prompt, serial, kernel arc.11 |
 | ef7351eb9396 | smoke | smoke--dice | PASSED | 1/1 | 1/1 | ¥0.0057 | 0.00M | 70s | 2026-09-13 13:30 | Octos main@118a0ce1 round22 one-line system prompt, serial, kernel arc.11 |
@@ -107,14 +115,14 @@
 | f031f20d1558 | smoke | smoke--counter | FAILED | — | 0/0 | — | — | — | 2026-09-11 07:02 | Octos 官方 v2.0.2 · 实操演示 |
 | 50d049b049bd | smoke | smoke--counter | PASSED | 1/1 | 1/1 | ¥0.63 | 3.80M | 16m41s | 2026-09-11 02:07 | Octos 适配包 |
 
-## 榜单 · smoke（20 条，预生成 3 条，显示前 6 名与我们）
+## 榜单 · smoke（21 条，预生成 3 条，显示前 6 名与我们）
 
 | # | 真实# | 队伍 | 通过率 | 功能率 | 费用 | 耗时 | 级别 |
 |---|---|---|---|---|---|---|---|
 | 1 | — | VOLO AI ⚠预生成 | 100% | 100% | ¥0.0001 | 0s | senior |
 | 2 | — | 你也秃对不队 ⚠预生成 | 100% | 100% | ¥0.0031 | 2s | senior |
 | 3 | — | Orchestra ⚠预生成 | 100% | 100% | ¥0.0037 | 4s | senior |
-| 4 | 1 | **李尧** | 100% | 100% | ¥0.01 | 46s | senior |
+| 4 | 1 | **李尧** | 100% | 100% | ¥0.0095 | 24s | senior |
 | 5 | 2 | niceeeeee | 100% | 100% | ¥0.02 | 10s | senior |
 | 6 | 3 | JustSoSO | 100% | 100% | ¥0.07 | 21s | senior |
 
@@ -125,11 +133,11 @@
 | 1 | — | 你也秃对不队 ⚠预生成 | 100% | 100% | ¥0.0000 | 2s | senior |
 | 2 | — | VOLO AI ⚠预生成 | 100% | 100% | ¥0.0001 | 1s | senior |
 | 3 | — | Orchestra ⚠预生成 | 100% | 100% | ¥0.0046 | 4s | senior |
-| 4 | 1 | niceeeeee | 100% | 100% | ¥0.02 | 8s | senior |
-| 5 | 2 | **李尧** | 100% | 100% | ¥0.08 | 68s | senior |
+| 4 | 1 | **李尧** | 100% | 100% | ¥0.0086 | 30s | senior |
+| 5 | 2 | niceeeeee | 100% | 100% | ¥0.02 | 8s | senior |
 | 6 | 3 | 包子头队 | 100% | 100% | ¥0.10 | 20s | senior |
 
-## 榜单 · ticket-booking（27 条，预生成 2 条，显示前 6 名与我们）
+## 榜单 · ticket-booking（28 条，预生成 2 条，显示前 6 名与我们）
 
 | # | 真实# | 队伍 | 通过率 | 功能率 | 费用 | 耗时 | 级别 |
 |---|---|---|---|---|---|---|---|
@@ -168,6 +176,11 @@
 | 09-12 | ticket-booking | ticket-booking | ab4c98a6cb17 | 4ebb50bb26f5（main@9b0d3009：tests 写保护 + 并行安全持久化 + 哈希降本） | 9/10 | 1/2 | ¥1.99 | 1051 s | 自跑 10/10；唯一失败 REQ-1.2 登录用例注册时 `getByLabel(/证件号码|document number|passport number/)` 找不到可编辑输入框，10 s 超时（代码错：缺字段/label）。功能率首次非零 |
 | 09-12 | ticket-booking | ticket-booking | cbbec51884de | 07b56825e93b（main@0522db48：表单控件服务端直出契约） | 8/10 | 0/2 | ¥2.49 | 1352 s | 自跑 10/10；评测 2 条超时：REQ-1.1 注册后 locator.evaluate 超时（spec:71）、REQ-1.2 `locator.fill: Target crashed`（Chromium 渲染进程崩溃）。归因：环境（平台评测端内存/并行），与上一轮 9/10 同代码路径 |
 | 09-13 | arc-bench-web | keep | 29c840566f36 | 14a0dd892d0a（main@15a6bedf：A1–A7 + 1500 s/节点默认，官方 v2.0.2 runtime） | 0/32（全部 skipped） | 0/32 | **¥57.28** | 15735 s | 生成阶段 32 节点逐个验收全部 1/1（6 个节点用了一轮修复）；容器内全套并行验收 rc=-9、平台评测 4 worker 启动 1 秒被 Killed。reaper 读到 cgroup memory.max=512 MiB、memory.peak=512 MiB、oom 159 次 —— 平台给容器 512 MB 内存，4 个 Chromium 必然 OOM。单次费用超过 ¥50 阈值，已停止 Web 提交 |
+| 09-13 | smoke-evolution | counter | d049ec0e4462 / 7bf27008cc42 | main@6d450734 round23 evolution 探测+codegen，串行（提交 436e949eb915） | 2/2 | 2/2 | ¥0.281 / **¥0.0044** | 29 / 29 s | 第一次走多请求（63.9k token），第二次 1 请求 1,058 token |
+| 09-13 | smoke-evolution | dice | f700e26638db / 1b9d0eeeb392 | 同上 | 2/2 | 2/2 | ¥0.060 / **¥0.0042** | 30 / 32 s | 提交取最好合计 ¥0.0086（榜首 ¥0.0188） |
+| 09-13 | smoke | counter | 4bc6155eaeb6 | 同上（提交 89e3f8452b2c） | 1/1 | 1/1 | **¥0.0050** | 19 s | 953 token |
+| 09-13 | smoke | dice | c8fc443adc45 | 同上 | 1/1 | 1/1 | **¥0.0044** | 28 s | 838 token；提交合计 ¥0.0095 |
+| 09-13 | ticket-booking | ticket-booking | 3f0124e82113 / 784402a777c2 | 同上 codegen 路径（提交 60de4ddb1b45） | **0/10 / 0/10** | 0/2 | ¥0.48 / ¥0.62 | 328 / 600 s | 自跑 10/10；平台 10 条 ERR_CONNECTION_REFUSED :3301——codegen 生成的 server 只监听 PORT，丢了双端口契约；已回流 A |
 | 09-13 | smoke | counter | ceb57c0a9603 / e5ba35b5574d | main@118a0ce1 round22 一行 system prompt，串行、key 空闲（提交 b6a772a3283d） | 1/1 | 1/1 | **¥0.0061 / ¥0.0058** | 19 / 23 s | 1 请求、约 1.0k token |
 | 09-13 | smoke | dice | ce71b20cd1e9 / ef7351eb9396 | 同上 | 1/1 | 1/1 | **¥0.0057 / ¥0.0057** | 45 / 70 s | 提交合计 ¥0.0114（榜首 ¥0.0171） |
 | 09-13 | smoke-evolution | counter | 9a1b1944a73e | 同上（提交 f3fc1a863a6e） | 2/2 | 2/2 | ¥0.034 | 94 s | 云端仍多请求、1.8 万 token（A 本机 1.2k）；已回流 |
