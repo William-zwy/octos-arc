@@ -1,20 +1,26 @@
 # ARC-Bench 成绩看板
 
-生成时间：2026-09-13 09:02 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
+生成时间：2026-09-13 09:39 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
 
 ## 各赛道我们的位置
 
 | 赛道 | 名次 | 通过率 | 功能率 | 费用 | 耗时 | 运行编号（有效） |
 |---|---|---|---|---|---|---|
-| smoke | 13/18（真实 agent 内 10/12，预生成 6） | 100% | 100% | ¥1.06 | 44s | c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
-| smoke-evolution | 8/11（真实 agent 内 4/6，预生成 5） | 100% | 100% | ¥1.08 | 54s | efa79e3db00c, 9ba8f915d00b, 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
-| ticket-booking | 5/23（真实 agent 内 3/14，预生成 9） | 90% | 50% | ¥1.99 | 17m31s | c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
+| smoke | 9/18（真实 agent 内 6/12，预生成 6） | 100% | 100% | ¥0.31 | 34s | 5424432e8276, 53a91acea453, cc066e8e11f6, c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
+| smoke-evolution | 7/11（真实 agent 内 3/6，预生成 5） | 100% | 100% | ¥0.57 | 40s | 7cedb3299bd9, 0f03a259f963, efa79e3db00c, 9ba8f915d00b, 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
+| ticket-booking | 5/23（真实 agent 内 3/15，预生成 8） | 90% | 50% | ¥1.77 | 3m54s | 7cc5accdf91e, c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
 | arc-bench-web | 未上榜（榜共 1 条，其中预生成 1） | — | — | — | — | — |
 
 ## 我们的全部运行
 
 | 运行编号 | 赛道 | 题目 | 状态 | 通过 | 功能 | 费用 | Token | 耗时 | 创建(UTC) | 提交名 |
 |---|---|---|---|---|---|---|---|---|---|---|
+| 7cc5accdf91e | ticket-booking | ticket-booking--ticket-booking | FAILED | 9/10 | 1/2 | ¥1.77 | 1.96M | 3m54s | 2026-09-13 09:31 | Octos main@a2170220 non-stream proxy (official v2.0.2 runtime) |
+| 7cedb3299bd9 | smoke-evolution | smoke-evolution--dice | PASSED | 2/2 | 2/2 | ¥0.29 | 0.40M | 40s | 2026-09-13 09:30 | Octos main@a2170220 non-stream proxy (official v2.0.2 runtime) |
+| 0f03a259f963 | smoke-evolution | smoke-evolution--counter | PASSED | 2/2 | 2/2 | ¥0.28 | 0.40M | 41s | 2026-09-13 09:30 | Octos main@a2170220 non-stream proxy (official v2.0.2 runtime) |
+| 5424432e8276 | smoke | smoke--dice | PASSED | 1/1 | 1/1 | ¥0.14 | 0.32M | 31s | 2026-09-13 09:30 | Octos main@a2170220 non-stream proxy (official v2.0.2 runtime) |
+| 53a91acea453 | smoke | smoke--counter | PASSED | 1/1 | 1/1 | ¥0.17 | 0.16M | 37s | 2026-09-13 09:27 | Octos main@a2170220 non-stream proxy (official v2.0.2 runtime) |
+| cc066e8e11f6 | smoke | smoke--counter | PASSED | 1/1 | 1/1 | ¥0.37 | 0.61M | 35s | 2026-09-13 09:11 | Octos main@0a2ef44f usage-probe (official v2.0.2 runtime) |
 | c14ea5c5aa56 | ticket-booking | ticket-booking--ticket-booking | FAILED | 9/10 | 1/2 | ¥2.50 | 5.02M | 6m33s | 2026-09-13 08:53 | Octos main@ade9a56c cost pass (reasoning_effort=low proxy, official v2.0.2 runtime) |
 | efa79e3db00c | smoke-evolution | smoke-evolution--dice | PASSED | 2/2 | 2/2 | ¥0.54 | 1.54M | 54s | 2026-09-13 08:53 | Octos main@ade9a56c cost pass (reasoning_effort=low proxy, official v2.0.2 runtime) |
 | 9ba8f915d00b | smoke-evolution | smoke-evolution--counter | PASSED | 2/2 | 2/2 | ¥0.54 | 1.57M | 53s | 2026-09-13 08:53 | Octos main@ade9a56c cost pass (reasoning_effort=low proxy, official v2.0.2 runtime) |
@@ -58,7 +64,7 @@
 | 3 | — | Orchestra ⚠预生成 | 100% | 100% | ¥0.0037 | 4s | senior |
 | 4 | 1 | niceeeeee | 100% | 100% | ¥0.02 | 10s | senior |
 | 5 | 2 | JustSoSO | 100% | 100% | ¥0.07 | 21s | senior |
-| 13 | 10 | **李尧** | 100% | 100% | ¥1.06 | 44s | senior |
+| 9 | 6 | **李尧** | 100% | 100% | ¥0.31 | 34s | senior |
 
 ## 榜单 · smoke-evolution（11 条，预生成 5 条，显示前 5 名与我们）
 
@@ -69,9 +75,9 @@
 | 3 | — | Orchestra ⚠预生成 | 100% | 100% | ¥0.0046 | 4s | senior |
 | 4 | — | niceeeeee ⚠预生成 | 100% | 100% | ¥0.02 | 8s | senior |
 | 5 | 1 | 包子头队 | 100% | 100% | ¥0.10 | 20s | senior |
-| 8 | 4 | **李尧** | 100% | 100% | ¥1.08 | 54s | senior |
+| 7 | 3 | **李尧** | 100% | 100% | ¥0.57 | 40s | senior |
 
-## 榜单 · ticket-booking（23 条，预生成 9 条，显示前 5 名与我们）
+## 榜单 · ticket-booking（23 条，预生成 8 条，显示前 5 名与我们）
 
 | # | 真实# | 队伍 | 通过率 | 功能率 | 费用 | 耗时 | 级别 |
 |---|---|---|---|---|---|---|---|
@@ -79,7 +85,7 @@
 | 2 | — | VOLO AI ⚠预生成 | 90% | 50% | ¥0.0000 | 1s | senior |
 | 3 | 1 | 睿欣达工场 | 90% | 50% | ¥0.81 | 7m30s | senior |
 | 4 | 2 | 非常队 | 90% | 50% | ¥1.11 | 10m07s | senior |
-| 5 | 3 | **李尧** | 90% | 50% | ¥1.99 | 17m31s | senior |
+| 5 | 3 | **李尧** | 90% | 50% | ¥1.77 | 3m54s | senior |
 
 ## 榜单 · arc-bench-web（1 条，预生成 1 条，显示前 5 名与我们）
 
@@ -109,6 +115,11 @@
 | 09-12 | ticket-booking | ticket-booking | ab4c98a6cb17 | 4ebb50bb26f5（main@9b0d3009：tests 写保护 + 并行安全持久化 + 哈希降本） | 9/10 | 1/2 | ¥1.99 | 1051 s | 自跑 10/10；唯一失败 REQ-1.2 登录用例注册时 `getByLabel(/证件号码|document number|passport number/)` 找不到可编辑输入框，10 s 超时（代码错：缺字段/label）。功能率首次非零 |
 | 09-12 | ticket-booking | ticket-booking | cbbec51884de | 07b56825e93b（main@0522db48：表单控件服务端直出契约） | 8/10 | 0/2 | ¥2.49 | 1352 s | 自跑 10/10；评测 2 条超时：REQ-1.1 注册后 locator.evaluate 超时（spec:71）、REQ-1.2 `locator.fill: Target crashed`（Chromium 渲染进程崩溃）。归因：环境（平台评测端内存/并行），与上一轮 9/10 同代码路径 |
 | 09-13 | arc-bench-web | keep | 29c840566f36 | 14a0dd892d0a（main@15a6bedf：A1–A7 + 1500 s/节点默认，官方 v2.0.2 runtime） | 未评测（运行中） | | | | 本机同适配包 grade-local 32/32 后上云 |
+| 09-13 | smoke | counter | 53a91acea453 | main@a2170220 非流式代理 | 1/1 | 1/1 | ¥0.17 | 37 s | 供应商 3 次请求 / 40,331 token；平台 164,720（4.1×） |
+| 09-13 | smoke | dice | 5424432e8276 | 同上 | 1/1 | 1/1 | ¥0.14 | 31 s | 供应商 3 / 38,287；平台 320,262（8.4×） |
+| 09-13 | smoke-evolution | counter | 0f03a259f963 | 同上 | 2/2 | 2/2 | ¥0.28 | 41 s | 供应商 7 / 81,012；平台 396,958 |
+| 09-13 | smoke-evolution | dice | 7cedb3299bd9 | 同上 | 2/2 | 2/2 | ¥0.29 | 40 s | 供应商 7 / 81,855；平台 401,575 |
+| 09-13 | ticket-booking | ticket-booking | 7cc5accdf91e | 同上 | 9/10 | 1/2 | ¥1.77 | 234 s | 供应商 12 / 268,479；平台 1,963,098；失败仍是 REQ-1.2 登录 `Target crashed`（第三次） |
 | 09-13 | smoke | counter | cc066e8e11f6 | main@0a2ef44f（含 A 的 [usage] 统计） | 1/1 | 1/1 | ¥0.37 | 35 s | 适配层代理统计 4 次请求、prompt 48,065 / completion 2,559 / 合计 50,624 token、cache_hit 0；平台 token_count 613,136（12.1×），费用与平台 token 数非线性 |
 | 09-13 | smoke | counter | fe02bdc94d77 | main@ade9a56c 费用版（reasoning_effort=low 代理） | 1/1 | 1/1 | ¥0.45 | 38 s | 改前 0491d2a6f510：¥1.24、201 s |
 | 09-13 | smoke | dice | c726465310c2 | 同上 | 1/1 | 1/1 | ¥0.61 | 49 s | 改前 bd8418c88535：¥1.42、267 s |
