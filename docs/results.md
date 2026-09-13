@@ -1,14 +1,14 @@
 # ARC-Bench 成绩看板
 
-生成时间：2026-09-13 13:36 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
+生成时间：2026-09-13 13:38 UTC；账号：李尧；预生成判定：费用 < ¥0.01 且耗时 < 10s。
 
 ## 各赛道我们的位置
 
 | 赛道 | 名次 | 通过率 | 功能率 | 费用 | 耗时 | 运行编号（有效） |
 |---|---|---|---|---|---|---|
-| smoke | 4/20（真实 agent 内 1/14，预生成 6） | 100% | 100% | ¥0.01 | 46s | ef7351eb9396, e5ba35b5574d, ce71b20cd1e9, ceb57c0a9603, db8980f15123, c6c35b0d1eab, c967b38e457c, 1868c77f82cb, 3a6067ba11b9, 2e03281e9449, c17bc1b44d26, aa1f5a0b981f, 549b16afca23, 1365151c2cf7, 783657d3f437, 96e0e4fb2b00, aefc01d1ae3f, bdcf35d968c7, 478a9be4715c, 6ff834e499d8, fab88d27c1d0, 3ddbaac0d8e0, 2e5f7cec22a9, 402a9be38707, a04246e9bfc0, 5424432e8276, 53a91acea453, cc066e8e11f6, c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
-| smoke-evolution | 5/12（真实 agent 内 1/6，预生成 6） | 100% | 100% | ¥0.08 | 68s | 6232223b9863, 9a1b1944a73e, e1b848eec6e2, b400134172bf, 497502f1aefd, 96e2c8aaac3d, ba7ae29d3a46, eefebbdffc4f, 66f9d3d67017, b8f1b3da9208, 265f41f54fe9, 19f60a7de400, ad959cc86495, b4fed98daae8, 7b6d012e9a0a, d28dd2612f94, 17465b7eaa0e, fe9600d1c5a1, 65d055f9bd6f, 7cedb3299bd9, 0f03a259f963, efa79e3db00c, 9ba8f915d00b, 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
-| ticket-booking | 3/27（真实 agent 内 1/18，预生成 9） | 90% | 50% | ¥0.37 | 3m36s | 709788da672e, 060a3debc450, 2e4802e9cb97, 954a231a3d23, 7cc5accdf91e, c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
+| smoke | 4/20（真实 agent 内 1/17，预生成 3） | 100% | 100% | ¥0.01 | 46s | ef7351eb9396, e5ba35b5574d, ce71b20cd1e9, ceb57c0a9603, db8980f15123, c6c35b0d1eab, c967b38e457c, 1868c77f82cb, 3a6067ba11b9, 2e03281e9449, c17bc1b44d26, aa1f5a0b981f, 549b16afca23, 1365151c2cf7, 783657d3f437, 96e0e4fb2b00, aefc01d1ae3f, bdcf35d968c7, 478a9be4715c, 6ff834e499d8, fab88d27c1d0, 3ddbaac0d8e0, 2e5f7cec22a9, 402a9be38707, a04246e9bfc0, 5424432e8276, 53a91acea453, cc066e8e11f6, c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
+| smoke-evolution | 5/12（真实 agent 内 2/9，预生成 3） | 100% | 100% | ¥0.08 | 68s | 6232223b9863, 9a1b1944a73e, e1b848eec6e2, b400134172bf, 497502f1aefd, 96e2c8aaac3d, ba7ae29d3a46, eefebbdffc4f, 66f9d3d67017, b8f1b3da9208, 265f41f54fe9, 19f60a7de400, ad959cc86495, b4fed98daae8, 7b6d012e9a0a, d28dd2612f94, 17465b7eaa0e, fe9600d1c5a1, 65d055f9bd6f, 7cedb3299bd9, 0f03a259f963, efa79e3db00c, 9ba8f915d00b, 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
+| ticket-booking | 3/27（真实 agent 内 1/25，预生成 2） | 90% | 50% | ¥0.37 | 3m36s | 709788da672e, 060a3debc450, 2e4802e9cb97, 954a231a3d23, 7cc5accdf91e, c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
 | arc-bench-web | 未上榜（榜共 1 条，其中预生成 1） | — | — | — | — | — |
 
 ## 我们的全部运行
@@ -107,7 +107,7 @@
 | f031f20d1558 | smoke | smoke--counter | FAILED | — | 0/0 | — | — | — | 2026-09-11 07:02 | Octos 官方 v2.0.2 · 实操演示 |
 | 50d049b049bd | smoke | smoke--counter | PASSED | 1/1 | 1/1 | ¥0.63 | 3.80M | 16m41s | 2026-09-11 02:07 | Octos 适配包 |
 
-## 榜单 · smoke（20 条，预生成 6 条，显示前 6 名与我们）
+## 榜单 · smoke（20 条，预生成 3 条，显示前 6 名与我们）
 
 | # | 真实# | 队伍 | 通过率 | 功能率 | 费用 | 耗时 | 级别 |
 |---|---|---|---|---|---|---|---|
@@ -118,18 +118,18 @@
 | 5 | 2 | niceeeeee | 100% | 100% | ¥0.02 | 10s | senior |
 | 6 | 3 | JustSoSO | 100% | 100% | ¥0.07 | 21s | senior |
 
-## 榜单 · smoke-evolution（12 条，预生成 6 条，显示前 6 名与我们）
+## 榜单 · smoke-evolution（12 条，预生成 3 条，显示前 6 名与我们）
 
 | # | 真实# | 队伍 | 通过率 | 功能率 | 费用 | 耗时 | 级别 |
 |---|---|---|---|---|---|---|---|
 | 1 | — | 你也秃对不队 ⚠预生成 | 100% | 100% | ¥0.0000 | 2s | senior |
 | 2 | — | VOLO AI ⚠预生成 | 100% | 100% | ¥0.0001 | 1s | senior |
 | 3 | — | Orchestra ⚠预生成 | 100% | 100% | ¥0.0046 | 4s | senior |
-| 4 | — | niceeeeee ⚠预生成 | 100% | 100% | ¥0.02 | 8s | senior |
-| 5 | 1 | **李尧** | 100% | 100% | ¥0.08 | 68s | senior |
-| 6 | 2 | 包子头队 | 100% | 100% | ¥0.10 | 20s | senior |
+| 4 | 1 | niceeeeee | 100% | 100% | ¥0.02 | 8s | senior |
+| 5 | 2 | **李尧** | 100% | 100% | ¥0.08 | 68s | senior |
+| 6 | 3 | 包子头队 | 100% | 100% | ¥0.10 | 20s | senior |
 
-## 榜单 · ticket-booking（27 条，预生成 9 条，显示前 6 名与我们）
+## 榜单 · ticket-booking（27 条，预生成 2 条，显示前 6 名与我们）
 
 | # | 真实# | 队伍 | 通过率 | 功能率 | 费用 | 耗时 | 级别 |
 |---|---|---|---|---|---|---|---|
