@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from llm_proxy import destream_request, inject_reasoning, request_shape, to_sse, usage_record
+from llm_proxy import BUDGET_NOTICE, destream_request, enforce_turn_budget, inject_reasoning, request_shape, to_sse, trim_request, trim_system_prompt, usage_record
 
 
 class InjectTests(unittest.TestCase):
@@ -79,3 +79,48 @@ class DestreamTests(unittest.TestCase):
         self.assertTrue(sse.endswith("data: [DONE]\n\n"))
         rec = usage_record(resp, 1, "low")
         self.assertEqual(rec["sse_chunks"], 0)
+
+
+class TrimTests(unittest.TestCase):
+    SYS = ("You are Octos.\n\n## Formatting Rules\nkeep f\n\n## Research & Search Rules\ndrop r\n### sub\ndrop too\n\n"
+           "## Coding And Shell Rules\nkeep c\n### Output shape\nkeep o\n\n## Active Skills\n\n# Cron Scheduling\ndrop\n## Actions\ndrop\n"
+           "# Skill Store\ndrop\n\n## Tool use discipline\nkeep t\n")
+
+    def test_should_drop_listed_sections_including_subsections_and_skill_block(self):
+        out = trim_system_prompt(self.SYS)
+        for kept in ("You are Octos.", "## Formatting Rules", "keep f", "## Coding And Shell Rules", "keep c", "keep o", "## Tool use discipline", "keep t"):
+            self.assertIn(kept, out)
+        for dropped in ("Research", "drop r", "drop too", "Cron Scheduling", "Skill Store", "## Actions"):
+            self.assertNotIn(dropped, out)
+
+    def test_should_leave_unknown_prompts_untouched(self):
+        self.assertEqual(trim_system_prompt("plain text\n## Something else\nbody"), "plain text\n## Something else\nbody")
+
+    def test_should_remove_unused_tools_and_keep_coding_tools(self):
+        body = json.dumps({"model": "m", "messages": [{"role": "system", "content": self.SYS}, {"role": "user", "content": "x"}],
+                           "tools": [{"type": "function", "function": {"name": n}} for n in ("spawn", "bash", "write_file", "update_plan", "read_file")]}).encode()
+        out = json.loads(trim_request(body))
+        self.assertEqual([t["function"]["name"] for t in out["tools"]], ["bash", "write_file", "read_file"])
+        self.assertNotIn("Research", out["messages"][0]["content"])
+        self.assertEqual(out["messages"][1]["content"], "x")
+
+
+class ExtraDropTests(unittest.TestCase):
+    def test_should_drop_extra_tools_on_top_of_defaults(self):
+        body = json.dumps({"model": "m", "messages": [{"role": "user", "content": "x"}],
+                           "tools": [{"type": "function", "function": {"name": n}} for n in ("bash", "write_file", "spawn", "shell")]}).encode()
+        from llm_proxy import DROP_TOOLS
+        out = json.loads(trim_request(body, DROP_TOOLS | {"bash", "shell"}))
+        self.assertEqual([t["function"]["name"] for t in out["tools"]], ["write_file"])
+
+
+class TurnBudgetTests(unittest.TestCase):
+    def test_should_strip_tools_and_append_notice_once_budget_is_used(self):
+        body = json.dumps({"model": "m", "messages": [{"role": "user", "content": "x"}], "tools": [{"type": "function", "function": {"name": "bash"}}]}).encode()
+        self.assertIs(enforce_turn_budget(body, 3, 6), body)
+        self.assertIs(enforce_turn_budget(body, 99, 0), body)
+        out = json.loads(enforce_turn_budget(body, 6, 6))
+        self.assertNotIn("tools", out)
+        self.assertEqual(out["messages"][-1], {"role": "user", "content": BUDGET_NOTICE})
+        again = json.loads(enforce_turn_budget(json.dumps(out).encode(), 7, 6))
+        self.assertEqual(sum(1 for m in again["messages"] if m.get("content") == BUDGET_NOTICE), 1)

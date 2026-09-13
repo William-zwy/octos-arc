@@ -37,10 +37,16 @@ Environment (all optional):
     OCTOS_SKELETON_MIN_NODES  separate skeleton turn only for trees with at least this many nodes (3)
     OCTOS_SMALL_TASK_NODES    trees up to this size get the minimal self-verification text (2)
     OCTOS_VERIFY_MODE         auto (default) | minimal | full
-    OCTOS_ARC_REASONING       low (default) | medium | high | none | passthrough — DeepSeek reasoning via local proxy
+    OCTOS_ARC_REASONING       auto (default: none for <=1 node to implement, else low) | low | medium | high | none | passthrough
+    OCTOS_ARC_IMPLEMENT_REASONING  reasoning for first implement turns of small tasks (default none); rewrite/repair keep the base mode
     OCTOS_ARC_INLINE_SPECS    "0" stops quoting the node's spec files into the prompt (default: quote up to 24k chars)
     OCTOS_ARC_DESTREAM        "0" lets streaming requests reach the platform as SSE (default: one JSON response upstream)
-    OCTOS_SESSION_SCOPE       node (default) | turn | run — when a fresh octos session starts
+    OCTOS_ARC_TRIM_PROMPT     "0" keeps the kernel system prompt and all tool schemas (default: drop ARC-irrelevant sections/tools)
+    OCTOS_ARC_DROP_SHELL      "0" leaves bash/shell available in minimal-verification turns (default: removed)
+    OCTOS_ARC_IMPLEMENT_REQUESTS / OCTOS_ARC_REPAIR_REQUESTS  hard per-turn request caps enforced at the proxy (12 for small tasks / 10; 0 = off)
+    OCTOS_ARC_REWRITE_ON_ZERO "0" disables the single full-rewrite turn when round 0 passes nothing
+    OCTOS_ARC_INLINE_SOURCE_CHARS  budget for quoting the app's sources into repair/rewrite prompts (40000; 0 = off)
+    OCTOS_SESSION_SCOPE       turn (default) | node | run — when a fresh octos session starts
     OCTOS_ARC_INSTALL_PLAYWRIGHT  "0" never installs Playwright on the fly
     OCTOS_ARC_ALIAS_SPEC_IDS  "0" stops mirroring node states onto spec ids
     OCTOS_PERF_CONTRACT       "0" drops the performance rules from prompts
@@ -298,6 +304,34 @@ def unchanged_node_ids(nodes: list[dict], previous: dict[str, dict]) -> set[str]
     return out
 
 
+def inline_sources(output_dir: Path, max_chars: int = 40000) -> str:
+    """Quote the app's source files (frontend sources, backend JS) so a repair
+    turn edits immediately instead of spending its request budget on reads.
+    Bounded; largest files first are skipped when they would not fit."""
+    files: list[Path] = []
+    for part in ("frontend", "backend"):
+        base = output_dir / part
+        if base.is_dir():
+            for path in sorted(base.rglob("*")):
+                rel = path.relative_to(output_dir)
+                if any(seg in ("node_modules", "dist", ".git", "data") for seg in rel.parts):
+                    continue
+                if path.is_file() and path.suffix in (".js", ".mjs", ".cjs", ".html", ".css", ".json"):
+                    files.append(path)
+    parts, total = [], 0
+    for path in sorted(files, key=lambda p: p.stat().st_size):
+        try:
+            text = path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        if total + len(text) > max_chars:
+            parts.append(f"--- {path.relative_to(output_dir)} --- (omitted, {len(text)} chars; read it if you must change it)\n")
+            continue
+        total += len(text)
+        parts.append(f"--- {path.relative_to(output_dir)} ---\n{text.rstrip()}\n")
+    return ("Current source files (quoted; edit them directly, no need to read):\n" + "".join(parts)) if parts else ""
+
+
 def source_listing(output_dir: Path, limit: int = 60) -> str:
     """Short, stable listing of the app sources for evolution prompts."""
     lines = []
@@ -544,7 +578,11 @@ class OctosDriver:
         self.mode = os.environ.get("OCTOS_DRIVER", "stdio")
         # "turn": new session every turn; "node": one session per requirement
         # node (design -> implement -> repairs share context); "run": one session.
-        self.session_scope = os.environ.get("OCTOS_SESSION_SCOPE", "node")
+        # Default "turn" since specs are quoted into every prompt: a repair turn
+        # is self-contained, while a shared node session made each repair
+        # request carry the whole implement history (v8-tb: 49 requests, 1.1M
+        # prompt tokens for 7 repairs).
+        self.session_scope = os.environ.get("OCTOS_SESSION_SCOPE", "turn")
         if os.environ.get("OCTOS_SESSION_PER_TURN") == "0" and "OCTOS_SESSION_SCOPE" not in os.environ:
             self.session_scope = "run"
         self.octos_bin = octos_bin
@@ -679,7 +717,7 @@ UI_CONTRACT_CORE = """\
 UI contract (the hidden Playwright tests depend on these; a violation scores 0):
 - Buttons are real <button> elements, links are <a href>, every form control has a visible <label for=id>; their texts are copied VERBATIM from the requirement/spec (anchored regexes like /^name$/i reject "Full Name"). Use plain text/password/email inputs, native <select>/checkbox/radio; NEVER type="date"/"number". All controls exist in the served HTML itself and stay visible, enabled and editable at all times.
 - No native HTML5 validation attributes; validate in JavaScript and show ONE inline error element (role="alert") naming the problem (required / invalid / match / terms / duplicate). On error stay on the page and create no record.
-- Strict mode: every echoed value (username, city, date) appears in EXACTLY ONE visible element per page; never both a short and a long form of one entity, never a per-field error plus a summary.
+- Strict mode: every echoed value (username, city, date) appears in EXACTLY ONE element per page; never both a short and a long form of one entity, never a per-field error plus a summary. Serve a SEPARATE HTML document per route (`/`, `/register`, `/login`, ...) — never several forms in one document with hidden views: hidden inputs and labels still collide in getByLabel/getByRole.
 - State: persist ONLY what the requirement says is persisted and reproduce that seed on EVERY fresh start; a page's initial state (e.g. "the count is initially 0") is per-page-load client state, never a shared server value — the grader runs several test files in parallel against ONE server.
 - Zero external requests (no CDN, fonts, analytics); assets small and same-origin.
 - Text only: never OCR reference images. Write files in your first actions.
@@ -714,7 +752,7 @@ Verify briefly before you finish — the harness runs the official acceptance te
 """
 
 VERIFY_MINIMAL = """\
-Do NOT start the server, curl, run node, or write your own tests — the harness builds the frontend, starts the backend and runs the official Playwright spec right after your turn and hands you any failure. Tool budget for this turn: at most 8 write_file/edit_file calls (one backend file backend/server.js plus at most 4 frontend files; write each file once, complete), at most 2 read_file calls, and exactly one shell command: `cd frontend && npm run build`. Batch: emit ALL write_file calls together in ONE response (parallel tool calls), then the single build command in the next response, then finish — every extra round trip resends the whole context and is billed. Do not list directories or re-read files you just wrote; the file listing above is authoritative.
+You have no shell in this turn — the harness runs `npm run build`, starts the backend and runs the official Playwright spec right after your turn and hands you any failure. Tool budget for this turn: at most 8 write_file/edit_file calls (one backend file backend/server.js plus at most 4 frontend files; write each file once, complete) and at most 2 read_file calls. Emit ALL write_file calls together in ONE response (parallel tool calls), then finish with a one-line summary — every extra round trip resends the whole context and is billed. Do not list directories or re-read files you just wrote; the file listing above is authoritative. Double-check syntax mentally before writing: a build or start failure costs a repair round.
 """
 
 PORT_RULES = """\
@@ -782,8 +820,8 @@ Read the files you need before changing them, keep every existing route, label a
 REPAIR_PROMPT = """\
 The official acceptance tests for requirement node {node_id} just ran against your app: {passed}/{total} passed. Failing tests (Feature / where it failed / what was observed / the last steps before failure):
 {failures}
-{corrections}{slow}
-Fix frontend/ and/or backend/ so these tests pass without breaking the passing ones. Read the failing assertion in the spec, fix the root cause with as few tool calls as possible, run `npm run build` in frontend/ once. The harness re-runs the official tests right after your turn; do not start servers or write your own tests. The spec files are read-only ground truth.
+{corrections}{slow}{sources}
+Fix frontend/ and/or backend/ so these tests pass without breaking the passing ones. You have about 10 requests: in the FIRST response read at most two files (only the ones you will change), in the SECOND response emit every edit_file/write_file call together, then finish — do not read more files afterwards. No shell commands. The harness rebuilds and re-runs the official tests right after your turn. The spec files are read-only ground truth.
 """ + PORT_RULES
 
 FINAL_CHECK_PROMPT = """\
@@ -964,6 +1002,10 @@ class Flow:
             prefixes.append(str(self.tests_dir))
         return prefixes
 
+    def sources_text(self) -> str:
+        limit = int(os.environ.get("OCTOS_ARC_INLINE_SOURCE_CHARS", "40000"))
+        return inline_sources(self.output_dir, limit) + "\n" if limit > 0 else ""
+
     def corrections_text(self) -> str:
         if not self.pending_corrections:
             return ""
@@ -971,13 +1013,28 @@ class Flow:
         self.pending_corrections = []
         return text
 
-    def turn(self, prompt: str, timeout: int, label: str, expect_verification: bool = True) -> tuple[bool, str]:
+    def turn(self, prompt: str, timeout: int, label: str, expect_verification: bool = True,
+             request_budget: int | None = None) -> tuple[bool, str]:
         monitor = TurnMonitor(self.protected_prefixes(), expect_verification=expect_verification,
                               allowed_prefixes=[".arc/design/", str(self.output_dir / ".arc" / "design")])
+        proxy = getattr(self, "llm_proxy", None)
+        if proxy is not None:
+            # Per-turn reasoning: OCTOS_ARC_IMPLEMENT_REASONING (e.g. "none") applies
+            # to first implement turns of small tasks; rewrite/repair keep the base mode.
+            base_mode = getattr(self, "base_reasoning_mode", proxy.mode)
+            impl_mode = os.environ.get("OCTOS_ARC_IMPLEMENT_REASONING", "none")
+            is_implement = label.endswith(" implement") or label.startswith("skeleton")
+            proxy.mode = impl_mode if (impl_mode and is_implement and self.minimal_mode(getattr(self, "n_nodes", 99))) else base_mode
+            if request_budget is None:
+                request_budget = int(os.environ.get("OCTOS_ARC_REPAIR_REQUESTS", "10")) if "repair" in label else \
+                    int(os.environ.get("OCTOS_ARC_IMPLEMENT_REQUESTS", "12" if self.minimal_mode(getattr(self, "n_nodes", 99)) else "0"))
+            proxy.begin_turn(request_budget)
         t0 = time.time()
         ok, text = self.driver.run(prompt, max(60, int(timeout)), monitor)
         log(f"[flow] {label} {'ok' if ok else 'FAILED'} in {time.time()-t0:.0f}s "
             f"(tools={monitor.tool_calls} wrote={monitor.wrote_files} verified={monitor.verified}): {text[-240:]!r}")
+        if proxy is not None and proxy.turn_budget and proxy.turn_requests > proxy.turn_budget:
+            log(f"[guard] {label}: request budget {proxy.turn_budget} hit; turn forced to finish")
         for c in monitor.corrections():
             log(f"[guard] {label}: {c[:160]}")
             if self.guard_enabled:
@@ -1007,9 +1064,21 @@ class Flow:
             blocks.append(UI_CONTRACT_SESSION)
         return "".join(blocks)
 
+    SHELL_TOOLS = {"bash", "shell", "exec_command"}
+
+    def minimal_mode(self, total_nodes: int) -> bool:
+        mode = os.environ.get("OCTOS_VERIFY_MODE", "auto")
+        return mode == "minimal" or (mode != "full" and total_nodes <= self.small_task_nodes)
+
     def verify_text(self, total_nodes: int) -> str:
-        minimal = total_nodes <= self.small_task_nodes and os.environ.get("OCTOS_VERIFY_MODE", "auto") != "full"
-        return VERIFY_MINIMAL if minimal or os.environ.get("OCTOS_VERIFY_MODE") == "minimal" else VERIFY_FULL.format(smoke=self.smoke_port)
+        minimal = self.minimal_mode(total_nodes)
+        # Prompt budgets alone are ignored often enough (v9-tb-a: 41 tool calls
+        # incl. servers in a "no shell" repair turn); in minimal mode the proxy
+        # removes the shell tools so commands are impossible, the harness builds.
+        proxy = getattr(self, "llm_proxy", None)
+        if proxy is not None and os.environ.get("OCTOS_ARC_DROP_SHELL", "1") != "0":
+            proxy.extra_drop_tools = set(self.SHELL_TOOLS) if minimal else set()
+        return VERIFY_MINIMAL if minimal else VERIFY_FULL.format(smoke=self.smoke_port)
 
     def tests_prompt_for(self, node_id: str | None, skeleton: bool = False) -> str:
         if not self.tests_dir:
@@ -1123,20 +1192,27 @@ class Flow:
         """Front the model endpoint with llm_proxy so DeepSeek reasoning is
         capped (`OCTOS_ARC_REASONING`: low (default) | medium | high | none |
         passthrough) and exact per-request usage lands in .arc/llm-usage.jsonl."""
-        mode = os.environ.get("OCTOS_ARC_REASONING", "low")
+        mode = os.environ.get("OCTOS_ARC_REASONING", "auto")
+        if mode == "auto":
+            # Thinking off is safe for one-node builds and one-node evolutions
+            # (v10: Counter/Dice/Evolution all pass, completion 0.5-1.9k tokens)
+            # but TB repairs without thinking looped 22 calls with no write.
+            mode = "none" if getattr(self, "nodes_to_implement", 2) <= 1 else "low"
         upstream = os.environ.get("OPENAI_BASE_URL", "")
         if mode == "passthrough" or not upstream.startswith("http"):
             return
         try:
             dump = (self.output_dir / ".arc" / "llm-requests") if os.environ.get("OCTOS_ARC_PROXY_DUMP") == "1" else None
             self.llm_proxy = LlmProxy(upstream, mode, self.output_dir / ".arc" / "llm-usage.jsonl", dump_dir=dump,
-                                      destream=os.environ.get("OCTOS_ARC_DESTREAM", "1") != "0").start()
+                                      destream=os.environ.get("OCTOS_ARC_DESTREAM", "1") != "0",
+                                      trim=os.environ.get("OCTOS_ARC_TRIM_PROMPT", "1") != "0").start()
         except OSError as exc:
             log(f"[proxy] could not start local LLM proxy ({exc}); using the endpoint directly")
             return
+        self.base_reasoning_mode = mode
         os.environ["OPENAI_BASE_URL"] = self.llm_proxy.base_url
         log(f"[proxy] LLM requests via {self.llm_proxy.base_url} -> {upstream} (reasoning={mode}, "
-            f"destream={'on' if self.llm_proxy.destream else 'off'})")
+            f"destream={'on' if self.llm_proxy.destream else 'off'}, trim={'on' if self.llm_proxy.trim else 'off'})")
 
     def stop_llm_proxy(self) -> None:
         proxy = getattr(self, "llm_proxy", None)
@@ -1151,7 +1227,8 @@ class Flow:
         if not path.is_file():
             return
         tot = {"requests": 0, "prompt_tokens": 0, "completion_tokens": 0, "reasoning_tokens": 0,
-               "prompt_cache_hit_tokens": 0, "total_tokens": 0}
+               "prompt_cache_hit_tokens": 0, "total_tokens": 0, "request_bytes": 0, "response_bytes": 0,
+               "sse_chunks": 0}
         for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
             try:
                 rec = json.loads(line)
@@ -1199,11 +1276,16 @@ class Flow:
         except Exception as exc:  # noqa: BLE001
             log(f"[trace] test rows not recorded: {exc}")
 
-    def acceptance_loop(self, node_id: str, specs: list[str], deadline: float) -> bool | None:
-        """Returns True/False for a real verdict, None when no local run happened."""
+    def acceptance_loop(self, node_id: str, specs: list[str], deadline: float,
+                        rebuild_prompt=None) -> bool | None:
+        """Returns True/False for a real verdict, None when no local run happened.
+        `rebuild_prompt(failures)` (optional) yields a full re-implementation
+        prompt; it is used once when round 0 passes nothing — rewriting beats
+        patching a structurally broken first attempt (v13-tb-a)."""
         if self.runner is None or not specs:
             return None
         best_passed, best_sha, regressions = -1, self.head(), 0
+        rewrite_used = False
         for attempt in range(self.repair_rounds + 1):
             summary = self.run_specs(specs)
             if summary.error:
@@ -1243,9 +1325,18 @@ class Flow:
             slow = summary.slow(int(os.environ.get("OCTOS_ARC_SLOW_MS", "3000")))
             slow_text = ("Also, these tests took over 3 s on this fast machine and will exceed the grader's "
                          "10 s budget: " + "; ".join(slow) + ". Remove the latency.\n" + self.perf_text()) if slow else ""
+            if passed == 0 and rebuild_prompt is not None and not rewrite_used \
+                    and os.environ.get("OCTOS_ARC_REWRITE_ON_ZERO", "1") != "0":
+                rewrite_used = True
+                log(f"[flow] {node_id}: nothing passed; one full rewrite turn instead of a patch")
+                prompt = rebuild_prompt(failures or "(no detail)")
+                self.turn(prompt, min(self.node_timeout, left), f"{node_id} rewrite (repair {attempt + 1})",
+                          request_budget=int(os.environ.get("OCTOS_ARC_IMPLEMENT_REQUESTS", "12")))
+                continue
             prompt = REPAIR_PROMPT.format(node_id=node_id, passed=passed, total=summary.total,
                                           failures=failures or "(no detail)", corrections=self.corrections_text(),
-                                          slow=slow_text, smoke=self.smoke_port, port=self.web_port)
+                                          slow=slow_text, smoke=self.smoke_port, port=self.web_port,
+                                          sources=self.sources_text())
             self.turn(prompt, min(self.node_timeout, left), f"{node_id} repair {attempt + 1}/{self.repair_rounds}")
         if best_passed > 0 and best_sha and self.head() != best_sha:
             self.restore_app(best_sha)
@@ -1369,7 +1460,13 @@ class Flow:
         self.mark("implementation_done", node_id, (text[-500:] or None) if ok else "implement turn timed out; partial code")
         self.commit(f"{node_id} (implement): {node.get('name', '')}")
 
-        verdict = self.acceptance_loop(node_id, specs, deadline)
+        def rebuild_prompt(failures: str) -> str:
+            return (prompt + "\nYOUR PREVIOUS ATTEMPT FAILED EVERY ACCEPTANCE TEST — the failures (Feature / where / "
+                    "observation / steps):\n" + failures + "\n" + self.sources_text()
+                    + "Rewrite the files for this node completely (full write_file for each file, not edits), "
+                    "fixing the root causes above.\n")
+
+        verdict = self.acceptance_loop(node_id, specs, deadline, rebuild_prompt=rebuild_prompt)
         self.test_verdict[node_id] = verdict
         if verdict is True:
             self.mark("test_passed", node_id, f"{len(specs)} acceptance spec file(s) pass locally")
@@ -1459,6 +1556,7 @@ class Flow:
             failing = sorted(k for k in grouped if k) or ["all nodes"]
             prompt = REPAIR_PROMPT.format(
                 node_id=", ".join(failing), passed=summary.passed, total=summary.total, failures=failures,
+                sources=self.sources_text(),
                 corrections=self.corrections_text() + "The grader runs all spec files IN PARALLEL against one "
                 "server; tests from different files must not interfere through shared server state "
                 "(e.g. a counter that every browser session shares). Keep persisted data only where the "
@@ -1540,6 +1638,8 @@ class Flow:
                 unchanged = unchanged_node_ids(ordered, previous)
                 log(f"[flow] evolution mode: existing app detected; unchanged nodes {sorted(unchanged)}, "
                     f"to implement {[i for i in node_ids if i not in unchanged]}")
+            self.nodes_to_implement = len([n for n in node_ids if n not in unchanged])
+            self.n_nodes = len(ordered)
 
             self.tests_dir = locate_acceptance_tests(tree, BUNDLE_DIR)
             if self.tests_dir:

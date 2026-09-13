@@ -96,6 +96,100 @@ def request_shape(body: bytes) -> dict | None:
     return shape
 
 
+# System-prompt sections of the octos coding profile that no ARC task uses.
+# Each entry: (heading the cut starts at, heading it stops before). Cuts are
+# whole sections, so the kept text stays byte-identical to the kernel's.
+DROP_SECTIONS: list[tuple[str, str | None]] = [
+    ("## Research & Search Rules", None),
+    ("## Rich Card Rendering", None),
+    ("## Pipelines", None),
+    ("## Background Tasks", None),
+    ("## Cancellation", None),
+    ("## Scheduled Tasks (Cron)", None),
+    ("## Queue Behavior", None),
+    ("## Slash Commands", None),
+    ("## Active Skills", "## Tool use discipline"),  # cron / skill-store skill docs (H1s inside)
+]
+# Tools the coding turns never need; the model cannot call what it cannot see.
+DROP_TOOLS = {"spawn", "ask_user_question", "check", "tool_search", "update_plan", "exec_command"}
+
+
+def trim_system_prompt(text: str, drops: list[tuple[str, str | None]] = DROP_SECTIONS) -> str:
+    lines = text.split("\n")
+
+    def level(line: str) -> int:
+        stripped = line.lstrip("#")
+        return len(line) - len(stripped) if line.startswith("#") and stripped.startswith(" ") else 0
+
+    out: list[str] = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        rule = next((d for d in drops if line.startswith(d[0])), None)
+        if rule is None:
+            out.append(line)
+            i += 1
+            continue
+        start_level = level(line)
+        j = i + 1
+        while j < len(lines):
+            if rule[1] is not None:
+                if lines[j].startswith(rule[1]):
+                    break
+            elif 0 < level(lines[j]) <= start_level:
+                break
+            j += 1
+        i = j
+    trimmed = "\n".join(out)
+    while "\n\n\n\n" in trimmed:
+        trimmed = trimmed.replace("\n\n\n\n", "\n\n\n")
+    return trimmed
+
+
+def trim_request(body: bytes, drop_tools: set[str] = DROP_TOOLS) -> bytes:
+    """Drop irrelevant system-prompt sections and unused tool schemas from a
+    chat request (the platform meters request bytes; Counter: 45k -> ~17k)."""
+    try:
+        data = json.loads(body)
+    except (ValueError, UnicodeDecodeError):
+        return body
+    if not isinstance(data, dict) or "messages" not in data:
+        return body
+    for msg in data.get("messages") or []:
+        if msg.get("role") == "system" and isinstance(msg.get("content"), str):
+            msg["content"] = trim_system_prompt(msg["content"])
+    if isinstance(data.get("tools"), list):
+        data["tools"] = [t for t in data["tools"]
+                         if ((t.get("function") or {}).get("name") or t.get("name")) not in drop_tools]
+    return json.dumps(data, ensure_ascii=False).encode("utf-8")
+
+
+BUDGET_NOTICE = ("Tool budget for this turn is exhausted. Do not call any more tools: reply now with a one-line "
+                 "summary of what you changed. The harness will build and test the app.")
+
+
+def enforce_turn_budget(body: bytes, used: int, budget: int) -> bytes:
+    """Once `used` requests have been made in the current turn, strip the tool
+    schemas and append a user notice so the model must answer (ending the turn).
+    A hard cap the model cannot ignore, unlike prompt budgets (v11-tb: 20-call
+    repair turns)."""
+    if budget <= 0 or used < budget:
+        return body
+    try:
+        data = json.loads(body)
+    except (ValueError, UnicodeDecodeError):
+        return body
+    if not isinstance(data, dict) or "messages" not in data:
+        return body
+    data.pop("tools", None)
+    data.pop("tool_choice", None)
+    msgs = list(data.get("messages") or [])
+    if not msgs or msgs[-1].get("role") != "user" or msgs[-1].get("content") != BUDGET_NOTICE:
+        msgs.append({"role": "user", "content": BUDGET_NOTICE})
+    data["messages"] = msgs
+    return json.dumps(data, ensure_ascii=False).encode("utf-8")
+
+
 def destream_request(body: bytes) -> tuple[bytes, bool]:
     """Turn a streaming chat request into a non-streaming one. Returns
     (new_body, was_streaming). The platform's meter sits between us and the
@@ -166,10 +260,19 @@ def usage_record(response_body: bytes, elapsed_ms: int, mode: str) -> dict | Non
 
 class LlmProxy:
     def __init__(self, upstream_base: str, mode: str, log_path: Path | None = None, host: str = "127.0.0.1",
-                 dump_dir: Path | None = None, dump_limit: int = 3, destream: bool = True) -> None:
+                 dump_dir: Path | None = None, dump_limit: int = 3, destream: bool = True, trim: bool = True,
+                 extra_drop_tools: set[str] | None = None) -> None:
         self.upstream = upstream_base.rstrip("/")
         self.mode = mode
         self.destream = destream
+        self.trim = trim
+        # Tools removed from every request in addition to DROP_TOOLS (mutable:
+        # the flow can take the shell away for one-turn tasks and give it back).
+        self.extra_drop_tools: set[str] = set(extra_drop_tools or ())
+        # Per-turn request cap (0 = unlimited); the flow calls begin_turn().
+        self.turn_budget = 0
+        self.turn_requests = 0
+        self.budget_hits = 0
         self.log_path = log_path
         self.dump_dir = dump_dir      # OCTOS_ARC_PROXY_DUMP=1: first N request bodies for prefix analysis
         self.dump_limit = dump_limit
@@ -189,6 +292,15 @@ class LlmProxy:
                 was_streaming = False
                 if method == "POST" and self.path.rstrip("/").endswith("/chat/completions"):
                     body = inject_reasoning(body, proxy.mode)
+                    with proxy._lock:
+                        used = proxy.turn_requests
+                        proxy.turn_requests += 1
+                    capped = enforce_turn_budget(body, used, proxy.turn_budget)
+                    if capped is not body:
+                        proxy.budget_hits += 1
+                    body = capped
+                    if proxy.trim or proxy.extra_drop_tools:
+                        body = trim_request(body, (DROP_TOOLS if proxy.trim else set()) | proxy.extra_drop_tools)
                     if proxy.destream:
                         body, was_streaming = destream_request(body)
                     proxy._dump(body)
@@ -207,7 +319,7 @@ class LlmProxy:
                     status, payload, resp_headers = exc.code, exc.read(), exc.headers
                 except Exception as exc:  # noqa: BLE001
                     status, payload, resp_headers = 502, json.dumps({"error": {"message": f"proxy: {exc}"}}).encode(), {}
-                proxy._log(payload, int((time.time() - t0) * 1000), body)
+                proxy._log(payload, int((time.time() - t0) * 1000), body, len(body), len(payload))
                 ctype = resp_headers.get("Content-Type", "application/json") if resp_headers else "application/json"
                 if was_streaming and status == 200:
                     payload, ctype = to_sse(payload), "text/event-stream; charset=utf-8"
@@ -229,6 +341,11 @@ class LlmProxy:
         self.base_url = f"http://{host}:{self.port}/v1"
         self._thread = threading.Thread(target=self.server.serve_forever, daemon=True)
 
+    def begin_turn(self, budget: int) -> None:
+        with self._lock:
+            self.turn_budget = int(budget)
+            self.turn_requests = 0
+
     def _dump(self, body: bytes) -> None:
         if not self.dump_dir or self._dumped >= self.dump_limit:
             return
@@ -239,12 +356,14 @@ class LlmProxy:
         except OSError:
             pass
 
-    def _log(self, payload: bytes, elapsed_ms: int, request_body: bytes = b"") -> None:
+    def _log(self, payload: bytes, elapsed_ms: int, request_body: bytes = b"", req_bytes: int = 0,
+             resp_bytes: int = 0) -> None:
         if not self.log_path:
             return
         rec = usage_record(payload, elapsed_ms, self.mode)
         if rec is None:
             return
+        rec["request_bytes"], rec["response_bytes"] = req_bytes, resp_bytes
         shape = request_shape(request_body)
         if shape:
             rec["request"] = shape
