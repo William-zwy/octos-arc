@@ -308,6 +308,26 @@ def unchanged_node_ids(nodes: list[dict], previous: dict[str, dict]) -> set[str]
     return out
 
 
+CODEGEN_MANIFESTS = {
+    "frontend/package.json": {"name": "f", "private": True, "scripts": {"build": "node -e \"const f=require('fs');f.mkdirSync('dist',{recursive:true});for(const n of f.readdirSync('src'))f.copyFileSync('src/'+n,'dist/'+n)\""}},
+    "backend/package.json": {"name": "b", "private": True, "scripts": {"start": "node server.js"}},
+}
+
+
+def write_codegen_manifests(output_dir: Path) -> list[str]:
+    """Codegen turns never emit package.json: the harness writes the two fixed
+    manifests (idempotent build copying src/* to dist, start running server.js)."""
+    written = []
+    for rel, data in CODEGEN_MANIFESTS.items():
+        path = output_dir / rel
+        if path.exists():
+            continue
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+        written.append(rel)
+    return written
+
+
 def inline_sources(output_dir: Path, max_chars: int = 40000, exts: tuple = (".js", ".mjs", ".cjs", ".html", ".css", ".json")) -> str:
     """Quote the app's source files (frontend sources, backend JS) so a repair
     turn edits immediately instead of spending its request budget on reads.
@@ -735,9 +755,12 @@ Requirement {node_id}: {description}
 
 Acceptance test (ground truth):
 {spec}
-Files (exact): frontend/src/index.html (the page); frontend/package.json = {{"name":"f","scripts":{{"build":"node -e \\"const f=require('fs');f.mkdirSync('dist',{{recursive:true}});for(const n of f.readdirSync('src'))f.copyFileSync('src/'+n,'dist/'+n)\\""}}}}; backend/package.json = {{"name":"b","scripts":{{"start":"node server.js"}}}}; backend/server.js = Node http server on process.env.PORT||{port} serving ../frontend/dist files at / (index.html for /), 404 for anything else, wrapped in try/catch and process.on('uncaughtException').
-Rules: texts, button names, labels and test ids exactly as in the test; the initial state is literally in the HTML; state lives in the page script unless the requirement says it is persisted; no external resources, no CSS, no comments, no notes. index.html <= 20 lines, server.js <= 20 lines.
+Files: frontend/src/index.html (+ one html per further route); backend/server.js = Node http server on process.env.PORT||{port} serving ../frontend/dist files (index.html for /, <name>.html for /<name>) plus any API routes the requirement needs (in-memory state), 404 for anything else, wrapped in try/catch and process.on('uncaughtException'). Both package.json files already exist (build copies src/* to dist; start runs server.js): do not output them.
+Rules: texts, button names, labels and test ids exactly as in the test; the initial state is literally in the HTML; state lives in the page script unless the requirement says it is persisted; no external resources, no CSS, no comments, no notes; Playwright strict mode: every locator in the test must match exactly one element on the served page (no duplicate links, labels, texts or ids; each label's for= resolves to its own control). {size_rule}
 """
+
+CODEGEN_SIZE_SMALL = "index.html <= 20 lines, server.js <= 20 lines."
+CODEGEN_SIZE_FULL = "As short as the tests allow; one page file per route is fine."
 
 UI_CONTRACT_DATA = """\
 - Concrete example values in the requirement (seed records, option labels, sample accounts, nationalities, seat classes) are FIXTURE DATA: they must exist verbatim as <option>s / seed rows. When a control's values are described but not listed, offer a broad standard set.
@@ -989,6 +1012,7 @@ class Flow:
         self.driver: OctosDriver | None = None
         self.tests_dir: Path | None = None
         self.spec_map: dict = {None: []}
+        self.probe_summaries: dict = {}
         self.aliases: dict[str, str] = {}
         self.runner: AcceptanceRunner | None = None
         self.designs: dict[str, dict] = {}
@@ -1101,7 +1125,7 @@ class Flow:
         """One-request generation for one-node tasks (OCTOS_ARC_CODEGEN=0 disables)."""
         return (os.environ.get("OCTOS_ARC_CODEGEN", "1") != "0" and getattr(self, "llm_proxy", None) is not None
                 and not getattr(self, "codegen_blocked", False)
-                and getattr(self, "nodes_to_implement", 2) <= 1 and getattr(self, "n_nodes", 99) <= 2)
+                and getattr(self, "n_nodes", 99) <= int(os.environ.get("OCTOS_ARC_CODEGEN_MAX_NODES", "2")))
 
     def codegen_turn(self, prompt: str, timeout: int, label: str) -> tuple[bool, str]:
         """Run a tool-less turn; parse and write the file blocks from the reply."""
@@ -1129,12 +1153,15 @@ class Flow:
         if not self.tests_dir:
             return "(none)"
         files = list(self.spec_map.get(node_id) or [])
+        files += sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.ts")
+                        if not p.name.endswith(".spec.ts") and str(p.relative_to(self.tests_dir)) not in files)
         parts = []
         for rel in files:
             try:
-                parts.append((self.tests_dir / rel).read_text(encoding="utf-8", errors="replace").strip())
+                text = (self.tests_dir / rel).read_text(encoding="utf-8", errors="replace").strip()
             except OSError:
                 continue
+            parts.append(text if len(files) == 1 else f"--- {rel} ---\n{text}")
         return "\n".join(parts) or "(none)"
 
     def tests_prompt_for(self, node_id: str | None, skeleton: bool = False) -> str:
@@ -1374,11 +1401,12 @@ class Flow:
                     "the served HTML instead of after a fetch), and check the spec's locator against your markup.")
                 log(f"[flow] {node_id}: identical failure twice; switching repairs to tool mode")
             previous_failures = normalized
-            if attempt == 0 and passed < summary.total and self.codegen_mode():
-                # Cloud 91aaecaf31af / 5747e6bcf530: codegen repairs re-emit the same files.
-                # Repairs need tools (inspect the served page, targeted edits).
+            if attempt >= int(os.environ.get("OCTOS_ARC_CODEGEN_REPAIRS", "1")) and passed < summary.total \
+                    and self.codegen_mode():
+                # Cloud 91aaecaf31af / 5747e6bcf530: repeated codegen repairs re-emit the same files.
+                # One cheap codegen repair (failure digest + quoted sources) is allowed; then tools.
                 self.codegen_blocked = True
-                log(f"[flow] {node_id}: codegen first attempt failed; repairs use tool mode")
+                log(f"[flow] {node_id}: codegen attempt {attempt} still failing; repairs use tool mode")
             for line in (failures or "").splitlines():
                 if line.strip().startswith("Observation:"):
                     log(f"[acceptance]   {' '.join(line.strip().split())[:360]}")
@@ -1485,6 +1513,7 @@ class Flow:
     def node_cycle(self, node: dict, ordered: list[dict], index: int, total: int) -> None:
         node_id = str(node.get("id"))
         specs = list(self.spec_map.get(node_id) or [])
+        self.codegen_blocked = False  # a previous node's fallback to tool mode must not leak into this one
         nodes_left = total - index + 1
         node_budget = min(self.node_budget_cap, max(240, self.remaining() / nodes_left))
         deadline = time.time() + node_budget
@@ -1522,14 +1551,18 @@ class Flow:
                                     tests=self.tests_prompt_for(node_id), smoke=self.smoke_port, port=self.web_port,
                                     performance=self.perf_text(), ui=self.ui_contract(), verify=self.verify_text(total))
         prompt = self.corrections_text() + prompt
+        codegen_prompt = None
         implement_timeout = min(self.node_timeout, self.implement_fraction * node_budget, deadline - time.time())
         if self.codegen_mode():
             compact = CODEGEN_PROMPT.format(node_id=node_id, description=str(node.get("description") or "").strip(),
-                                            spec=self.spec_bodies(node_id), port=self.web_port)
+                                            spec=self.spec_bodies(node_id), port=self.web_port,
+                                            size_rule=CODEGEN_SIZE_SMALL if self.n_nodes <= 1 else CODEGEN_SIZE_FULL)
             if self.has_app():  # evolution: keep the existing app, return every changed file complete
-                compact = (compact.replace("Files (exact):", "Existing app below; keep everything that works and output "
-                                           "every changed file complete. Files (exact):", 1)
-                           + inline_sources(self.output_dir, 12000, exts=(".html", ".js")))
+                compact = (compact.replace("Files:", "Existing app below; keep everything that works and output "
+                                           "every changed file complete. Files:", 1)
+                           + inline_sources(self.output_dir, 30000, exts=(".html", ".js")))
+            codegen_prompt = compact
+            write_codegen_manifests(self.output_dir)
             ok, text = self.codegen_turn(compact, implement_timeout, f"{node_id} implement")
         else:
             ok, text = self.turn(prompt, implement_timeout, f"{node_id} implement")
@@ -1576,6 +1609,10 @@ class Flow:
         self.commit(f"{node_id} (implement): {node.get('name', '')}")
 
         def rebuild_prompt(failures: str) -> str:
+            if self.codegen_mode() and codegen_prompt:
+                return (codegen_prompt + "\nYour previous files (quoted below) failed every test. Failures:\n" + failures
+                        + "\n" + inline_sources(self.output_dir, 30000, exts=(".html", ".js"))
+                        + "Fix the root causes and return every file you change, complete.\n")
             return (prompt + "\nYOUR PREVIOUS ATTEMPT FAILED EVERY ACCEPTANCE TEST — the failures (Feature / where / "
                     "observation / steps):\n" + failures + "\n" + self.sources_text()
                     + "Rewrite the files for this node completely (full write_file for each file, not edits), "
@@ -1593,6 +1630,23 @@ class Flow:
         elif verdict is False:
             self.mark("test_failed", node_id, "acceptance specs still failing after repair rounds")
 
+    def already_passing_nodes(self, node_ids: list[str]) -> set[str]:
+        """Evolution probe: run each candidate node's specs against the existing app
+        (no LLM); nodes that fully pass need no implementation turn."""
+        out: set[str] = set()
+        for node_id in node_ids:
+            specs = list(self.spec_map.get(node_id) or [])
+            if not specs:
+                continue
+            summary = self.run_specs(specs)
+            if summary.error or not summary.total:
+                continue
+            log(f"[acceptance] probe {node_id}: {summary.passed}/{summary.total} against the existing app")
+            if summary.all_passed:
+                out.add(node_id)
+                self.probe_summaries[node_id] = summary  # regression_cycle reuses it
+        return out
+
     def regression_cycle(self, node: dict) -> None:
         """Evolution: unchanged node — carry the design/impl over, re-run its specs."""
         node_id = str(node.get("id"))
@@ -1603,7 +1657,7 @@ class Flow:
         self.mark("implementation_done", node_id, "carried over from the template application")
         verdict = None
         if self.runner is not None and specs:
-            summary = self.run_specs(specs)
+            summary = self.probe_summaries.pop(node_id, None) or self.run_specs(specs)
             if summary.error:
                 log(f"[acceptance] regression {node_id} infrastructure error: {summary.error[:300]}")
             else:
@@ -1772,6 +1826,14 @@ class Flow:
 
             self.runtime.git.ensure_repo()
             self.setup_playwright()
+            if self.evolution and self.runner is not None:
+                # The platform's template app carries no traceability records, so
+                # fingerprints cannot tell what is new. A node whose specs already
+                # pass against the existing app is unchanged — no LLM turn for it.
+                unchanged |= self.already_passing_nodes([n for n in node_ids if n not in unchanged])
+                self.nodes_to_implement = len([n for n in node_ids if n not in unchanged])
+                log(f"[flow] evolution mode after probing the existing app: unchanged {sorted(unchanged)}, "
+                    f"to implement {[i for i in node_ids if i not in unchanged]}")
 
             octos_bin = find_octos()
             log(f"[octos] binary {octos_bin}")
