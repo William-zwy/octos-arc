@@ -1,20 +1,25 @@
 # ARC-Bench 成绩看板
 
-生成时间：2026-09-13 11:37 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
+生成时间：2026-09-13 11:47 UTC；账号：李尧；预生成判定：费用 < ¥0.01 或耗时 < 10s。
 
 ## 各赛道我们的位置
 
 | 赛道 | 名次 | 通过率 | 功能率 | 费用 | 耗时 | 运行编号（有效） |
 |---|---|---|---|---|---|---|
-| smoke | 10/19（真实 agent 内 7/13，预生成 6） | 100% | 100% | ¥0.31 | 34s | 402a9be38707, a04246e9bfc0, 5424432e8276, 53a91acea453, cc066e8e11f6, c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
-| smoke-evolution | 7/11（真实 agent 内 3/6，预生成 5） | 100% | 100% | ¥0.47 | 32s | fe9600d1c5a1, 65d055f9bd6f, 7cedb3299bd9, 0f03a259f963, efa79e3db00c, 9ba8f915d00b, 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
-| ticket-booking | 5/26（真实 agent 内 3/17，预生成 9） | 90% | 50% | ¥1.77 | 3m54s | 7cc5accdf91e, c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
+| smoke | 9/19（真实 agent 内 6/13，预生成 6） | 100% | 100% | ¥0.16 | 24s | 3ddbaac0d8e0, 2e5f7cec22a9, 402a9be38707, a04246e9bfc0, 5424432e8276, 53a91acea453, cc066e8e11f6, c726465310c2, fe02bdc94d77, bd8418c88535, 0491d2a6f510, 50d049b049bd |
+| smoke-evolution | 7/11（真实 agent 内 3/6，预生成 5） | 100% | 100% | ¥0.26 | 38s | d28dd2612f94, 17465b7eaa0e, fe9600d1c5a1, 65d055f9bd6f, 7cedb3299bd9, 0f03a259f963, efa79e3db00c, 9ba8f915d00b, 6c9ea2294ff6, b76aadf42e9b, a02d29a7064a, 37fb13835049 |
+| ticket-booking | 3/26（真实 agent 内 1/17，预生成 9） | 90% | 50% | ¥0.67 | 5m34s | 954a231a3d23, 7cc5accdf91e, c14ea5c5aa56, cbbec51884de, ab4c98a6cb17, 0a3cd1d66042, b00c4ee7b568, a74a5ac5afbd |
 | arc-bench-web | 未上榜（榜共 1 条，其中预生成 1） | — | — | — | — | — |
 
 ## 我们的全部运行
 
 | 运行编号 | 赛道 | 题目 | 状态 | 通过 | 功能 | 费用 | Token | 耗时 | 创建(UTC) | 提交名 |
 |---|---|---|---|---|---|---|---|---|---|---|
+| 954a231a3d23 | ticket-booking | ticket-booking--ticket-booking | FAILED | 9/10 | 1/2 | ¥0.67 | 0.47M | 5m34s | 2026-09-13 11:39 | Octos main@1121574e v5 (max_tokens>=32768, per-file rewrite, official v2.0.2 runtime) |
+| d28dd2612f94 | smoke-evolution | smoke-evolution--dice | PASSED | 2/2 | 2/2 | ¥0.12 | 0.06M | 33s | 2026-09-13 11:39 | Octos main@1121574e v5 (max_tokens>=32768, per-file rewrite, official v2.0.2 runtime) |
+| 17465b7eaa0e | smoke-evolution | smoke-evolution--counter | PASSED | 2/2 | 2/2 | ¥0.14 | 0.07M | 44s | 2026-09-13 11:39 | Octos main@1121574e v5 (max_tokens>=32768, per-file rewrite, official v2.0.2 runtime) |
+| 3ddbaac0d8e0 | smoke | smoke--dice | PASSED | 1/1 | 1/1 | ¥0.09 | 0.04M | 24s | 2026-09-13 11:39 | Octos main@1121574e v5 (max_tokens>=32768, per-file rewrite, official v2.0.2 runtime) |
+| 2e5f7cec22a9 | smoke | smoke--counter | PASSED | 1/1 | 1/1 | ¥0.08 | 0.03M | 25s | 2026-09-13 11:39 | Octos main@1121574e v5 (max_tokens>=32768, per-file rewrite, official v2.0.2 runtime) |
 | 76fb32a69d81 | ticket-booking | ticket-booking--ticket-booking | FAILED | — | 0/0 | ¥1.02 | 0.72M | 4m04s | 2026-09-13 11:09 | Octos main@78ab6fe4 v4 (trimmed prompt, no-reasoning small tasks, official v2.0.2 runtime) |
 | fe9600d1c5a1 | smoke-evolution | smoke-evolution--dice | PASSED | 2/2 | 2/2 | ¥0.26 | 0.16M | 35s | 2026-09-13 11:09 | Octos main@78ab6fe4 v4 (trimmed prompt, no-reasoning small tasks, official v2.0.2 runtime) |
 | 65d055f9bd6f | smoke-evolution | smoke-evolution--counter | PASSED | 2/2 | 2/2 | ¥0.21 | 0.15M | 30s | 2026-09-13 11:09 | Octos main@78ab6fe4 v4 (trimmed prompt, no-reasoning small tasks, official v2.0.2 runtime) |
@@ -69,7 +74,7 @@
 | 3 | — | Orchestra ⚠预生成 | 100% | 100% | ¥0.0037 | 4s | senior |
 | 4 | 1 | niceeeeee | 100% | 100% | ¥0.02 | 10s | senior |
 | 5 | 2 | JustSoSO | 100% | 100% | ¥0.07 | 21s | senior |
-| 10 | 7 | **李尧** | 100% | 100% | ¥0.31 | 34s | senior |
+| 9 | 6 | **李尧** | 100% | 100% | ¥0.16 | 24s | senior |
 
 ## 榜单 · smoke-evolution（11 条，预生成 5 条，显示前 5 名与我们）
 
@@ -80,7 +85,7 @@
 | 3 | — | Orchestra ⚠预生成 | 100% | 100% | ¥0.0046 | 4s | senior |
 | 4 | — | niceeeeee ⚠预生成 | 100% | 100% | ¥0.02 | 8s | senior |
 | 5 | 1 | 包子头队 | 100% | 100% | ¥0.10 | 20s | senior |
-| 7 | 3 | **李尧** | 100% | 100% | ¥0.47 | 32s | senior |
+| 7 | 3 | **李尧** | 100% | 100% | ¥0.26 | 38s | senior |
 
 ## 榜单 · ticket-booking（26 条，预生成 9 条，显示前 5 名与我们）
 
@@ -88,9 +93,9 @@
 |---|---|---|---|---|---|---|---|
 | 1 | — | 你也秃对不队 ⚠预生成 | 80% | 0% | ¥0.0000 | 2s | senior |
 | 2 | — | VOLO AI ⚠预生成 | 90% | 50% | ¥0.0000 | 1s | senior |
-| 3 | 1 | 睿欣达工场 | 90% | 50% | ¥0.81 | 7m30s | senior |
-| 4 | 2 | 非常队 | 90% | 50% | ¥1.11 | 10m07s | senior |
-| 5 | 3 | **李尧** | 90% | 50% | ¥1.77 | 3m54s | senior |
+| 3 | 1 | **李尧** | 90% | 50% | ¥0.67 | 5m34s | senior |
+| 4 | 2 | 睿欣达工场 | 90% | 50% | ¥0.81 | 7m30s | senior |
+| 5 | 3 | 非常队 | 90% | 50% | ¥1.11 | 10m07s | senior |
 
 ## 榜单 · arc-bench-web（1 条，预生成 1 条，显示前 5 名与我们）
 
@@ -120,6 +125,11 @@
 | 09-12 | ticket-booking | ticket-booking | ab4c98a6cb17 | 4ebb50bb26f5（main@9b0d3009：tests 写保护 + 并行安全持久化 + 哈希降本） | 9/10 | 1/2 | ¥1.99 | 1051 s | 自跑 10/10；唯一失败 REQ-1.2 登录用例注册时 `getByLabel(/证件号码|document number|passport number/)` 找不到可编辑输入框，10 s 超时（代码错：缺字段/label）。功能率首次非零 |
 | 09-12 | ticket-booking | ticket-booking | cbbec51884de | 07b56825e93b（main@0522db48：表单控件服务端直出契约） | 8/10 | 0/2 | ¥2.49 | 1352 s | 自跑 10/10；评测 2 条超时：REQ-1.1 注册后 locator.evaluate 超时（spec:71）、REQ-1.2 `locator.fill: Target crashed`（Chromium 渲染进程崩溃）。归因：环境（平台评测端内存/并行），与上一轮 9/10 同代码路径 |
 | 09-13 | arc-bench-web | keep | 29c840566f36 | 14a0dd892d0a（main@15a6bedf：A1–A7 + 1500 s/节点默认，官方 v2.0.2 runtime） | 0/32（全部 skipped） | 0/32 | **¥57.28** | 15735 s | 生成阶段 32 节点逐个验收全部 1/1（6 个节点用了一轮修复）；容器内全套并行验收 rc=-9、平台评测 4 worker 启动 1 秒被 Killed。reaper 读到 cgroup memory.max=512 MiB、memory.peak=512 MiB、oom 159 次 —— 平台给容器 512 MB 内存，4 个 Chromium 必然 OOM。单次费用超过 ¥50 阈值，已停止 Web 提交 |
+| 09-13 | smoke | counter | 2e5f7cec22a9 | main@1121574e v5（max_tokens≥32768、按文件重写） | 1/1 | 1/1 | **¥0.08** | 25 s | 供应商 2 次 / 9,675 token（cache 5,120）；平台 29,322 |
+| 09-13 | smoke | dice | 3ddbaac0d8e0 | 同上 | 1/1 | 1/1 | **¥0.09** | 24 s | 供应商 2 / 9,191；平台 36,576 |
+| 09-13 | smoke-evolution | counter | 17465b7eaa0e | 同上 | 2/2 | 2/2 | **¥0.14** | 44 s | 供应商 8 / 31,022；平台 67,484 |
+| 09-13 | smoke-evolution | dice | d28dd2612f94 | 同上 | 2/2 | 2/2 | **¥0.12** | 33 s | 供应商 5 / 17,300；平台 62,733 |
+| 09-13 | ticket-booking | ticket-booking | 954a231a3d23 | 同上 | 9/10 | 1/2 | **¥0.67** | 334 s | 供应商 24 / 418,102（cache 330,240）；平台 473,145；失败 REQ-1.1 注册后条款复选框 10 s 内不稳定（locator.check 超时） |
 | 09-13 | smoke | counter | a04246e9bfc0 | main@78ab6fe4 v4（裁剪 system prompt、小题关推理） | 1/1 | 1/1 | ¥0.22 | 25 s | 供应商 2 次 / 9,632 token / 请求 32.5 KB；平台 141,783 |
 | 09-13 | smoke | dice | 402a9be38707 | 同上 | 1/1 | 1/1 | ¥0.16 | 25 s | 供应商 2 / 9,315；平台 123,780 |
 | 09-13 | smoke-evolution | counter | 65d055f9bd6f | 同上 | 2/2 | 2/2 | ¥0.21 | 30 s | 供应商 5 / 17,306；平台 150,193 |
@@ -178,3 +188,12 @@
 - 云端与本机 cache_hit 全为 0：每次请求的固定前缀（内核 system prompt 24,978 字符 + 15 个工具 schema 13,735 字符，约 10k token）在会话内逐请求 sha256 一致，所以不是前缀抖动；可能是 arc 代理不回传 prompt_cache_hit_tokens 或平台计费不打缓存折扣。
 - system prompt 绝大部分与 ARC 无关（Research & Search Rules、Rich Card Rendering、Pipelines、Background Tasks、Cron、Queue、Slash Commands、Active Skills 等）；Counter 一次运行 9 个请求、供应商计费 prompt 107k token，其中约 90k 是该前缀重发。建议 stdio/solo 的 coding profile 把 system prompt 砍到约 3k 字符、精简工具 schema。
 - 样本：A 本机 arc/arc-output/v4-counter/.arc/llm-requests/request-01.json（已脱敏）。
+
+### 费用曲线（同题同模型，官方 v2.0.2 runtime，2026-09-12 → 09-13）
+| 题 | 改前（82e3bef3） | A1–A7 | 费用版 v1（代理 low） | 非流式代理 | v4 裁剪前缀 | v5 max_tokens 修复 |
+|---|---|---|---|---|---|---|
+| smoke--counter | ¥1.24 / 201 s | — | ¥0.45 / 38 s | ¥0.17 / 37 s | ¥0.22 / 25 s | **¥0.08 / 25 s** |
+| smoke--dice | ¥1.42 / 267 s | — | ¥0.61 / 49 s | ¥0.14 / 31 s | ¥0.16 / 25 s | **¥0.09 / 24 s** |
+| evolution--counter | ¥0.55 / 177 s | ¥0.60 / 209 s | ¥0.54 / 53 s | ¥0.28 / 41 s | ¥0.21 / 30 s | **¥0.14 / 44 s** |
+| evolution--dice | ¥0.60 / 204 s | ¥1.48 / 283 s | ¥0.54 / 54 s | ¥0.29 / 40 s | ¥0.26 / 35 s | **¥0.12 / 33 s** |
+| ticket-booking | 7/10 ¥4.73 / 674 s | 9/10 ¥1.99 / 1051 s | 9/10 ¥2.50 / 393 s | 9/10 ¥1.77 / 234 s | 0/0 ¥1.02（回归） | **9/10 ¥0.67 / 334 s** |
