@@ -190,6 +190,25 @@ def enforce_turn_budget(body: bytes, used: int, budget: int) -> bytes:
     return json.dumps(data, ensure_ascii=False).encode("utf-8")
 
 
+def ensure_max_tokens(body: bytes, minimum: int) -> bytes:
+    """Raise a too-small `max_tokens` (kernel arc.11 sends 4096; a whole node's
+    files need 10-25k — cloud 76fb32a69d81 truncated both implement turns and
+    wrote nothing). Never lowers a larger value."""
+    if minimum <= 0:
+        return body
+    try:
+        data = json.loads(body)
+    except (ValueError, UnicodeDecodeError):
+        return body
+    if not isinstance(data, dict) or "messages" not in data:
+        return body
+    current = data.get("max_tokens")
+    if not isinstance(current, int) or current < minimum:
+        data["max_tokens"] = minimum
+        return json.dumps(data, ensure_ascii=False).encode("utf-8")
+    return body
+
+
 def destream_request(body: bytes) -> tuple[bytes, bool]:
     """Turn a streaming chat request into a non-streaming one. Returns
     (new_body, was_streaming). The platform's meter sits between us and the
@@ -255,15 +274,21 @@ def usage_record(response_body: bytes, elapsed_ms: int, mode: str) -> dict | Non
     details = usage.get("completion_tokens_details") or {}
     if isinstance(details, dict) and "reasoning_tokens" in details:
         rec["reasoning_tokens"] = details["reasoning_tokens"]
+    # The ARC endpoint reports cache hits OpenAI-style (prompt_tokens_details.
+    # cached_tokens), not DeepSeek-style; fold either into one field.
+    pdetails = usage.get("prompt_tokens_details") or {}
+    if "prompt_cache_hit_tokens" not in rec and isinstance(pdetails, dict) and "cached_tokens" in pdetails:
+        rec["prompt_cache_hit_tokens"] = pdetails["cached_tokens"]
     return rec
 
 
 class LlmProxy:
     def __init__(self, upstream_base: str, mode: str, log_path: Path | None = None, host: str = "127.0.0.1",
                  dump_dir: Path | None = None, dump_limit: int = 3, destream: bool = True, trim: bool = True,
-                 extra_drop_tools: set[str] | None = None) -> None:
+                 extra_drop_tools: set[str] | None = None, min_max_tokens: int = 32768) -> None:
         self.upstream = upstream_base.rstrip("/")
         self.mode = mode
+        self.min_max_tokens = min_max_tokens
         self.destream = destream
         self.trim = trim
         # Tools removed from every request in addition to DROP_TOOLS (mutable:
@@ -292,6 +317,7 @@ class LlmProxy:
                 was_streaming = False
                 if method == "POST" and self.path.rstrip("/").endswith("/chat/completions"):
                     body = inject_reasoning(body, proxy.mode)
+                    body = ensure_max_tokens(body, proxy.min_max_tokens)
                     with proxy._lock:
                         used = proxy.turn_requests
                         proxy.turn_requests += 1
