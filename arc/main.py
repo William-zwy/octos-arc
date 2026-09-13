@@ -81,7 +81,7 @@ from acceptance import (  # noqa: E402
     nodes_for_failures, playwright_candidates, playwright_version_hint, restore_tree,
     restore_worktree, snapshot_worktree, tree_digest,
 )
-from codegen import FORMAT_INSTRUCTIONS, parse_file_blocks, write_files  # noqa: E402
+from codegen import FORMAT_INSTRUCTIONS, dedupe_nav_links, parse_file_blocks, write_files  # noqa: E402
 from guard import TurnMonitor  # noqa: E402
 from llm_proxy import LlmProxy  # noqa: E402
 from requirement_order import ancestors_of, node_fingerprint, topo_order  # noqa: E402
@@ -309,7 +309,9 @@ def unchanged_node_ids(nodes: list[dict], previous: dict[str, dict]) -> set[str]
 
 
 CODEGEN_MANIFESTS = {
-    "frontend/package.json": {"name": "f", "private": True, "scripts": {"build": "node -e \"const f=require('fs');f.mkdirSync('dist',{recursive:true});for(const n of f.readdirSync('src'))f.copyFileSync('src/'+n,'dist/'+n)\""}},
+    # Pages are copied twice: `register.html` and extensionless `register`, so a naive static
+    # server that maps /register -> dist/register still finds the page (local s5/s8 first pass: 404 -> 0/6).
+    "frontend/package.json": {"name": "f", "private": True, "scripts": {"build": "node -e \"const f=require('fs');f.mkdirSync('dist',{recursive:true});for(const n of f.readdirSync('src')){f.copyFileSync('src/'+n,'dist/'+n);if(n.endsWith('.html')&&n!=='index.html')f.copyFileSync('src/'+n,'dist/'+n.slice(0,-5))}\""}},
     # "type": "commonjs" pins the loader: Node 20.19 module detection treated a server.js mixing
     # import and require as ESM (cloud 3e425ce2ebf6: "require is not defined in ES module scope").
     "backend/package.json": {"name": "b", "private": True, "type": "commonjs", "scripts": {"start": "node server.js"}},
@@ -762,12 +764,16 @@ Rules: texts, button names, labels and test ids exactly as in the test; the init
 """
 
 CODEGEN_SIZE_SMALL = "index.html <= 20 lines, server.js <= 20 lines."
-CODEGEN_SIZE_FULL = ("As short as the tests allow; one page file per route. Visibility: an element the test expects visible "
-                     "must have a non-empty box (never an empty div/span: give meters and feedback areas text) and the "
-                     "signed-in/out header (username, 退出登录/登录 links) is rendered into the HTML by the server from the "
-                     "session cookie, not by a fetch after load; error feedback stays in the DOM with the role the test queries. "
-                     "No HTML5 validation attributes (required/pattern/minlength/type=email: the browser would block the submit "
-                     "and the test expects the server's message): validate on the server, show its message in the page.")
+CODEGEN_SIZE_FULL = ("As short as the tests allow; one page file per route. Mechanisms (follow exactly): "
+                     "(1) every page contains the literal `<!--NAV-->` and no other navigation links; the server replaces it "
+                     "with `<a href=\"/login\">登录</a> <a href=\"/register\">Register</a>` when signed out or "
+                     "`<span>USERNAME</span> <a href=\"/logout\">退出登录</a>` when signed in (read from the cookie) before sending. "
+                     "(2) Session cookie exactly `session=TOKEN; Path=/; HttpOnly; SameSite=Lax`; sign-out clears it and redirects to /. "
+                     "(3) Validation: the values produced by the test helpers (see the support file) are valid input and MUST be "
+                     "accepted (names with spaces, any document number, phone, email the helper uses); reject only the cases the "
+                     "tests assert are rejected; each message is the FIRST alternative of the test's regex copied verbatim, shown in one persistent `role=alert` element. "
+                     "(4) Elements the test expects visible have a non-empty box (never an empty div/span). "
+                     "(5) No HTML5 validation attributes (required/pattern/type=email): the server validates.")
 
 UI_CONTRACT_DATA = """\
 - Concrete example values in the requirement (seed records, option labels, sample accounts, nationalities, seat classes) are FIXTURE DATA: they must exist verbatim as <option>s / seed rows. When a control's values are described but not listed, offer a broad standard set.
@@ -1149,6 +1155,9 @@ class Flow:
         if files:
             written = write_files(self.output_dir, files)
             log(f"[codegen] {label}: wrote {len(written)} file(s): {written[:8]}")
+            deduped = dedupe_nav_links(self.output_dir)
+            if deduped:
+                log(f"[codegen] {label}: removed static nav links duplicating the NAV placeholder in {deduped}")
             return True, text
         if ok:
             log(f"[codegen] {label}: reply contained no file blocks")
@@ -1416,7 +1425,7 @@ class Flow:
                     "the served HTML instead of after a fetch), and check the spec's locator against your markup.")
                 log(f"[flow] {node_id}: identical failure twice; switching repairs to tool mode")
             previous_failures = normalized
-            if attempt >= int(os.environ.get("OCTOS_ARC_CODEGEN_REPAIRS", "1")) and passed < summary.total \
+            if attempt >= int(os.environ.get("OCTOS_ARC_CODEGEN_REPAIRS", "2")) and passed < summary.total \
                     and self.codegen_mode():
                 # Cloud 91aaecaf31af / 5747e6bcf530: repeated codegen repairs re-emit the same files.
                 # One cheap codegen repair (failure digest + quoted sources) is allowed; then tools.
