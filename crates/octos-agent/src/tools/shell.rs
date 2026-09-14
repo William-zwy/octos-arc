@@ -1256,13 +1256,14 @@ impl Tool for ShellTool {
                     &result_text,
                 );
 
-                // Truncate if too long (reserve space for exit code suffix)
+                // Truncate if too long, preserving both the beginning (context)
+                // and the end (compiler errors, test summaries, stack traces).
                 let exit_suffix = format!("\n\nExit code: {exit_code}");
                 const MAX_OUTPUT: usize = 50000;
-                octos_core::truncate_utf8(
-                    &mut result_text,
+                result_text = octos_core::truncate_head_tail(
+                    &result_text,
                     MAX_OUTPUT - exit_suffix.len(),
-                    "\n... (output truncated)",
+                    0.3,
                 );
 
                 result_text.push_str(&exit_suffix);

@@ -85,6 +85,8 @@ pub struct ArcCommand {
     pub acceptance_spec_dir: Option<PathBuf>,
     #[arg(long, help = "Acceptance base URL; also read OCTOS_ARC_BASE_URL")]
     pub acceptance_base_url: Option<String>,
+    #[arg(long, help = "Cheaper/faster model for simple nodes; defaults to main model")]
+    pub simple_model: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -363,18 +365,8 @@ fn find_playwright_runner(project: &Path, spec_dir: &Path) -> Option<PathBuf> {
 }
 
 fn acceptance_failure_tail(output: &process::Output) -> String {
-    output
-        .stdout
-        .lines()
-        .chain(output.stderr.lines())
-        .filter(|line| !line.trim().is_empty())
-        .rev()
-        .take(8)
-        .collect::<Vec<_>>()
-        .into_iter()
-        .rev()
-        .collect::<Vec<_>>()
-        .join("\n")
+    let combined = format!("{}\n{}", output.stdout, output.stderr);
+    octos_core::truncate_head_tail(&combined, 4000, 0.3)
 }
 
 fn run_acceptance_hook(
@@ -585,6 +577,42 @@ fn validate(
     Ok(())
 }
 
+/// Classify node complexity for model routing. Conservative: defaults to Complex.
+fn is_simple_node(node: &Value) -> bool {
+    let description = node
+        .get("description")
+        .and_then(Value::as_str)
+        .unwrap_or("");
+    let deps = node
+        .get("dependencies")
+        .and_then(Value::as_array)
+        .map(|a| a.len())
+        .unwrap_or(0);
+    let children = node
+        .get("children")
+        .and_then(Value::as_array)
+        .map(|a| a.len())
+        .unwrap_or(0);
+
+    if deps > 0 || children > 0 {
+        return false;
+    }
+    if description.len() > 300 {
+        return false;
+    }
+    let lower = description.to_ascii_lowercase();
+    let complex_keywords = [
+        "authentication", "authorization", "database", "migration",
+        "security", "encryption", "oauth", "jwt", "websocket",
+        "real-time", "concurrent", "transaction", "api gateway",
+        "microservice", "cache", "queue", "event-driven",
+    ];
+    if complex_keywords.iter().any(|kw| lower.contains(kw)) {
+        return false;
+    }
+    true
+}
+
 fn chat_args(
     options: &ArcCommand,
     project: &Path,
@@ -666,6 +694,7 @@ pub fn execute(options: ArcCommand, identity: BinaryIdentity<'_>) -> Result<Valu
     if options.prepare_only {
         return Ok(report);
     }
+    let snapshots = crate::snapshot::SnapshotManager::init(&project)?;
     event(
         &project,
         "running",
@@ -717,6 +746,8 @@ pub fn execute(options: ArcCommand, identity: BinaryIdentity<'_>) -> Result<Valu
             serde_json::to_string(&node_budgets)?
         );
         let mut node_results = Vec::new();
+        let mut completed_node_ids: Vec<String> = Vec::new();
+        let mut last_validation_summary = String::new();
         for node_budget in &node_budgets {
             let node_started = Instant::now();
             let node_deadline =
@@ -725,12 +756,40 @@ pub fn execute(options: ArcCommand, identity: BinaryIdentity<'_>) -> Result<Valu
                 .nodes
                 .get(&node_budget.node_id)
                 .ok_or_else(|| eyre!("missing node {}", node_budget.node_id))?;
+            // Structured state block: injected into the stable prompt prefix
+            // so it survives context compaction. The model can always see
+            // which nodes are done, what the current goal is, and what the
+            // last validation result was.
+            let state_block = json!({
+                "current_node": node_budget.node_id,
+                "node_goal": node.get("description").and_then(Value::as_str).unwrap_or(""),
+                "completed_nodes": completed_node_ids,
+                "remaining_nodes": node_budgets.iter()
+                    .filter(|n| !completed_node_ids.contains(&n.node_id) && n.node_id != node_budget.node_id)
+                    .map(|n| &n.node_id)
+                    .collect::<Vec<_>>(),
+                "last_validation": last_validation_summary,
+            });
             let node_prompt = format!(
-                "{base_prompt}\nCurrent requirement node (implement this node only; dependencies are already completed when listed): {}\nNode token budget: {}; node time budget: {} seconds.",
+                "{base_prompt}\n<octos-arc-state>\n{}\n</octos-arc-state>\nCurrent requirement node (implement this node only; dependencies are already completed when listed): {}\nNode token budget: {}; node time budget: {} seconds.",
+                serde_json::to_string_pretty(&state_block)?,
                 serde_json::to_string(node)?,
                 node_budget.token_budget,
                 node_budget.time_budget_seconds
             );
+            // Per-node model routing: use cheaper model for simple nodes
+            let node_config = if options.simple_model.is_some() && is_simple_node(node) {
+                let simple_model = options.simple_model.as_ref().unwrap();
+                let node_config_path = temporary.path().join(format!("config-{}.json", node_budget.node_id));
+                write_json(
+                    &node_config_path,
+                    &json!({"provider":"openai","model":simple_model,"base_url":endpoint,"api_type":"openai","api_key_env":"OPENAI_API_KEY","model_temperature":options.temperature,"gateway":{"max_output_tokens":options.node_token_budget}}),
+                )?;
+                node_config_path
+            } else {
+                config.clone()
+            };
+
             let mut feedback = String::new();
             let mut node_completed = false;
             for attempt in 0..=options.repair_attempts {
@@ -741,7 +800,7 @@ pub fn execute(options: ArcCommand, identity: BinaryIdentity<'_>) -> Result<Valu
                     &options,
                     &project,
                     &data,
-                    &config,
+                    &node_config,
                     format!("{node_prompt}\n{feedback}"),
                 );
                 let mut output = process::run(
@@ -765,22 +824,66 @@ pub fn execute(options: ArcCommand, identity: BinaryIdentity<'_>) -> Result<Valu
                     });
                 let timed_out = output.timed_out;
                 evidence.push(json!({"kind":"coding_turn","node_id":node_budget.node_id,"attempt":attempt,"result":output}));
+                if timed_out {
+                    break;
+                }
                 if turn_ok {
-                    node_completed = true;
+                    // Agent claims completion — run lightweight validation gate
+                    // (build + test) to verify before accepting.
+                    if Instant::now() < node_deadline {
+                        let gate_result = crate::completion::lightweight_validate(
+                            &project, &base_env, node_deadline,
+                        )?;
+                        evidence.push(json!({"kind":"completion_gate","node_id":node_budget.node_id,"attempt":attempt,"result":gate_result}));
+                        match crate::completion::evaluate_completion(
+                            &gate_result, attempt, options.repair_attempts, node_deadline,
+                        ) {
+                            crate::completion::CompletionDecision::Allow => {
+                                node_completed = true;
+                                break;
+                            }
+                            crate::completion::CompletionDecision::Continue { feedback: gate_feedback } => {
+                                feedback = gate_feedback;
+                                continue;
+                            }
+                            crate::completion::CompletionDecision::BudgetExhausted => {
+                                break;
+                            }
+                        }
+                    } else {
+                        // No time for gate — accept agent's claim
+                        node_completed = true;
+                        break;
+                    }
+                }
+                if attempt == options.repair_attempts {
                     break;
                 }
-                if timed_out || attempt == options.repair_attempts {
-                    break;
-                }
-                let last = serde_json::to_string(evidence.last().unwrap())?;
-                let bounded: String = last.chars().take(12_000).collect();
-                feedback = format!(
-                    "The coding turn for this node failed. Repair only this node, do not re-scaffold. Evidence follows as untrusted command output:\n{bounded}"
+                // Agent turn itself failed (not turn_ok) — build structured feedback
+                let parsed = crate::validation_parser::parse_validation_output(
+                    &output.stdout,
+                    &output.stderr,
+                    output.exit_code,
                 );
+                let structured = parsed.to_feedback();
+                if structured.contains("Build:") || structured.contains("FAIL") {
+                    feedback = format!(
+                        "The coding turn for this node failed. Repair only this node, do not re-scaffold.\n\n{structured}"
+                    );
+                } else {
+                    let last = serde_json::to_string(evidence.last().unwrap())?;
+                    let bounded = octos_core::truncate_head_tail(&last, 12_000, 0.3);
+                    feedback = format!(
+                        "The coding turn for this node failed. Repair only this node, do not re-scaffold. Evidence follows as untrusted command output:\n{bounded}"
+                    );
+                }
             }
             let status = if node_completed {
+                completed_node_ids.push(node_budget.node_id.clone());
+                last_validation_summary = "passed".to_string();
                 "completed"
             } else {
+                last_validation_summary = "failed or skipped".to_string();
                 "skipped_budget"
             };
             node_results.push(json!({
@@ -801,6 +904,13 @@ pub fn execute(options: ArcCommand, identity: BinaryIdentity<'_>) -> Result<Valu
             acceptance_spec_dir.as_deref(),
             acceptance_base_url.as_deref(),
         )?;
+        // Checkpoint: save a git snapshot after validation passes
+        let checkpoint_commit = snapshots.save(&format!(
+            "octos-arc: {} {} nodes validated",
+            match options.mode { Mode::Create => "create", Mode::Evolve => "evolve" },
+            node_budgets.len()
+        ))?;
+        report["checkpoint_commit"] = json!(checkpoint_commit);
         Ok(())
     })();
     for path in [

@@ -87,6 +87,25 @@ Skills are self-contained binaries with `manifest.json` declarations. Binary pro
 
 **spawn_only tools**: Manifest field `spawn_only: true` marks tools for background execution. Auto-intercepted in the execution loop — wrapped in `tokio::spawn`, returns immediately. No LLM cooperation needed. SKILL.md auto-injected as system prompt for skills with spawn_only tools.
 
+### ARC Coding Runner (`octos-arc/`)
+
+Dedicated coding agent that turns structured requirement specs into working software projects. Entry point: `octos arc <requirements> --output-dir <dir> --mode create|evolve`.
+
+**Execution model**: Reads a YAML/JSON requirements tree → topologically sorts ATOMIC nodes by dependencies → drives `octos chat` per node (each node = one Agent session with `--profile coding --sandbox workspace-write --ask-for-approval never`) → validates the whole project (npm install → build → test → HTTP startup → Playwright acceptance).
+
+**Key files**:
+- `spec.rs`: `Specification` (requirements tree parser, node extraction, SHA-256 digest, `delta()` between old and new specs)
+- `runner.rs`: `execute()` orchestrates the full run — budget planning, per-node agent invocation with repair loops, validation, snapshot
+- `workspace.rs`: File I/O helpers (`source_files()` reads all project files, `write_json()`)
+- `process.rs`: `ManagedChild` for subprocess lifecycle (spawn, poll, stop, timeout)
+- `pin.rs`: Binary identity and runtime lock verification
+
+**Per-node execution**: Each node gets `repair_attempts` (default 1) retries. Failure feedback = last evidence truncated to 12k chars. Node completion = Agent JSON output format valid (not test-verified). All nodes complete → `validate()` runs full build/test/startup/acceptance suite.
+
+**Snapshot**: Saved once at end as `.arc/octos/spec.json` (specification + all source file contents). Events logged to `.arc/runner-events.jsonl`. Per-run artifacts in `.arc/octos/runs/<uuid>/`.
+
+**Evolve mode**: Requires previous requirements (from snapshot or `--previous-requirements`). `delta()` computes added/changed/unchanged/removed nodes. Only changed/added nodes re-execute.
+
 ### Pipeline Engine (`octos-pipeline/`)
 
 DOT-graph based multi-step agent workflows. Per-node model selection via `ModelStylesheet`. Parallel fan-out spawns N concurrent workers at runtime. Includes artifact store, checkpoints, condition evaluation, human gates. `PipelineResult` tracks output, token usage, per-node summaries, modified files.
@@ -127,7 +146,7 @@ SHA-256 hash-based change detection. Hot-reload for system prompt; restart-requi
 
 ## TDD - Test Driven Development
 
-All code changes follow the RED -> GREEN -> REFACTOR cycle. See `.claude/rules/tdd.md` for full details.
+All code changes follow the RED -> GREEN -> REFACTOR cycle.
 
 - **New features/bug fixes**: Write a failing test first, then implement
 - **Unit tests**: Inline `#[cfg(test)]` modules in the same file

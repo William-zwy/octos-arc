@@ -17,6 +17,7 @@ chrono.workspace = true
 fs2.workspace = true
 uuid.workspace = true
 reqwest.workspace = true
+octos-core.workspace = true
 
 [lints]
 workspace = true
