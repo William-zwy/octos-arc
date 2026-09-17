@@ -1,0 +1,9 @@
+{
+  "task_id": "smoke-evolution--dice",
+  "file_count": 2,
+  "paths": [
+    "REQ-1.spec.ts",
+    "REQ-2.spec.ts"
+  ],
+  "public_downloads": null
+}

@@ -1,0 +1,110 @@
+[
+  {
+    "kind": "reference",
+    "path": "edit-question.jpeg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--stackoverflow/references/edit-question.jpeg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--stackoverflow\\references\\edit-question.jpeg",
+    "bytes": 489111,
+    "sha256": "2ea0896872183f8d3db5c8893679e91ede65c8724c674a21c954aa89836a1b3f",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "profile-page.jpeg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--stackoverflow/references/profile-page.jpeg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--stackoverflow\\references\\profile-page.jpeg",
+    "bytes": 301288,
+    "sha256": "2474b45bccceb0cb28d39ebeb220c5ef2e411d5eaec314380193aa6e9fa2ce26",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "sign-up.jpeg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--stackoverflow/references/sign-up.jpeg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--stackoverflow\\references\\sign-up.jpeg",
+    "bytes": 659524,
+    "sha256": "327ae07dc72ddaca29df8c7905403aa7bc7eaae772ee555243180576fac1d3d8",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "user-feed.jpeg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--stackoverflow/references/user-feed.jpeg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--stackoverflow\\references\\user-feed.jpeg",
+    "bytes": 201020,
+    "sha256": "61c62813fc6859ab55a40b3943c1712d7367be0ca9a890dde49cd397789babad",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "search-and-filter.jpeg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--stackoverflow/references/search-and-filter.jpeg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--stackoverflow\\references\\search-and-filter.jpeg",
+    "bytes": 623120,
+    "sha256": "c801506969fcbf7ed9243999350890adf8deffd5145e0de42ef17c4a6dabbc91",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "questions-page.jpeg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--stackoverflow/references/questions-page.jpeg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--stackoverflow\\references\\questions-page.jpeg",
+    "bytes": 759769,
+    "sha256": "6d4a901ea382ece914b8ea2867795d94a457e4c59f8b35f2d13dd57bdb03ffe0",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "login.jpeg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--stackoverflow/references/login.jpeg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--stackoverflow\\references\\login.jpeg",
+    "bytes": 55890,
+    "sha256": "b162b9b7b705c2548380201fa3d973f3621846847f04717ec094711814ff0025",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "homepage.jpeg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--stackoverflow/references/homepage.jpeg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--stackoverflow\\references\\homepage.jpeg",
+    "bytes": 3476797,
+    "sha256": "1241aa904e1b28306670f8c55a06a8a0e475426dfb4aa0bef3ad6255643ebab2",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "question-page.jpeg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--stackoverflow/references/question-page.jpeg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--stackoverflow\\references\\question-page.jpeg",
+    "bytes": 1178757,
+    "sha256": "3007509c115bac370730258864eeb266ac44b8f7229af5737973d42b76367dae",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "tags-page.jpeg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--stackoverflow/references/tags-page.jpeg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--stackoverflow\\references\\tags-page.jpeg",
+    "bytes": 689964,
+    "sha256": "a2864321c25cc99c107b3c11640fec18e991891291cdf0867938027d982cadea",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "ask-question-page.jpeg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--stackoverflow/references/ask-question-page.jpeg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--stackoverflow\\references\\ask-question-page.jpeg",
+    "bytes": 218611,
+    "sha256": "d4a259c42b0790026767f330f8e7449441a8d6c1596aaf88c95e5c5f30f3c408",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "edit-profile.jpeg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--stackoverflow/references/edit-profile.jpeg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--stackoverflow\\references\\edit-profile.jpeg",
+    "bytes": 279255,
+    "sha256": "18e54c5f461fdb6a8622f6f6274631014a48610251bef88df68f49ae3c17b6a3",
+    "status": "downloaded"
+  }
+]

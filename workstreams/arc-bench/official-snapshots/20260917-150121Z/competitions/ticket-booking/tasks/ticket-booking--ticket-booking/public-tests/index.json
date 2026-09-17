@@ -1,0 +1,10 @@
+{
+  "task_id": "ticket-booking--ticket-booking",
+  "file_count": 3,
+  "paths": [
+    "REQ-1.1-user-registration.spec.ts",
+    "REQ-1.2-user-login.spec.ts",
+    "support/e2e.ts"
+  ],
+  "public_downloads": null
+}

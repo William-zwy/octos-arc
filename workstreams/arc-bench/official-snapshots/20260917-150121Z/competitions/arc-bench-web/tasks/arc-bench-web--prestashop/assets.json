@@ -1,0 +1,200 @@
+[
+  {
+    "kind": "reference",
+    "path": "add_to_cart.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/add_to_cart.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\add_to_cart.png",
+    "bytes": 248271,
+    "sha256": "30a8c2560d511eebe4ea1978cc0064d4d7f5b45dd2260b19aaeb2815c6ac909a",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "register.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/register.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\register.png",
+    "bytes": 473040,
+    "sha256": "5141fe9dce3ff4a9aee520e25a91ff7c430ca0eade102ee2b55a51fd9619782f",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "category.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/category.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\category.png",
+    "bytes": 829420,
+    "sha256": "7df56ba8f67efa90099b31041291ab1c6f87e8cc400e6c7bc7a9d198db6468e8",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "my_account_wishlist.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/my_account_wishlist.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\my_account_wishlist.png",
+    "bytes": 159289,
+    "sha256": "9b9ac66c86fd1f62879e2e33f0f0c0bd86476348f1c3fe352e040fea3af769ec",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "my_account_address.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/my_account_address.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\my_account_address.png",
+    "bytes": 111722,
+    "sha256": "6a915559764dd097423f269ac7903eedb3289d9c4121671efc52e9479ffd2a11",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "navigation.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/navigation.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\navigation.png",
+    "bytes": 1497811,
+    "sha256": "b6625ed4623d4618ebc006c5036956ed0088f0608c1a6c65a008bd9cea198700",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "homepage.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/homepage.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\homepage.png",
+    "bytes": 4299876,
+    "sha256": "386e725b16bf13b7b872f12e5730eea5ae30eaa4bf27547fd408384d1b946bbf",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "login.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/login.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\login.png",
+    "bytes": 117822,
+    "sha256": "82622e4c58fb53469405cd744f0aec7bc8656350e9680a3d21c84b8145454be6",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "checkout_shipping.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/checkout_shipping.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\checkout_shipping.png",
+    "bytes": 138529,
+    "sha256": "2e08f41c65b73f8b9528b0ba45b39df97dddc93b2b0e38ec9e53a3c1f317b4d8",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "checkout_summary.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/checkout_summary.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\checkout_summary.png",
+    "bytes": 1260246,
+    "sha256": "e3a04c073e2ef059afc34068fcab4d58e34d256b1130cbf28db722bf46f7fbf8",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "checkout.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/checkout.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\checkout.png",
+    "bytes": 446194,
+    "sha256": "1226a822847bea9f838f080a9caf2e8181ec3b50b5817e3ad90d02afb869074d",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "my_account_order.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/my_account_order.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\my_account_order.png",
+    "bytes": 165796,
+    "sha256": "f4db6077d5201cf8de40516e98069c18298660b97ff4e499d4d51127345f9aab",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "checkout_payment.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/checkout_payment.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\checkout_payment.png",
+    "bytes": 147314,
+    "sha256": "a24d68195aaee8c81d38e14306524b4a1ec498f29a3b6d8453852b709551b901",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "logout.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/logout.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\logout.png",
+    "bytes": 847801,
+    "sha256": "3d214babfa566aa15a70df57b2571cda01750fd5db1fd5ccfd9c1fb430310d09",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "forgot_password.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/forgot_password.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\forgot_password.png",
+    "bytes": 149604,
+    "sha256": "cdc2ffb32109bac676232be162e34847e6698c046cea2327ae1c9c7b7b77f350",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "search.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/search.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\search.png",
+    "bytes": 838794,
+    "sha256": "ee4f7e65d7fb4c1e5b4ad0f1d7a2fd6cc3439c7f64221314c028596286bb726c",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "product_detail.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/product_detail.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\product_detail.png",
+    "bytes": 1831725,
+    "sha256": "1e3fc9d05d896e727ea12708a921330dd493e0d2e6cf4232e1ddf6f0b02375ba",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "checkout_address.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/checkout_address.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\checkout_address.png",
+    "bytes": 313623,
+    "sha256": "4c5301382fed8a0f1448f29663a8865387e4f838c78819a74819a33c51596c81",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "my_account_info.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/my_account_info.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\my_account_info.png",
+    "bytes": 479445,
+    "sha256": "0db074f2a24f98a650ce80a4400974641f4f198d2bc5671165f324a2cf5e4593",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "cart.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/cart.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\cart.png",
+    "bytes": 196286,
+    "sha256": "0d19c8b57f2c750d6d416a0f7af4dcca9ccef40379d0ea77e2b3c5112286d03e",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "sort.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/sort.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\sort.png",
+    "bytes": 252950,
+    "sha256": "6ee5fafeb0776d3e11e68f280dda3ca47c437301744c22298300fab465d1d998",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "my_account.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--prestashop/references/my_account.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--prestashop\\references\\my_account.png",
+    "bytes": 102965,
+    "sha256": "06f5f50c94924104be0700678ed2f3860f81d2b613b67e62dcb361850bd7b5ba",
+    "status": "downloaded"
+  }
+]

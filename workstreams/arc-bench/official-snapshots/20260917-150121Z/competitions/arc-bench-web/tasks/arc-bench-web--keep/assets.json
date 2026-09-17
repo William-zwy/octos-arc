@@ -1,0 +1,196 @@
+[
+  {
+    "kind": "reference",
+    "path": "pin_button.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/pin_button.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\pin_button.png",
+    "bytes": 83989,
+    "sha256": "17c209656d39afd090ac4f1c0087fb90a635da76b405d52a10db9556aacdb6c2",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "home_page.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/home_page.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\home_page.png",
+    "bytes": 131300,
+    "sha256": "954a7e6f5ed26c78f460a3fcd96504b607a4991f880fe125aee341feb9725171",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "list_view.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/list_view.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\list_view.png",
+    "bytes": 107414,
+    "sha256": "449ba5da88059f30b35a6221bcdb749b7cd40201ab5fad739aeb2c0a3ee10e0e",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "assign_label_to_note.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/assign_label_to_note.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\assign_label_to_note.png",
+    "bytes": 223213,
+    "sha256": "cd409f45aa6218836f9c43e480d8479ae30055730db1d352b3f93cde0aaca5b1",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "manage_labels.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/manage_labels.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\manage_labels.png",
+    "bytes": 189487,
+    "sha256": "2d043fd2d1d3f6d809984dbb13dac2171d99ff17880f8aa4dd1b11fa5b4db5e4",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "note_delete_notification.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/note_delete_notification.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\note_delete_notification.png",
+    "bytes": 18637,
+    "sha256": "140dae244826e0fd7f0279fa2f2c157f95e787e6467509b70e45b065fbbad325",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "sidebar_collapsed.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/sidebar_collapsed.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\sidebar_collapsed.png",
+    "bytes": 172849,
+    "sha256": "8a756fe19ee20d78e6b9f75936dd8f135905a5f4df20ae952a69dda3ae28d4cc",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "settings_dropdown.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/settings_dropdown.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\settings_dropdown.png",
+    "bytes": 51470,
+    "sha256": "04bcf8fe3aca4bca25480c535db61b194eb8cbe1519fa0b65291dd2a5e6a624f",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "unarchive_button.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/unarchive_button.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\unarchive_button.png",
+    "bytes": 53652,
+    "sha256": "2b5b9b8844ec2bd63b8d55d5ccd4bfb2957c5bfcf410f2b0e466c73bd1f82032",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "archive_button.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/archive_button.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\archive_button.png",
+    "bytes": 70526,
+    "sha256": "6f2a0aeef91c3524ace57cfcb7bcc7a5a52806ef52afd8e73ef25f74a1489eb9",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "create_note_home_page.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/create_note_home_page.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\create_note_home_page.png",
+    "bytes": 15927,
+    "sha256": "c57c624fdba686431d2e2f3baa460c34282a154784643dd8065367a80554fcad",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "note_editing.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/note_editing.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\note_editing.png",
+    "bytes": 122853,
+    "sha256": "1ba156d6a5bc4c395661c596da747d9d08be69d21ac0346c23a8e940776d20f5",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "note_coloring.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/note_coloring.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\note_coloring.png",
+    "bytes": 244426,
+    "sha256": "85772f358645de218221b613f69aa346eed96d42e53345d982e64a9a6981d9b9",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "create_note_form.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/create_note_form.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\create_note_form.png",
+    "bytes": 20858,
+    "sha256": "47d3dc70a8763fc415b65de15a22517832976c33712b215f831e2570350e5041",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "note_more_options_dropdown.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/note_more_options_dropdown.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\note_more_options_dropdown.png",
+    "bytes": 53925,
+    "sha256": "bc988ef6e7b3f5e05897891121008f88eff7366050206d6083a8f78470087af8",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "trash_list.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/trash_list.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\trash_list.png",
+    "bytes": 56669,
+    "sha256": "509437b673281f31c357d74a9a58be0c6f7eef9c86846407f2f3ebd50269b435",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "search_suggested_filters.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/search_suggested_filters.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\search_suggested_filters.png",
+    "bytes": 69496,
+    "sha256": "4ea43ea88d6e722780f684325a844237c356dcb609da5bf81b9f5c9295d41f2e",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "sidebar.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/sidebar.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\sidebar.png",
+    "bytes": 61118,
+    "sha256": "2667a9bd827a4dde8906b4edb63e5e58a50d08a261de3a297c9874fa0627ea06",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "archived_notes_page.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/archived_notes_page.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\archived_notes_page.png",
+    "bytes": 54784,
+    "sha256": "8ca81dd0d76349a368a8145c60c18a92d156fd888df3550fedc8aded6043b174",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "settings_settings.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/settings_settings.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--keep\\references\\settings_settings.png",
+    "bytes": 167077,
+    "sha256": "9810cddecd8fa393ba28e073cd2f8f90af8d7665c7e483388d98e0f272d90343",
+    "status": "downloaded"
+  },
+  {
+    "status": "missing_official",
+    "kind": "reference",
+    "path": "label_filtered_list.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/label_filtered_list.png?catalog=competition",
+    "error": "Official API returned HTTP 404 for both references and assets probes."
+  },
+  {
+    "status": "missing_official",
+    "kind": "reference",
+    "path": "search_keyword.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/search_keyword.png?catalog=competition",
+    "error": "Official API returned HTTP 404 for both references and assets probes."
+  }
+]
