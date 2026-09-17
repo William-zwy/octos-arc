@@ -66,6 +66,8 @@ test_a2.md
 
 # Agent research output
 *.md
+# Persistent project memory for the ARC-Bench hackathon workstream.
+!docs/ARC_BENCH_HACKATHON_PROJECT_MEMORY.md
 !README.md
 !README-zh.md
 !ORG-README.md
