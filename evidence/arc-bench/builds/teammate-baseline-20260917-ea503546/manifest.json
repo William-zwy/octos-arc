@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "purpose": "teammate original Agent baseline freeze",
+  "agent_build_id": "teammate-baseline-20260917-ea503546",
+  "frozen_at": "2026-09-17T22:54:00.3347245+08:00",
+  "repository": {
+    "root": "D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松",
+    "remote": "git@github.com:William-zwy/octos-arc.git",
+    "branch": "codex/arc-bench-agent-freeze",
+    "code_sha": "ea503546aad31b2e3b887235e3b35cc0a8b9cfe8",
+    "remote_main_sha": "ea503546aad31b2e3b887235e3b35cc0a8b9cfe8",
+    "dirty_preexisting_changes": [
+      ".gitignore",
+      "docs/ARC_BENCH_HACKATHON_PROJECT_MEMORY.md"
+    ],
+    "source_code_changed": false
+  },
+  "package": {
+    "relative_path": "evidence/arc-bench/builds/teammate-baseline-20260917-ea503546/octos-arc-bundle.zip",
+    "sha256": "812af3d15de93ce2955c6f2a0de7c6351d205b81e9fdf33f36fcd41387162ef0",
+    "bytes": 323633,
+    "format": "zip",
+    "source": "arc/pack.sh file set, reproduced with Windows Compress-Archive because sh/zip are unavailable",
+    "root_entry": "main.py",
+    "forbidden_root_entry": "arc/main.py",
+    "input_roots": [
+      "main.py",
+      "octos_stdio.py",
+      "requirement_order.py",
+      "acceptance.py",
+      "guard.py",
+      "llm_proxy.py",
+      "codegen.py",
+      "requirements.txt",
+      "hooks",
+      "arcbench_agent_runtime",
+      "public-tests"
+    ],
+    "input_file_count": 492,
+    "input_manifest_sha256": "526c2bab320dee8616b54ffd4f05ee7b2a99b5a00404dfdba4d92b0a18a1ba22"
+  },
+  "runtime": {
+    "local_git": "E:\\Program Files\\Git\\cmd\\git.exe 2.33.0.windows.2",
+    "local_python": "Python 3.7.0",
+    "local_node": "v24.21.0",
+    "local_npm": "11.19.0",
+    "local_cargo": "unavailable",
+    "local_octos_binary": "unavailable",
+    "pinned_runtime_version": "v2.0.3-rc.11-arc.11",
+    "pinned_runtime_source_commit": "1de981aebe1915b8aeb9a6645b0fe91a63fb4d0a",
+    "pinned_runtime_binary_sha256": "05f41672f0b5fef8c3936aa56b72f1add8525961a928668abb34849d4595124e",
+    "runtime_lock_sha256": "7e9634d53aa49d60aad5b0e0618917762186ad0eaf832c0a3569a863e9f55c3d"
+  },
+  "configuration": {
+    "source": "repository defaults plus arc/run-task-local.py fallback; actual platform selection remains pending",
+    "model": "deepseek-v4-flash",
+    "base_url": "https://api.arc-bench.com/v1",
+    "reasoning": "auto (main.py: none for <=1 implementable node, otherwise low)",
+    "context_limits": {
+      "inline_spec_chars": 24000,
+      "inline_source_chars": 40000,
+      "proxy_min_max_tokens": 32768,
+      "kernel_arc11_max_tokens": 4096
+    },
+    "budgets": {
+      "whole_generation": "max(3600, 1500 * node_count) seconds",
+      "node": 1500,
+      "node_timeout": 1200,
+      "design_timeout": 420,
+      "repair_rounds": 5,
+      "min_repair_seconds": 300
+    },
+    "execution": {
+      "session_scope": "turn",
+      "design_turn": 1,
+      "design_mode": "separate",
+      "fully_parallel": 0,
+      "workers": "memory-aware auto",
+      "playwright_install": 1
+    },
+    "request_caps": {
+      "implement": "20 for small tasks / 0 means disabled",
+      "repair": 10
+    }
+  },
+  "configuration_hash": "f6d329004dbd379114b7efba68a59b9180ae4166452ff6b22f34f6d91006a846",
+  "environment_presence": {
+    "MODEL": false,
+    "OPENAI_BASE_URL": false,
+    "OCTOS_BIN": false,
+    "NODE_BIN": false,
+    "OCTOS_TIME_BUDGET": false,
+    "OCTOS_NODE_TIME_BUDGET": false,
+    "OCTOS_NODE_TIMEOUT": false,
+    "OCTOS_DESIGN_TIMEOUT": false,
+    "OCTOS_REPAIR_ROUNDS": false,
+    "OCTOS_MIN_REPAIR_SECONDS": false,
+    "OCTOS_DESIGN_TURN": false,
+    "OCTOS_DESIGN_MODE": false,
+    "OCTOS_SESSION_SCOPE": false,
+    "OCTOS_ARC_REASONING": false,
+    "OCTOS_ARC_IMPLEMENT_REASONING": false,
+    "OCTOS_ARC_INLINE_SPECS": false,
+    "OCTOS_ARC_DESTREAM": false,
+    "OCTOS_ARC_TRIM_PROMPT": false,
+    "OCTOS_ARC_DROP_SHELL": false,
+    "OCTOS_ARC_IMPLEMENT_REQUESTS": false,
+    "OCTOS_ARC_REPAIR_REQUESTS": false,
+    "OCTOS_ARC_MAX_TOKENS": false,
+    "OCTOS_ARC_CODEGEN": false,
+    "OCTOS_ARC_FULLY_PARALLEL": false,
+    "OCTOS_ARC_TEST_TIMEOUT_MS": false,
+    "OCTOS_ARC_SLOW_MS": false,
+    "OCTOS_RELEASE_URL": false,
+    "ARCBENCH_API_KEY": false,
+    "OPENAI_API_KEY": false
+  },
+  "launch": {
+    "platform": "python main.py /workspace/task",
+    "local": "python arc/run-task-local.py <task_dir> --name <run_id>",
+    "local_preflight": "not executable in this worktree: Octos binary unavailable and API key unset"
+  },
+  "binding": {
+    "agent_build_id": "teammate-baseline-20260917-ea503546",
+    "task_snapshot_id": null,
+    "run_id": null,
+    "code_sha": "ea503546aad31b2e3b887235e3b35cc0a8b9cfe8",
+    "configuration_hash": "f6d329004dbd379114b7efba68a59b9180ae4166452ff6b22f34f6d91006a846",
+    "binding_status": "agent frozen; task snapshot and run binding pending phase 1 and phase 3"
+  },
+  "secrets_policy": {
+    "values_recorded": false,
+    "key_values_in_manifest": false,
+    "key_values_in_package": false,
+    "required_source": "environment or platform secret manager"
+  }
+}
