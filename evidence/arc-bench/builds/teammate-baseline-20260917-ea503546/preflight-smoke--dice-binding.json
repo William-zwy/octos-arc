@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "phase": "2.5-platform-smoke-gate",
+  "status": "passed",
+  "gate_scope": "local_evidence_binding_without_importing_raw_platform_logs",
+  "created_at": "2026-09-18",
+  "evidence_source": "platform run object and logs confirmed by the user and a separate agent",
+  "task": {
+    "task_id": "smoke--dice",
+    "task_snapshot_id": "20260917-150121Z",
+    "task_snapshot_manifest": "workstreams/arc-bench/official-snapshots/20260917-150121Z/manifest.json",
+    "required_test_source": "/workspace/tests",
+    "test_source_precedence": [
+      "ARCBENCH_TESTS_DIR",
+      "/workspace/tests",
+      "ZIP bundled public-tests"
+    ],
+    "fallback_policy": "pause_and_preserve_A0_if_bundled_tests_are_selected",
+    "bundled_lite_tests_present": false
+  },
+  "agent": {
+    "agent_build_id": "teammate-baseline-20260917-ea503546",
+    "code_sha": "ea503546aad31b2e3b887235e3b35cc0a8b9cfe8",
+    "zip_path": "evidence/arc-bench/builds/teammate-baseline-20260917-ea503546/octos-arc-bundle.zip",
+    "zip_sha256": "812af3d15de93ce2955c6f2a0de7c6351d205b81e9fdf33f36fcd41387162ef0",
+    "a0_immutable": true
+  },
+  "platform": {
+    "submission_id": "3ac91524402b",
+    "run_id": "1e9d8704a273",
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-vl-flash-vision-exp",
+    "reasoning_level": "reasoning-none",
+    "token_limit": null,
+    "timeout": null,
+    "concurrency_policy": "tests=1 worker; agent_acceptance=2 workers; container_memory=2048 MiB",
+    "observed_token_usage": 856,
+    "observed_cost_cny": 0.00456,
+    "observed_runtime_seconds": 39,
+    "agent_whole_generation_budget_seconds": 3600,
+    "agent_node_budget_seconds": 1500,
+    "base_url": "https://api.arc-bench.com/v1"
+  },
+  "configuration_hash": "fc3798e84d36b218b7b1d1c0626b710dba18038bc62a8a122e6a4c9594e38bc3",
+  "verification": {
+    "entrypoint": {
+      "status": "confirmed",
+      "value": "main.py",
+      "source": "separate_agent_confirmation"
+    },
+    "test_source": {
+      "status": "confirmed",
+      "value": "/workspace/tests",
+      "source": "separate_agent_confirmation"
+    },
+    "metrics_binding": {
+      "status": "confirmed",
+      "submission_id": "3ac91524402b",
+      "run_id": "1e9d8704a273"
+    },
+    "result": {
+      "status": "PASSED",
+      "score": 100,
+      "passed": 1,
+      "total": 1,
+      "test": "REQ-1: roll and display a six-sided dice value",
+      "test_duration_ms": 387
+    },
+    "security": {
+      "api_key_value_recorded": false,
+      "api_key_value_in_repository": false,
+      "raw_platform_logs_imported": false,
+      "local_policy": "Keep platform logs out of the repository; never persist or echo the API key value."
+    }
+  },
+  "verification_requirements": [
+    "log confirms our main.py is the execution entrypoint",
+    "log confirms the platform-injected model and runtime",
+    "log confirms /workspace/tests is the selected test directory",
+    "run metrics are attributable to this run_id",
+    "platform logs were reviewed outside the repository; no API key value was copied into local evidence"
+  ],
+  "next_action": "Bind the independent smoke--counter run, then the combined Smoke gate can be closed before the 13-task baseline."
+}
