@@ -1,7 +1,9 @@
 {
   "schema_version": 1,
   "phase": "2.5-platform-smoke-gate",
-  "status": "awaiting_platform_submission",
+  "status": "passed",
+  "gate_scope": "local_evidence_binding_without_importing_raw_platform_logs",
+  "evidence_source": "platform run object and logs confirmed by the user and a separate agent",
   "created_at": "2026-09-18",
   "task": {
     "task_id": "smoke--counter",
@@ -24,17 +26,53 @@
     "a0_immutable": true
   },
   "platform": {
-    "submission_id": null,
-    "run_id": null,
-    "model": null,
-    "visual_model": null,
-    "reasoning_level": null,
+    "submission_id": "3ac91524402b",
+    "run_id": "a26913c7e4cf",
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-vl-flash-vision-exp",
+    "reasoning_level": "reasoning-none",
     "token_limit": null,
     "timeout": null,
-    "concurrency_policy": null,
+    "concurrency_policy": "tests=1 worker; agent_acceptance=2 workers; container_memory=2048 MiB",
+    "observed_token_usage": 1781,
+    "observed_runtime_seconds": 21,
+    "agent_whole_generation_budget_seconds": 3600,
+    "agent_node_budget_seconds": 1500,
     "base_url": "https://api.arc-bench.com/v1"
   },
-  "configuration_hash": null,
+  "configuration_hash": "3976454af8e94f17b3725f2dc8aaba1bbdd8a1cd9d48ca7a46525411b7edfcc9",
+  "verification": {
+    "entrypoint": {
+      "status": "confirmed",
+      "value": "python3 /workspace/submission/main.py /tmp/arcbench/requirements-source -output-dir /workspace/template",
+      "source": "separate_agent_confirmation"
+    },
+    "test_source": {
+      "status": "confirmed",
+      "value": "/workspace/tests",
+      "details": "runner spec tests_dir=/workspace/tests; 1 spec file mapped from REQ-1",
+      "source": "separate_agent_confirmation"
+    },
+    "metrics_binding": {
+      "status": "confirmed",
+      "submission_id": "3ac91524402b",
+      "run_id": "a26913c7e4cf"
+    },
+    "result": {
+      "status": "PASSED",
+      "score": 100,
+      "passed": 1,
+      "total": 1,
+      "test": "REQ-1: increment and decrement the counter",
+      "run_duration_seconds": 21
+    },
+    "security": {
+      "api_key_value_recorded": false,
+      "api_key_value_in_repository": false,
+      "raw_platform_logs_imported": false,
+      "local_policy": "Keep platform logs out of the repository; never persist or echo the API key value."
+    }
+  },
   "verification_requirements": [
     "log confirms our main.py is the execution entrypoint",
     "log confirms the platform-injected model and runtime",
@@ -43,5 +81,5 @@
     "logs contain no API key value",
     "smoke--counter completes before smoke--dice is started"
   ],
-  "next_action": "Upload the existing A0 ZIP without repacking, save the submission, run smoke--counter, then fill platform fields from the submission and run result."
+  "next_action": "Smoke Counter and Smoke Dice are independently bound; proceed to the 13-task A0 baseline using the same configuration hash."
 }

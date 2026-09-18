@@ -166,16 +166,15 @@ A0 是不可变的对照组。后续不得覆盖、重打包后仍沿用同一�
 - 保存运行配置默认值、预算、请求上限和运行时版本；
 - 保证 A0 后续可重复上传、可与优化版本进行公平比较。
 
-### 阶段 2.5：平台汇合与 Smoke 门禁——Dice 已通过，Counter 待绑定
+### 阶段 2.5：平台汇合与 Smoke 门禁——已通过
 
-当前门禁记录：[`preflight-smoke--counter-binding.json`](../evidence/arc-bench/builds/teammate-baseline-20260917-ea503546/preflight-smoke--counter-binding.json) 与 [`preflight-smoke--dice-binding.json`](../evidence/arc-bench/builds/teammate-baseline-20260917-ea503546/preflight-smoke--dice-binding.json)。Smoke Dice 已绑定以下平台运行：
+当前门禁记录：[`preflight-smoke--counter-binding.json`](../evidence/arc-bench/builds/teammate-baseline-20260917-ea503546/preflight-smoke--counter-binding.json) 与 [`preflight-smoke--dice-binding.json`](../evidence/arc-bench/builds/teammate-baseline-20260917-ea503546/preflight-smoke--dice-binding.json)。Smoke Counter 和 Smoke Dice 已分别绑定平台运行：
 
-- submission ID：`3ac91524402b`；
-- run ID：`1e9d8704a273`；
-- 模型：`deepseek-v4-flash`；视觉模型：`deepseek-vl-flash-vision-exp`；推理级别：`reasoning-none`；
-- 观测用量：856 tokens、0.00456 CNY、39 s；测试 1 worker，Agent 验收 2 workers / 2048 MiB；
-- 配置哈希：`fc3798e84d36b218b7b1d1c0626b710dba18038bc62a8a122e6a4c9594e38bc3`；
-- 入口确认是 ZIP 根目录 `main.py`，测试来源确认是 `/workspace/tests`；平台原始日志未复制进仓库，仓库中不保存 API Key 值。
+- Counter：run ID `a26913c7e4cf`，1781 tokens，21 s，1/1 通过；
+- Dice：run ID `1e9d8704a273`，856 tokens，39 s，1/1 通过；
+- submission ID：`3ac91524402b`；模型：`deepseek-v4-flash`；视觉模型：`deepseek-vl-flash-vision-exp`；推理级别：`reasoning-none`；
+- 两次运行共用配置哈希：`3976454af8e94f17b3725f2dc8aaba1bbdd8a1cd9d48ca7a46525411b7edfcc9`；测试 1 worker，Agent 验收 2 workers / 2048 MiB；
+- 两次运行均确认入口为 `main.py`、测试来源为 `/workspace/tests`；平台原始日志未复制进仓库，仓库中不保存 API Key 值。
 
 执行步骤：
 
@@ -187,7 +186,7 @@ A0 是不可变的对照组。后续不得覆盖、重打包后仍沿用同一�
 6. 确认公开测试来自 `/workspace/tests`，而不是 ZIP 中旧版 bundled tests。
 7. 保存 submission ID、run ID、测试结果和计量信息；原始平台日志不复制进仓库，仓库证据中不保存 API Key 值。
 
-门禁通过条件：Counter 和 Dice 两个运行都完成独立绑定，入口、测试来源和结果均有证据，且本地仓库不保存 API Key。当前 Dice 已通过；Counter 仍是 `awaiting_platform_submission`，因此整体 Smoke 门禁尚未关闭。
+门禁通过条件：Counter 和 Dice 两个运行都完成独立绑定，入口、测试来源和结果均有证据，且本地仓库不保存 API Key。当前整体 Smoke 门禁已通过。
 
 如果日志显示回退到 ZIP bundled tests：立即暂停批量运行，保留 A0 不变；另建 A1，仅同步官方公开测试和任务身份映射，不修改 Agent 策略。原包没有 Lite 独立测试，错误回退可能把 Lite 与 Web 同名测试混用。
 

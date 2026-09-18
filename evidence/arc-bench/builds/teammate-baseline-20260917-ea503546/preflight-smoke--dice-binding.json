@@ -41,7 +41,7 @@
     "agent_node_budget_seconds": 1500,
     "base_url": "https://api.arc-bench.com/v1"
   },
-  "configuration_hash": "fc3798e84d36b218b7b1d1c0626b710dba18038bc62a8a122e6a4c9594e38bc3",
+  "configuration_hash": "3976454af8e94f17b3725f2dc8aaba1bbdd8a1cd9d48ca7a46525411b7edfcc9",
   "verification": {
     "entrypoint": {
       "status": "confirmed",
