@@ -10,7 +10,7 @@
 >
 > 阶段 3 文件摄取与阶段 4 自动分支 SOP 见 [`ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md`](./ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md)。
 >
-> 阶段 5 跨 Run 问题、暂缓项与优化决策见 [`ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md`](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)。首版为执行前核验稿，不代表已修改 Agent 或完成平台 A/B。
+> 阶段 5 跨 Run 问题、暂缓项与优化决策见 [`ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md`](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)。已记录首个独立本地优化候选；尚未打包或完成平台 A/B。
 >
 > 当前执行状态（2026-09-19）：阶段 2.5 已完成并通过；阶段 3、阶段 4、阶段 5 正在并行执行，尚未宣告完成。
 
@@ -115,6 +115,7 @@
 - 当前代码基线：`ea503546aad31b2e3b887235e3b35cc0a8b9cfe8`。
 - 远程 `origin/main` 当前仍为上述代码基线；本地证据分支在该基线上保存 Agent 冻结、官方快照、Smoke 门禁证据、执行计划和阶段 3–5 协作记录。
 - 当前证据分支为 `codex/arc-bench-official-snapshot-20260917`。后续优化代码应从原始代码基线建立独立分支/工作树，避免把约 95 MB 官方资产历史带入最终代码分支。
+- 首个阶段 5 本地代码候选已从 A0 基线建立独立分支 `codex/arc-bench-phase5-route-contract`，提交 `c53c333d5205fb98bf168c1f4fc670c0eec7432f`；其修改范围、测试结果和未验证事项见阶段 5 决策台账。该候选尚未打包、未提交平台运行、未推送远程。
 - 当前本地环境没有 Octos、Cargo 和 ARC-Bench API Key，但既定执行方式是把 ZIP 上传到官网，由平台注入运行时、模型服务、任务和公开测试，因此这些本地缺口不阻塞官网基线；它们只限制本地端到端复现。
 - 仓库内没有复制外部资料中的 API Key；任何 Key 都必须通过环境变量或平台密钥管理，不得写入代码、日志、提交信息或公开文档。
 - 阶段 2.5 已完成并通过；阶段 3、阶段 4、阶段 5 正常并行执行中。后续状态以 run 绑定、阶段 3 原始证据、阶段 4 诊断和阶段 5 A/B 结果为准。
