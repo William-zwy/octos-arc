@@ -46,14 +46,12 @@
       "last_run_id": "00c59e0762fb"
     },
     "arc-bench-web--keep": {
-      "thread_id": null,
+      "thread_id": "01a0b7e7-1cff-7380-ac81-ef35dbe70633",
       "title": "07 项目阶段4 + arc-bench-web--keep",
-      "status": "needs_reconciliation",
+      "status": "quarantined",
       "last_run_id": "4b792b72d7dd",
-      "candidate_thread_ids": [
-        "01a0b7e7-1cff-7380-ac81-ef35dbe70633"
-      ],
-      "reason": "用户报告存在两个同标题会话；当前 thread listing 未返回候选，已读取候选的 completed turn 但 latestAssistantMessageId 为空且无可验证最终消息。不得自动选择、复用或再次 fork，需先确认两个实际 Thread ID。"
+      "last_handoff_id": "4b792b72d7dd-retrigger-01",
+      "reason": "用户报告存在两个同标题会话；当前 thread listing 未返回候选。该候选原始执行和一次重触发均变为 completed/idle，但 latestAssistantMessageId 为空且无可验证最终消息，因此已隔离。不得复用或再次触发，需先确认另一个实际 Thread ID。"
     }
   }
 }
