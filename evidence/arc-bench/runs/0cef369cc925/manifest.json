@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "run": {
+    "run_id": "0cef369cc925",
+    "submission_id": "59debd594609",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--keep",
+    "task_snapshot_id": null,
+    "created_at": "2026-09-18T12:48:46.365443",
+    "started_at": "2026-09-18T12:48:48.269233",
+    "finished_at": "2026-09-18T16:35:42.929837",
+    "status": "FAILED",
+    "score": 96.9,
+    "passed_count": 31,
+    "failed_count": 1,
+    "feature_implementation_rate": 0.96875,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 48000,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0
+  },
+  "internal_acceptance": {
+    "round_0": {
+      "passed": 31,
+      "total": 32,
+      "failing_nodes": ["REQ-2.8.2"]
+    },
+    "round_1": {
+      "passed": 32,
+      "total": 32,
+      "failing_nodes": []
+    },
+    "repaired_node_before_final_platform_run": "REQ-2.8.2"
+  },
+  "platform_final": {
+    "passed": 31,
+    "total": 32,
+    "failed_test": "REQ-2.5.4.spec.ts",
+    "failed_requirement": "REQ-2.5.4: Unarchive",
+    "failure_kind": "timedOut",
+    "timeout_ms": 10000,
+    "locator": "getByText(/Travel plans 2\\.5\\.4/i).first().getByRole('button', { name: /^Unarchive$/i })",
+    "failure_location": "/workspace/tests/helpers.ts:296"
+  },
+  "metering": {
+    "requests": 1004,
+    "prompt_tokens": 24772611,
+    "completion_tokens": 660754,
+    "reasoning_tokens": 436764,
+    "prompt_cache_hit_tokens": 22496000,
+    "provider_total_tokens": 25433365,
+    "platform_token_count": 58278570,
+    "cost": 31.453807,
+    "currency": "CNY",
+    "run_duration_seconds": 13576
+  },
+  "source_precedence": [
+    "run.json for final platform status, score and test list",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal rounds and provider usage",
+    "playwright-report.json for final locator and timeout details",
+    "failure-details.md for human-readable failure extraction",
+    "snapshots.json for generated design/codegen state",
+    "template.zip for package identity and reproducibility",
+    "summary.md for navigation only; it cannot override raw structured fields"
+  ],
+  "conflicts": [
+    {
+      "field": "internal_acceptance.round_0",
+      "summary_value": "26/32",
+      "raw_logs_value": "31/32, failing REQ-2.8.2",
+      "resolution": "retain both as provenance, use raw logs and structured platform artifacts for normalized record"
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-run-0cef369cc925-summary.md",
+      "role": "human_normalized_summary",
+      "bytes": 3141,
+      "sha256": "BE1189F9B3D11F576B25820CF27F47314B51EF267B3E4FDB750E153B6A6EC5EE",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-0cef369cc925-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 2990,
+      "sha256": "C5AC8BC8523C6DFCBC1A8A823AA5338BEA1BC606A0AC465E606FF4DD5210AB70",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-0cef369cc925-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 431635,
+      "sha256": "184B5ECBFF9C6DD91DCF6B15EE135BF3AB3E8A055780980F28B2B8A7A48B89BA",
+      "stored_in_repository": false
+    },
+    {
+      "name": "0cef369cc925-playwright-report.json",
+      "role": "final_playwright_report",
+      "bytes": 44381,
+      "sha256": "2C142E82915370C3CDB60C437635CC1BFEF9E64E0DD45114FE4F1F6919EC1F16",
+      "stored_in_repository": false
+    },
+    {
+      "name": "0cef369cc925-template.zip",
+      "role": "template_or_generated_package_snapshot",
+      "bytes": 1833757,
+      "sha256": "FDB0C36BB176AEEAB10817C5C9D1A8B5C45F081B861C36199FC914EF98E9BFE1",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-0cef369cc925-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 703550,
+      "sha256": "FA4C1D99F6DB135451375DD711651D40A8DECFD4F84316089AA8CFAAF627A3CB",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-0cef369cc925.json",
+      "role": "raw_run_object",
+      "bytes": 9539,
+      "sha256": "9D1918D9FAA6B281981AB7BA80ADC5CEB0AD12ADA617A03CBB876BF929273BEC",
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0
+  }
+}

@@ -1,0 +1,4426 @@
+{
+  "schema_version": 1,
+  "snapshot_id": "20260917-150121Z",
+  "captured_at_utc": "2026-09-17T15:01:21.9146094Z",
+  "source": {
+    "api_base": "https://arc-bench.com/api",
+    "catalog": "competition",
+    "authority": "ARC-Bench public competition API",
+    "hidden_tests": false
+  },
+  "repository": {
+    "git_head": "3467e44286a81cf0d5d3cda7826429b215573c1e",
+    "git_branch": "codex/arc-bench-official-snapshot-20260917"
+  },
+  "competitions": [
+    {
+      "id": "arc-bench-web",
+      "title": "ARC-Bench: Web Application",
+      "status": "open",
+      "task_count": 6,
+      "total_tests": 484,
+      "template_required": false,
+      "template_source_competition_id": null,
+      "task_ids": [
+        "arc-bench-web--12306",
+        "arc-bench-web--bookstack",
+        "arc-bench-web--ctrip",
+        "arc-bench-web--keep",
+        "arc-bench-web--prestashop",
+        "arc-bench-web--stackoverflow"
+      ]
+    },
+    {
+      "id": "smoke-evolution",
+      "title": "Smoke Competition (Evolution)",
+      "status": "open",
+      "task_count": 2,
+      "total_tests": 4,
+      "template_required": true,
+      "template_source_competition_id": "smoke",
+      "task_ids": [
+        "smoke-evolution--counter",
+        "smoke-evolution--dice"
+      ]
+    },
+    {
+      "id": "smoke",
+      "title": "Smoke Competition",
+      "status": "open",
+      "task_count": 2,
+      "total_tests": 2,
+      "template_required": false,
+      "template_source_competition_id": null,
+      "task_ids": [
+        "smoke--counter",
+        "smoke--dice"
+      ]
+    },
+    {
+      "id": "ticket-booking-evolution",
+      "title": "Ticket Booking (Evolution)",
+      "status": "open",
+      "task_count": 0,
+      "total_tests": 0,
+      "template_required": true,
+      "template_source_competition_id": "ticket-booking",
+      "task_ids": []
+    },
+    {
+      "id": "ticket-booking",
+      "title": "Ticket Booking",
+      "status": "open",
+      "task_count": 1,
+      "total_tests": 10,
+      "template_required": false,
+      "template_source_competition_id": null,
+      "task_ids": [
+        "ticket-booking--ticket-booking"
+      ]
+    },
+    {
+      "id": "arc-bench-lite",
+      "title": "ARC-Bench-Lite",
+      "status": "open",
+      "task_count": 2,
+      "total_tests": 66,
+      "template_required": false,
+      "template_source_competition_id": null,
+      "task_ids": [
+        "arc-bench-lite--bookstack",
+        "arc-bench-lite--keep"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "arc-bench-web--12306",
+      "competition_id": "arc-bench-web",
+      "title": "Train Ticket Booking System",
+      "total_tests": 138,
+      "module_count": 117,
+      "downloaded_test_files": 118,
+      "downloaded_assets": 33,
+      "official_requirement_sha256": "961f0c494d3dfb0f7c79b55a559a2e5b7c413848ccbe20f33c7bf51486f4510d",
+      "local_requirement_path": "C:\\Users\\dayuruozhi\\.codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\arc\\tasks\\arc-bench-web--12306\\requirements.yaml",
+      "local_requirement_sha256": "b88713c0be62f3689cae1f7745f44bf556d8f42302e9b259fde50ada7eb44ebf",
+      "local_requirement_matches": false,
+      "missing_official_assets": 0
+    },
+    {
+      "id": "arc-bench-web--bookstack",
+      "competition_id": "arc-bench-web",
+      "title": "BookStack Knowledge Base System",
+      "total_tests": 34,
+      "module_count": 34,
+      "downloaded_test_files": 35,
+      "downloaded_assets": 19,
+      "official_requirement_sha256": "be5041fd2f6a75993b23905f2a307ef3625238abe4bd168b38b05e51d8b2f646",
+      "local_requirement_path": "C:\\Users\\dayuruozhi\\.codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\arc\\tasks\\arc-bench-web--bookstack\\requirements.yaml",
+      "local_requirement_sha256": "2fc773dc95d6a8f42203769401e1228539eb958e54e0dcf9522c1dbb43be12e3",
+      "local_requirement_matches": false,
+      "missing_official_assets": 0
+    },
+    {
+      "id": "arc-bench-web--ctrip",
+      "competition_id": "arc-bench-web",
+      "title": "Ctrip Travel System",
+      "total_tests": 126,
+      "module_count": 133,
+      "downloaded_test_files": 126,
+      "downloaded_assets": 46,
+      "official_requirement_sha256": "f43556f06b933e954c732040041e0208f43aa00f5291bd38fb70ce8912dde2ce",
+      "local_requirement_path": "C:\\Users\\dayuruozhi\\.codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\arc\\tasks\\arc-bench-web--ctrip\\requirements.yaml",
+      "local_requirement_sha256": "39c8b1453aa7fee0b8a969b4cf650cadd2862f8e1ae7d0ac8a6bc8f2d8239da4",
+      "local_requirement_matches": false,
+      "missing_official_assets": 1
+    },
+    {
+      "id": "arc-bench-web--keep",
+      "competition_id": "arc-bench-web",
+      "title": "Keep",
+      "total_tests": 32,
+      "module_count": 32,
+      "downloaded_test_files": 33,
+      "downloaded_assets": 20,
+      "official_requirement_sha256": "0ee5e976f513ba19dff5348d0eb4813bcc3c1d4229ed28b3beb2cb51af90ea0e",
+      "local_requirement_path": "C:\\Users\\dayuruozhi\\.codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\arc\\tasks\\arc-bench-web--keep\\requirements.yaml",
+      "local_requirement_sha256": "a618ebd4dd96e94996f8424aecf27c7f7ef145325c611ab0faa3f5a4683bba2d",
+      "local_requirement_matches": false,
+      "missing_official_assets": 2
+    },
+    {
+      "id": "arc-bench-web--prestashop",
+      "competition_id": "arc-bench-web",
+      "title": "PrestaShop E-commerce Website",
+      "total_tests": 87,
+      "module_count": 86,
+      "downloaded_test_files": 87,
+      "downloaded_assets": 22,
+      "official_requirement_sha256": "bc1ae80bd8072a122bd9d7ea1375b1d2674a4b6bfc4a418375d1abef58b2aa0f",
+      "local_requirement_path": "C:\\Users\\dayuruozhi\\.codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\arc\\tasks\\arc-bench-web--prestashop\\requirements.yaml",
+      "local_requirement_sha256": "a8b89a68eb46886ecf60f0f688b0264bb2d680c97c7f4f4314482136f616cec1",
+      "local_requirement_matches": false,
+      "missing_official_assets": 0
+    },
+    {
+      "id": "arc-bench-web--stackoverflow",
+      "competition_id": "arc-bench-web",
+      "title": "Stack Overflow Platform",
+      "total_tests": 67,
+      "module_count": 66,
+      "downloaded_test_files": 67,
+      "downloaded_assets": 12,
+      "official_requirement_sha256": "a12bfe3919518c88920afcf9d34255217a8d4f677ba94414ef91ddc2fe0ac5ea",
+      "local_requirement_path": "C:\\Users\\dayuruozhi\\.codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\arc\\tasks\\arc-bench-web--stackoverflow\\requirements.yaml",
+      "local_requirement_sha256": "dcf802a82fc40d6d82fae901115be4401b275ce34858f388a9784f3a21b8e124",
+      "local_requirement_matches": false,
+      "missing_official_assets": 0
+    },
+    {
+      "id": "smoke-evolution--counter",
+      "competition_id": "smoke-evolution",
+      "title": "ARC Counter Evolution Smoke Test",
+      "total_tests": 2,
+      "module_count": 2,
+      "downloaded_test_files": 2,
+      "downloaded_assets": 0,
+      "official_requirement_sha256": "c68e9a366d63c1bad9edabc390707b26fda3762cd382fdc00d9e9851fdb510b7",
+      "local_requirement_path": "C:\\Users\\dayuruozhi\\.codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\arc\\tasks\\smoke-evolution--counter\\requirements.yaml",
+      "local_requirement_sha256": "d34b18e13a0012360196312759e55cddd87f9b6e61034cae36c85d5c47a8642b",
+      "local_requirement_matches": false,
+      "missing_official_assets": 0
+    },
+    {
+      "id": "smoke-evolution--dice",
+      "competition_id": "smoke-evolution",
+      "title": "ARC Dice Evolution Smoke Test",
+      "total_tests": 2,
+      "module_count": 2,
+      "downloaded_test_files": 2,
+      "downloaded_assets": 0,
+      "official_requirement_sha256": "f307ba0e3783ab0625848c8b1997d5271a4a13708f0ecfad88e0a482c6cac749",
+      "local_requirement_path": "C:\\Users\\dayuruozhi\\.codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\arc\\tasks\\smoke-evolution--dice\\requirements.yaml",
+      "local_requirement_sha256": "a043fbd2cba413db526958b570548e38da9a87b95167f5c177ae18cd0274e4c3",
+      "local_requirement_matches": false,
+      "missing_official_assets": 0
+    },
+    {
+      "id": "smoke--counter",
+      "competition_id": "smoke",
+      "title": "ARC Counter Smoke Test",
+      "total_tests": 1,
+      "module_count": 1,
+      "downloaded_test_files": 1,
+      "downloaded_assets": 0,
+      "official_requirement_sha256": "a6e82f80dbbfc8a19d6d6ff59d884d365cadc2caf86eee4341d58da4b412fa3e",
+      "local_requirement_path": "C:\\Users\\dayuruozhi\\.codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\arc\\tasks\\smoke--counter\\requirements.yaml",
+      "local_requirement_sha256": "b3601c59021e96fe91b2d1dc9633ef66e6c8c78f0b79d311042f387937f6e5ac",
+      "local_requirement_matches": false,
+      "missing_official_assets": 0
+    },
+    {
+      "id": "smoke--dice",
+      "competition_id": "smoke",
+      "title": "ARC Dice Smoke Test",
+      "total_tests": 1,
+      "module_count": 1,
+      "downloaded_test_files": 1,
+      "downloaded_assets": 0,
+      "official_requirement_sha256": "43c0808f5402289e5b866ff73e0ea06f4fa50323cdcdc65bb88a07bb6d94e316",
+      "local_requirement_path": "C:\\Users\\dayuruozhi\\.codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\arc\\tasks\\smoke--dice\\requirements.yaml",
+      "local_requirement_sha256": "d2b93c9822af03cd4eae7690508803ae6b99dceb892179268252caffca1cc334",
+      "local_requirement_matches": false,
+      "missing_official_assets": 0
+    },
+    {
+      "id": "ticket-booking--ticket-booking",
+      "competition_id": "ticket-booking",
+      "title": "火车票预订演示系统",
+      "total_tests": 10,
+      "module_count": 2,
+      "downloaded_test_files": 3,
+      "downloaded_assets": 3,
+      "official_requirement_sha256": "96d81f85c66ae833b20208a982c53d935dba77c926e709958f55f5c6dbedc467",
+      "local_requirement_path": "C:\\Users\\dayuruozhi\\.codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\arc\\tasks\\ticket-booking--ticket-booking\\requirements.yaml",
+      "local_requirement_sha256": "b011cbccccb5ef9290e41cb1a3fb162b321195367eb192bc25e9d430ca05e7fd",
+      "local_requirement_matches": false,
+      "missing_official_assets": 0
+    },
+    {
+      "id": "arc-bench-lite--bookstack",
+      "competition_id": "arc-bench-lite",
+      "title": "BookStack Knowledge Base System",
+      "total_tests": 34,
+      "module_count": 34,
+      "downloaded_test_files": 35,
+      "downloaded_assets": 19,
+      "official_requirement_sha256": "2c2bc0f2457ebca6ca5b0f0c7b473d89a18b9bfe72010e9fe35b8dfc70a65e2b",
+      "local_requirement_path": "C:\\Users\\dayuruozhi\\.codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\arc\\tasks\\arc-bench-web--bookstack\\requirements.yaml",
+      "local_requirement_sha256": "2fc773dc95d6a8f42203769401e1228539eb958e54e0dcf9522c1dbb43be12e3",
+      "local_requirement_matches": false,
+      "missing_official_assets": 0
+    },
+    {
+      "id": "arc-bench-lite--keep",
+      "competition_id": "arc-bench-lite",
+      "title": "Keep",
+      "total_tests": 32,
+      "module_count": 32,
+      "downloaded_test_files": 33,
+      "downloaded_assets": 20,
+      "official_requirement_sha256": "446b912bab64e30bb084e7c0d89f553ea9def59831b232de76b90b7bdfef810a",
+      "local_requirement_path": "C:\\Users\\dayuruozhi\\.codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\arc\\tasks\\arc-bench-web--keep\\requirements.yaml",
+      "local_requirement_sha256": "a618ebd4dd96e94996f8424aecf27c7f7ef145325c611ab0faa3f5a4683bba2d",
+      "local_requirement_matches": false,
+      "missing_official_assets": 2
+    }
+  ],
+  "files": [
+    {
+      "path": "competitions/arc-bench-lite/competition.json",
+      "bytes": 2389,
+      "sha256": "7b13ab9de92f68d937a5f9a19e6df75b6971a65b0787a158bd8f61d7e0c154c7"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/assets.json",
+      "bytes": 9627,
+      "sha256": "7da129505999f16fdc8bbde27f8f5df8a093f3d8f9e3fde6fd5b89e486a6f25e"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/task.json",
+      "bytes": 55153,
+      "sha256": "d355a9779860a4e131c2e590b0a856cc467ad2e3075165a0e3c11df7375935ab"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/helpers.ts",
+      "bytes": 10221,
+      "sha256": "d6b74b7ffbf1739ee06e8d1675679b9ed3aa203cfad3de1bd37c06c6d4ecfacf"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/index.json",
+      "bytes": 995,
+      "sha256": "9d95354d7bc442761e076a231a51ed8b7f9df5fbb0edd457893ba26c4b5ed294"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-1.1.spec.ts",
+      "bytes": 263,
+      "sha256": "eebd97ab29999dff756690e3f7b24947fb05a628e9b15b77a200945428f09449"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-1.2.spec.ts",
+      "bytes": 320,
+      "sha256": "ddbb10a468d22c653e44f1518a989adff6da733be15710e7c7aea21406c98497"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-2.1.spec.ts",
+      "bytes": 282,
+      "sha256": "21b108f9f3d49b419ce4c575b60413fb0247a62c1cadc9ea32e7097311a73cc6"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-2.2.spec.ts",
+      "bytes": 298,
+      "sha256": "90eaac17421008d211b61c28b061df3be942941b9bb47f0ee1cd761fa70783bd"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-3.1.spec.ts",
+      "bytes": 365,
+      "sha256": "056f0165b7913e8d0c125317ac8a3518aacebf83db7f7a4735a2699cea2e76ad"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-4.1.spec.ts",
+      "bytes": 278,
+      "sha256": "0a3587fb29a1ce861d28b123ee1a9a78ab7d4f165852cf63289ca35daa4a9fca"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-4.2.1.spec.ts",
+      "bytes": 334,
+      "sha256": "34184977ae250dd780e084c6efa00dbc9227ed358ccd713fc74855a94aaf9188"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-4.3.1.spec.ts",
+      "bytes": 484,
+      "sha256": "21e46fb8b0b822a290fb1319487ebc33f05894fc88a8602a064ed55035d5ddc4"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-4.3.2.spec.ts",
+      "bytes": 434,
+      "sha256": "f7dde6c8df1ea6c03dd432ca4131ec8180d53c8107b54b5a663a02e1ceaf01bb"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-4.4.1.spec.ts",
+      "bytes": 400,
+      "sha256": "1d0c89980c8e2dbde5c9e27a9c89761543dbc24f9581b3d5b99ed387f4b199c9"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-4.4.2.spec.ts",
+      "bytes": 421,
+      "sha256": "a4d7734d0478baa00aeef7bf3d0803b74260243371a7328230cc164ca8fd170e"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-4.5.1.spec.ts",
+      "bytes": 487,
+      "sha256": "fc2a47d43e7a01d18da03ea57e253dbc3d815f4a83e02e3b172e40d189ddb780"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-4.5.2.spec.ts",
+      "bytes": 414,
+      "sha256": "e127712132e46c2cf3e2d709103432ecb29ef12489b916e4f0ef47a44bffe6b3"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-5.1.spec.ts",
+      "bytes": 273,
+      "sha256": "03c4161fe5227d0d6221c184c8904f961d85d6c51d086bd1e0e0764f93fb485f"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-5.2.1.spec.ts",
+      "bytes": 374,
+      "sha256": "3b6f51fe9224089752856dc91310197803c18095b25d0dce7ff2864f8d109662"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-5.2.2.spec.ts",
+      "bytes": 439,
+      "sha256": "4af4db56246e5bded558bdabb4f6980d088dd34902e1241efe55226ada4a7a1c"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-5.3.1.spec.ts",
+      "bytes": 422,
+      "sha256": "5a5a48d7325a8a11b05b610ccfde63f3e4a2a67c98c9c4e4351a6bea3a798c07"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-5.3.2.spec.ts",
+      "bytes": 311,
+      "sha256": "a980a6267f186193604487e38403d6bb109140f66680ac1af4eb0bc1d65b228d"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-5.4.1.spec.ts",
+      "bytes": 484,
+      "sha256": "7c9d74cf3bd41b39d6e44e1eb7b3089887ec880d5468b567574895f1cf09a4b4"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-5.4.2.spec.ts",
+      "bytes": 415,
+      "sha256": "d63233c05b18bf465e351eb567db847c0bd749b67c577ea395acd2972300bc6a"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-5.5.1.spec.ts",
+      "bytes": 401,
+      "sha256": "59daa4eed22311e8c35a3656911aaef19e45594d9c0feb29394efad3667fedf5"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-5.5.2.spec.ts",
+      "bytes": 422,
+      "sha256": "d86d374d11a8c1f5abddb093768910a97f636181bce18ff3f18d40cbab7dc3f8"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-5.6.1.spec.ts",
+      "bytes": 531,
+      "sha256": "406e71c1fc57cab07916593ff9b7f9c515cd2ddbb7330f6176ff6a6330080fe1"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-6.1.1.spec.ts",
+      "bytes": 409,
+      "sha256": "624f6be40f39f851e83a5a4e86dffc8f82cfdce63b3a1bfdbcb72d5a74c02738"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-6.1.2.spec.ts",
+      "bytes": 491,
+      "sha256": "c19007cde8d498092e8ef62ee0526e70fad7cc310c98b0f18931e7856bf0aab9"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-6.1.3.spec.ts",
+      "bytes": 489,
+      "sha256": "692ec53367a97de05fb76f2de7ef4d0ca365b25808dd0d18567dd41cbc96cf34"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-6.2.1.spec.ts",
+      "bytes": 422,
+      "sha256": "d4eb8664d40c30a6ef1eb4462bef2438ec33381fcf67e9d6367d12d17ddb4f66"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-6.3.1.spec.ts",
+      "bytes": 381,
+      "sha256": "ea037d511d31ac8868c4be0f32f90299d2c8a06d34111144de186da7d9844944"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-6.3.2.spec.ts",
+      "bytes": 403,
+      "sha256": "d008f6fe788c23c7ad4268d4124f3914a000d01f2d7a41d565d5178df4c56ff6"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-7.1.spec.ts",
+      "bytes": 419,
+      "sha256": "d4893d7885ff717dfbbe06a0cb35509928c0e5b78d661a36c19f2ca6b9196750"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-7.2.spec.ts",
+      "bytes": 510,
+      "sha256": "8dd510e5c9ff914678e6adea72e201f7cb5ecec9d1062bc678c2a4886df6c01a"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-8.1.spec.ts",
+      "bytes": 343,
+      "sha256": "80a2e638ace4f41c90414eb40a2dd6f6bd9fd28b150b598852a943cc002900bb"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-8.2.spec.ts",
+      "bytes": 529,
+      "sha256": "8930a0bb61dd1494d30aa8e51d7706585b8671ffc6cbfd6bbfc3d003f5314d90"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests/REQ-9.1.spec.ts",
+      "bytes": 562,
+      "sha256": "acf54d4a2c23743847d875cfc707fd4fd67bf5aece255a93253dd595fba2a0a6"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/book.png",
+      "bytes": 547679,
+      "sha256": "e249cb0c1e3bfffb1527d87cc1de2040c51455e5216b932cc08adad4b91e2939"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/books.png",
+      "bytes": 2975274,
+      "sha256": "807f9a50f27c0af19d21d97a4dbf6814d6fa28dd08a81faf61e697413756be9b"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/chapter.png",
+      "bytes": 402415,
+      "sha256": "52996f9b66f9036806eb509198192967888f1b0e9ca11cb51e07456e2f6ab886"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/create_book.png",
+      "bytes": 219459,
+      "sha256": "c75c0a552d1252e5006ccea0a5e9f8f6de7d881afec59bb00810d1c670a551a4"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/create_chapter.png",
+      "bytes": 205424,
+      "sha256": "a37c8e4dc437b70aecad820bc87d12a5b2da9e704dda8c86061ad4819f230e4a"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/create_shelf.png",
+      "bytes": 481295,
+      "sha256": "01a3c040df09735f433144e3dc7aecffee0ec12222c8c7f1d5df143b49113c67"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/delete_book.png",
+      "bytes": 217411,
+      "sha256": "7b18c9786712346576ccf610d76f6376a97dda10de4adec70ac5c82a64456656"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/delete_draft.png",
+      "bytes": 193485,
+      "sha256": "d10e45507b85d437ba5c88bc3daacb5817dd64ba9ce007ed2caeaa6985d39ad9"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/delete_shelves.png",
+      "bytes": 211032,
+      "sha256": "b3a1631c71d592fa169c43b7e6f54807716ca841bb3896fc84388d0e187fb1d0"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/edit_book.png",
+      "bytes": 379746,
+      "sha256": "bee1640fa285e215c972c5e3879a0a106651d767667d9af16a1f05a3242bd500"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/edit_shelve.png",
+      "bytes": 316727,
+      "sha256": "0f429ee5bdce44c6d01748a6a2ab03d8057160433e189900412375a338ef3e68"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/favourites.png",
+      "bytes": 261949,
+      "sha256": "e5a7125f5ec07f2f7d7dae867fbc6340987e61f2d8266fee8808fafe75926ddf"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/index_after_login.png",
+      "bytes": 556545,
+      "sha256": "09f6a3dad77591471190c8a3346672bdcccb8309a93264cc660b6281cb16ecd7"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/index.png",
+      "bytes": 516040,
+      "sha256": "054e38695cf86a3340b5cadf70545f85837c710eb675d5f96b6fa284068e2f2f"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/login.png",
+      "bytes": 177263,
+      "sha256": "e44062e06232b25aa88b51b20cab2f0f76d945f5b8995424ad237c4725d2d7a9"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/page_draft.png",
+      "bytes": 221649,
+      "sha256": "9619f79f4d56d2aecfb8fc40798150896cc6931924d685d1eb09f41d663ea9fe"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/page.png",
+      "bytes": 1139125,
+      "sha256": "59f3d0c184fa708d8c1e3373f32756c66a5c9d5c1e43ac2ac58a002ce9eb2e9b"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/shelf.png",
+      "bytes": 885419,
+      "sha256": "aa0a645b3b0cb224838c79573fb9c113cf2537ea4af01f3773a6d7f24eb145e0"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/references/shelves.png",
+      "bytes": 1748769,
+      "sha256": "6c7d52cd796db8420eda0dbeaa48f657d0aff3c9d5595067c454fe32224d1401"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/requirements/prerequisites.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/requirements/requirements.md",
+      "bytes": 20810,
+      "sha256": "fe2b9e4db94827f106d42fc612029949939257f43a9e0c6cd5eeb1c3138e754b"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/requirements/requirements.yaml",
+      "bytes": 32201,
+      "sha256": "2c2bc0f2457ebca6ca5b0f0c7b473d89a18b9bfe72010e9fe35b8dfc70a65e2b"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/assets.json",
+      "bytes": 10974,
+      "sha256": "0b086e1f739a03c9fc5bf137fe7254dec7a9a9281bb1b610df638c8a853dc71a"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/task.json",
+      "bytes": 46150,
+      "sha256": "1d605a3a910445c38bbebdfc195a7f0b66378fd1b852fd1cd1715089659a819e"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/helpers.ts",
+      "bytes": 13163,
+      "sha256": "42ae20f9d533c768e9a96a62f29fe8a36ed1c1cc366638671f4a07782d72c01a"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/index.json",
+      "bytes": 944,
+      "sha256": "27ea48215ac113cc1580568aef2094444b36b836dc5a2471045f990fbe4180f5"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-1.1.spec.ts",
+      "bytes": 243,
+      "sha256": "f1fca17e4816f41c49b4c04493aba3285737a3535823b7b2a01b18289434cbbb"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.1.spec.ts",
+      "bytes": 389,
+      "sha256": "b92c8afbe1c3d1a86bb4d34ae84fa14e8d5175f2aad4b5566c21ee8a36b0ae97"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.2.spec.ts",
+      "bytes": 364,
+      "sha256": "fcc644bf26428436b83485eec2f0482c8ef50fc987746522d562708eba387943"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.3.1.spec.ts",
+      "bytes": 420,
+      "sha256": "0e6deb689a7ab618c23f809afc144e79afd5a05fb05de49cbfe59d79a2d6a489"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.3.2.spec.ts",
+      "bytes": 453,
+      "sha256": "08dd3979847bb09d4161f7f2c1c65b72e93bd2fb11ac575a5b34bf411823c870"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.3.3.spec.ts",
+      "bytes": 384,
+      "sha256": "86ecd39c8b0dd6a2b6790e591b6732ec1d148f21736923e2fcbfb3247b9c0088"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.4.spec.ts",
+      "bytes": 535,
+      "sha256": "cb8e3c4490dd3c80ef1c7856a0ccfc6f6076db2a53080e16dd2c5f1985f67ccc"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.5.1.spec.ts",
+      "bytes": 358,
+      "sha256": "038a32278f244bef228249b6ce20eb1edfce5838ff9a5584f19e9d7da0e4f9ad"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.5.2.spec.ts",
+      "bytes": 390,
+      "sha256": "185c69225db59c9a984ef00090479206e8f47885979e76ae59ec711c9ebd6d58"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.5.3.spec.ts",
+      "bytes": 399,
+      "sha256": "659acc7c4c6d4f5e8ded60b1ddc3f0c30ee2aaea7d557bc21743126d44fdf7a6"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.5.4.spec.ts",
+      "bytes": 523,
+      "sha256": "c73b50d02221ec85ba39bfac21ac1effe507eafe071c5e5bde89d54f2a13eb3e"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.6.1.spec.ts",
+      "bytes": 463,
+      "sha256": "a45acae70c10737cf8923be0b0fffb6c806774ed889cc9e45fe26ed725b1f1fc"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.6.2.spec.ts",
+      "bytes": 748,
+      "sha256": "bfa4b3eac7461d02d1273d050a0e4dbbc1ede1343a20de40425e6852d575ec3b"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.7.1.spec.ts",
+      "bytes": 549,
+      "sha256": "56585fcc8f06032563766893f0476942ee80ad90a296ada82a139b09e4031254"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.7.2.spec.ts",
+      "bytes": 562,
+      "sha256": "a21cdf7c4e2b8d4c287d1800c4e2c59e3f84825d66084bde6ead2e32f94b4eaa"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.7.3.spec.ts",
+      "bytes": 289,
+      "sha256": "b5b1d81152fab4ec32c26baaa32bb1956283429ef450a850041a2e1510c23338"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.7.4.spec.ts",
+      "bytes": 941,
+      "sha256": "cbd75be14ffc58908668afa2ec05e1e66be267658609cbfc4bb76b7522883ba8"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.7.5.spec.ts",
+      "bytes": 492,
+      "sha256": "ff715823eb43a140997e6ba5b524994e3215bdc3d64708b1545a4ffa8f114a50"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.7.6.1.spec.ts",
+      "bytes": 492,
+      "sha256": "436a03f7b41e40f12a751bae4a23cecbb44a04bf4088ef594ac1c14ff166b078"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.7.6.2.spec.ts",
+      "bytes": 488,
+      "sha256": "aa8738e48421fda1dbb6b5b612c2a33520f5523cf41870ed99d62a08b8134e38"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.7.6.3.spec.ts",
+      "bytes": 486,
+      "sha256": "6e9c442a68083372416dcb25244a51696676d2bd59a36f10fdcb636f91b4ec43"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.8.1.spec.ts",
+      "bytes": 458,
+      "sha256": "e4a971823953659b6ba6debc7074ec57541a4ac77f3d09db2e74cfdf9634309f"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.8.2.spec.ts",
+      "bytes": 510,
+      "sha256": "926f34bcafad8aa880044ec1bdae54f93e85b4035f87e7f99a97b6e010519109"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-2.8.3.spec.ts",
+      "bytes": 777,
+      "sha256": "4eaf51617b0e7f63b99559b8f7e82c166a767ca166c539b46632dfbd038a8215"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-3.1.spec.ts",
+      "bytes": 470,
+      "sha256": "6a1264dcabdb2b1ecfd6555e7901d781d5a33448cab087dd93400d565d393965"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-3.2.spec.ts",
+      "bytes": 427,
+      "sha256": "86526f6debcef11da94f997a829615d4ec23ca40bd295618df60174c717efb82"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-4.1.spec.ts",
+      "bytes": 576,
+      "sha256": "2ad66ad8e35fadd9fab26a54dcdae701ce486040d0776487fb23b6490fd05853"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-4.2.spec.ts",
+      "bytes": 398,
+      "sha256": "76fe24268700875facdb7860df7035dc86118525e872fda914d8b82af7cff3f3"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-5.1.spec.ts",
+      "bytes": 381,
+      "sha256": "7a66d0892b4dffe0ef1a773f382dcce4284cb4bdc63badcfd54ff8dd7019aa46"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-5.2.spec.ts",
+      "bytes": 273,
+      "sha256": "7a4d0fbcd7a34f6790f39a5685265d203d94cd41d0ec59926cea76f4fb207ac5"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-6.1.spec.ts",
+      "bytes": 409,
+      "sha256": "98501f0d319d91a055a3fde8a8ba4101f0717ead47a9f457944a9a871e44b68c"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/public-tests/REQ-6.2.spec.ts",
+      "bytes": 733,
+      "sha256": "016ffa8267c7211bd650bfee873cdbfe7eeb827f2f45b4e4b8b4aab67de6f2ae"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/archive_button.png",
+      "bytes": 70526,
+      "sha256": "6f2a0aeef91c3524ace57cfcb7bcc7a5a52806ef52afd8e73ef25f74a1489eb9"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/archived_notes_page.png",
+      "bytes": 54784,
+      "sha256": "8ca81dd0d76349a368a8145c60c18a92d156fd888df3550fedc8aded6043b174"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/assign_label_to_note.png",
+      "bytes": 223213,
+      "sha256": "cd409f45aa6218836f9c43e480d8479ae30055730db1d352b3f93cde0aaca5b1"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/create_note_form.png",
+      "bytes": 20858,
+      "sha256": "47d3dc70a8763fc415b65de15a22517832976c33712b215f831e2570350e5041"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/create_note_home_page.png",
+      "bytes": 15927,
+      "sha256": "c57c624fdba686431d2e2f3baa460c34282a154784643dd8065367a80554fcad"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/home_page.png",
+      "bytes": 131300,
+      "sha256": "954a7e6f5ed26c78f460a3fcd96504b607a4991f880fe125aee341feb9725171"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/list_view.png",
+      "bytes": 107414,
+      "sha256": "449ba5da88059f30b35a6221bcdb749b7cd40201ab5fad739aeb2c0a3ee10e0e"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/manage_labels.png",
+      "bytes": 189487,
+      "sha256": "2d043fd2d1d3f6d809984dbb13dac2171d99ff17880f8aa4dd1b11fa5b4db5e4"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/note_coloring.png",
+      "bytes": 244426,
+      "sha256": "85772f358645de218221b613f69aa346eed96d42e53345d982e64a9a6981d9b9"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/note_delete_notification.png",
+      "bytes": 18637,
+      "sha256": "140dae244826e0fd7f0279fa2f2c157f95e787e6467509b70e45b065fbbad325"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/note_editing.png",
+      "bytes": 122853,
+      "sha256": "1ba156d6a5bc4c395661c596da747d9d08be69d21ac0346c23a8e940776d20f5"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/note_more_options_dropdown.png",
+      "bytes": 53925,
+      "sha256": "bc988ef6e7b3f5e05897891121008f88eff7366050206d6083a8f78470087af8"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/pin_button.png",
+      "bytes": 83989,
+      "sha256": "17c209656d39afd090ac4f1c0087fb90a635da76b405d52a10db9556aacdb6c2"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/search_suggested_filters.png",
+      "bytes": 69496,
+      "sha256": "4ea43ea88d6e722780f684325a844237c356dcb609da5bf81b9f5c9295d41f2e"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/settings_dropdown.png",
+      "bytes": 51470,
+      "sha256": "04bcf8fe3aca4bca25480c535db61b194eb8cbe1519fa0b65291dd2a5e6a624f"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/settings_settings.png",
+      "bytes": 167077,
+      "sha256": "9810cddecd8fa393ba28e073cd2f8f90af8d7665c7e483388d98e0f272d90343"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/sidebar_collapsed.png",
+      "bytes": 172849,
+      "sha256": "8a756fe19ee20d78e6b9f75936dd8f135905a5f4df20ae952a69dda3ae28d4cc"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/sidebar.png",
+      "bytes": 61118,
+      "sha256": "2667a9bd827a4dde8906b4edb63e5e58a50d08a261de3a297c9874fa0627ea06"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/trash_list.png",
+      "bytes": 56669,
+      "sha256": "509437b673281f31c357d74a9a58be0c6f7eef9c86846407f2f3ebd50269b435"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/references/unarchive_button.png",
+      "bytes": 53652,
+      "sha256": "2b5b9b8844ec2bd63b8d55d5ccd4bfb2957c5bfcf410f2b0e466c73bd1f82032"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/requirements/prerequisites.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/requirements/requirements.md",
+      "bytes": 17030,
+      "sha256": "9f4867303fe8df0326f4ab7fad7e6aba137f85fc61ada969a73cb22d787fa515"
+    },
+    {
+      "path": "competitions/arc-bench-lite/tasks/arc-bench-lite--keep/requirements/requirements.yaml",
+      "bytes": 27138,
+      "sha256": "446b912bab64e30bb084e7c0d89f553ea9def59831b232de76b90b7bdfef810a"
+    },
+    {
+      "path": "competitions/arc-bench-web/competition.json",
+      "bytes": 5114,
+      "sha256": "6fc2be3ce50d7b69abc9a8c2059b29f8c9a64f4973b52f990126134871ee3d3e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/assets.json",
+      "bytes": 16481,
+      "sha256": "8757b1b97938f15a6440d6ece4d9c3ca6cb0b013a13da7dcf966e63043d03d8e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/task.json",
+      "bytes": 244743,
+      "sha256": "5ad4cf4c3e901ab9fd768239056916aa3f46a0d23876cd84360cdda08640ec1e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/assets/banner1.jpg",
+      "bytes": 138258,
+      "sha256": "ab357927b473050e262c431f96e70aabbae2c9e5b66ee3cf2f859a4532758a08"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/assets/banner2.jpg",
+      "bytes": 194570,
+      "sha256": "6a46eb648e811aca12857b6780e1c39fec9b6e3050473d5fa79e67dfd44cac1a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/assets/banner3.jpg",
+      "bytes": 228971,
+      "sha256": "19f15b5fdc18df041c478c5765b2371d1c1abd49568ea65a601df77281737123"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/assets/empty.png",
+      "bytes": 6411,
+      "sha256": "fe66bec34a6dc315c056afb60f95d60cfc150bcf09dc732f27d1b63db175f887"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/assets/logo-icon.png",
+      "bytes": 2197,
+      "sha256": "01784978051e90fea329dd2eb2da64ddcf63b0ee91d6c0f2bd45175e2b1c431b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/assets/logo.png",
+      "bytes": 7163,
+      "sha256": "863058ff45fcb1e69efd8b291115e8f1e6222e1eaf96a4d0d31d838d40b317b1"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/assets/noticepic.png",
+      "bytes": 5751,
+      "sha256": "180088354159bbc0d53c8ba9aab6584fa49f7e22504de7df96e8208051f85353"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/helpers.ts",
+      "bytes": 25240,
+      "sha256": "9ac301f7cede4e00dd6216ae8f93d86483a89f70d38534d0dbff968221eb0b0b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/index.json",
+      "bytes": 3184,
+      "sha256": "4cc56e19d5507904f17a287853c5c92b388f9509a8a5db9685d86c62284a1c43"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-1.1.spec.ts",
+      "bytes": 387,
+      "sha256": "9eb24adce6298f8d7e99c38395c2512158b4a9efbbee5def37592ccd69bae4c1"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-1.2.spec.ts",
+      "bytes": 296,
+      "sha256": "d5bfb5919a7e3e93a1cb9e0769bb7fddd650d20c7ffb2b390678b87ec8d119c3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.1.1.spec.ts",
+      "bytes": 324,
+      "sha256": "5d13e2614619f05b3f36d27a138aec5c6e83f27b2f749adca2aaffbab5d700a1"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.1.2.spec.ts",
+      "bytes": 315,
+      "sha256": "a417a72007fcce5242f9840efc5e9de06efd93bc6f069400e69884e522630f6b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.1.3.spec.ts",
+      "bytes": 494,
+      "sha256": "b4724ce051f825b9bedc4721ad5b20505ebda0ed11ccf9c662cafab94b0fef44"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.1.4.spec.ts",
+      "bytes": 441,
+      "sha256": "a24365ddf4050b5b77056a3add50cac604badb232b316934deddd403eb600bca"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.1.5.spec.ts",
+      "bytes": 457,
+      "sha256": "506542df72b4a136a0fca8d4b742087ba8343924d976e8c8b59b4e4430fe0495"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.1.6.spec.ts",
+      "bytes": 443,
+      "sha256": "3767323bc78701d3226ab4c172338e027e80462b4be29bb4c49aad470efb0356"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.1.7.spec.ts",
+      "bytes": 434,
+      "sha256": "743b966a9f1989c9da2bfe31958376b2ba7d2d7491562dbfbaeff697e897abce"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.1.8.spec.ts",
+      "bytes": 448,
+      "sha256": "db58de4e70aa4a6e30ae3ff949c1595a4d786f6d32699455c98163c2c6c0d545"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.1.9.spec.ts",
+      "bytes": 476,
+      "sha256": "c1b4c0ca7c9a243805a0e02473eca7ad9bccc4ae4e3039b75f2a95d87ede7cc8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.2.1.spec.ts",
+      "bytes": 295,
+      "sha256": "9d30cb08b3ee0ccee6be1864a5f4de7db310f2ead163ac9f2e228b901d6cba99"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.2.2.spec.ts",
+      "bytes": 286,
+      "sha256": "78145c2d9698d3ad06d5a3ddeb07e320f7423f5a0783467cb999e470e756dd18"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.2.3.spec.ts",
+      "bytes": 520,
+      "sha256": "7e9be8aa3350adb6ea592c1bc7201ca0983872ca7c849e38648b1e08c740f626"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.2.4.spec.ts",
+      "bytes": 464,
+      "sha256": "05bf7059db3951a441dbaf454d11fd5c82b51a6e3cf4396628544d83857e54f5"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.2.5.spec.ts",
+      "bytes": 431,
+      "sha256": "abca79cbc7dca6453cb832d0dc8faea20a43bf308b5d544891205413e06a49ec"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.2.6.spec.ts",
+      "bytes": 458,
+      "sha256": "fd41826d9400c1ff87ce99d815f92b28a5bae5eb2beef2982cde73e0ac280880"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.2.7.spec.ts",
+      "bytes": 374,
+      "sha256": "ae1e11574c9a63a1d5f93fba69e6bfd3c8dcc8cd116b4b016bb223d34514f966"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.3.1.spec.ts",
+      "bytes": 350,
+      "sha256": "4a44f695112d7aa1cb69496a2e5917a80d24d668b99c39c93fa7657cd4ee9116"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.4.1.spec.ts",
+      "bytes": 302,
+      "sha256": "acf31acff4a1ba7b5d6735cfc82ea77cdbbe1b2217361d153c39826acd9dad68"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.4.2.spec.ts",
+      "bytes": 314,
+      "sha256": "2a6f4dbe72b759139916f989fe2af80d49f3027bfaa63c4b2e2688f24fba1a61"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.4.3.spec.ts",
+      "bytes": 818,
+      "sha256": "ff2c3ec3042e3cdb9e504b0955aed9499abf36f208af70adda3b5c696837a04c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.4.4.spec.ts",
+      "bytes": 390,
+      "sha256": "fd72bd81be9aa1ad847e20f9d2cf917798ff59fc96c146ce8f1b794ae2817a6f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.4.5.spec.ts",
+      "bytes": 468,
+      "sha256": "7881301f95db0d1adfbfb5cd8d1035a8c689e044725ea7c6f20bd842ada60ba8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.4.6.spec.ts",
+      "bytes": 584,
+      "sha256": "08d55f7d7accf14f37fdf3a186b2481ca9ab607e48d42a7f2362713bec6f38d3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.5.1.spec.ts",
+      "bytes": 377,
+      "sha256": "71f52e1c780ab22970c8a72a42bb9852dd5715b5a288b65e8c795a9a4d0fbde4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-2.5.2.spec.ts",
+      "bytes": 371,
+      "sha256": "b59d27cced0a96740f68b7aa3fa405191e4f91664531dbd1be2b056408291e5f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.1.1.spec.ts",
+      "bytes": 304,
+      "sha256": "d8552963fa068fa42946e62da1dccb6ef2cd19259fc1a4ce836006cd3dfc50d5"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.1.2.spec.ts",
+      "bytes": 913,
+      "sha256": "8a23d8bcd91c2fa4c7b607a0db4f09a3af49867b7a626848a27b018d66040f4b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.1.3.spec.ts",
+      "bytes": 574,
+      "sha256": "77e7251cffcee8d44c461448a9780682c79ed1cbfb20aa0d82a117c20006d095"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.1.4.spec.ts",
+      "bytes": 864,
+      "sha256": "110bb6bbc97b63a57d2f5aa6b619ede1d98483a648ab0b1c4647ed3d5f208817"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.1.5.spec.ts",
+      "bytes": 294,
+      "sha256": "70749bc74ed3dcc321165a389aca2713602fa35d91e8b63523d02c4201fa860e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.1.6.spec.ts",
+      "bytes": 499,
+      "sha256": "486b7a0ce733c7a390d3141cc4a6db614849ca1dca55f15e89a4999642a3adf5"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.1.7.spec.ts",
+      "bytes": 499,
+      "sha256": "074447ebaefdf6392d6aec37d41f8f38f04c60fc623cc8464be50746be80bf2b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.1.spec.ts",
+      "bytes": 320,
+      "sha256": "d005f5c6bb2309bfde91880ed45812620af9ffe44da7dc4a7144cfe641f58fcc"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.10.spec.ts",
+      "bytes": 539,
+      "sha256": "b4ca5f899f40dfa39285b28e9ae6751c2e59390599bffacfef1185b0319c1ead"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.11.spec.ts",
+      "bytes": 527,
+      "sha256": "44969f42d4b8a99a098990359d7a9bb2a30022f1f79ea7562bcbe5f7c103d738"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.12.spec.ts",
+      "bytes": 543,
+      "sha256": "cfd30865a6a1556333e11766b9371a961a46c08ad037e07df241bab180e3a864"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.13.spec.ts",
+      "bytes": 326,
+      "sha256": "a4de36abbc165a77f75324352946fbfee3a891058ccc2acf776f1422a8535fe5"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.14.spec.ts",
+      "bytes": 402,
+      "sha256": "b4b2f38f6fdc695a44853205591657ade1b8ee4f7bf8082779e87413e580eb07"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.2.spec.ts",
+      "bytes": 349,
+      "sha256": "01f36fa143c1a9d232b9f15312d3da4d6e133d350c4352ec5b06a186d8df3947"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.3.spec.ts",
+      "bytes": 551,
+      "sha256": "026214bf17e22df1038ea9e19c5df6391f1dcb72e4c9b4988ba1a973be340eb6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.4.spec.ts",
+      "bytes": 417,
+      "sha256": "b8c612c873729edae53e9677e9e68c08724fa455fec2686f9e83ca628c1d09eb"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.5.spec.ts",
+      "bytes": 384,
+      "sha256": "bd3a05375f726c64ca371d0f984d123ef7df4cca855a1a80d74f6cdbf05b6c28"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.6.spec.ts",
+      "bytes": 321,
+      "sha256": "af2ac94dd5cf61f2f39ce8b874a1732047367d1824b06e1c3e26c454eb063023"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.7.spec.ts",
+      "bytes": 315,
+      "sha256": "a404a0ae12ad7e79b20891dfa96c2374d7ae80d4fc25e2cfc60236f079efabd6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.8.spec.ts",
+      "bytes": 317,
+      "sha256": "982935c574df8fed974bfda66259387ba0f4740bb0426c901d7d3d2fd14dfe54"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.2.9.spec.ts",
+      "bytes": 505,
+      "sha256": "b4e534f8422155efbffc2c084f9e0161dcead342c46c450450acb8d52e387418"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.3.1.spec.ts",
+      "bytes": 1039,
+      "sha256": "49004a9e24cff3d5d07cccc245a81042a766928e264fe46c0940a53b46fbe2bf"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.3.2.spec.ts",
+      "bytes": 776,
+      "sha256": "4f61958ba4a1b1091069c17e7e4c30fde20d5803935f14d30a6aa6cde133ef18"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.3.3.spec.ts",
+      "bytes": 337,
+      "sha256": "203fcc85d2aec7200527b1d8e4ccc17b40ef6c71d0dc0e54560ff6c816400871"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.3.4.spec.ts",
+      "bytes": 323,
+      "sha256": "9dd8756f3396b38f00b1f9d53c00a2006c156424910c3f0a717a94dcc1d50485"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-3.3.5.spec.ts",
+      "bytes": 334,
+      "sha256": "e9b613230e0781c0bc3e1fc94fb61e7ae762e70adee10db37ebcd069a7f45d27"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.1.1.spec.ts",
+      "bytes": 354,
+      "sha256": "e6dd64824f24ebb19d8347ff605e4fbe4fd4f1af8d57059b004405830acfba0e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.1.2.spec.ts",
+      "bytes": 391,
+      "sha256": "d69c72c3eae5deec618d0333e53d40d406f44e4381a8f772787a912b7e75e3c2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.1.3.spec.ts",
+      "bytes": 382,
+      "sha256": "15f9ae2108c8e4fdd46527605a65951c0a1096372e7fbc316ab38aec05d42116"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.1.spec.ts",
+      "bytes": 392,
+      "sha256": "c103383d4e39ab4a1a4b04b22a2976fc12239a0fe599a4d1300d9abb5829d901"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.10.spec.ts",
+      "bytes": 578,
+      "sha256": "7d1c4657bf168019fe447fe96de637d1f09bb5dbffbcef2759a1404dad8dff6a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.11.spec.ts",
+      "bytes": 670,
+      "sha256": "de0f116e3a1cccf65f10151ccbc92c25f810431fbd4afa373feaad3111cfbb79"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.12.spec.ts",
+      "bytes": 506,
+      "sha256": "04724840480dd0251609af3b4d6510d80e505b6a5abc73550baa996b3099b2db"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.13.spec.ts",
+      "bytes": 471,
+      "sha256": "1494266731d5f31a046e30c12d4cc488da3fbec8d8ad6b08449445dd96ac5010"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.14.spec.ts",
+      "bytes": 494,
+      "sha256": "a5f4ca40310d3267464f5b54ff1108543a94170044b2aabfab6f7adc42f728b6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.15.spec.ts",
+      "bytes": 639,
+      "sha256": "0ad564df38dbb3dec0fc91ce9d34c8daf7dbe1a2155a21be32518a936ac8a888"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.16.spec.ts",
+      "bytes": 913,
+      "sha256": "e28630f1215d4ba105d9cdec961ce9c730cc22da4540c68ab5bdedc2a6b558ca"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.17.spec.ts",
+      "bytes": 466,
+      "sha256": "3e3b8c774290d4df508e6fdcae7723c51dd2087f55323339d75b4b80ce2539da"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.2.spec.ts",
+      "bytes": 419,
+      "sha256": "ee08eea5d7d73ceb34d916a9e8e2038d05ade7e98f16ccdea4addbf11b48bab7"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.3.spec.ts",
+      "bytes": 480,
+      "sha256": "b14fdc1ea3411e92eacb1d718ff35aec3c622fdebafab38b674d44129563003f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.4.spec.ts",
+      "bytes": 577,
+      "sha256": "e607c27fcf246b84d02524c6a4170af97396442bc9f08e387124077ad8c0dd3c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.5.spec.ts",
+      "bytes": 431,
+      "sha256": "813d1d0429b4b604c36b238d5205f49be41ab831e42ce86cc3f04f505042b344"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.6.spec.ts",
+      "bytes": 451,
+      "sha256": "f57e8473878d17de807a8598a1e45bec51b02d71ee006e6161719f0448b0913d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.7.spec.ts",
+      "bytes": 492,
+      "sha256": "07b441768752fc2ba3d0f934ec023b5a04b93cb135a1c9a7be31909a3fe15f93"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.8.spec.ts",
+      "bytes": 670,
+      "sha256": "ee7f404e6aa55c99b930b1f4356228a1e4ca0098b2aff28092d6e57d9863e912"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.2.9.spec.ts",
+      "bytes": 913,
+      "sha256": "13b55e4a0bffe0736e80a17b670fd5d47d1cf80c34753b0bc74519938ba536eb"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.3.1.spec.ts",
+      "bytes": 463,
+      "sha256": "4e4089df8f6780a9d6d297309d126d2fed7a20475c2f3577f15ea69b001cb094"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.3.2.spec.ts",
+      "bytes": 941,
+      "sha256": "da7f877a7935e15342b81c1df0409ab2c9ec316b4ea65fa42dd71a202c1ca57c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.3.3.spec.ts",
+      "bytes": 1025,
+      "sha256": "ea81a30aacb74f553c931b65121f4f7d6f5d7d4cbb9e3ee02a757af1f4021504"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.3.4.spec.ts",
+      "bytes": 631,
+      "sha256": "51a88687e58337d71045ef561dc18f131aef9d4b71ff78b5463a991d37bae084"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.3.5.spec.ts",
+      "bytes": 342,
+      "sha256": "d39e6cdbfe3da2b31e50b1f7f18fd06785986c64d66552e3252512acc150b8c5"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.3.6.spec.ts",
+      "bytes": 2368,
+      "sha256": "723948ae36fa11a111c765f246d17d699dffe04f70a986828361e305d5c228ed"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.3.7.spec.ts",
+      "bytes": 2365,
+      "sha256": "ebbb906bd80d0b0bce413a794865bb203d3f9c58a62766de1967d1b6374d2ad8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.3.8.spec.ts",
+      "bytes": 1985,
+      "sha256": "246a50cc2bc412e2232ef160275c576c14a85768f230140d8c8f3aa1057b2fa9"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.4.1.spec.ts",
+      "bytes": 804,
+      "sha256": "39a44f123592939a371d74f40e93b932873d016600d3b18e931d814c61505a58"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.4.10.spec.ts",
+      "bytes": 430,
+      "sha256": "7241b5b40f8d5cef4c13061b983c2b3ec258535b9f3f0fdf255a73a4486d84a4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.4.11.spec.ts",
+      "bytes": 674,
+      "sha256": "873577980c13aa45ef5003aabce3ed53788036d1cc3065e4501c209f05f5e6b8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.4.2.spec.ts",
+      "bytes": 533,
+      "sha256": "ef8e4cf9e9ff776135338d4b0601b19dd4ad182c4b05a875e4c2c15b3527d4ae"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.4.3.spec.ts",
+      "bytes": 521,
+      "sha256": "6a5d63c6094fb679ce5ff2c1d373efda76ad49c75468a90a071786074ee3b7eb"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.4.4.spec.ts",
+      "bytes": 447,
+      "sha256": "0da53bb8d63e3fdf578342dc25c7f604d63b9e2dcf1e6b57dd7f40fd9e4085d1"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.4.5.spec.ts",
+      "bytes": 539,
+      "sha256": "0d44b6ce49ab2c0e173f3d909423b3d34317de5260fe12ced1b361ddca251cf0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.4.6.spec.ts",
+      "bytes": 529,
+      "sha256": "f7ab9a9e75e97c9f88471491bb75b3f70be10474b19a43e42a2dc26314fa7330"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.4.7.spec.ts",
+      "bytes": 520,
+      "sha256": "45a9cdc6ddf081a9533a6a6ea222c2b123eba43d12baf54dbeb4b62bdcaa0e00"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.4.8.spec.ts",
+      "bytes": 1227,
+      "sha256": "43eaadeef8569fbc2dce81be46fc9f48978b025aabc20bb609087681fb2dbad3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.4.9.spec.ts",
+      "bytes": 1744,
+      "sha256": "3ee86ef16aa682947a5b52f4a694b8b6900edf4d4d95e3092a34adaa5f002bcd"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-4.5.1.spec.ts",
+      "bytes": 609,
+      "sha256": "19b6f6e950308df0811b3fd2ee4239692ffc7a76cd0e5c9be0d61d9d6eb841d8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.1.1.spec.ts",
+      "bytes": 382,
+      "sha256": "316123af8eab4e9a61440c8ee60f2c03b3df18f042566eb27305127398a2948a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.1.2.spec.ts",
+      "bytes": 365,
+      "sha256": "e11650037cce51531e7eee9ecddc726a49635d010e886876add4fcdaed78e6a6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.1.3.spec.ts",
+      "bytes": 374,
+      "sha256": "d86d7a934f7ea726011ef635e1f224359b2091f1d261e17540f13a69f92c6ab0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.2.1.spec.ts",
+      "bytes": 360,
+      "sha256": "5a2510f8a66f06722c3aa3d65f55e936f5f679620be34e615e27465ab2682f8e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.2.2.spec.ts",
+      "bytes": 597,
+      "sha256": "c383c296bbf1756f0f4ac36e125ef9e8de492729f03c4081aa8b152251913c60"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.2.3.spec.ts",
+      "bytes": 648,
+      "sha256": "ef8bf6a801b8ccfc3e7a7737e55ab769d48f5ede554e50e23d0265a13f50e22d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.2.4.spec.ts",
+      "bytes": 411,
+      "sha256": "04e715883a53e8fc4429f1e92ebcf5d6074ad5369af488e6759e9a6df1cff2c7"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.2.5.spec.ts",
+      "bytes": 503,
+      "sha256": "395cebdeea1d927d12849988f17ad094eebf83068b72ceb933f3c14cfebe631e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.2.6.spec.ts",
+      "bytes": 429,
+      "sha256": "deb7b976b718ec025dc06e5686aaf3f83619350520499dc669a17f57935e3b6f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.2.7.spec.ts",
+      "bytes": 701,
+      "sha256": "4e6438543e4dcbc26be1a2cb599afc223b9180adabc5133f69c6fc5efb8170ad"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.3.1.spec.ts",
+      "bytes": 1104,
+      "sha256": "779f740e93e8603b0a496c86df4a3f8f4299b5f271d6c87574b994954f8e4815"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.3.2.spec.ts",
+      "bytes": 426,
+      "sha256": "0b0143373a7d89613eb3290a1686d1c88f1bc643fbe417020361847a3f4c62d6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.3.3.spec.ts",
+      "bytes": 456,
+      "sha256": "7f00756dd95ea2c64a9b07c9667696ddd5ac48652cd6853f7ec656147924596b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.3.4.spec.ts",
+      "bytes": 442,
+      "sha256": "fc90401ed94583cb041cdf3afe0cfc42a405860ad928d002a18aae1e0d37616c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.3.5.spec.ts",
+      "bytes": 484,
+      "sha256": "d7605e083f06314bd7cdf1372aec03e175a3e6cb003ba4f1e195cb3059e30f50"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.3.6.spec.ts",
+      "bytes": 425,
+      "sha256": "486fa1dfb7090f2a5ff999728b794e2d549b5b5d45ed9beab3bcbfa9308a777c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.3.7.spec.ts",
+      "bytes": 437,
+      "sha256": "3c201d28d6187b6af17261b8494a8aedd8cb2a042a0010b88f4f7c1c6fde3347"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.3.8.spec.ts",
+      "bytes": 435,
+      "sha256": "aa045daecb6dae6f179b832756b91969c64e3e778731497ac13e4856ddf4fdde"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-5.3.9.spec.ts",
+      "bytes": 967,
+      "sha256": "05daea9403e64e52d7b24ac8bbf434118ead9cc177db8f3c75050ca415969489"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-6.1.1.spec.ts",
+      "bytes": 469,
+      "sha256": "4b7646c6c993934a068a8c31bb51596426a1b84e0638cc95f1be96106af389a0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-6.2.1.spec.ts",
+      "bytes": 478,
+      "sha256": "06ddf46e40f02fd148382f58ee58f685ff32ef50c12321367ac84ddfb0c5aaf2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-6.2.2.spec.ts",
+      "bytes": 528,
+      "sha256": "0a8b1c22bf622ea15c2fa53fd07c4b2f660112e03a23b1d776789bd997526ca7"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-6.3.1.spec.ts",
+      "bytes": 493,
+      "sha256": "8e32bb59a7aff4b4c5d85d7c2fce48c8b195e1d9869a148fb60a7a3e8b80b5e7"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/public-tests/REQ-6.3.2.spec.ts",
+      "bytes": 393,
+      "sha256": "7583e40e3d93188c7fbf37b870968a58a84bb04302f2310d6659e2fed8ce0781"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/account-security.png",
+      "bytes": 154767,
+      "sha256": "edef927e280b8b86db63108c1cc65ffcdfe59ebc558857c4720abb5db1a9aaaf"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/add-passenger.png",
+      "bytes": 383706,
+      "sha256": "ce946a0c860197999bdc8e7c120907fd7068520a6e0785dfb7ea8a5b62b576ef"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/booking-1.png",
+      "bytes": 455273,
+      "sha256": "ce269c6614bafa6e7a6b12c2ab903c5d838f7dbba3952568305ca2b4d8fec9c8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/booking-confirm.png",
+      "bytes": 73876,
+      "sha256": "496ad7637454652e900b8bce66d39f54fd3f2c2a91ef5e9fe5cf33232a601b35"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/date-selector.png",
+      "bytes": 36716,
+      "sha256": "430b137eb987c75ebae9815af7c7d09bac031b3cc54d5d1307d8603cb1fb7a2b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/edit-email.png",
+      "bytes": 164016,
+      "sha256": "c64faea731a30acb067f777f587bbdc59e0dcab9c598a633cf938d842381e850"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/edit-password.png",
+      "bytes": 151794,
+      "sha256": "b637c909d1e2235357fcd8964b538282125d216dc77fdf8da094d98bdd19b143"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/forgot-password.png",
+      "bytes": 210520,
+      "sha256": "8c0edd73f8f4c9b4d1a634dcc5e7a9292e0cc3f43b3ba06f8a210f16efc1dd16"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/homepage.png",
+      "bytes": 2618414,
+      "sha256": "a993a429965857982022eb457b1859ec42ae1935382f321111ce3515e6bca79c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/location-selector-form.png",
+      "bytes": 92539,
+      "sha256": "c4b7e00f016c89d9dc24c517e17c330337920e7cd533139f008e51c142deda6d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/location-selector-list.png",
+      "bytes": 34424,
+      "sha256": "54ca5b9041b6fc7806a3a888f1e7bfcda0b31b4c1e0de19b3ddf0243986e0fd8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/login-form.png",
+      "bytes": 77846,
+      "sha256": "7edf7ae08e18c6efbae481e9dff06fe742f99f34a20130de53461da72066a82e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/login.png",
+      "bytes": 1026902,
+      "sha256": "5792c1edb96395b5e8554d87840ac7cfb0f9dc37b66dac9816290b8996f9c371"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/my-passengers.png",
+      "bytes": 166814,
+      "sha256": "8b8f6fab8715dace65368622d07b4f3f9828f6188da0a3eed62351109c4f9903"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/payment.png",
+      "bytes": 566550,
+      "sha256": "3481335f939444a288db6eb902963840322da17929f11c16eecebddc84337028"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/policy.png",
+      "bytes": 355519,
+      "sha256": "d04c0931aeabc88d9bd3b4e5bb8133eb7401e008d2634d17790c42f6dae935a8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/register.png",
+      "bytes": 365835,
+      "sha256": "12e14f2c678e3b07e572ecf3da65f86874f5b9bf9e83eba1352045194fe93352"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/rule.png",
+      "bytes": 377141,
+      "sha256": "57f2d132343aaa16ffb45728f081c4b412f787a9276e645cb39eb7271ee48515"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/search-result.png",
+      "bytes": 341799,
+      "sha256": "d1fdd30ab5b03c2a55663bb2986dcf9b9bcb74c99babdc52e1ab618a0bef2003"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/ticket-orders.png",
+      "bytes": 152925,
+      "sha256": "8f00819d89f92440eab5aa6e166838dc9490b56fbb0c0e34512d7c3d33a00082"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/travel-guide-dropdown.png",
+      "bytes": 50141,
+      "sha256": "b932f58a5bbf48352408796e026d9504dcda426381b4c496d9896ed9451eeb9b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/travel-guide.png",
+      "bytes": 330376,
+      "sha256": "8ea7b682d8937ff09717d83f1660b51d55c2c6abaaccd1f9cf8cf40f742248b2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/uncompleted-orders.png",
+      "bytes": 444447,
+      "sha256": "1f226c98511f8e2ca785e49f8cbd288574a76a3bb5880cb590b54d3d747c5686"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/user-center.png",
+      "bytes": 184435,
+      "sha256": "125666400d80052466434c3d65dfe37951470737b9bd348978b63e69eb7ae7e6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/user-information.png",
+      "bytes": 379344,
+      "sha256": "aa871e8c7c76d4aa27e96251395c69863b0d97c2e38aa2f252a3fcdad4cd1b57"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/references/verify-mobile.png",
+      "bytes": 160973,
+      "sha256": "00372990e9fa4bb5ad54756f1247276c825510a63cb88d408054a3ef771dcb48"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/requirements/prerequisites.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/requirements/requirements.md",
+      "bytes": 98678,
+      "sha256": "269aef05faba978787efb920701c411c92dbb143d9352009422bd137e9462a56"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--12306/requirements/requirements.yaml",
+      "bytes": 137828,
+      "sha256": "961f0c494d3dfb0f7c79b55a559a2e5b7c413848ccbe20f33c7bf51486f4510d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/assets.json",
+      "bytes": 9570,
+      "sha256": "00ff273d656d7c41b9b3018368815c68a37dfc6e93b32736174d8fe666573f23"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/task.json",
+      "bytes": 55028,
+      "sha256": "344109ec86dfd881eae3e0197ecdf4a7cac4b29aaffcc95456bab13476da3e2b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/helpers.ts",
+      "bytes": 9687,
+      "sha256": "522503eba9e3e35814d94686de030c40b20d83e50c15dbed2ddf71cffe1001d3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/index.json",
+      "bytes": 994,
+      "sha256": "f34b392f814e0e1a5c55cf047621bffde605ec5c06af1c824730dade7b3bad41"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-1.1.spec.ts",
+      "bytes": 263,
+      "sha256": "eebd97ab29999dff756690e3f7b24947fb05a628e9b15b77a200945428f09449"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-1.2.spec.ts",
+      "bytes": 320,
+      "sha256": "ddbb10a468d22c653e44f1518a989adff6da733be15710e7c7aea21406c98497"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-2.1.spec.ts",
+      "bytes": 287,
+      "sha256": "093eb3b930f18f7988b0aa2be83dd9e7213d3578a2831a1f438007e93693d5d8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-2.2.spec.ts",
+      "bytes": 298,
+      "sha256": "90eaac17421008d211b61c28b061df3be942941b9bb47f0ee1cd761fa70783bd"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-3.1.spec.ts",
+      "bytes": 365,
+      "sha256": "056f0165b7913e8d0c125317ac8a3518aacebf83db7f7a4735a2699cea2e76ad"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-4.1.spec.ts",
+      "bytes": 278,
+      "sha256": "0a3587fb29a1ce861d28b123ee1a9a78ab7d4f165852cf63289ca35daa4a9fca"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-4.2.1.spec.ts",
+      "bytes": 334,
+      "sha256": "34184977ae250dd780e084c6efa00dbc9227ed358ccd713fc74855a94aaf9188"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-4.3.1.spec.ts",
+      "bytes": 480,
+      "sha256": "b3fce092d32e18192b71a20e8be397bebd43fb3783e51c0ab578b3a6bc836fc4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-4.3.2.spec.ts",
+      "bytes": 432,
+      "sha256": "8f38a57993c9eba632492fb5b82f0182be7122ff5ba9fc8b665e41b4fb079334"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-4.4.1.spec.ts",
+      "bytes": 403,
+      "sha256": "6ddaf98ef7eac090ce1de1da252094d00a9e378fdf9870b3f86e4ae714ced672"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-4.4.2.spec.ts",
+      "bytes": 421,
+      "sha256": "a4d7734d0478baa00aeef7bf3d0803b74260243371a7328230cc164ca8fd170e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-4.5.1.spec.ts",
+      "bytes": 485,
+      "sha256": "83ae574e966d30e57d655be43f73cb72cb7816dc4349d8ac0b69f4a8909f92e3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-4.5.2.spec.ts",
+      "bytes": 414,
+      "sha256": "e127712132e46c2cf3e2d709103432ecb29ef12489b916e4f0ef47a44bffe6b3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-5.1.spec.ts",
+      "bytes": 273,
+      "sha256": "03c4161fe5227d0d6221c184c8904f961d85d6c51d086bd1e0e0764f93fb485f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-5.2.1.spec.ts",
+      "bytes": 374,
+      "sha256": "3b6f51fe9224089752856dc91310197803c18095b25d0dce7ff2864f8d109662"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-5.2.2.spec.ts",
+      "bytes": 439,
+      "sha256": "4af4db56246e5bded558bdabb4f6980d088dd34902e1241efe55226ada4a7a1c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-5.3.1.spec.ts",
+      "bytes": 420,
+      "sha256": "d194cc5b094af142970565aded273cc260ebacb15ec6a51d61947be8a2a474f2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-5.3.2.spec.ts",
+      "bytes": 316,
+      "sha256": "327360a42bbcc66b431688ce27e4a0abdd0023be7f6df26d29bc826ec6520765"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-5.4.1.spec.ts",
+      "bytes": 482,
+      "sha256": "04e9437adfcbe73cbabe5bd9796cff3b8e00c4e3f08e9c11d38e73b3bd137553"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-5.4.2.spec.ts",
+      "bytes": 415,
+      "sha256": "d63233c05b18bf465e351eb567db847c0bd749b67c577ea395acd2972300bc6a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-5.5.1.spec.ts",
+      "bytes": 404,
+      "sha256": "68b5413b20bc4d7d906bd210276172bfe00c870ea3024a55909974d44c580858"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-5.5.2.spec.ts",
+      "bytes": 422,
+      "sha256": "d86d374d11a8c1f5abddb093768910a97f636181bce18ff3f18d40cbab7dc3f8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-5.6.1.spec.ts",
+      "bytes": 529,
+      "sha256": "e28aa7c1b77d832849699854d88cc203f9277a60c04cccbdeae713304c4ad504"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-6.1.1.spec.ts",
+      "bytes": 407,
+      "sha256": "e8fd2422943558adcb614211ef0286217412c1d9a130a44766bfc013dbb0f097"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-6.1.2.spec.ts",
+      "bytes": 466,
+      "sha256": "8555ba463790fdf9df48153ae31e0f53552e5a1bde5d36eeed7c82062235fbb3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-6.1.3.spec.ts",
+      "bytes": 485,
+      "sha256": "1330eca06c28dd6e5cc58b51e65663da353313077588f781fe1561ed1aeb4450"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-6.2.1.spec.ts",
+      "bytes": 420,
+      "sha256": "124bb5ad4d5fea69d29d3e2baeda668f149989af15bca7c9a6d8d91b95c8fd56"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-6.3.1.spec.ts",
+      "bytes": 381,
+      "sha256": "ea037d511d31ac8868c4be0f32f90299d2c8a06d34111144de186da7d9844944"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-6.3.2.spec.ts",
+      "bytes": 401,
+      "sha256": "1bb517f1e1ca3f11587e0b87b9ffaef061db974629efe048096bd8a02e352a2f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-7.1.spec.ts",
+      "bytes": 396,
+      "sha256": "9f1d5aba4aa084518effd3d4f82c51a242d49566447ec3e300dd3f9c895c26a2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-7.2.spec.ts",
+      "bytes": 487,
+      "sha256": "bc07e815a9d870334ab478f03bd6c8015b96f3eb26e3ae29706dbeaab7b66e66"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-8.1.spec.ts",
+      "bytes": 348,
+      "sha256": "0d2c8dfe45cf1dfe6f5f22bcaf2fea7f746db56f8d8bef933bce6be6ead9ea12"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-8.2.spec.ts",
+      "bytes": 506,
+      "sha256": "950c12d6f7924c78c738f04b2a83b49516aa7008a2ae1032d34d30decdaeb08d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/public-tests/REQ-9.1.spec.ts",
+      "bytes": 560,
+      "sha256": "b7de9b6cc8e57c2c011fb6bbad0bae6ec77906f4118554ec7f7b3d434f3417bd"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/book.png",
+      "bytes": 547679,
+      "sha256": "e249cb0c1e3bfffb1527d87cc1de2040c51455e5216b932cc08adad4b91e2939"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/books.png",
+      "bytes": 2975274,
+      "sha256": "807f9a50f27c0af19d21d97a4dbf6814d6fa28dd08a81faf61e697413756be9b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/chapter.png",
+      "bytes": 402415,
+      "sha256": "52996f9b66f9036806eb509198192967888f1b0e9ca11cb51e07456e2f6ab886"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/create_book.png",
+      "bytes": 219459,
+      "sha256": "c75c0a552d1252e5006ccea0a5e9f8f6de7d881afec59bb00810d1c670a551a4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/create_chapter.png",
+      "bytes": 205424,
+      "sha256": "a37c8e4dc437b70aecad820bc87d12a5b2da9e704dda8c86061ad4819f230e4a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/create_shelf.png",
+      "bytes": 481295,
+      "sha256": "01a3c040df09735f433144e3dc7aecffee0ec12222c8c7f1d5df143b49113c67"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/delete_book.png",
+      "bytes": 217411,
+      "sha256": "7b18c9786712346576ccf610d76f6376a97dda10de4adec70ac5c82a64456656"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/delete_draft.png",
+      "bytes": 193485,
+      "sha256": "d10e45507b85d437ba5c88bc3daacb5817dd64ba9ce007ed2caeaa6985d39ad9"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/delete_shelves.png",
+      "bytes": 211032,
+      "sha256": "b3a1631c71d592fa169c43b7e6f54807716ca841bb3896fc84388d0e187fb1d0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/edit_book.png",
+      "bytes": 379746,
+      "sha256": "bee1640fa285e215c972c5e3879a0a106651d767667d9af16a1f05a3242bd500"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/edit_shelve.png",
+      "bytes": 316727,
+      "sha256": "0f429ee5bdce44c6d01748a6a2ab03d8057160433e189900412375a338ef3e68"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/favourites.png",
+      "bytes": 261949,
+      "sha256": "e5a7125f5ec07f2f7d7dae867fbc6340987e61f2d8266fee8808fafe75926ddf"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/index_after_login.png",
+      "bytes": 556545,
+      "sha256": "09f6a3dad77591471190c8a3346672bdcccb8309a93264cc660b6281cb16ecd7"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/index.png",
+      "bytes": 516040,
+      "sha256": "054e38695cf86a3340b5cadf70545f85837c710eb675d5f96b6fa284068e2f2f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/login.png",
+      "bytes": 177263,
+      "sha256": "e44062e06232b25aa88b51b20cab2f0f76d945f5b8995424ad237c4725d2d7a9"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/page_draft.png",
+      "bytes": 221649,
+      "sha256": "9619f79f4d56d2aecfb8fc40798150896cc6931924d685d1eb09f41d663ea9fe"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/page.png",
+      "bytes": 1139125,
+      "sha256": "59f3d0c184fa708d8c1e3373f32756c66a5c9d5c1e43ac2ac58a002ce9eb2e9b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/shelf.png",
+      "bytes": 885419,
+      "sha256": "aa0a645b3b0cb224838c79573fb9c113cf2537ea4af01f3773a6d7f24eb145e0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/references/shelves.png",
+      "bytes": 1748769,
+      "sha256": "6c7d52cd796db8420eda0dbeaa48f657d0aff3c9d5595067c454fe32224d1401"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/requirements/prerequisites.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/requirements/requirements.md",
+      "bytes": 21261,
+      "sha256": "4e70597b05689810a0a697a9f0f029617b78814bc674a397b5bf1b4cfa492cff"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--bookstack/requirements/requirements.yaml",
+      "bytes": 31627,
+      "sha256": "be5041fd2f6a75993b23905f2a307ef3625238abe4bd168b38b05e51d8b2f646"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/assets.json",
+      "bytes": 23135,
+      "sha256": "df4fffa595a97b8bce331deb42a71d779f5d397b2e249a5e4fb0c2ca256ee1ed"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/task.json",
+      "bytes": 211828,
+      "sha256": "ff8b696e0fe04fcdc6df75e71173fe04de4dc90ff38994969ccbbb5e1c118e4e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/helpers.ts",
+      "bytes": 25979,
+      "sha256": "a04223045a7602aa513c18e62da72f136a4d2fe7d088cca0962d78a60c5ec448"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/index.json",
+      "bytes": 3527,
+      "sha256": "486dded38efdd823484aaa8f0f888bf84881cdd9eb88b5c8a115de575043204c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-0.spec.ts",
+      "bytes": 233,
+      "sha256": "10e6717d88ed84ee09e8248a762255ffd3157e1640a2a2081a7923fa6fb829c6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-1.1.spec.ts",
+      "bytes": 239,
+      "sha256": "e0fc3effc5c81347d97fac9ae4e391ba4fe95f70b809b1e559dc0d7a7d51860a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-10.1.1.spec.ts",
+      "bytes": 501,
+      "sha256": "100dee4444d7a8ec0406076ba225e5e236d9032cae42200566957d1259e10f61"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-10.2.1.spec.ts",
+      "bytes": 515,
+      "sha256": "3b76ba75405c6057585a055e2b6fc46726041e68e9dc5021fceb0b1d1df1cbe3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.1.spec.ts",
+      "bytes": 395,
+      "sha256": "d3fcd83bc62b8a149917e8dfb524fef788e9e4591ca15f4bcb46cafe09a6f5de"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.2.spec.ts",
+      "bytes": 225,
+      "sha256": "c51da9d82a3fcf160d9e28b376ae794db76460e9a9ee4c2e177d081b67f2fd0f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.3.1.spec.ts",
+      "bytes": 229,
+      "sha256": "2251c363595ffd667f976f161bcee26873ecd6613d4227a80b246dc26c64b539"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.3.2.spec.ts",
+      "bytes": 242,
+      "sha256": "d06dff3a123df420b7d77bf749b30b019a436c609cb4706f8bbe3ed39e7d4ea5"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.3.3.spec.ts",
+      "bytes": 350,
+      "sha256": "c0a5e5c2f00ecd49a8229b91a054c6e8b4c322275045b16159c8a2bb9c18a6d4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.4.1.spec.ts",
+      "bytes": 431,
+      "sha256": "06aca7b8bd26f74cdb29696ca26af5c0664e8b89f1a88b8c3fa392cc1ee0e4a4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.4.2.spec.ts",
+      "bytes": 494,
+      "sha256": "76f7735fe2ed21d3ed3c03793291c18f25cc0d2a81209e3c464b422c190d721e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.4.3.spec.ts",
+      "bytes": 531,
+      "sha256": "63698e31d55c4342a7b86c62372ad9339fa5846463fb2557081125f505590b6a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.4.4.spec.ts",
+      "bytes": 481,
+      "sha256": "b822f01ecafd51103d51fd5fe606fb8051dcdef756d1a206f1121384c1656ea2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.4.5.spec.ts",
+      "bytes": 499,
+      "sha256": "63777b33ef8006a173acb6c483ad4ba70bdf86f652d7917763354aef19b59115"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.5.1.spec.ts",
+      "bytes": 731,
+      "sha256": "7051b9f626c7507b1f428091f4739a74d59c924ebce5074836a2003c18b856ff"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.5.2.spec.ts",
+      "bytes": 387,
+      "sha256": "7cadcce716d8ec5ca1930308b8a9e7e7345519ac0839ca87cfa7873fc3fab1d3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.5.3.spec.ts",
+      "bytes": 572,
+      "sha256": "0344c7dcb031a1c7d0a8a80aa13f60d950e4c9661fa73c4b4b40d538ce2a43ad"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.5.4.spec.ts",
+      "bytes": 646,
+      "sha256": "45540b081edfb638bb33ab7b7b2df7ffe93bbb0f75ad29486b2b2c91aa56fae5"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.5.5.spec.ts",
+      "bytes": 673,
+      "sha256": "dcb21b3848386b39477bdfbe9f96cf6d33481a07d7b41d5917c5b81d48d858ea"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.6.1.spec.ts",
+      "bytes": 399,
+      "sha256": "720c050bfb14fb1cd4d5489c4eb3b2e551a5adb760fb39a4ae11b9a448d4eb49"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.6.2.1.spec.ts",
+      "bytes": 534,
+      "sha256": "d7ad3fb7ef67a550fe0b70d72d0a698f9f4acbddfb46729c96750da39a020e26"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.6.2.2.spec.ts",
+      "bytes": 357,
+      "sha256": "96b76353992b8a93101e8f72bb98f93af47da9718c876a92c0b38c7073433f3d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.6.3.1.spec.ts",
+      "bytes": 818,
+      "sha256": "61a94257dc22eac05204a636ce963f4e4569c1ecc1b219c4759ab80a25ecae82"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.6.4.1.spec.ts",
+      "bytes": 710,
+      "sha256": "0a8e37c754e1c908191e2222927f1e4c9bf1d828b5f6a420ae6ac727214aa624"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.6.4.2.spec.ts",
+      "bytes": 689,
+      "sha256": "55eecbf242007ff0953cd7f1c4843ed150587e5167433fbbfad66673f20ce248"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.6.4.3.spec.ts",
+      "bytes": 726,
+      "sha256": "5dbf74b5fe3631e2981fdb9292572effa5110f5634335a49a54cc7adc9c3178a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-2.7.1.spec.ts",
+      "bytes": 477,
+      "sha256": "6a1a69c9899e49d4c84a17c6f6224bb15da72cb0952bbe9cf9702d0036f1d731"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.2.1.spec.ts",
+      "bytes": 521,
+      "sha256": "ed91773dfa375e8846d4bdf898325e1a2a35edda9fc5b9a98363f50d3f21caf6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.2.2.spec.ts",
+      "bytes": 693,
+      "sha256": "8cbf673d9ba88bbefa4bbb12735a3e74bba89913425e7bb5376ed13a407881e0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.2.3.spec.ts",
+      "bytes": 587,
+      "sha256": "14847beb4fb6c44d0ef75aecccb2e5b843b1339fbf684a6f20064ab70f9c78f1"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.2.4.spec.ts",
+      "bytes": 358,
+      "sha256": "b6e1a61ab357064a8fe55247c2f50660bce3f3df6706ddda3df22b00bcfe37da"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.2.5.1.spec.ts",
+      "bytes": 476,
+      "sha256": "639cf80feccdd58026728245463ee958875c8917205e7d15d86aaa5244c44bf4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.2.5.2.spec.ts",
+      "bytes": 521,
+      "sha256": "17552f135e211c9fe382bf0f453aaff94dcfad7b741e8036009c92921f11da9f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.2.6.1.spec.ts",
+      "bytes": 574,
+      "sha256": "3b91a5236cac04b7c9be70d79ac961fcafb2cb653c736113fb31d1156f30c52b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.2.6.2.spec.ts",
+      "bytes": 349,
+      "sha256": "b918d2007b013544300c5a68f901eaeacfadac0077a831c7eecec2dc95eff91d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.2.7.1.spec.ts",
+      "bytes": 626,
+      "sha256": "20a07d22808f6366a8c38221c31a950c76330904ea8582134f4b375690d9a686"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.2.7.2.spec.ts",
+      "bytes": 724,
+      "sha256": "3154aba038a0079f0b2815ea73f98e9945411cbd7143b478465a805e983e4f6f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.3.1.spec.ts",
+      "bytes": 482,
+      "sha256": "8a3ca907e7363c873cb736ddc230c2def33ee6e040571ff870fa4a851d1eabe3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.3.2.spec.ts",
+      "bytes": 387,
+      "sha256": "5394b41317efbcc1b862090afc207703901ed2d5e645445661f6ff6675d73c8d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.4.1.spec.ts",
+      "bytes": 272,
+      "sha256": "5c2ddc9439b8e55a16611db007fe281efd8853058b816b93866ae284c69397b6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.4.2.spec.ts",
+      "bytes": 396,
+      "sha256": "9e0abe5cbc9951d95c333d1e0ee690edf29b5beda5f21d87c825e871fbfeed52"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.5.1.1.spec.ts",
+      "bytes": 555,
+      "sha256": "a2e5fadd9be96183745eff1c307a90ec4189cffa4222e535bcc3a72b37ec329d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.5.2.1.spec.ts",
+      "bytes": 419,
+      "sha256": "ab6a19ec04f8cd2fe66ea3870264d487387a6a4de704ded0b171090f6b5a15e9"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.5.2.2.spec.ts",
+      "bytes": 436,
+      "sha256": "85cf752f448f517d474812c6a2861eb3c7e7d0bfc9d9748eab03e7b38714d997"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.5.2.3.spec.ts",
+      "bytes": 362,
+      "sha256": "bd2f1efa047dfdfbd7749a91c55dab8f160b514332b02c08354a51513d789e63"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.5.3.1.spec.ts",
+      "bytes": 548,
+      "sha256": "28f1bbcbb17b9c091ff46dd2f4ab4bea3f7e8bddfb0fc2c66db0e5f33255d189"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.5.3.2.spec.ts",
+      "bytes": 368,
+      "sha256": "6d659fba630473007a10cf0cc5d5d1cee21df6924cd2994dcfba80455ab42a5e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.5.3.3.spec.ts",
+      "bytes": 392,
+      "sha256": "b5cf45448ba519d50a1cf69ee7104863f422f6202a3bff7e833db7307d561385"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.5.3.4.spec.ts",
+      "bytes": 407,
+      "sha256": "8949ab20323f4ef1fe219be6143b05b46bb9a29b7fad8016c2e7eb0e422b37a3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.5.4.1.spec.ts",
+      "bytes": 586,
+      "sha256": "433168a75f16287d957b25c25f222ba42604ed80eb20a773320b4d478ac5c1fd"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.5.4.2.spec.ts",
+      "bytes": 283,
+      "sha256": "d9a23a593874471507c3905d44edcda28ad3a6caabf0ed4d8c3cd94bc13cec92"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-3.5.4.3.spec.ts",
+      "bytes": 735,
+      "sha256": "546b103ac78a10e7ea2ade473c22440c16f0fd79791a95b2c03103911cf7c8ef"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.1.1.1.spec.ts",
+      "bytes": 411,
+      "sha256": "1cab18a7e32f8ea64337bda335431c909ab0c7efc7227781634db5456a454bbd"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.1.2.1.spec.ts",
+      "bytes": 429,
+      "sha256": "0b2d720e180e38bb44e15646278bd2ac67ad33280badbf9183675bc00345ccd8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.1.3.1.spec.ts",
+      "bytes": 445,
+      "sha256": "2005942d16c3faef3cba04a8e3ae13fa834d4d6bf5a30de84c00890f83618666"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.1.3.2.spec.ts",
+      "bytes": 500,
+      "sha256": "5e20282d71fb9a4eae95db2b1dc12ce6ba71955b05d92e3ce3ce72528ce21109"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.1.4.1.spec.ts",
+      "bytes": 443,
+      "sha256": "2a2a98a79e0d1695b47c284765e33babaf0bfd2615074c1b051a47d34c129ca7"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.1.5.1.spec.ts",
+      "bytes": 451,
+      "sha256": "240814181975dead6a096421423fbdb366418309c946a302b60b07d5f34626f6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.1.6.1.spec.ts",
+      "bytes": 396,
+      "sha256": "feeb6713e13182345ded58fbd06418b4db1de8920a13f02d190317928d95bcd3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.2.1.1.spec.ts",
+      "bytes": 397,
+      "sha256": "533448f6b668eb4bc41cd758bc5a5e71b6020fcf64b943391388ede15b50d9bd"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.2.1.2.spec.ts",
+      "bytes": 407,
+      "sha256": "88647d4225936b2b9beee6186a76ed123884f682d98daae9595fba930b61838e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.2.2.1.spec.ts",
+      "bytes": 317,
+      "sha256": "d968c3c2fb2688a3eca2f7b32e03a6789cda390aa3bb6359b106fbd238f8c719"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.2.2.2.spec.ts",
+      "bytes": 429,
+      "sha256": "cd711b5764ac36ce3a18d74d16c97b411f60539378669fb9d487620182cbd7a6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.2.3.1.spec.ts",
+      "bytes": 436,
+      "sha256": "32a1e3a52c34fa12429b082c713412a577545d4c072611265e96305d7a2cafed"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.2.4.1.spec.ts",
+      "bytes": 406,
+      "sha256": "279569fcfb97dfa4786ecf54c9ca216d433d47b470c6a4a200cdb2ae9dd45454"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.2.5.1.spec.ts",
+      "bytes": 547,
+      "sha256": "6bfde52a89f6f4b9a73f49f5448a0c401efe6a5cc946505839f4b5f0dca06792"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.2.5.2.spec.ts",
+      "bytes": 466,
+      "sha256": "da1c1bcc3a0f8f1eaf168c19829172247c30b9dae2594d937cbe2e6584cd385b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.3.1.spec.ts",
+      "bytes": 339,
+      "sha256": "9100c6b69e570657de11e17f3c3623db41710a53407892ac5b3af89e0b4d7f16"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.3.2.spec.ts",
+      "bytes": 558,
+      "sha256": "0a72aad1ea5e42ca47a7d7e71e264127e4ea07f896e9aa99be57f30e5086c6c5"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.4.1.spec.ts",
+      "bytes": 340,
+      "sha256": "96ad3be7e979890cc66ef9bf8687ec992a000fafacd1fb34db64073b72f2aa8c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.4.2.1.spec.ts",
+      "bytes": 460,
+      "sha256": "872af46772ec322bc9464d7a9e05e0984366fb89cf40e23ea196553a478e642a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.4.2.2.spec.ts",
+      "bytes": 481,
+      "sha256": "f3376574566254e0e3d2382b3125ef8c8d9b5310828ec2f7b905f00fea7d3018"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.4.2.3.spec.ts",
+      "bytes": 434,
+      "sha256": "e95a0aefa30fcc8582b516e06eff82a31e2e4289983b39121e19bc207e0f44b3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.4.2.4.spec.ts",
+      "bytes": 460,
+      "sha256": "6a8ea8a8bda3ea8cbdf147f85d5a428df9c3e1d80b074431e34fa8f1f610e82f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.4.3.1.spec.ts",
+      "bytes": 518,
+      "sha256": "7359af26fa506aa0a47c0f0ab973c0f2600a68f30dea13b1bcc5f140e3aef655"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.4.4.1.spec.ts",
+      "bytes": 474,
+      "sha256": "5de21a44394d2c2f8ad801bdffd9a1ce3a85927e79a4150afd4bbf43868f2dbb"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.5.1.1.spec.ts",
+      "bytes": 555,
+      "sha256": "441148feeb015f0a30e7ab73fc6f3b63ab9698a483b797b50756f62af901051b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.5.1.2.spec.ts",
+      "bytes": 566,
+      "sha256": "2c694b7ed1a099285bca1547e720cca2c7a41941b0c71549f65cbdaf135ad31a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-4.5.2.1.spec.ts",
+      "bytes": 540,
+      "sha256": "94b93d511f1e90518417e705dc8eb4a169d89c0a4f797c5a7922a860cc5aedef"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.1.spec.ts",
+      "bytes": 307,
+      "sha256": "fb9faea47ea6dcc2ff16e8906e5a7bcb0d4e825e74771ee27286e727a3db1291"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.2.spec.ts",
+      "bytes": 611,
+      "sha256": "fb9b50d96ab06775e7c0e33fa18727c78863c61ae1709714967894edb5b80c7e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.3.1.1.spec.ts",
+      "bytes": 545,
+      "sha256": "460e5b6f07e970643b688af70a35abe757789b2419c1d3db88601370376c145e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.3.1.2.spec.ts",
+      "bytes": 540,
+      "sha256": "643a3de677fd9680794f73dd485c9bb4f0e648b604618ced01a9494614dde0f4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.3.2.1.spec.ts",
+      "bytes": 689,
+      "sha256": "e2511de49104fb17618677c9483d0bdc81a9394088e53f04ebfd3eb94c71fb2e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.3.2.2.spec.ts",
+      "bytes": 521,
+      "sha256": "6e8f8f5d84792ccb473c3dbb0456238077240baf62beed3fa6e4b58d7a0b9d73"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.3.3.1.spec.ts",
+      "bytes": 628,
+      "sha256": "9b83cb0bacba9c7fef22a98e7a91f3fd68687bd2c8bdd18373acceaa0e071e27"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.3.3.2.spec.ts",
+      "bytes": 697,
+      "sha256": "89f84857fa820d964df5d959fc1b88ab37206fb511f37a4ea7faa284e270e740"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.4.1.1.spec.ts",
+      "bytes": 376,
+      "sha256": "fc0f613860932829895947d69539d8748ba157e103ea0643610a31f9dc56806c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.4.2.1.spec.ts",
+      "bytes": 726,
+      "sha256": "bc89eb3008b7a7a7d1a1e6dc4a3d244c25be392ce347495b525120e0fd7108df"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.4.3.1.spec.ts",
+      "bytes": 623,
+      "sha256": "5db96488f176dc3b590f5d7c47e964c4ae3c40adbafa5392b165a5ee14a1ebeb"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.4.3.2.spec.ts",
+      "bytes": 703,
+      "sha256": "7e655bcc43d0065dfe72716d4ca289665eb61bc25f408aca354442c6352be330"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.5.1.1.spec.ts",
+      "bytes": 515,
+      "sha256": "8c163df58bed530520928070fa507325f166624426ccdb96f4aceadc2f27d9f1"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.5.1.2.spec.ts",
+      "bytes": 545,
+      "sha256": "5adf870f8998a24bf08a8a346171b5e71dd7fe45386edf31e27dd6c701339a57"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.5.2.1.spec.ts",
+      "bytes": 732,
+      "sha256": "b154d61542d4c2e3d41741bc9da6e5c0024a2788b7d97bea583039e8084ac450"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.5.3.1.spec.ts",
+      "bytes": 623,
+      "sha256": "eb0f16d44022354db5f97c22a247716a486ab65b00c1eb1677ec0cced74720cd"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.5.3.2.spec.ts",
+      "bytes": 707,
+      "sha256": "18060cb805940736673f95cfa5d824be0dd3fab0c5f68ab86b521ca553cd4afb"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.6.1.1.spec.ts",
+      "bytes": 519,
+      "sha256": "fbbc77fcface6ab92e0e91d177f4e19a66eced554d149430b03f6c2db64e2360"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.6.2.1.spec.ts",
+      "bytes": 666,
+      "sha256": "157093ff37684f7e4111b3389062fa7a740b2970608e3be2756735fbf1af79e8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.6.2.2.spec.ts",
+      "bytes": 565,
+      "sha256": "50308d0aa1e58b853b2d0e39a914295ac26b480977ea0e2e3e894b4b037c1d7a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.6.3.1.spec.ts",
+      "bytes": 623,
+      "sha256": "0c5e7fb0f30cb7b2325f3a99c4cadfa2cb00fff7d80dd58466a662054f5565fc"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-5.6.3.2.spec.ts",
+      "bytes": 702,
+      "sha256": "e6c1237d0cbe623cae30676458e723884faacb1bdbe78db23891d619be0c1936"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-6.1.1.spec.ts",
+      "bytes": 419,
+      "sha256": "e5d0651f87ed098b4adf02426ea5c42d3c3282e09d8e7e087f44a07e212df6bc"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-6.2.1.spec.ts",
+      "bytes": 612,
+      "sha256": "4436fd1201854635811c6bb0028ee735e066c4320a0c4e25e0e3d11d8d99fd36"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-6.3.1.spec.ts",
+      "bytes": 446,
+      "sha256": "76c4063d027863ff205786be9e2128c33aa98fe49026f72f0dcc6d700f532852"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-6.4.1.spec.ts",
+      "bytes": 922,
+      "sha256": "bcddb23e7a9399b902efbcc86f041456e449a3324f5db929206a20f066dbe7ec"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-6.5.1.spec.ts",
+      "bytes": 714,
+      "sha256": "be7668032b27eccd61f27908592c3ae571ffd03856f369c0021f8e4f9a2fb269"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-6.6.1.spec.ts",
+      "bytes": 765,
+      "sha256": "faf8392a971fe2a2878a878427e288c8dd0da4d331269cc83d07990c7f69b561"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-7.1.spec.ts",
+      "bytes": 312,
+      "sha256": "c4bc4efa2c775e3cbe11438552bfef57e84e25e6c93b548e90709ade76c8720b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-7.2.1.1.spec.ts",
+      "bytes": 661,
+      "sha256": "a407d246b8980e8f59cba34fe8e0624c714495ef255ab1d1167e9515732bfa9d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-7.2.2.1.spec.ts",
+      "bytes": 604,
+      "sha256": "8cfaa998721df587cae4afe36c9be7667231cae4a0993cdaa9a0cb3602d193a2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-7.2.2.2.spec.ts",
+      "bytes": 634,
+      "sha256": "d7756a55d59cee9072e0c598b2ca267541e3d6d24c729281c15c542af18537c7"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-7.2.3.1.spec.ts",
+      "bytes": 542,
+      "sha256": "59aae4adb1de6ce0e5e848340643ce118fb85ba0f5561e3d00a334643164a84e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-7.2.3.2.spec.ts",
+      "bytes": 466,
+      "sha256": "7963bdfca2b76adf5adbaf9675e015a175731ac6c1cac78f0c17eaa286e3d0e4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-7.3.1.1.spec.ts",
+      "bytes": 632,
+      "sha256": "b17f085dfaaf7b55b831b157f670a163f262dc7b00bcb04e8f4b1de4f637d506"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-7.3.2.1.spec.ts",
+      "bytes": 621,
+      "sha256": "a3a1fc6d759b134d6b6f15845e55a115d533962fedf0c553bc1571d5fc4bde92"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-8.1.1.1.spec.ts",
+      "bytes": 471,
+      "sha256": "5339c1bd504b6a86418777a96f35b497a12c27e73e185346ceb7f64bc8f488ab"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-8.2.1.spec.ts",
+      "bytes": 464,
+      "sha256": "aa680750d3c9b9552caebf22159cecc5bc3f09b9b62bb478b441dae0caa07218"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-8.2.2.spec.ts",
+      "bytes": 491,
+      "sha256": "14840acc11181293c46317ea1ea784ecb130a1c227618a97150d977bbad0acd7"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-9.1.spec.ts",
+      "bytes": 327,
+      "sha256": "adb34498e19bfc4ef3a663c95f3dcfb5d82965538c359959f757beca2ed4e538"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-9.2.1.1.spec.ts",
+      "bytes": 357,
+      "sha256": "f3d49da2d4ca2012be4d1653a62faaf186430253ff1714cb1fedcd8e1e8016d0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-9.2.1.2.spec.ts",
+      "bytes": 385,
+      "sha256": "eb4a07ff7e1cc35029cf9fa97d6c7fe0a330f355de98aa6c2ad82496bdd2e1f1"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-9.2.2.1.spec.ts",
+      "bytes": 366,
+      "sha256": "0e09fad9e4dd5a95ecbde656f144fc300bb7283d6cbd96fca3bdae1a9cee290c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-9.3.1.1.spec.ts",
+      "bytes": 430,
+      "sha256": "c88ba8df22c847414fdd3f53e12f1eb9355f91d11ee707bc393b7caa7ae4a99e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-9.3.2.1.spec.ts",
+      "bytes": 464,
+      "sha256": "f89def225ac8fa1722c4e478249733114c2a20927399b5e2375ceb982bbd1132"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/public-tests/REQ-9.3.3.1.spec.ts",
+      "bytes": 421,
+      "sha256": "90b2bed4dcdb0b15a1f802c790e3c6a50704ac00b04fbf2e26432bc64d32f5ef"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/add_contact.png",
+      "bytes": 211478,
+      "sha256": "ecc2d8a842b10004f4e28ca47eb3878e3f5caba557b38f8b0a591ec8b1a86dc0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/add_reimbursement.png",
+      "bytes": 207630,
+      "sha256": "6061a4a31633d5cb73aa1ce3173c842caa769223819de6bd32f975a3ab2c8d0b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/addaddress.png",
+      "bytes": 804166,
+      "sha256": "712449cd437db78640d8f68c9000fb10e6b0dca41f5d0725279c504319edd712"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/addpassenger.png",
+      "bytes": 938270,
+      "sha256": "f7ccc8f2e096cc0381a0e803b6104c257235469c2f820085210322752b998689"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/address.png",
+      "bytes": 605003,
+      "sha256": "673c56d3bfe6f3e2a281c4f945a2c072d579d6fdc3d7614ebb66fb9b5d1b103a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/addressShow.png",
+      "bytes": 597212,
+      "sha256": "348d5737a10bacee30b11ee6cb76bcae071c8445436adfa465372d52b127abdb"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/airport1.png",
+      "bytes": 216878,
+      "sha256": "7c6b47e37b6386fba92718a990b9888ba7faede54f11905ddfe270546a06a1df"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/airport2.png",
+      "bytes": 261102,
+      "sha256": "405bf3530ca3c66ba429a486c1652ea0ae9518ff2d1db4be9ec23c24859e9d5a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/airport3.png",
+      "bytes": 267605,
+      "sha256": "a291ade4a0f9a4dad17c8500496d54ae0265a9492b3f9a4cc7dd1e9ad829e93f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/airport4.png",
+      "bytes": 226328,
+      "sha256": "70ac460e7bf06161b05b80bfc111c6a6094ba0040162961d16ae445435a040df"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/airport5.png",
+      "bytes": 218490,
+      "sha256": "2ad7aa2f672fbca706ed92cb57b5a57eae551ada738c35341cc1e056e3d19505"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/book1_mention.png",
+      "bytes": 207568,
+      "sha256": "bf5fa943fda80e7663b0f21cff370e08c9706bd2eeb5501a8df4c7a38e6c7024"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/book2.png",
+      "bytes": 212410,
+      "sha256": "d5564e811717d5cf33a774ff5ca15a639fe44dda31f23a837fa40d71f3c596cd"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/book3.png",
+      "bytes": 1005801,
+      "sha256": "2658a483aa61f1c0e63950b279963957ae0d8377b3747b9a0cd16e0ebb831921"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/book4.png",
+      "bytes": 425033,
+      "sha256": "b19bad01c4b87a184cffb1ff42db079ac3646c899afd998898fe51370fe1d238"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/city_selection.png",
+      "bytes": 46268,
+      "sha256": "dfc6a0bc3b98e4aca30c1c6988f9535d5fcd49d178056557a6924a659c4be8ba"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/contact.png",
+      "bytes": 207684,
+      "sha256": "df3e92d2032e68edebcefc189affd661c89147d0e246ab9006a635ed532a630a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/date_selection_2.png",
+      "bytes": 52634,
+      "sha256": "b8f9659d7cce275ff1baefd7bc0d3d8e6f7e05e0d1aea6beedfcc4a99845ca08"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/date_selection.png",
+      "bytes": 54376,
+      "sha256": "88c9cefd9ceb77cb840c32ae43160530f1fb7b9a174cf95155f198b7c0ef1323"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/enter_order.png",
+      "bytes": 5108,
+      "sha256": "f4f54bcaf92dd4361cb227c222e50d88549f6aaddc61a141beeec6f2f435f81e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/enter_self.png",
+      "bytes": 30257,
+      "sha256": "f83c1f850d97575edbd24b64a2d5cabebc4f9aa49699a8735c652d59011901be"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/index.png",
+      "bytes": 4818636,
+      "sha256": "d2296ff2a3b2450ae72426e7940318e0223eb434030c20bbdc5c0c92a47f4859"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/login1.png",
+      "bytes": 1179400,
+      "sha256": "b9787a15524420cd07a150b84cc79233565790babf5356dd4f29259ee9834376"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/login2.png",
+      "bytes": 1141404,
+      "sha256": "3ef29f2f70b98bca9b98e8c20b7464e19292f7fa19bf4ffe8faa4d69d2d25bcd"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/modifyemail.png",
+      "bytes": 539090,
+      "sha256": "0e47c8532dcd8dbaee917df75806ee2635f51786c47476cd5058f1291085bb11"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/modifyinfo.png",
+      "bytes": 617830,
+      "sha256": "7f67a08267d5c2d29f5b1e12b6f2dc47f663de7dfb9ab1222e88dcbae9857883"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/modifypassword.png",
+      "bytes": 666477,
+      "sha256": "7dd35ce7cfac42f9a85b814aa4fe14f18cbbe5094e6d06b19db91e47550d0a90"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/modifyphone.png",
+      "bytes": 691143,
+      "sha256": "a9674be2baa0aceeda6dcfb0ba818589218c7783a494991ca93a9a981cfaa391"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/more_date.png",
+      "bytes": 48927,
+      "sha256": "8bab19282650cc257cd914d902866661102d30b144dd8e97bed7b56a0e4447f0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/moreservice.png",
+      "bytes": 135733,
+      "sha256": "bfa6a5ed58c7876c6d63383ff33d94ef29199422783695f5f2b023881d9700d2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/myinfo.png",
+      "bytes": 609363,
+      "sha256": "a52bc8f90997507ee25cf46ef8ccfd04ada263816ca8774485580d19af5daa7f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/order1.png",
+      "bytes": 644635,
+      "sha256": "9a881420a737fe95bb19f192850971c59b1bfae629a051b28b1837857cfa9b93"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/order2.png",
+      "bytes": 1163524,
+      "sha256": "0f3ed2736b5e29dd1e42d55f28dee66462591c7fc438e4db5f5c998c0d4844fb"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/passenger.png",
+      "bytes": 1134349,
+      "sha256": "13fc178de0c8f1ed770c8226cb5b11e46be3620a75cd9f88db410d10b5609bb7"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/register1.png",
+      "bytes": 877534,
+      "sha256": "114c671ca129d2a7d38a51872ef3f89576ccd7076be4423e2e4dab00656cfb96"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/register2.png",
+      "bytes": 720449,
+      "sha256": "08459955732deb3ef84e3a90d86f841cd24012631dcbbb565a6f14ad304901cf"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/reimbursement.png",
+      "bytes": 181292,
+      "sha256": "e7a9dda96e49e47d7970cc3493749596313cd9f17d46f383ec18a81aeee445ad"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/reimbursement2.png",
+      "bytes": 309303,
+      "sha256": "8647acf946b0e3ff7a04791591508c2ad60e4661deb3dde281f10e584dc6f9eb"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/safecenter.png",
+      "bytes": 674604,
+      "sha256": "52cb2bb8f7151c97dddfefaa37bee4edfae9f0254374f0ee7af5207a9ce5448b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/search_panel.png",
+      "bytes": 22377,
+      "sha256": "fcedd8324ecb04b6e50d7cd971206fdb6a4c5bab59ca27adea915dad141c1d25"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/search_results.png",
+      "bytes": 272491,
+      "sha256": "9706c47d8abf98e31ebca04c72b77459472ddeeaa8035f144e8813aa25514e9e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/search.png",
+      "bytes": 70175,
+      "sha256": "823c7cdb653722a9abb3414719f44cfb9d6115351c47126adece291e057b3499"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/status1.png",
+      "bytes": 147707,
+      "sha256": "c222ef78ed5eaed012469ba72698c3b18020c5438acdee5163239d05a3040896"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/status2.png",
+      "bytes": 152539,
+      "sha256": "a984f275e62a89bc8f2d903b226a4b01c3d968ee65c8889aa3b0a539d0895882"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/status3.png",
+      "bytes": 257120,
+      "sha256": "cf0a4432317047ce3c41c039a47b5dcb4e706e43e2a1cba4c0c3a9de95e835e1"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/references/status4.png",
+      "bytes": 388613,
+      "sha256": "8c15bffc169daf80692f1db109ff4f3662f8af18dcc2f334172e04432d1c0e15"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/requirements/prerequisites.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/requirements/requirements.md",
+      "bytes": 87657,
+      "sha256": "5a5c84cfcccaf1978fe0435173a711579f44c54c61e053fbd9433bb555a8a9d9"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--ctrip/requirements/requirements.yaml",
+      "bytes": 117631,
+      "sha256": "f43556f06b933e954c732040041e0208f43aa00f5291bd38fb70ce8912dde2ce"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/assets.json",
+      "bytes": 10912,
+      "sha256": "a768569ae52f613a9a6d4982eecf126b4e87fd4b0903be0de36d7ab2fed44dea"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/task.json",
+      "bytes": 47241,
+      "sha256": "98f2f15f181dcba160fb553b6f2a608d34c0b3b4ac6bfc002c016b892f0203b3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/helpers.ts",
+      "bytes": 11043,
+      "sha256": "e9c1bc1566e7bc3ba20b5262d2cc22f31148c74d624fb1c1865e7c1392546949"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/index.json",
+      "bytes": 943,
+      "sha256": "6aac221ea32ee95d25ef871d03480d560f394a058c9d5e82618c501a5b228e70"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-1.1.spec.ts",
+      "bytes": 243,
+      "sha256": "f1fca17e4816f41c49b4c04493aba3285737a3535823b7b2a01b18289434cbbb"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.1.spec.ts",
+      "bytes": 391,
+      "sha256": "2279195f04d55c6531de905623bfb661cab492d020afee041fb6e4e9e9be768d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.2.spec.ts",
+      "bytes": 364,
+      "sha256": "fcc644bf26428436b83485eec2f0482c8ef50fc987746522d562708eba387943"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.3.1.spec.ts",
+      "bytes": 344,
+      "sha256": "bbf7053d3eb3f16f9a9d556122b6c1c29200ee676058de7ebc109e5df21497e9"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.3.2.spec.ts",
+      "bytes": 487,
+      "sha256": "110669f8badfb284dcd5f2cf7b223e98d9b2c4f87dbf08c2bc238ded3c5d9e09"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.3.3.spec.ts",
+      "bytes": 384,
+      "sha256": "86ecd39c8b0dd6a2b6790e591b6732ec1d148f21736923e2fcbfb3247b9c0088"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.4.spec.ts",
+      "bytes": 458,
+      "sha256": "bc5ca73694966c64195cb78c3684b1d42cfde2748c1596cc50d3a3d0a15b88df"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.5.1.spec.ts",
+      "bytes": 349,
+      "sha256": "04825eebdb6ddbf56b0ea2c3582cfdd70635c14a3563b6ac7c2fbd0e1ac51602"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.5.2.spec.ts",
+      "bytes": 415,
+      "sha256": "60386c9ce9d86956006d789826f717b21502b138a876e118e65651a507e0a6f2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.5.3.spec.ts",
+      "bytes": 399,
+      "sha256": "659acc7c4c6d4f5e8ded60b1ddc3f0c30ee2aaea7d557bc21743126d44fdf7a6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.5.4.spec.ts",
+      "bytes": 536,
+      "sha256": "ce9396271ac03981f66ba2ee8bd3dda98b414326e1ca5d0968c99c81c2f5aadd"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.6.1.spec.ts",
+      "bytes": 571,
+      "sha256": "a1777d467b008e3fff991116079f86da216057e1ce612246884aba1ee268d958"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.6.2.spec.ts",
+      "bytes": 561,
+      "sha256": "8f39abacfc3108aca3ddefd6a9767d59dbccb153c364bb6012ca41c6623be22c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.7.1.spec.ts",
+      "bytes": 558,
+      "sha256": "f266da88e71c28115fcb48d6bd7a9ac6cf2d95042d2318bb031c782e03da7c75"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.7.2.spec.ts",
+      "bytes": 566,
+      "sha256": "2fb724d16e678cb2ec7f45fe22fdb5feb65be891a6887c72259f620a262465a2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.7.3.spec.ts",
+      "bytes": 307,
+      "sha256": "4e8ad4b58700f2c17389ebeab1e1c1adeb89d70d1529a23004c4fedd7b9337aa"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.7.4.spec.ts",
+      "bytes": 843,
+      "sha256": "dbafcfcc7a65150e2001c82c162d0696de2616c897803ce123ce18623b901a3a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.7.5.spec.ts",
+      "bytes": 516,
+      "sha256": "4b2295185e593c5e03c25c5a404748359240c24b2745e2b07a56ca20adce5a0d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.7.6.1.spec.ts",
+      "bytes": 498,
+      "sha256": "4be8a71f9e978000d1f4a90d628d02a5f700e2ef65e8787c3b6b40b4148a3968"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.7.6.2.spec.ts",
+      "bytes": 507,
+      "sha256": "6a436000ee7c6200a7664670f8009e45792ddc8517715297306f8ce05677f809"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.7.6.3.spec.ts",
+      "bytes": 492,
+      "sha256": "e956b23c498c40fc2dbd8f317bd399bc25d819c498e6c67ca1f7e3e24a4dbf80"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.8.1.spec.ts",
+      "bytes": 359,
+      "sha256": "d6e1b879768fa79addbb41c8c64a293022d09ef981090832a8900174e611d360"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.8.2.spec.ts",
+      "bytes": 404,
+      "sha256": "816b2ec513e1e1ff2e9497a12e2d23a41e85f7d5a683c3e087bd20c56c953d3b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-2.8.3.spec.ts",
+      "bytes": 601,
+      "sha256": "6c78e25434935853aff92e397065310955c8a253412c385d63a236309cad8fe0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-3.1.spec.ts",
+      "bytes": 436,
+      "sha256": "21c26ce240c1a4bae61e200dc021e0780bc1cbf7bcae885f97ad7265a829cdf6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-3.2.spec.ts",
+      "bytes": 397,
+      "sha256": "f16404d93187f322956483cbd3913c8b47e23ffea82cbfec1f343be17c832ef6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-4.1.spec.ts",
+      "bytes": 319,
+      "sha256": "5180b1a2ee4c1c2df09caa1a0be917da6a9c1b90a3b63c1b4ac44d35d7de836a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-4.2.spec.ts",
+      "bytes": 390,
+      "sha256": "c77d1d508732da7ada064c6d9ac9eb29282f7fa779fe26b95286697dcd04cb45"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-5.1.spec.ts",
+      "bytes": 426,
+      "sha256": "af130f622e42afe4ecddf8d272f620fc45b816fadd5647ea15cae92cc7dc9df2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-5.2.spec.ts",
+      "bytes": 295,
+      "sha256": "f086f768843261d3ad1050b7dfaee1096a09d915f83154aabb7df3a4e604a385"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-6.1.spec.ts",
+      "bytes": 360,
+      "sha256": "ffc3ad1ef3ed5b640f863cf9aa1a554113a0428da2009ea40df4db390fc12aaf"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/public-tests/REQ-6.2.spec.ts",
+      "bytes": 508,
+      "sha256": "e10a0075164d6a8f4adc3a4c6720e346c5aaf0d75cc702ff3c58602d7b1d81a1"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/archive_button.png",
+      "bytes": 70526,
+      "sha256": "6f2a0aeef91c3524ace57cfcb7bcc7a5a52806ef52afd8e73ef25f74a1489eb9"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/archived_notes_page.png",
+      "bytes": 54784,
+      "sha256": "8ca81dd0d76349a368a8145c60c18a92d156fd888df3550fedc8aded6043b174"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/assign_label_to_note.png",
+      "bytes": 223213,
+      "sha256": "cd409f45aa6218836f9c43e480d8479ae30055730db1d352b3f93cde0aaca5b1"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/create_note_form.png",
+      "bytes": 20858,
+      "sha256": "47d3dc70a8763fc415b65de15a22517832976c33712b215f831e2570350e5041"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/create_note_home_page.png",
+      "bytes": 15927,
+      "sha256": "c57c624fdba686431d2e2f3baa460c34282a154784643dd8065367a80554fcad"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/home_page.png",
+      "bytes": 131300,
+      "sha256": "954a7e6f5ed26c78f460a3fcd96504b607a4991f880fe125aee341feb9725171"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/list_view.png",
+      "bytes": 107414,
+      "sha256": "449ba5da88059f30b35a6221bcdb749b7cd40201ab5fad739aeb2c0a3ee10e0e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/manage_labels.png",
+      "bytes": 189487,
+      "sha256": "2d043fd2d1d3f6d809984dbb13dac2171d99ff17880f8aa4dd1b11fa5b4db5e4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/note_coloring.png",
+      "bytes": 244426,
+      "sha256": "85772f358645de218221b613f69aa346eed96d42e53345d982e64a9a6981d9b9"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/note_delete_notification.png",
+      "bytes": 18637,
+      "sha256": "140dae244826e0fd7f0279fa2f2c157f95e787e6467509b70e45b065fbbad325"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/note_editing.png",
+      "bytes": 122853,
+      "sha256": "1ba156d6a5bc4c395661c596da747d9d08be69d21ac0346c23a8e940776d20f5"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/note_more_options_dropdown.png",
+      "bytes": 53925,
+      "sha256": "bc988ef6e7b3f5e05897891121008f88eff7366050206d6083a8f78470087af8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/pin_button.png",
+      "bytes": 83989,
+      "sha256": "17c209656d39afd090ac4f1c0087fb90a635da76b405d52a10db9556aacdb6c2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/search_suggested_filters.png",
+      "bytes": 69496,
+      "sha256": "4ea43ea88d6e722780f684325a844237c356dcb609da5bf81b9f5c9295d41f2e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/settings_dropdown.png",
+      "bytes": 51470,
+      "sha256": "04bcf8fe3aca4bca25480c535db61b194eb8cbe1519fa0b65291dd2a5e6a624f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/settings_settings.png",
+      "bytes": 167077,
+      "sha256": "9810cddecd8fa393ba28e073cd2f8f90af8d7665c7e483388d98e0f272d90343"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/sidebar_collapsed.png",
+      "bytes": 172849,
+      "sha256": "8a756fe19ee20d78e6b9f75936dd8f135905a5f4df20ae952a69dda3ae28d4cc"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/sidebar.png",
+      "bytes": 61118,
+      "sha256": "2667a9bd827a4dde8906b4edb63e5e58a50d08a261de3a297c9874fa0627ea06"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/trash_list.png",
+      "bytes": 56669,
+      "sha256": "509437b673281f31c357d74a9a58be0c6f7eef9c86846407f2f3ebd50269b435"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/references/unarchive_button.png",
+      "bytes": 53652,
+      "sha256": "2b5b9b8844ec2bd63b8d55d5ccd4bfb2957c5bfcf410f2b0e466c73bd1f82032"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/requirements/prerequisites.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/requirements/requirements.md",
+      "bytes": 18002,
+      "sha256": "acc02be33ebba05f8eef9323098766d5506b4580335bb14a2c786285d4f53f8a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--keep/requirements/requirements.yaml",
+      "bytes": 27287,
+      "sha256": "0ee5e976f513ba19dff5348d0eb4813bcc3c1d4229ed28b3beb2cb51af90ea0e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/assets.json",
+      "bytes": 11274,
+      "sha256": "5a44d0b514f1df8472daa2d243110280462a7e6369a4ffaba90d395d4db768e0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/task.json",
+      "bytes": 112563,
+      "sha256": "2220d3abcffed385e89e292de6fa21bdba7c54d4c199f9fcc85ce05abf089464"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/helpers.ts",
+      "bytes": 14591,
+      "sha256": "e73d858c11ee3b2fb505f6561165b69c713944af0e9eaa520d8060903974cb0d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/index.json",
+      "bytes": 2289,
+      "sha256": "5fa66c01a8f22c2b0a67e25eae76e39a2de3c3dced51f0acd979c91204a6499e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-0.spec.ts",
+      "bytes": 299,
+      "sha256": "f9a700131670358c957271831d4bd7e59204e44dc32e6cbc98d98ce2a8fe1378"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-1.1.spec.ts",
+      "bytes": 332,
+      "sha256": "787a18ab88a8262ceafb366081a35de612ee7b8afa78916a8081ef36b2faee67"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-1.2.spec.ts",
+      "bytes": 324,
+      "sha256": "448a6456a0852e9ab9bec9e64a94e3a58fbef0e5abdd17d66a99f2a9d4d2df78"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-1.3.1.spec.ts",
+      "bytes": 338,
+      "sha256": "24710d24ed74a4c7ac8c9469349117746c8ed19122b979cca4411521fa6b908d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-1.3.2.spec.ts",
+      "bytes": 386,
+      "sha256": "9c92527f8fe0501923fc97dc10d36ed26269e3a5fb8b41eb400ff139b787dcd2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-1.4.spec.ts",
+      "bytes": 525,
+      "sha256": "1e7c372ca1a21594f43bbee6b150c4c8941358d909a030c150b6dab0baf28efd"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-1.5.spec.ts",
+      "bytes": 291,
+      "sha256": "b54bb9b11b046c934724a503cca2dc9a306fc3e0bbe229cd1d6b5ed59121d730"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-1.6.1.spec.ts",
+      "bytes": 250,
+      "sha256": "14202f63e7d998731065bef1f86280a7a07f3f4f872078199f916e8731149a16"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-1.6.2.spec.ts",
+      "bytes": 320,
+      "sha256": "6dfb951710e230e69702789d6b1510ccc65a5df4dc109733e9a44cac81eedcc2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-2.1.spec.ts",
+      "bytes": 319,
+      "sha256": "170d01a0347d9c32475446db06aad982e80fc9160c94f8a07663ef0b556bb7b8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-2.2.1.spec.ts",
+      "bytes": 262,
+      "sha256": "8721771b563c37fdc7557581186bb240ada08e047a7239cd64c1bf2c21dd0be1"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-2.2.2.spec.ts",
+      "bytes": 367,
+      "sha256": "8c76e8881bf181cb2c75ee4c89df4cb700abbc6f892986a2f7a36c058db13726"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-2.2.3.spec.ts",
+      "bytes": 380,
+      "sha256": "bdc2360083561f5f27a136385b52a9e750ed7fc9c5ac3ea7e72ad8c6963e7554"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-2.3.spec.ts",
+      "bytes": 412,
+      "sha256": "3affe0c784ef18a7d4a5bf6797d3f109f9876ce600fd630026aaea21c4afd2ee"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.1.spec.ts",
+      "bytes": 321,
+      "sha256": "428840966bb95194a0d0c90f381350344683836bf38879a86c0a867dcbcd1d49"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.2.1.spec.ts",
+      "bytes": 312,
+      "sha256": "f6f2e991ecef36bc99df3aa4db7de92040f6288bedf5e3b8e6b55cc0e11f7de8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.2.2.spec.ts",
+      "bytes": 350,
+      "sha256": "8dfd9a3850922877a936ddc90432a489eda4b3c0f649814287fa690de2e73245"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.3.spec.ts",
+      "bytes": 310,
+      "sha256": "a1a63bc7c7403879b9fdbbad32119fc8fc6e7362a02ebf79f1f5ad459ff26652"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.4.spec.ts",
+      "bytes": 348,
+      "sha256": "6e1363487c541b05655483df81c8e4136a3b90f1b54c91124d6f61ae54d6d316"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.5.1.spec.ts",
+      "bytes": 330,
+      "sha256": "5528f174aab8e9e214dfc6c94120f6ed78f44a5631befc6227086dcba3ccba6b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.5.2.spec.ts",
+      "bytes": 388,
+      "sha256": "4c90ead7e80768b520414cc1727f7b154a322dc7bb754cc64dc34dcaf1098d26"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.5.3.spec.ts",
+      "bytes": 410,
+      "sha256": "8dd9b4ce081c765a84d50f40f295cb8d62c3119382879fb6fd942537973b29ec"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.6.1.spec.ts",
+      "bytes": 441,
+      "sha256": "444de662fea00c57a50bbcaa6badcdcecfc88afbb3213b5bd7a32207d15279a7"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.6.2.spec.ts",
+      "bytes": 420,
+      "sha256": "45d7dfc2aa74c517e8f2cd37402aee48d8d4639d4bffe54d5ff4e3662a24524e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.6.3.spec.ts",
+      "bytes": 354,
+      "sha256": "76cb1f1f65a2adcee4293218f9a3c6e1688ef3d47819782f2371d40c4bb23b17"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.6.4.spec.ts",
+      "bytes": 465,
+      "sha256": "0468af267652b6ed82c88c33d9f59aa2a683ffdae5d0a5e5940d192ee45039ff"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.7.spec.ts",
+      "bytes": 473,
+      "sha256": "89fca7fea3936b310e018a16edf3aeb5e04374eecaaa18ec1a368e07138d3ddc"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.8.spec.ts",
+      "bytes": 313,
+      "sha256": "e68ad63bac77648247f4ab84fcc43ee065640429d05e2a8b744a2ce3419416f2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-3.9.spec.ts",
+      "bytes": 351,
+      "sha256": "82a6d3252ca3cdaa2dbcc3f72a0bf7871015718a6cfcd61574ad1ad3d5be1696"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.1.spec.ts",
+      "bytes": 355,
+      "sha256": "dd44641bc66bf297e6a6ac1b833494a3c51473f204c9c0f5c37586f543b97e29"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.10.spec.ts",
+      "bytes": 330,
+      "sha256": "6cf95573817f902d31fb312c81825bacdb0db320b007ec79e39e35813fe4235e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.11.spec.ts",
+      "bytes": 362,
+      "sha256": "5a410f27e4824eb18ff9a7cd0ef7855734d8cda2cc1fafd8b70a84eb9908dc80"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.2.spec.ts",
+      "bytes": 318,
+      "sha256": "02e9698dad358e57bb1f99498118c96d8ba2e69f6f9091f82a8cf48f0399c4c3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.3.spec.ts",
+      "bytes": 375,
+      "sha256": "c5ac048576857a22d1c932f6764472b7d855df7549292caad4cc6a685c3cf5c9"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.4.spec.ts",
+      "bytes": 518,
+      "sha256": "8133aa4643f5473133042d6bbc1bbb679a657073d38a1ccb92a57b6727c559ee"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.5.1.spec.ts",
+      "bytes": 379,
+      "sha256": "4a404cb2861624dc5f1f835d958474bd8316abba17cb51ffce0015bb00a46579"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.5.2.spec.ts",
+      "bytes": 379,
+      "sha256": "0ffade697fbbef5fc03e6c6338628e040f906de026ed59c8029f33f9b4576a7f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.5.3.spec.ts",
+      "bytes": 429,
+      "sha256": "46ced82415ed103df252895d06067a59aca0a3b0bed81a3f25c5f12cb720294c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.5.4.spec.ts",
+      "bytes": 469,
+      "sha256": "b8d9439ddedb71e5523055f9c34b7c8bd0d838ab7e8ee6275e650579a6d3ab87"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.6.1.spec.ts",
+      "bytes": 396,
+      "sha256": "abaa9c92c7b8667337981efc5412a52d999ce198e6af04593fbc6321742aa9d5"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.6.2.spec.ts",
+      "bytes": 452,
+      "sha256": "529267bb967f7f4ca9f76b7ac6af32f35a7c1768a74569bb9a2f018af6848ca7"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.6.3.spec.ts",
+      "bytes": 440,
+      "sha256": "a0c4cf492fae3d0c34e14c341404b13d4ef777a5274aeaf6cb9e77e8c6d28cd6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.7.spec.ts",
+      "bytes": 387,
+      "sha256": "e1b7c3e1641a09bb82aaa6983ce403b32bce53c1fde1c8bb7685c68c0ab0d34e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.8.1.spec.ts",
+      "bytes": 414,
+      "sha256": "0ba6bc8ba1fe1a0e5a03ecdc47e525ffe66ba0754204cad90d2a6d1f0f65e67c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.8.2.spec.ts",
+      "bytes": 424,
+      "sha256": "47bf26285374c19cf201a0973d99c213e368a8d1af35de72d9c4782a0835cf53"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.9.1.spec.ts",
+      "bytes": 335,
+      "sha256": "12dc9c429c264a8ef152ec81c44ba6d04e253cc60a175a30d8b607e7dd7089eb"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-4.9.2.spec.ts",
+      "bytes": 399,
+      "sha256": "32fb11990b779315c490e6d44f9e4d0867ecc5d0debce538c791e20ac10dab9e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-5.1.spec.ts",
+      "bytes": 404,
+      "sha256": "90c3a95cea067f94ec3ac97be87e6cff8efc3f2ab39ae55f80102cd22dbdf19d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-5.2.spec.ts",
+      "bytes": 461,
+      "sha256": "4402875330196ee70f8cce34a512e8b0a6b1a151013d3a2a3deea1fb490e8707"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-5.3.spec.ts",
+      "bytes": 483,
+      "sha256": "3caf3961a6b261958475f2c349702fa0078733d3c05f6847cfaec2d6ff03b8b3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-5.4.spec.ts",
+      "bytes": 481,
+      "sha256": "d13f7b9c5c77746915c2dc3c5bfb2bd8d377dcf7e6f6c9324b9230e954d4c753"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-5.5.spec.ts",
+      "bytes": 450,
+      "sha256": "9f7efef92bedad2c4325c45ec1920de4d28f8c71d6df2ede9720888656fc52d3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-5.6.spec.ts",
+      "bytes": 486,
+      "sha256": "454f15676348c3e844fdc069aa9ea4a48d9cf8874a057cb5e753556652e81b6b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-5.7.spec.ts",
+      "bytes": 396,
+      "sha256": "4d54678ea6714d86ec4c3a699f1f4e05e91e4f1a0616c74ec54eaf2055455f7e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-6.1.spec.ts",
+      "bytes": 352,
+      "sha256": "0b27834dbbfa2d653946a2e922aebfe092e3d5269924518973505ad8930ebbd7"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-6.2.spec.ts",
+      "bytes": 489,
+      "sha256": "8e88d84700da3d4ea4f264fa6e05a5e04e1d30341cef0473ae94bce9675f6379"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-6.3.1.spec.ts",
+      "bytes": 558,
+      "sha256": "c3075dd4a5360f8b0063290ac125dd1c2c52e3c9b9d4bcc548a7e1df9c76174f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-6.3.2.spec.ts",
+      "bytes": 583,
+      "sha256": "47bbf2814e0d7b2faca3a90fab4256564530c531136d124c83a7c1e9af8a493a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-6.3.3.spec.ts",
+      "bytes": 594,
+      "sha256": "45b115d297e043ec69af7686123a20c528fa5fc6b54b947bd9fd9020efb41ce4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-6.4.spec.ts",
+      "bytes": 645,
+      "sha256": "ad83cf1e25e777a876605c33cc053fe7e90a6eb9556ae067d6dc16ea6615811d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-6.5.spec.ts",
+      "bytes": 813,
+      "sha256": "5352b9f58fe391b0deb1eaa792461b80e2def562581acfdcecdc59beb7b02816"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-6.6.spec.ts",
+      "bytes": 827,
+      "sha256": "9f7457af9e43ba720abc061600d541f23fb963c513efab4d6bd30d8666176830"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-6.7.spec.ts",
+      "bytes": 883,
+      "sha256": "561140c0ad806f61e295b1968da160802788ef68b16253349354c5c7cc9089b6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-7.1.spec.ts",
+      "bytes": 284,
+      "sha256": "d3f9d254ca41f056f100b2530da5f248f66bd00cc138375d029fbec0ec0964ec"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-7.2.spec.ts",
+      "bytes": 709,
+      "sha256": "4b908282a2e0fb74abfd6ac9222006710250dd43e1baf97001c315dc0c4ff532"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-7.3.spec.ts",
+      "bytes": 1008,
+      "sha256": "0b0efef258a732bc20aa22db12a316f95cf6660a92f5e879f63df0008bf066fc"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-7.4.spec.ts",
+      "bytes": 569,
+      "sha256": "22314d52080634f76b6a245614370c7aa7d133f6e2849bfcb74794926bb03b94"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.1.spec.ts",
+      "bytes": 339,
+      "sha256": "e88eea4ba4e98a163ecc88c9e41907e11be59d6b92bb0ac370cc5603abcf0b8f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.2.spec.ts",
+      "bytes": 339,
+      "sha256": "2feb137b6fc0dfe9d09e8ef2b2159be3cd2ac3944a3057ae00d288b0a25e1e3f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.3.spec.ts",
+      "bytes": 813,
+      "sha256": "a861b7ff5002154666314ff686538d7ff8f151bd17a3a3e616ed64365ac45fd0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.4.1.spec.ts",
+      "bytes": 364,
+      "sha256": "8d632677add63413962848f3c24d2417e40b8eed2b4dc3035ae96f325dfae2b2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.4.2.spec.ts",
+      "bytes": 1144,
+      "sha256": "6c07672f24c2b6df3b2cf4561031c3332e6f4ce5c79b3721ed16c7be55d834f5"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.4.3.spec.ts",
+      "bytes": 593,
+      "sha256": "26bd2f9ae4613d472b607cb2742ecc43a8579f72f4265e94a66c2d8efabd39d7"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.4.4.spec.ts",
+      "bytes": 417,
+      "sha256": "0693e68f2c1ea6a1a9bb957255e4325e7a8801c7f476d8b2856bb179ca93a859"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.5.1.spec.ts",
+      "bytes": 370,
+      "sha256": "c54f352284720452a35ad0e53248387f6b274338b17364fced5517efcf371de0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.5.2.spec.ts",
+      "bytes": 419,
+      "sha256": "db874d806d8543a214eada577fbb916e466310af7626f8223bdf907bc7d21e44"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.5.3.spec.ts",
+      "bytes": 393,
+      "sha256": "9b744b6faa77a3312a905e4e10edf93dfb725720547c9799531bbecddb88142d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.5.4.spec.ts",
+      "bytes": 449,
+      "sha256": "bdb455c67f0bcf18ebbd3fb8646db68614dcc46f72477c3ccb123110051e310d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.6.1.spec.ts",
+      "bytes": 370,
+      "sha256": "65c542226deb71452670cde20e2f8af5b93eaf04991a283f20726c4678c94e25"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.6.2.spec.ts",
+      "bytes": 615,
+      "sha256": "ecffdefb5f7dcaa40bf00e3d6040487822e7010101b3c22b1a5ff1ea81d08e43"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.6.3.spec.ts",
+      "bytes": 472,
+      "sha256": "e670d07a098fcb404d9e5d9c6b17e9514612f38062faf6c9eacf07754487cb0d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.6.4.spec.ts",
+      "bytes": 539,
+      "sha256": "48a4ea66c699a22ab14e7cb992d06c494befa25d00248f79790e383a44af6671"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.6.5.spec.ts",
+      "bytes": 425,
+      "sha256": "d4355ead1dc0fde40d4ae9663136d5264ade2e680cf2f5021dcf5e6822544bd1"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.6.6.spec.ts",
+      "bytes": 522,
+      "sha256": "83090f1117acbc78c36a2db5fe6cc2b294312d04118ca3d8aa947cdd37d7280d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.6.7.spec.ts",
+      "bytes": 503,
+      "sha256": "ae76231730c8a9476b7ab9781619b5a25cbd4c4a91de13c190565b309ddde1d2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/public-tests/REQ-8.7.spec.ts",
+      "bytes": 341,
+      "sha256": "b22ea832ccb2117dfeafff3a5d83225a319c5688f00184c93abddfa88c51280b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/add_to_cart.png",
+      "bytes": 248271,
+      "sha256": "30a8c2560d511eebe4ea1978cc0064d4d7f5b45dd2260b19aaeb2815c6ac909a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/cart.png",
+      "bytes": 196286,
+      "sha256": "0d19c8b57f2c750d6d416a0f7af4dcca9ccef40379d0ea77e2b3c5112286d03e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/category.png",
+      "bytes": 829420,
+      "sha256": "7df56ba8f67efa90099b31041291ab1c6f87e8cc400e6c7bc7a9d198db6468e8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/checkout_address.png",
+      "bytes": 313623,
+      "sha256": "4c5301382fed8a0f1448f29663a8865387e4f838c78819a74819a33c51596c81"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/checkout_payment.png",
+      "bytes": 147314,
+      "sha256": "a24d68195aaee8c81d38e14306524b4a1ec498f29a3b6d8453852b709551b901"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/checkout_shipping.png",
+      "bytes": 138529,
+      "sha256": "2e08f41c65b73f8b9528b0ba45b39df97dddc93b2b0e38ec9e53a3c1f317b4d8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/checkout_summary.png",
+      "bytes": 1260246,
+      "sha256": "e3a04c073e2ef059afc34068fcab4d58e34d256b1130cbf28db722bf46f7fbf8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/checkout.png",
+      "bytes": 446194,
+      "sha256": "1226a822847bea9f838f080a9caf2e8181ec3b50b5817e3ad90d02afb869074d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/forgot_password.png",
+      "bytes": 149604,
+      "sha256": "cdc2ffb32109bac676232be162e34847e6698c046cea2327ae1c9c7b7b77f350"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/homepage.png",
+      "bytes": 4299876,
+      "sha256": "386e725b16bf13b7b872f12e5730eea5ae30eaa4bf27547fd408384d1b946bbf"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/login.png",
+      "bytes": 117822,
+      "sha256": "82622e4c58fb53469405cd744f0aec7bc8656350e9680a3d21c84b8145454be6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/logout.png",
+      "bytes": 847801,
+      "sha256": "3d214babfa566aa15a70df57b2571cda01750fd5db1fd5ccfd9c1fb430310d09"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/my_account_address.png",
+      "bytes": 111722,
+      "sha256": "6a915559764dd097423f269ac7903eedb3289d9c4121671efc52e9479ffd2a11"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/my_account_info.png",
+      "bytes": 479445,
+      "sha256": "0db074f2a24f98a650ce80a4400974641f4f198d2bc5671165f324a2cf5e4593"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/my_account_order.png",
+      "bytes": 165796,
+      "sha256": "f4db6077d5201cf8de40516e98069c18298660b97ff4e499d4d51127345f9aab"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/my_account_wishlist.png",
+      "bytes": 159289,
+      "sha256": "9b9ac66c86fd1f62879e2e33f0f0c0bd86476348f1c3fe352e040fea3af769ec"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/my_account.png",
+      "bytes": 102965,
+      "sha256": "06f5f50c94924104be0700678ed2f3860f81d2b613b67e62dcb361850bd7b5ba"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/navigation.png",
+      "bytes": 1497811,
+      "sha256": "b6625ed4623d4618ebc006c5036956ed0088f0608c1a6c65a008bd9cea198700"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/product_detail.png",
+      "bytes": 1831725,
+      "sha256": "1e3fc9d05d896e727ea12708a921330dd493e0d2e6cf4232e1ddf6f0b02375ba"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/register.png",
+      "bytes": 473040,
+      "sha256": "5141fe9dce3ff4a9aee520e25a91ff7c430ca0eade102ee2b55a51fd9619782f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/search.png",
+      "bytes": 838794,
+      "sha256": "ee4f7e65d7fb4c1e5b4ad0f1d7a2fd6cc3439c7f64221314c028596286bb726c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/references/sort.png",
+      "bytes": 252950,
+      "sha256": "6ee5fafeb0776d3e11e68f280dda3ca47c437301744c22298300fab465d1d998"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/requirements/prerequisites.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/requirements/requirements.md",
+      "bytes": 46642,
+      "sha256": "46cab5ab00b516c57857f9388f7adadffddfc43239845f4e5671430660a48c0e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--prestashop/requirements/requirements.yaml",
+      "bytes": 61687,
+      "sha256": "bc1ae80bd8072a122bd9d7ea1375b1d2674a4b6bfc4a418375d1abef58b2aa0f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/assets.json",
+      "bytes": 6257,
+      "sha256": "8c352ab470a6fd2c67d9f528b095dafb6e448f5db2256b1318bfb2804eeebf66"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/task.json",
+      "bytes": 114719,
+      "sha256": "a4e7d5658c7797d969ea8e8421be33197bff166d5aef6f0237631eee1b7b1030"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/helpers.ts",
+      "bytes": 16670,
+      "sha256": "4663bf909cd4d8e51c60cf718fb7859efdca12b43acf55042b0a96c89847c044"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/index.json",
+      "bytes": 1784,
+      "sha256": "c2e31fe33d1b59635ccd83df3568e629ed7ab63aa2dd802315cb4e31b152bdb3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-0.spec.ts",
+      "bytes": 335,
+      "sha256": "8c6a873ddfe36aca9d2d40638223b6c2b2c88ede451f48e41f617b6bdd6bc7a0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-1.1.spec.ts",
+      "bytes": 313,
+      "sha256": "53c234e03e84a3d147de8c8add9db4c6cc57ba74123754786e218b160ad7dd2c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-1.2.spec.ts",
+      "bytes": 342,
+      "sha256": "f764f75ea74cb3046fdec7584ea2fdd2e5d67e425cf50fa254a929018e5821d3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-1.3.spec.ts",
+      "bytes": 345,
+      "sha256": "a5aa4e363bde4076a3d2fdbb91361755d68c410ac3dc650732589ba094779ae2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-1.4.spec.ts",
+      "bytes": 333,
+      "sha256": "c383eba6d3917797af9c095153101df93fa56f8f282789eec80a90ca91342d11"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-1.5.spec.ts",
+      "bytes": 334,
+      "sha256": "297067cf9ce11528c0c67dd99058061c5d71a8899d5f52906cf6a6fdf28489e6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-2.1.spec.ts",
+      "bytes": 296,
+      "sha256": "4f4cc2db6d3a67c0fa344ab6a20edbabf2f63752beb3d93ac51fea1d02e49028"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-2.2.spec.ts",
+      "bytes": 357,
+      "sha256": "9804a7c8233b6be90e4bff983c42c309d2e88a6cb259264f540db400708ba617"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-2.3.spec.ts",
+      "bytes": 351,
+      "sha256": "b40f5487ecec09a91a044405cdf843358b905c1803d1ef204f4248a740470847"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-2.4.1.spec.ts",
+      "bytes": 617,
+      "sha256": "8fc2790e6dcc5fd81b1e5c42e92f042a584bb91056e210778065fc87d9c67e4d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-2.4.2.spec.ts",
+      "bytes": 383,
+      "sha256": "cea0a137419f77fb58c1b2456ce7eac6f4d293b5533b336ad3c9e5e69d031f84"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-2.4.3.spec.ts",
+      "bytes": 430,
+      "sha256": "f7ca906686b02257b3de0804205365144a35db0ba35d9aa555574d12c3b8435c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-2.4.4.spec.ts",
+      "bytes": 500,
+      "sha256": "231139cf47de6b88e080fef28b9f89aa839efb80584853198045903b9eb765a4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-2.4.5.spec.ts",
+      "bytes": 527,
+      "sha256": "765acd60fc1b36a75c685743b252064a9caca0a6f2542511b40f3371d2a0a9c5"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-2.5.1.spec.ts",
+      "bytes": 603,
+      "sha256": "29411e3db72bf1d0bef83ef6fe0de04b00fbfa940bf742afc28997d5a17b6c48"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-2.5.2.spec.ts",
+      "bytes": 519,
+      "sha256": "1cba81af8d8116d17f87ec5f094a76f4c5d8009586263048740a181f4ae3d008"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-2.5.3.spec.ts",
+      "bytes": 531,
+      "sha256": "615d0c744fa5b7819da4eb72db976e60370a514eae515d143e771f3c8e925c19"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-2.6.spec.ts",
+      "bytes": 356,
+      "sha256": "d124248b39d8d0a3ee6d91821f194f30b10a7d848f2250e7c2869db454324b99"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-2.7.spec.ts",
+      "bytes": 1009,
+      "sha256": "97d8fcfe9d08d5395ace286e13bd2c7d0c71fd79b24449687bea6da1f67364b6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.1.spec.ts",
+      "bytes": 306,
+      "sha256": "757ca9c72a05b15a2f5beb456ae86102a3e6315f800c688fed3def9bff410562"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.2.1.spec.ts",
+      "bytes": 884,
+      "sha256": "50adaf5b8e99359932c029e2c298e4401519054eb45fd12ceddee84b9ddca221"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.2.2.spec.ts",
+      "bytes": 799,
+      "sha256": "ff177224f50520863a82fb7f9c156d50d0660b67cc72cb0ec62125b36c40dd83"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.3.1.spec.ts",
+      "bytes": 349,
+      "sha256": "cf31adf517415fac0bb56860b8b2c127c4f794d6b7463c2adf9ef38214a10aab"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.3.2.spec.ts",
+      "bytes": 342,
+      "sha256": "d05070c869bc9b964e6a94e2dd36c86ad33c9ed27e071e45938ed58a5bcadd5d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.3.3.spec.ts",
+      "bytes": 363,
+      "sha256": "3e1fc31d93f40ab22587095b72dd16cc0d05afa119e9ca951bd1c20828abbb5c"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.3.4.spec.ts",
+      "bytes": 352,
+      "sha256": "c4f3dd13aba55b7183d1f4591036582994b9780b3328831128b6aeb0cf219fbe"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.3.5.spec.ts",
+      "bytes": 344,
+      "sha256": "149e945f9f0c657d1c7a31c03739de4420f8b68ce4a0d3eba90f5d7c97521395"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.3.6.spec.ts",
+      "bytes": 350,
+      "sha256": "a78c03147b2611ecde4560c9cbf49f5c3e5bde5a83cb4cdff51b3439f93edb96"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.4.1.spec.ts",
+      "bytes": 410,
+      "sha256": "06830967b6fe42c0f2db43cb13b7901750d04266fb7edb48e8727979073a5c57"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.4.2.spec.ts",
+      "bytes": 544,
+      "sha256": "6695b88c63df467e6e70dd3ab440a32aa2ce2c7a9e7d31a08feb3afba1fc6de0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.4.3.spec.ts",
+      "bytes": 461,
+      "sha256": "fb62b3e4951f407df17d62f7f66153364927faadfbd06d94a8d1c8c3b06cb2d2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.4.4.spec.ts",
+      "bytes": 539,
+      "sha256": "0ef27e45c04b1ca924f692186bb460bf600cef72c0db191761f15f1bebb50c5d"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.4.5.spec.ts",
+      "bytes": 424,
+      "sha256": "a75510b72010b2108359d7fd52b2f317cde7fd8b4ab41774353a413b1db61b56"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.5.spec.ts",
+      "bytes": 593,
+      "sha256": "22386710848d421e6e13b23ae17baac90cf819a01862723f7775359cc8b6f26e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.6.1.spec.ts",
+      "bytes": 553,
+      "sha256": "4e525b49304a31b99f5559f1e76c3c8428caf994b7766e27319cf6fa73eae17f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-3.6.2.spec.ts",
+      "bytes": 475,
+      "sha256": "796bd6b3df2a96b7e3e78858194a1c32d3f55db8cbce50ec84d142b422e5dbbf"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-4.1.spec.ts",
+      "bytes": 613,
+      "sha256": "58e8056143c4910df071b1275f748978b09edac0ca07efeea2301069ddf72a8b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-4.2.spec.ts",
+      "bytes": 475,
+      "sha256": "d3e1f4d8b5683ece3b04494326018a693a09d60c3c2d01c47849ecdf76ce9fb4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-4.3.spec.ts",
+      "bytes": 491,
+      "sha256": "95ec1b4bdac91f2f585dbfa7731c82f2a9e2a76e6359c6045c080a8962a8cc3b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-4.4.spec.ts",
+      "bytes": 476,
+      "sha256": "099475790c31cd67249207edd21c0b05555ff6789204daa7a4c723510dec850a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-4.5.1.spec.ts",
+      "bytes": 739,
+      "sha256": "70578f9a743e4ad3f9d9ec29d9762e81b69db230f48841bd92e23463bae6b290"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-4.5.2.spec.ts",
+      "bytes": 580,
+      "sha256": "2a6e917e22f8a0fa7f6e1153bcc08ddd591be5ca12354fc7b5dc684fddc6b2a2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-4.5.3.spec.ts",
+      "bytes": 611,
+      "sha256": "74e088b7b65b35b1191671cfa0b154ff2a8027a92a0cb7510c865c8ee9796c85"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-4.6.spec.ts",
+      "bytes": 606,
+      "sha256": "2dc89e5d190183e22e8574c58c105f6364a4a43cf8b90c5d9efe97db1befb616"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-5.1.1.spec.ts",
+      "bytes": 661,
+      "sha256": "e604c438d04e99bbc9a9bc748425edf528291fd4a1578c70960b49bd79ac93e8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-5.1.2.spec.ts",
+      "bytes": 413,
+      "sha256": "19cfe746667a886b280dd84bd1d3f4a4f3a5015f486e17bda5abb6030eea2d22"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-5.2.1.spec.ts",
+      "bytes": 633,
+      "sha256": "778760a6da3e69831936888e4d01cddd2047c2f351d4664e532ce9ddecbf4405"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-5.2.2.spec.ts",
+      "bytes": 470,
+      "sha256": "87e4cb53537175624a594086ef5443f9497df39e409697c624c4332e08ceb5a6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-5.3.spec.ts",
+      "bytes": 583,
+      "sha256": "377086cbb8829d786ce4fa69b1088697b837c5411eb264577c686cd0c94781a4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-5.4.spec.ts",
+      "bytes": 604,
+      "sha256": "da0f32a69e0b8619a24959eb24e1705f41fc751b9bab63f69492de2c8398760b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-5.5.spec.ts",
+      "bytes": 641,
+      "sha256": "9901e9c6e4d616ab6528621cdf78ffc802e49afb7af6ea00659f9c7288e76868"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-6.1.spec.ts",
+      "bytes": 290,
+      "sha256": "426498d45380621272f0f680a671dca19f1c299d215c38818a4aa7ac1f0764a6"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-6.2.spec.ts",
+      "bytes": 327,
+      "sha256": "60c2431482cbd728a0d7ba6ce767a456eadca0f61925a1b418744d33425bdaa5"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-6.3.spec.ts",
+      "bytes": 562,
+      "sha256": "0d3775ca85a36002e96c404ab13b45042134fb030165abfbd5fc694cad1feab1"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-7.1.spec.ts",
+      "bytes": 431,
+      "sha256": "d4fdc9773b78ee7b51e65a8675352147d20f1328e203a806b209b7f887a6b24e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-7.2.spec.ts",
+      "bytes": 434,
+      "sha256": "dd759f75ffe609579564757bd72559c6684d6b2e61cc80405bbe6f3638ebfe2f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-7.3.spec.ts",
+      "bytes": 927,
+      "sha256": "1c4e3309b91c4d1df060bb0766886f6db2ec489f8f1005b35230abcf02c0688e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-8.1.spec.ts",
+      "bytes": 427,
+      "sha256": "4eb6307d221f441d5dbb19a64fdcba34abb053cf2d368b4767d15ce0a45fade4"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-8.2.1.spec.ts",
+      "bytes": 359,
+      "sha256": "832e712e52b531c2a68b4a401e39c09b0fb535709f3a394d2b1c1cebe43e5c2b"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-8.2.2.spec.ts",
+      "bytes": 363,
+      "sha256": "b6ef3a99e7f0f90bd0d0346c9c8537ecb2fc34dd51c93d6f2626dcdc7aa63aff"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-9.1.spec.ts",
+      "bytes": 367,
+      "sha256": "6e1a689cf37235caa55addf7fba1a950f4580fa18a009c054f5633b44a4dc93a"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-9.2.spec.ts",
+      "bytes": 496,
+      "sha256": "44e0b61be9a30ce08520f46b7af3f49cc4a9a7b372bb56c20d6cd3ed39151bc3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-9.3.spec.ts",
+      "bytes": 402,
+      "sha256": "8bc4972c24c9d740801794bac5a6a2ba36777cfdf8da7feb7fe2c10f022ba5f0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-9.4.spec.ts",
+      "bytes": 404,
+      "sha256": "71745514896ab4eb1684462e52ad12e6acf71a9143f89f45916c8218657a1e78"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-9.5.spec.ts",
+      "bytes": 409,
+      "sha256": "0406515ba88c4358dc6734cefe6aa296b4563ca089b2bf452e94cd40dd14d804"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/public-tests/REQ-9.6.spec.ts",
+      "bytes": 419,
+      "sha256": "e85a92cc307947f62b1883db49c893494ee0ae95ca4eaab5da71d6f29260904e"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/references/ask-question-page.jpeg",
+      "bytes": 218611,
+      "sha256": "d4a259c42b0790026767f330f8e7449441a8d6c1596aaf88c95e5c5f30f3c408"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/references/edit-profile.jpeg",
+      "bytes": 279255,
+      "sha256": "18e54c5f461fdb6a8622f6f6274631014a48610251bef88df68f49ae3c17b6a3"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/references/edit-question.jpeg",
+      "bytes": 489111,
+      "sha256": "2ea0896872183f8d3db5c8893679e91ede65c8724c674a21c954aa89836a1b3f"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/references/homepage.jpeg",
+      "bytes": 3476797,
+      "sha256": "1241aa904e1b28306670f8c55a06a8a0e475426dfb4aa0bef3ad6255643ebab2"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/references/login.jpeg",
+      "bytes": 55890,
+      "sha256": "b162b9b7b705c2548380201fa3d973f3621846847f04717ec094711814ff0025"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/references/profile-page.jpeg",
+      "bytes": 301288,
+      "sha256": "2474b45bccceb0cb28d39ebeb220c5ef2e411d5eaec314380193aa6e9fa2ce26"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/references/question-page.jpeg",
+      "bytes": 1178757,
+      "sha256": "3007509c115bac370730258864eeb266ac44b8f7229af5737973d42b76367dae"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/references/questions-page.jpeg",
+      "bytes": 759769,
+      "sha256": "6d4a901ea382ece914b8ea2867795d94a457e4c59f8b35f2d13dd57bdb03ffe0"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/references/search-and-filter.jpeg",
+      "bytes": 623120,
+      "sha256": "c801506969fcbf7ed9243999350890adf8deffd5145e0de42ef17c4a6dabbc91"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/references/sign-up.jpeg",
+      "bytes": 659524,
+      "sha256": "327ae07dc72ddaca29df8c7905403aa7bc7eaae772ee555243180576fac1d3d8"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/references/tags-page.jpeg",
+      "bytes": 689964,
+      "sha256": "a2864321c25cc99c107b3c11640fec18e991891291cdf0867938027d982cadea"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/references/user-feed.jpeg",
+      "bytes": 201020,
+      "sha256": "61c62813fc6859ab55a40b3943c1712d7367be0ca9a890dde49cd397789babad"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/requirements/prerequisites.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/requirements/requirements.md",
+      "bytes": 48838,
+      "sha256": "8f13b74be5019fc9fcc67a7f26b07b0e19f30916a44cc8111f054af7fa2cee80"
+    },
+    {
+      "path": "competitions/arc-bench-web/tasks/arc-bench-web--stackoverflow/requirements/requirements.yaml",
+      "bytes": 61753,
+      "sha256": "a12bfe3919518c88920afcf9d34255217a8d4f677ba94414ef91ddc2fe0ac5ea"
+    },
+    {
+      "path": "competitions/smoke/competition.json",
+      "bytes": 2252,
+      "sha256": "5d21b7a8e92f37c600820fbd34fea5deebad0d7d9e1bfed4b2ceccddfbf42a04"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--counter/assets.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--counter/task.json",
+      "bytes": 2821,
+      "sha256": "1dde6b84c5fd3d8fdc4dcc6a393a2495bbbf5a32b0a2f504f0745262a2ac7fe1"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--counter/public-tests/index.json",
+      "bytes": 126,
+      "sha256": "b882250dc6f0b323e131de869a0cb4002fe9ede773defa0ac4c6c2f775a1de3b"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--counter/public-tests/REQ-1.spec.ts",
+      "bytes": 671,
+      "sha256": "de5d8c9124640d6c2ab7ceef7201b34cf8bbe6c70a6345769c24c3b2e3ee45d6"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--counter/requirements/prerequisites.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--counter/requirements/requirements.md",
+      "bytes": 873,
+      "sha256": "2f0c488cde1e565631619c57bb4749684b6b563296d80e744098a4a48518b300"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--counter/requirements/requirements.yaml",
+      "bytes": 1222,
+      "sha256": "a6e82f80dbbfc8a19d6d6ff59d884d365cadc2caf86eee4341d58da4b412fa3e"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--dice/assets.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--dice/task.json",
+      "bytes": 2311,
+      "sha256": "94007deac70df668f38e187dfd2f14a608b4a4d4176a621321cf6cb3b64d696a"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--dice/public-tests/index.json",
+      "bytes": 123,
+      "sha256": "9e291644a53ebfffbdbeefa6fe18d6e0398b8a6b49138bc16ad0181143afaec7"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--dice/public-tests/REQ-1.spec.ts",
+      "bytes": 375,
+      "sha256": "446cc5d2b9634fd168fde498fcf73e740605a787b36a5693a1dd33a50effb3b8"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--dice/requirements/prerequisites.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--dice/requirements/requirements.md",
+      "bytes": 669,
+      "sha256": "601e18487745654dbd9ceed396fa66c6e872b0585d1d506b1856805cee4cac5e"
+    },
+    {
+      "path": "competitions/smoke/tasks/smoke--dice/requirements/requirements.yaml",
+      "bytes": 946,
+      "sha256": "43c0808f5402289e5b866ff73e0ea06f4fa50323cdcdc65bb88a07bb6d94e316"
+    },
+    {
+      "path": "competitions/smoke-evolution/competition.json",
+      "bytes": 2346,
+      "sha256": "92ed3fb243f4ff93f239622a125e3badb59f20b99f9b94949e0fb7fe5564a358"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--counter/assets.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--counter/task.json",
+      "bytes": 3787,
+      "sha256": "13735149f91a533abcc003a77e2afecf924b1c89eb4748bb8ad3f4902f37f75c"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--counter/public-tests/index.json",
+      "bytes": 158,
+      "sha256": "7be234bde95d5f797c46597ca9c6b62799ac7f08ed154e13039bdb25f1a26d39"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--counter/public-tests/REQ-1.spec.ts",
+      "bytes": 582,
+      "sha256": "d8eaba8c2bebe37ba63343289fdfe2dc0b492d016bb2f8ea559e1d9c4c214a91"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--counter/public-tests/REQ-2.spec.ts",
+      "bytes": 459,
+      "sha256": "72c9cbe0d0eeec63b2da2f7e5946238a7928bde441da19eb12f482a536b597e0"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--counter/requirements/prerequisites.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--counter/requirements/requirements.md",
+      "bytes": 1238,
+      "sha256": "432daee76417a2fcd9597081abfebca39e20619fae04fcb78fa3b10e7e5ca653"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--counter/requirements/requirements.yaml",
+      "bytes": 1763,
+      "sha256": "c68e9a366d63c1bad9edabc390707b26fda3762cd382fdc00d9e9851fdb510b7"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--dice/assets.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--dice/task.json",
+      "bytes": 3467,
+      "sha256": "db1fc3e3e303a40d458cfac7ed481007cc0adbeebf7714f1529dd57954c37a80"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--dice/public-tests/index.json",
+      "bytes": 155,
+      "sha256": "05b13dcefac77566548de8a2ee0dc9653e922d5882a704b76db674d3d158fd84"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--dice/public-tests/REQ-1.spec.ts",
+      "bytes": 368,
+      "sha256": "d3a1b3e70b73fd79976d9651df57175645be9b1e34ff34878378fb565d3deab0"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--dice/public-tests/REQ-2.spec.ts",
+      "bytes": 493,
+      "sha256": "54575659a4197a8ede792e807436090c95c2518161709086018290d6b8185358"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--dice/requirements/prerequisites.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--dice/requirements/requirements.md",
+      "bytes": 1134,
+      "sha256": "2eb217334b2f9fb875d93aecc88dfb90e17467559324db38ca8becb347d1ff4d"
+    },
+    {
+      "path": "competitions/smoke-evolution/tasks/smoke-evolution--dice/requirements/requirements.yaml",
+      "bytes": 1587,
+      "sha256": "f307ba0e3783ab0625848c8b1997d5271a4a13708f0ecfad88e0a482c6cac749"
+    },
+    {
+      "path": "competitions/ticket-booking/competition.json",
+      "bytes": 2066,
+      "sha256": "e724da8e5d190d0e5e4046f4ea7d54c139d32a125b90909f4def1ffb9886291b"
+    },
+    {
+      "path": "competitions/ticket-booking/tasks/ticket-booking--ticket-booking/assets.json",
+      "bytes": 1536,
+      "sha256": "5ff8af1e4f719b48c06cb621b9505fd57df11f47222ce8b485930735e3889b71"
+    },
+    {
+      "path": "competitions/ticket-booking/tasks/ticket-booking--ticket-booking/task.json",
+      "bytes": 22900,
+      "sha256": "85881f28596824e179d426cf10b5394955c7137d10631c7903cad617a4b769ab"
+    },
+    {
+      "path": "competitions/ticket-booking/tasks/ticket-booking--ticket-booking/public-tests/index.json",
+      "bytes": 220,
+      "sha256": "6c072a4c1cef5970a6376746b7025d6bf314502893b0b1afd690ed01c81ba80f"
+    },
+    {
+      "path": "competitions/ticket-booking/tasks/ticket-booking--ticket-booking/public-tests/REQ-1.1-user-registration.spec.ts",
+      "bytes": 6267,
+      "sha256": "effc7a98a0da5f18f95aa3c188bafb7264ccc089e6e9fc319f529b410f83d2b3"
+    },
+    {
+      "path": "competitions/ticket-booking/tasks/ticket-booking--ticket-booking/public-tests/REQ-1.2-user-login.spec.ts",
+      "bytes": 3281,
+      "sha256": "701eb9af146a1cf6d650ff3df7de48e4e6da978f244dc8963708dadf72b2daab"
+    },
+    {
+      "path": "competitions/ticket-booking/tasks/ticket-booking--ticket-booking/public-tests/support/e2e.ts",
+      "bytes": 8306,
+      "sha256": "ce27f673a3ee84e6d7e852647c6857f8e2ce19ca9b5dd90db0fd49dd5dee9601"
+    },
+    {
+      "path": "competitions/ticket-booking/tasks/ticket-booking--ticket-booking/references/homepage.png",
+      "bytes": 3622330,
+      "sha256": "327011b226701040faa88b45d092129f5653dc3bff7ff491a8702421ff816528"
+    },
+    {
+      "path": "competitions/ticket-booking/tasks/ticket-booking--ticket-booking/references/login.png",
+      "bytes": 4009963,
+      "sha256": "51dd64711bec5ee6b8f399c1a6a11dc5fcdd2babe2adfee131503fb12fb1f49e"
+    },
+    {
+      "path": "competitions/ticket-booking/tasks/ticket-booking--ticket-booking/references/register.png",
+      "bytes": 146387,
+      "sha256": "62d78b672986644a3cedf19fe1dc25aee69210e47d43a974c4e16581423d3986"
+    },
+    {
+      "path": "competitions/ticket-booking/tasks/ticket-booking--ticket-booking/requirements/prerequisites.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "competitions/ticket-booking/tasks/ticket-booking--ticket-booking/requirements/requirements.md",
+      "bytes": 9974,
+      "sha256": "078d34d1549a1a2faa1e4bcb1152851cdc1894a54ed464b7444489a6674c176f"
+    },
+    {
+      "path": "competitions/ticket-booking/tasks/ticket-booking--ticket-booking/requirements/requirements.yaml",
+      "bytes": 11630,
+      "sha256": "96d81f85c66ae833b20208a982c53d935dba77c926e709958f55f5c6dbedc467"
+    },
+    {
+      "path": "competitions/ticket-booking-evolution/competition.json",
+      "bytes": 1089,
+      "sha256": "bb3e80a7c743df4aa4e806c6ff878e3100a5e0cf373060bd4b5d60daf8d1c3da"
+    }
+  ],
+  "errors": [],
+  "status": "complete_with_official_asset_gaps",
+  "missing_official_assets": [
+    {
+      "competition_id": "arc-bench-web",
+      "task_id": "arc-bench-web--ctrip",
+      "kind": "reference",
+      "path": "index.jpg",
+      "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--ctrip/references/index.jpg?catalog=competition"
+    },
+    {
+      "competition_id": "arc-bench-web",
+      "task_id": "arc-bench-web--keep",
+      "kind": "reference",
+      "path": "label_filtered_list.png",
+      "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/label_filtered_list.png?catalog=competition"
+    },
+    {
+      "competition_id": "arc-bench-web",
+      "task_id": "arc-bench-web--keep",
+      "kind": "reference",
+      "path": "search_keyword.png",
+      "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--keep/references/search_keyword.png?catalog=competition"
+    },
+    {
+      "competition_id": "arc-bench-lite",
+      "task_id": "arc-bench-lite--keep",
+      "kind": "reference",
+      "path": "label_filtered_list.png",
+      "source_url": "https://arc-bench.com/api/requirements/arc-bench-lite--keep/references/label_filtered_list.png?catalog=competition"
+    },
+    {
+      "competition_id": "arc-bench-lite",
+      "task_id": "arc-bench-lite--keep",
+      "kind": "reference",
+      "path": "search_keyword.png",
+      "source_url": "https://arc-bench.com/api/requirements/arc-bench-lite--keep/references/search_keyword.png?catalog=competition"
+    }
+  ],
+  "asset_gap_count": 5
+}

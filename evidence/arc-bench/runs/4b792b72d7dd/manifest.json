@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "run": {
+    "run_id": "4b792b72d7dd",
+    "submission_id": "a2b15e6dbf54",
+    "display_name": "teammate-baseline-20260917-ea503546",
+    "catalog": "competition",
+    "competition_id": "arc-bench-web",
+    "task_id": "arc-bench-web--keep",
+    "task_snapshot_id": null,
+    "created_at": "2026-09-18T17:09:42.483873",
+    "started_at": "2026-09-18T17:09:44.992909",
+    "finished_at": "2026-09-18T19:50:44.798107",
+    "status": "FAILED",
+    "score": 93.8,
+    "passed_count": 30,
+    "failed_count": 2,
+    "feature_implementation_rate": 0.9375,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 48000,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0
+  },
+  "internal_acceptance": {
+    "suite_summary": {
+      "round_0_passed": 27,
+      "round_0_total": 32,
+      "source": "summary and raw log round markers"
+    },
+    "notable_node_progress": {
+      "node": "REQ-2.7.5",
+      "round_0": "0/1",
+      "round_1": "0/1",
+      "round_2": "1/1"
+    },
+    "final_unverified_nodes": ["REQ-2.7.5", "REQ-6.1"]
+  },
+  "platform_final": {
+    "passed": 30,
+    "total": 32,
+    "failed_tests": [
+      {
+        "test": "REQ-2.7.5.spec.ts",
+        "requirement": "REQ-2.7.5: Edit labels",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "locator": "getByText(/edit labels/i).first()",
+        "failure_location": "/workspace/tests/helpers.ts:124, /workspace/tests/helpers.ts:139, /workspace/tests/REQ-2.7.5.spec.ts:10",
+        "observed_state": "locator resolved to <span>Edit labels</span> but element was not visible during click"
+      },
+      {
+        "test": "REQ-6.1.spec.ts",
+        "requirement": "REQ-6.1: Items and styling",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "locator": "getByText(/edit labels/i).first()",
+        "failure_location": "/workspace/tests/helpers.ts:149, /workspace/tests/helpers.ts:154, /workspace/tests/REQ-6.1.spec.ts:10",
+        "observed_state": "locator resolved to <span>Edit labels</span> but element remained hidden"
+      }
+    ],
+    "score": 93.8,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "metering": {
+    "requests": 1042,
+    "prompt_tokens": 24999867,
+    "completion_tokens": 819758,
+    "reasoning_tokens": 604223,
+    "prompt_cache_hit_tokens": 22753792,
+    "provider_total_tokens": 25819625,
+    "platform_token_count": 25819721,
+    "cost": 16.391786,
+    "currency": "CNY",
+    "run_duration_seconds": 9609
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "log_result_finalized": "FAILED score=93.8"
+  },
+  "source_precedence": [
+    "run.json for final platform status, score and test list",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal rounds and provider usage",
+    "playwright-report.json for final timeout configuration and test result details",
+    "failure-details.md for locator and call-log extraction",
+    "snapshots.json for generated design/codegen state",
+    "template.zip for package identity and reproducibility",
+    "summary.md for navigation only; it cannot override raw structured fields"
+  ],
+  "conflicts": [],
+  "missing": [
+    "task_snapshot_id",
+    "agent_build_id",
+    "code_sha"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-4b792b72d7dd-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 550416,
+      "sha256": "19EFDE03237362F27318E61D61ACDB316A30CC200F8ABCE54DD03EC99EBC4DE6",
+      "stored_in_repository": false
+    },
+    {
+      "name": "4b792b72d7dd-template.zip",
+      "role": "template_or_generated_package_snapshot",
+      "bytes": 1834572,
+      "sha256": "9A3BC2E320DA8F33F765C159FB22E002A2861E5D193546F4572244288B7674AD",
+      "stored_in_repository": false
+    },
+    {
+      "name": "4b792b72d7dd-playwright-report.json",
+      "role": "final_playwright_report",
+      "bytes": 47322,
+      "sha256": "B39F4F5CFC3D4A123FFB5EAEA2A7F275DEFA667C9394377B396F5A4C4517557F",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-4b792b72d7dd-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 23862,
+      "sha256": "2869194839B9D30DE49E6B3900FDDA7C42A66A08CC68D0A7D46174CDE447668F",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-4b792b72d7dd-summary.md",
+      "role": "human_normalized_summary",
+      "bytes": 3324,
+      "sha256": "3D1B285CD994BE2DDC932BC2E0E332DC2BC9B025CC460A6B0EFCC6C1F9224717",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-4b792b72d7dd-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 403009,
+      "sha256": "1904246997A713EF99F4A6010664523DFF45EBF8B41F70AA953C3E5BB0D5557C",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-4b792b72d7dd.json",
+      "role": "raw_run_object",
+      "bytes": 11653,
+      "sha256": "FAF51384155651795E0BE45342383AB3AF35DEA7BDCF7242B2E9A86A7EB0E3A3",
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0
+  }
+}

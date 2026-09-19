@@ -1,0 +1,29 @@
+[
+  {
+    "kind": "reference",
+    "path": "homepage.png",
+    "source_url": "https://arc-bench.com/api/requirements/ticket-booking--ticket-booking/references/homepage.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\ticket-booking\\tasks\\ticket-booking--ticket-booking\\references\\homepage.png",
+    "bytes": 3622330,
+    "sha256": "327011b226701040faa88b45d092129f5653dc3bff7ff491a8702421ff816528",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "login.png",
+    "source_url": "https://arc-bench.com/api/requirements/ticket-booking--ticket-booking/references/login.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\ticket-booking\\tasks\\ticket-booking--ticket-booking\\references\\login.png",
+    "bytes": 4009963,
+    "sha256": "51dd64711bec5ee6b8f399c1a6a11dc5fcdd2babe2adfee131503fb12fb1f49e",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "register.png",
+    "source_url": "https://arc-bench.com/api/requirements/ticket-booking--ticket-booking/references/register.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\ticket-booking\\tasks\\ticket-booking--ticket-booking\\references\\register.png",
+    "bytes": 146387,
+    "sha256": "62d78b672986644a3cedf19fe1dc25aee69210e47d43a974c4e16581423d3986",
+    "status": "downloaded"
+  }
+]

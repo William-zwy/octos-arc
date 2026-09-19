@@ -1,0 +1,8 @@
+{
+  "task_id": "smoke--counter",
+  "file_count": 1,
+  "paths": [
+    "REQ-1.spec.ts"
+  ],
+  "public_downloads": null
+}

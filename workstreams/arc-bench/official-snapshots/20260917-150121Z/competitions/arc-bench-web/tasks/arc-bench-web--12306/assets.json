@@ -1,0 +1,299 @@
+[
+  {
+    "kind": "reference",
+    "path": "edit-password.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/edit-password.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\edit-password.png",
+    "bytes": 151794,
+    "sha256": "b637c909d1e2235357fcd8964b538282125d216dc77fdf8da094d98bdd19b143",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "booking-confirm.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/booking-confirm.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\booking-confirm.png",
+    "bytes": 73876,
+    "sha256": "496ad7637454652e900b8bce66d39f54fd3f2c2a91ef5e9fe5cf33232a601b35",
+    "status": "downloaded"
+  },
+  {
+    "kind": "assets",
+    "path": "logo.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/assets/logo.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\assets\\logo.png",
+    "bytes": 7163,
+    "sha256": "863058ff45fcb1e69efd8b291115e8f1e6222e1eaf96a4d0d31d838d40b317b1",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "forgot-password.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/forgot-password.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\forgot-password.png",
+    "bytes": 210520,
+    "sha256": "8c0edd73f8f4c9b4d1a634dcc5e7a9292e0cc3f43b3ba06f8a210f16efc1dd16",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "search-result.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/search-result.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\search-result.png",
+    "bytes": 341799,
+    "sha256": "d1fdd30ab5b03c2a55663bb2986dcf9b9bcb74c99babdc52e1ab618a0bef2003",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "date-selector.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/date-selector.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\date-selector.png",
+    "bytes": 36716,
+    "sha256": "430b137eb987c75ebae9815af7c7d09bac031b3cc54d5d1307d8603cb1fb7a2b",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "travel-guide-dropdown.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/travel-guide-dropdown.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\travel-guide-dropdown.png",
+    "bytes": 50141,
+    "sha256": "b932f58a5bbf48352408796e026d9504dcda426381b4c496d9896ed9451eeb9b",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "user-information.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/user-information.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\user-information.png",
+    "bytes": 379344,
+    "sha256": "aa871e8c7c76d4aa27e96251395c69863b0d97c2e38aa2f252a3fcdad4cd1b57",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "rule.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/rule.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\rule.png",
+    "bytes": 377141,
+    "sha256": "57f2d132343aaa16ffb45728f081c4b412f787a9276e645cb39eb7271ee48515",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "uncompleted-orders.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/uncompleted-orders.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\uncompleted-orders.png",
+    "bytes": 444447,
+    "sha256": "1f226c98511f8e2ca785e49f8cbd288574a76a3bb5880cb590b54d3d747c5686",
+    "status": "downloaded"
+  },
+  {
+    "kind": "assets",
+    "path": "empty.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/assets/empty.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\assets\\empty.png",
+    "bytes": 6411,
+    "sha256": "fe66bec34a6dc315c056afb60f95d60cfc150bcf09dc732f27d1b63db175f887",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "payment.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/payment.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\payment.png",
+    "bytes": 566550,
+    "sha256": "3481335f939444a288db6eb902963840322da17929f11c16eecebddc84337028",
+    "status": "downloaded"
+  },
+  {
+    "kind": "assets",
+    "path": "banner2.jpg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/assets/banner2.jpg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\assets\\banner2.jpg",
+    "bytes": 194570,
+    "sha256": "6a46eb648e811aca12857b6780e1c39fec9b6e3050473d5fa79e67dfd44cac1a",
+    "status": "downloaded"
+  },
+  {
+    "kind": "assets",
+    "path": "noticepic.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/assets/noticepic.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\assets\\noticepic.png",
+    "bytes": 5751,
+    "sha256": "180088354159bbc0d53c8ba9aab6584fa49f7e22504de7df96e8208051f85353",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "location-selector-list.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/location-selector-list.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\location-selector-list.png",
+    "bytes": 34424,
+    "sha256": "54ca5b9041b6fc7806a3a888f1e7bfcda0b31b4c1e0de19b3ddf0243986e0fd8",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "travel-guide.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/travel-guide.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\travel-guide.png",
+    "bytes": 330376,
+    "sha256": "8ea7b682d8937ff09717d83f1660b51d55c2c6abaaccd1f9cf8cf40f742248b2",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "user-center.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/user-center.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\user-center.png",
+    "bytes": 184435,
+    "sha256": "125666400d80052466434c3d65dfe37951470737b9bd348978b63e69eb7ae7e6",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "register.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/register.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\register.png",
+    "bytes": 365835,
+    "sha256": "12e14f2c678e3b07e572ecf3da65f86874f5b9bf9e83eba1352045194fe93352",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "booking-1.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/booking-1.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\booking-1.png",
+    "bytes": 455273,
+    "sha256": "ce269c6614bafa6e7a6b12c2ab903c5d838f7dbba3952568305ca2b4d8fec9c8",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "my-passengers.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/my-passengers.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\my-passengers.png",
+    "bytes": 166814,
+    "sha256": "8b8f6fab8715dace65368622d07b4f3f9828f6188da0a3eed62351109c4f9903",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "policy.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/policy.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\policy.png",
+    "bytes": 355519,
+    "sha256": "d04c0931aeabc88d9bd3b4e5bb8133eb7401e008d2634d17790c42f6dae935a8",
+    "status": "downloaded"
+  },
+  {
+    "kind": "assets",
+    "path": "logo-icon.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/assets/logo-icon.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\assets\\logo-icon.png",
+    "bytes": 2197,
+    "sha256": "01784978051e90fea329dd2eb2da64ddcf63b0ee91d6c0f2bd45175e2b1c431b",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "ticket-orders.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/ticket-orders.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\ticket-orders.png",
+    "bytes": 152925,
+    "sha256": "8f00819d89f92440eab5aa6e166838dc9490b56fbb0c0e34512d7c3d33a00082",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "login-form.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/login-form.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\login-form.png",
+    "bytes": 77846,
+    "sha256": "7edf7ae08e18c6efbae481e9dff06fe742f99f34a20130de53461da72066a82e",
+    "status": "downloaded"
+  },
+  {
+    "kind": "assets",
+    "path": "banner3.jpg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/assets/banner3.jpg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\assets\\banner3.jpg",
+    "bytes": 228971,
+    "sha256": "19f15b5fdc18df041c478c5765b2371d1c1abd49568ea65a601df77281737123",
+    "status": "downloaded"
+  },
+  {
+    "kind": "assets",
+    "path": "banner1.jpg",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/assets/banner1.jpg?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\assets\\banner1.jpg",
+    "bytes": 138258,
+    "sha256": "ab357927b473050e262c431f96e70aabbae2c9e5b66ee3cf2f859a4532758a08",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "verify-mobile.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/verify-mobile.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\verify-mobile.png",
+    "bytes": 160973,
+    "sha256": "00372990e9fa4bb5ad54756f1247276c825510a63cb88d408054a3ef771dcb48",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "edit-email.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/edit-email.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\edit-email.png",
+    "bytes": 164016,
+    "sha256": "c64faea731a30acb067f777f587bbdc59e0dcab9c598a633cf938d842381e850",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "add-passenger.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/add-passenger.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\add-passenger.png",
+    "bytes": 383706,
+    "sha256": "ce946a0c860197999bdc8e7c120907fd7068520a6e0785dfb7ea8a5b62b576ef",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "account-security.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/account-security.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\account-security.png",
+    "bytes": 154767,
+    "sha256": "edef927e280b8b86db63108c1cc65ffcdfe59ebc558857c4720abb5db1a9aaaf",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "login.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/login.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\login.png",
+    "bytes": 1026902,
+    "sha256": "5792c1edb96395b5e8554d87840ac7cfb0f9dc37b66dac9816290b8996f9c371",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "homepage.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/homepage.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\homepage.png",
+    "bytes": 2618414,
+    "sha256": "a993a429965857982022eb457b1859ec42ae1935382f321111ce3515e6bca79c",
+    "status": "downloaded"
+  },
+  {
+    "kind": "reference",
+    "path": "location-selector-form.png",
+    "source_url": "https://arc-bench.com/api/requirements/arc-bench-web--12306/references/location-selector-form.png?catalog=competition",
+    "local_path": "workstreams\\arc-bench\\official-snapshots\\20260917-150121Z\\competitions\\arc-bench-web\\tasks\\arc-bench-web--12306\\references\\location-selector-form.png",
+    "bytes": 92539,
+    "sha256": "c4b7e00f016c89d9dc24c517e17c330337920e7cd533139f008e51c142deda6d",
+    "status": "downloaded"
+  }
+]
