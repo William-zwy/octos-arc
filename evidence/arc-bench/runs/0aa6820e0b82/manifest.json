@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "run": {
+    "run_id": "0aa6820e0b82",
+    "submission_id": "b88949d044c2",
+    "display_name": "teammate-baseline-20260917-ea503546",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--keep",
+    "task_snapshot_id": null,
+    "created_at": "2026-09-19T08:00:38.120971",
+    "started_at": "2026-09-19T08:00:39.812145",
+    "finished_at": "2026-09-19T10:44:37.747342",
+    "status": "FAILED",
+    "score": 90.6,
+    "passed_count": 29,
+    "failed_count": 3,
+    "feature_implementation_rate": 0.90625,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 48000,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0
+  },
+  "internal_acceptance": {
+    "round_0": {
+      "passed": 29,
+      "total": 32,
+      "failing_nodes": ["REQ-2.3.1", "REQ-2.5.4", "REQ-2.7.5"]
+    },
+    "round_1": {
+      "passed": 29,
+      "total": 32,
+      "failing_nodes": ["REQ-2.3.2", "REQ-2.5.4", "REQ-2.7.5"]
+    },
+    "round_2": {
+      "passed": 29,
+      "total": 32,
+      "failing_nodes": ["REQ-2.3.2", "REQ-2.5.4", "REQ-2.7.5"]
+    },
+    "repair_rounds_completed": 2,
+    "repair_stopped_reason": "same failures as previous round"
+  },
+  "platform_final": {
+    "passed": 29,
+    "total": 32,
+    "failed_tests": [
+      {
+        "test": "REQ-2.3.2.spec.ts",
+        "requirement": "REQ-2.3.2: Notification and Undo",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10023,
+        "locator": "getByRole('button', { name: /^Undo$/i })",
+        "failure_location": "/workspace/tests/helpers.ts:281; /workspace/tests/REQ-2.3.2.spec.ts:10"
+      },
+      {
+        "test": "REQ-2.5.4.spec.ts",
+        "requirement": "REQ-2.5.4: Unarchive",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10023,
+        "locator": "getByText(/Travel plans 2\\.5\\.4/i).first().getByRole('button', { name: /Travel\\s+plans\\s+2\\.5\\.4/i }).first()",
+        "failure_location": "/workspace/tests/helpers.ts:144,271; /workspace/tests/REQ-2.5.4.spec.ts:9"
+      },
+      {
+        "test": "REQ-2.7.5.spec.ts",
+        "requirement": "REQ-2.7.5: Edit labels",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10022,
+        "locator": "getByRole('group', { name: /^Label Work editable$/i }).getByRole('button', { name: /^Save$/i })",
+        "failure_detail": "button resolved but was not stable and was detached from the DOM during click",
+        "failure_location": "/workspace/tests/helpers.ts:355; /workspace/tests/REQ-2.7.5.spec.ts:11"
+      }
+    ],
+    "score": 90.6,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "metering": {
+    "requests": 1291,
+    "prompt_tokens": 34395140,
+    "completion_tokens": 717795,
+    "reasoning_tokens": 444073,
+    "prompt_cache_hit_tokens": 31627392,
+    "provider_requests": 1290,
+    "provider_prompt_tokens": 34395052,
+    "provider_completion_tokens": 717781,
+    "provider_total_tokens": 35112833,
+    "platform_token_count": 35112935,
+    "cost": 17.926147,
+    "currency": "CNY",
+    "run_duration_seconds": 9777
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "log_result_finalized": "FAILED score=90.6"
+  },
+  "source_precedence": [
+    "run.json for final platform status, score and test list",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal rounds and provider usage",
+    "meter.json for metered request/token/cost totals",
+    "playwright-report.json for final timeout configuration and test result details",
+    "failure-details.md for locator and call-log extraction",
+    "snapshots.json for generated design and codegen state",
+    "template.zip for package identity and reproducibility"
+  ],
+  "conflicts": [],
+  "missing": [
+    "task_snapshot_id",
+    "agent_build_id",
+    "code_sha"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-0aa6820e0b82-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 25734,
+      "sha256": "7A1ECBE35F3A12763BB26B96E009CE2F5D33636474A2DA68BB66035A2ABE9FB2",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-0aa6820e0b82.json",
+      "role": "raw_run_object",
+      "bytes": 9708,
+      "sha256": "256F89162B213AA9D476E5003627C08AAE6FC463E0976A261A595808A9B4AC18",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-0aa6820e0b82-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 449434,
+      "sha256": "3428758DDC28474ACE1F723D2AACB6F5122FF8489CD11EA714DB671DDFEAECE6",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-0aa6820e0b82-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 59487,
+      "sha256": "6FA4D37F80C3F5E7FCCA466CB82F11006D8D09B489E284F765636FC2DF5D9C2E",
+      "stored_in_repository": false
+    },
+    {
+      "name": "0aa6820e0b82-playwright-report.json",
+      "role": "final_playwright_report",
+      "bytes": 48390,
+      "sha256": "2E7966D9FEA00E544BE67DAA2B1BD3F656E410F0EE81CE2C372FF83954A22AE3",
+      "stored_in_repository": false
+    },
+    {
+      "name": "0aa6820e0b82-template.zip",
+      "role": "template_or_generated_package_snapshot",
+      "bytes": 1839107,
+      "sha256": "9B46EC5C3D55FEDD1E986BC6733E05CFA8C95C76723EFF42B67C22CF8DE93EC4",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-0aa6820e0b82-meter.json",
+      "role": "meter_request_and_cost_export",
+      "bytes": 299539,
+      "sha256": "7CB73E5AD89B621C064FED1EE52930FFFD2CBAFB2D3135CD1AFC453BC52E0FFE",
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0
+  }
+}
