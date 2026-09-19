@@ -1,8 +1,8 @@
 # 阶段 4 结果：`smoke-evolution--dice`
 
-> Run：`4c70ab1239a7`  
-> Submission：`4349bc89be76`  
-> Handoff：`4c70ab1239a7-3F4C53C132A1`  
+> Run：`4c70ab1239a7`
+> Submission：`4349bc89be76`
+> Handoff：`4c70ab1239a7-3F4C53C132A1`
 > 分析范围：只读分析本 Run；未创建新 Run、未重跑、未上传、未修改代码或测试
 
 ## 结论
