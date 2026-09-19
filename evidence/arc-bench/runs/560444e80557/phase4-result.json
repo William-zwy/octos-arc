@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 4 read-only diagnosis",
+  "handoff_id": "560444e80557-4CD2DC152A3E",
+  "run_id": "560444e80557",
+  "task_key": "smoke-evolution--counter",
+  "thread_id": "01a0b48b-b24d-7550-835c-6f8110aebfbd",
+  "status": "complete",
+  "phase4_status": "complete",
+  "completed_at": "2026-09-19T13:07:07.5675663Z",
+  "scope": {
+    "only_this_run": true,
+    "other_runs_analyzed": false,
+    "new_run_created": false,
+    "rerun_performed": false,
+    "upload_performed": false,
+    "code_modified": false,
+    "tests_modified": false
+  },
+  "source_evidence": {
+    "manifest_path": "evidence/arc-bench/runs/560444e80557/manifest.json",
+    "manifest_conflicts": [],
+    "missing_identity_fields": [
+      "task_snapshot_id",
+      "agent_build_id",
+      "code_sha"
+    ],
+    "external_artifacts_verified": true,
+    "artifacts": [
+      {
+        "name": "arcbench-560444e80557-failure-details.md",
+        "bytes": 2109,
+        "sha256": "95DE7FDDF07A6E474F62AEE1119DA8A07A47E311C74B6F3FE53508736EE31A90"
+      },
+      {
+        "name": "arcbench-run-560444e80557-summary.md",
+        "bytes": 3532,
+        "sha256": "1BBF1FF15AB47DB308093C8C3CB37794A20A0FF9DC67D45DBEF4D952A376EF2E"
+      },
+      {
+        "name": "arcbench-run-560444e80557.json",
+        "bytes": 4250,
+        "sha256": "A25A6DDBE36DD48097258323557DB4EB79F8D62E225155E80A5293BBB3FFC73E"
+      },
+      {
+        "name": "arcbench-run-560444e80557-logs.json",
+        "bytes": 35435,
+        "sha256": "94204EE746EF1356418B6976A2B06AC3E212421E918373F95BBAC56B605BD836"
+      },
+      {
+        "name": "arcbench-560444e80557-snapshots.json",
+        "bytes": 4461,
+        "sha256": "7F48BC4A1B5019CF6B0F6D602A7415D3280636C0990F692A24DE24B339082A4A"
+      },
+      {
+        "name": "560444e80557-template.zip",
+        "bytes": 5048,
+        "sha256": "A833A3C8118922A6196884AF7CC5E1D04798B2A149BF5DBE0C822AD96F62306C"
+      }
+    ]
+  },
+  "functional_result": {
+    "status": "PASSED",
+    "score": 100.0,
+    "passed": 2,
+    "total": 2,
+    "failed": 0,
+    "feature_implementation_rate": 1.0,
+    "failure_reason": null,
+    "functional_failure": false,
+    "round_0_passed": true,
+    "repair_rounds_completed": 0,
+    "tests": {
+      "REQ-1": {
+        "title": "preserve increment and decrement behavior",
+        "status": "passed",
+        "duration_ms": 533
+      },
+      "REQ-2": {
+        "title": "reset a changed count to zero",
+        "status": "passed",
+        "duration_ms": 294
+      }
+    }
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "finalized_status": "PASSED score=100.0"
+  },
+  "evolution_observation": {
+    "initial_nodes_to_implement": [
+      "REQ-1",
+      "REQ-2"
+    ],
+    "probe_results": {
+      "REQ-1": "1/1 passed",
+      "REQ-2": "0/1 passed"
+    },
+    "unchanged_nodes_after_probe": [
+      "REQ-1"
+    ],
+    "implemented_nodes": [
+      "REQ-2"
+    ],
+    "regression_results": {
+      "REQ-1": "1/1"
+    },
+    "node_acceptance": {
+      "REQ-2": "1/1"
+    },
+    "full_suite": "2/2; failing nodes []",
+    "evolution_path_effective": true
+  },
+  "token_observation": {
+    "requests": 1,
+    "prompt_tokens": 1010,
+    "completion_tokens": 468,
+    "reasoning_tokens": 0,
+    "prompt_cache_hit_tokens": 0,
+    "provider_total_tokens": 1478,
+    "platform_token_count": 3221,
+    "cost": 0.015651,
+    "currency": "CNY",
+    "interpretation": "One provider request; provider and platform token counts use different scopes and must both be retained for future A/B comparisons."
+  },
+  "timing_observation": {
+    "platform_run_duration_seconds": 34,
+    "started_to_finished_elapsed_seconds": 47.714697,
+    "generation_agent_log_window_seconds": 34,
+    "implementation_turn_seconds": 3,
+    "playwright_suite_duration_ms": 1713.208,
+    "observed_overhead": [
+      "Octos bundle download took approximately 7 seconds in the generation log.",
+      "The generation process completed before the platform build and final Playwright evaluation finished."
+    ],
+    "metric_scope_gap": true,
+    "interpretation": "The 34-second platform duration matches the generation-agent window, while started_at to finished_at spans approximately 47.7 seconds; the runtime field likely excludes part of evaluation/cleanup and should not be conflated with wall-clock elapsed time."
+  },
+  "resource_observation": {
+    "memory_limit_bytes": 2147483648,
+    "memory_peak_bytes": 665202688,
+    "oom_kill": false,
+    "stray_processes_killed": 12,
+    "interpretation": "No memory failure occurred, but process cleanup remains a scalability risk for larger tasks."
+  },
+  "observability_gaps": {
+    "snapshot_design_status": {
+      "REQ-1": 404,
+      "REQ-2": 404
+    },
+    "snapshot_codegen_object_empty": true,
+    "structured_runner_event_count": 1,
+    "raw_log_and_playwright_report_sufficient_for_final_result": true,
+    "interpretation": "The run is functionally valid, but snapshots and structured runner events do not fully represent the successful design/codegen path."
+  },
+  "stage5_decision": {
+    "needed_at_project_level": true,
+    "functional_fix_required_for_this_run": false,
+    "recommended_scope": "optimization_and_observability",
+    "priority": [
+      "Clarify and reduce startup/probe/Octos cold-start overhead without changing the successful Evolution decision path.",
+      "Reconcile platform duration with generation and wall-clock timestamps.",
+      "Make design/codegen snapshots and node status accurately reflect direct codegen writes and acceptance results.",
+      "Continue process cleanup hardening for larger Web tasks."
+    ],
+    "do_not_change_yet": [
+      "Do not rewrite the Evolution planner based on this passing Run.",
+      "Do not infer multimodal performance from this task."
+    ]
+  },
+  "conclusion": "This Run has no functional failure. The Evolution path correctly preserved REQ-1, implemented REQ-2, passed regression, and passed the full suite. Stage 5 remains justified for performance and observability improvements, not for a correctness repair to this Run."
+}
