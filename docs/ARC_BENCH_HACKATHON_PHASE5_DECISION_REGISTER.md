@@ -1,6 +1,6 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.1；建立日期：2026-09-19；状态：首个 5E 切片已本地实现与单元验证，尚未打包或进行平台 A/B。
+> 版本：v1.2；建立日期：2026-09-19；状态：首个 5E 切片已本地实现与单元验证，尚未打包或进行平台 A/B。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
@@ -18,7 +18,7 @@
 
 ## 2. 本版证据范围与基线
 
-本版纳入两个 Lite Run。两者共享平台 submission ID `59debd594609`，但各自 manifest 尚未填入 `task_snapshot_id`，也缺少可核验的上传 Agent 构建/代码 SHA 绑定；**共享 submission ID 不足以单独证明构建、任务快照和配置均可比**。下表里的 `template.zip` 是该 Run 的**生成应用快照**，不是上传的 Agent ZIP。
+本版纳入两个 Lite Run 和一个 Web BookStack Run。两个 Lite Run 共享平台 submission ID `59debd594609`，但各自 manifest 尚未填入 `task_snapshot_id`，也缺少可核验的上传 Agent 构建/代码 SHA 绑定；**共享 submission ID 不足以单独证明构建、任务快照和配置均可比**。Web BookStack 的展示名同样指向冻结 A0，用户确认该次上传的是未修改且与远程一致的队友代码；其 manifest 仍缺独立的上传 ZIP SHA、`code_sha` 和 `task_snapshot_id`。下表里的 `template.zip` 是该 Run 的**生成应用快照**，不是上传的 Agent ZIP。
 
 待纳入队列：[Web Keep `4b792b72d7dd`](../evidence/arc-bench/runs/4b792b72d7dd/manifest.json) 已有阶段 3 manifest（平台 `30/32`），但本台账尚未收到可复核的阶段 4 机制结论；暂不把它与 Lite Keep 的同名任务或本切片缺路由机制合并。
 
@@ -26,8 +26,9 @@
 |---|---|---|---|
 | Keep Lite [`0cef369cc925`](../evidence/arc-bench/runs/0cef369cc925/manifest.json) | 平台 `31/32`、FAILED，`REQ-2.5.4 Unarchive` 十秒超时；内部 round 0 `31/32`（失败 `REQ-2.8.2`）→ round 1 `32/32` | 1,004 次；输入 24,772,611、输出 660,754、缓存命中 22,496,000、推理 436,764、Provider total 25,433,365、平台 Token 58,278,570；13,576 秒；¥31.453807 | 功能可靠性疑点及成本基线 |
 | BookStack Lite [`00c59e0762fb`](../evidence/arc-bench/runs/00c59e0762fb/manifest.json) | 平台 `32/34`、FAILED，`REQ-4.5.1` 和 `REQ-6.1.3` 十秒超时；内部 round 0、round 1 均 `32/34`、同两题失败 | 1,324 次；输入 35,214,173、输出 681,758、缓存命中 32,267,264、推理 401,979、Provider total 35,895,931、平台 Token 60,951,255；14,338 秒；¥32.962032 | 已确认的功能缺陷及成本基线 |
+| BookStack Web [`c31c51f2400b`](../evidence/arc-bench/runs/c31c51f2400b/manifest.json)（[阶段 4 结果](../evidence/arc-bench/runs/c31c51f2400b/phase4-result.md)） | 冻结 A0；平台 `34/34`、PASSED、score 100；内部 round 0 `34/34`，修复轮次 0 | 1,095 次；输入 27,791,179、输出 494,827、缓存命中 25,721,344、推理 243,817、Provider total 28,286,006、平台 Token 28,219,131；7,362 秒；¥13.216805 | 功能通过样本；仅评审效率与回归门槛，不立功能补丁 |
 
-缓存命中 Token 是输入 Token 的子集，推理 Token 通常包含在输出口径内，不能再加到 Provider total；平台 Token 与 Provider total 口径不同，不能互相替代。Keep 的人工摘要曾将内部 round 0 写为 `26/32`，与原始日志 `31/32` 冲突；本台账按 manifest 的原始证据口径使用 `31/32`。两次运行均核验平台入口 `main.py` 和 `/workspace/tests`，没有 bundled tests 回退；这不能代替未来每次 Run 的独立核验。
+缓存命中 Token 是输入 Token 的子集，推理 Token 通常包含在输出口径内，不能再加到 Provider total；平台 Token 与 Provider total 口径不同，不能互相替代。Keep 的人工摘要曾将内部 round 0 写为 `26/32`，与原始日志 `31/32` 冲突；本台账按 manifest 的原始证据口径使用 `31/32`。三个 Run 均核验平台入口 `main.py` 和 `/workspace/tests`，没有 bundled tests 回退；这不能代替未来每次 Run 的独立核验。Web 与 Lite 虽同为 BookStack、测试数量也同为 34，但属不同赛道，不构成同任务、同快照的 A/B；不得直接比较费用或把 Web 的成功当作阶段 5 候选代码的收益。
 
 ## 3. 跨 Run 问题索引
 
@@ -36,17 +37,17 @@
 | `P5-001` | 设计中声明的路由未接入生成应用主路由 | `confirmed`：BookStack 同一 Run 的两处漏接；**尚未跨 Run 确认** | 本地已验证；平台效果未验证 | P0；平台 A/B 前先确认身份 |
 | `P5-002` | 状态写入与随即导航/读取可能竞态 | `strong_candidate`：Keep 一处；缺最终网络/DOM 时序 | 待证据，不修改 | P1；需 Keep trace 或等效复现 |
 | `P5-003` | A0 超时摘要可能把缺路由误导成等待/性能问题 | A0 措辞 `confirmed`；对修复结果的因果影响 `unknown` | 已在 `P5-001` 同一切片本地修改；平台效果未验证 | P0，随 `P5-001` 一起 A/B |
-| `P5-004` | 两个 Lite Run 请求、Token、耗时高，但瓶颈来源未定位 | 指标 `confirmed`；根因 `unknown` | 暂缓 5C/5D 调参 | P2；功能率稳定且有请求级明细后重开 |
-| `P5-005` | A/B 的上传 Agent 构建、任务快照绑定不完整 | 两个 manifest 缺字段 `confirmed`；平台是否能回填 `unknown` | 验证前门禁，不等于 Agent 功能修复 | P0；新候选复跑前处理 |
+| `P5-004` | 三个 Run 的请求、Token、耗时均可计量，但瓶颈来源未定位 | 指标 `confirmed`；根因 `unknown`；Web BookStack 功能已通过 | 暂缓 5C/5D 调参 | P2；功能率稳定且有请求级明细后重开 |
+| `P5-005` | A/B 的上传 Agent 构建、任务快照绑定不完整 | 三个 manifest 缺字段 `confirmed`；平台是否能回填 `unknown` | 验证前门禁，不等于 Agent 功能修复 | P0；新候选复跑前处理 |
 
-**当前跨 Run 结论：**两个 Run 都有十秒超时，也都消耗较多请求；但没有证据表明 Keep 的超时与 BookStack 的缺路由共享根因。禁止按“超时”这一表面标签做单一补丁。后续发现同一机制时，在对应 ID 下追加 Run 证据；机制不同则新建 ID，并记录关联而不强行合并。
+**当前跨 Run 结论：**两个 Lite Run 都有十秒超时，也都消耗较多请求；但没有证据表明 Keep 的超时与 BookStack 的缺路由共享根因。A0 Web BookStack 已 `34/34` 通过，说明漏路由不是所有 BookStack Run 的必然结果，却不能推翻 Lite 的具体漏接证据。禁止按“超时”这一表面标签做单一补丁。后续发现同一机制时，在对应 ID 下追加 Run 证据；机制不同则新建 ID，并记录关联而不强行合并。
 
 ## 4. 决策记录与现有能力盘点
 
 ### `P5-001`｜生成路由契约未闭环
 
 - **已确认事实：**BookStack 的 `.arc/design/REQ-4.5.1.json` 声明 `POST /shelf/:id/edit`；最终生成包 `backend/server.js` 有 `handleShelfEdit` 和提交表单，但主请求分发没有该 POST 分支。`.arc/design/REQ-6.1.3.json` 声明 `GET/POST /page/:id/delete`；最终生成包有删除页面/处理函数，却没有对应 GET/POST 分支。两类漏接在相关 codegen 快照中已出现并延续到最终生成包。Playwright 分别等不到更新后的 Shelf 标题和 `Confirm Delete` 按钮。因此“十秒超时”只是外部表现，缺路由是可直接定位的生成应用缺陷。
-- **共性边界：**“设计—代码接线遗漏”可作为通用 Agent 防线候选；目前只在 BookStack 一个 Run 中观察到两次，不能宣称所有 Lite/Web 任务都存在。
+- **共性边界：**“设计—代码接线遗漏”可作为通用 Agent 防线候选；目前只在 Lite BookStack 一个 Run 中观察到两次。冻结 A0 的 Web BookStack `c31c51f2400b` 首轮和平台最终均 `34/34`，可作为功能通过的回归样本，但赛道不同，不能据此判断 Lite 的缺路由已自愈，也不能宣称所有 Lite/Web 任务都存在该缺陷。
 - **A0 已有与候选新增：**A0 的 [`arc/main.py`](../arc/main.py) 已让模型产出 `.arc/design` 的 `routes`，并有逐节点 acceptance、修复轮次、无进展切换与最佳状态保留；[`arc/acceptance.py`](../arc/acceptance.py) 已生成失败摘要，但无通用路由接线提示。独立候选分支 `codex/arc-bench-phase5-route-contract`（完整提交 `c53c333d5205fb98bf168c1f4fc670c0eec7432f`）只在**测试失败时**读取当前节点设计与生成的 `backend/server.js`，把未在受支持的显式分发条件中检出的路由加入原有修复摘要；不另建验收循环，也不覆盖最佳状态机制。
 - **方案形式与选择：**已采用保守的本地静态诊断，而非执行生成代码或对有副作用的 POST 发探测请求。支持真实快照中同时出现的字符串路由（如 `"POST /shelf/:id/edit"`）和对象路由；只识别同一行的显式 `req.method` 加路径条件，同一路由族已有可识别分支时才给出最多 3 条“待核查”提示。未知路由风格保持沉默，提示不阻断测试。单纯追加提示词不能识别漏接；按 BookStack 任务名写补丁会过拟合，均未采用。
 - **已改边界：**候选只改 `arc/main.py` 的现有 acceptance 入口、`arc/acceptance.py` 的摘要与路由候选函数、对应两份单元测试及 `CHANGELOG.md`；未改 `arc/codegen.py`、官方需求/测试、生成应用快照或冻结 A0。
@@ -68,14 +69,14 @@
 
 ### `P5-004`｜Token、请求数和运行时间
 
-- **已确认事实：**两个 Lite Run 分别有 1,004/1,324 次模型请求、约 3.77/3.98 小时耗时；输入 Token 中大量是缓存命中。当前无请求级 meter 明细，不能准确指认某个设计、实现或修复轮次为主要费用来源。
+- **已确认事实：**两个 Lite Run 分别有 1,004/1,324 次模型请求、约 3.77/3.98 小时耗时；A0 Web BookStack 在 `34/34`、零修复轮次下仍有 1,095 次请求、7,362 秒耗时。三者输入 Token 中大量是缓存命中。当前无请求级 meter 明细，不能准确指认某个设计、实现或修复轮次为主要费用来源；跨赛道费用差异不能直接解释为 Agent 优化收益。
 - **当前代码已有：**[`arc/main.py`](../arc/main.py) 已设置请求预算、修复轮数、无进展停止和最佳状态保留；[`arc/llm_proxy.py`](../arc/llm_proxy.py) 与 [`arc/metrics.py`](../arc/metrics.py) 有代理计量与汇总。不得把这些能力当成“尚未实现”再做重复预算层。
-- **当前决策：**完成率优先。暂不全局缩短预算、改模型、压缩所有节点上下文或调大并发；先在 `P5-001` 的 A/B 中观察修复轮数和请求变化。若功能率相同，再用请求级明细选择 5C/5D 的单变量实验。
+- **当前决策：**完成率优先。Web BookStack 阶段 4 建议 `review_only`：无功能补丁，`34/34` 是后续效率实验不可降低的回归门槛。暂不全局缩短预算、改模型、压缩所有节点上下文或调大并发；先在 Lite BookStack 的 `P5-001` A/B 中观察修复轮数和请求变化。若同任务功能率相同，再用请求级明细选择 5C/5D 的单变量实验。
 - **重开条件：**有可定位的请求级 meter/轮次耗时，或新 Run 显示重复失败、重复视觉分析、无进展循环等明确机制。
 
 ### `P5-005`｜A/B 身份与任务快照绑定
 
-- **已确认事实：**两份 Lite manifest 的 `task_snapshot_id` 均为 `null`；缺少能够独立核验上传 Agent ZIP SHA 和代码 SHA 的绑定。BookStack 的展示名包含 A0 标识，但展示名和共同 submission ID 不是完整哈希证明。生成应用 `template.zip` 的 SHA 不能充当上传 Agent ZIP 的 SHA。
+- **已确认事实：**两份 Lite 和一份 Web BookStack manifest 的 `task_snapshot_id` 均为 `null`；缺少能够独立核验上传 Agent ZIP SHA 和代码 SHA 的绑定。Web BookStack 的 A0 身份有用户明确确认，三个 Run 的展示名也包含 A0 标识，但确认与展示名都不能替代独立上传包哈希；生成应用 `template.zip` 的 SHA 不能充当上传 Agent ZIP 的 SHA。
 - **当前决策：**此项是候选平台复跑前的证据门禁，不默认引发 Agent 主流程改造。先用现有上传、运行和官方快照材料补充/核验 build ID、代码 SHA、上传 ZIP SHA、任务快照或官方任务资产哈希及配置哈希；平台无法给出时记录不可比限制，不填猜测值。
 - **重开条件：**现有记录无法完成绑定，且确认需在 `arc/metrics.py` 或运行清单中加入最小元数据输出时，再立项 5A 的窄切片。不要因此提前重构完整 TaskContext。
 
@@ -91,6 +92,7 @@
 | 5F Evolution 指纹与增量编译 | 本轮暂缓；两个 Lite Run 不足以证明 Evolution 故障 | 对应 Evolution 基线显示全量重建、错误影响范围或回归 |
 | 5G 进程/端口/OOM 治理 | 本轮暂缓；失败可定位到生成应用/交互，尚无进程资源故障证据 | 新 Run 提供端口冲突、启动失败、OOM、泄漏或超时层级证据 |
 | Keep 的具体生成代码补丁 | 待证据；`P5-002` 的实际时序仍未确认 | trace/error-context 或可重复实验确认根因 |
+| Web BookStack 功能补丁 | 决定不改；冻结 A0 的 `c31c51f2400b` 已首轮及最终 `34/34`，阶段 4 仅建议效率评审 | 新的同任务失败链路或可复现回归；效率优化必须保持 `34/34` |
 
 暂缓不是“永不处理”。每个新 Run 都须检索上述触发条件；无新证据时保留决定，不因看到同名任务或同样的超时字符串就自动翻案。
 
@@ -118,5 +120,6 @@
 |---|---|---|---|---|
 | 2026-09-19 | 建立阶段 5 跨 Run 决策台账 | 文档建立；Agent 改动未授权 | 尚无优化代码提交、候选 ZIP 或优化版 Run | 仅完成执行前核验，不宣称阶段 5 或 G6 完成 |
 | 2026-09-19 | `P5-001` + `P5-003` 保守路由诊断与中性超时摘要 | 本地已验证；平台待验证 | `codex/arc-bench-phase5-route-contract`，`c53c333d5205fb98bf168c1f4fc670c0eec7432f`；未打包，无新 Run | 4 项定向测试通过；真实 BookStack 检出 3 条、Keep 0 条；完整候选 81 项/A0 78 项均为相同 3 fail + 1 error（Windows 基线问题） |
+| 2026-09-19 | 纳入 A0 Web BookStack `c31c51f2400b` | 阶段 3/4 证据已验证；阶段 5 决定仅评审效率 | A0 原版 Run；非候选构建，非 A/B | 平台与内部首轮均 `34/34`；阶段 4 ACK/结果四项身份字段匹配；无功能补丁，`34/34` 作为回归门槛 |
 
 后续新增一行时，若状态为“实施中”或以上，必须写出实际文件、完整提交 SHA、构建 ID、测试命令及结果；若状态为“平台已验证”，还须写出新 Run ID 和 A/B 结论。不得把本文件的建立提交误写成 Agent 优化提交。
