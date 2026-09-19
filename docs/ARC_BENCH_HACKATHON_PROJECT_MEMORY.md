@@ -100,7 +100,11 @@
 - 两次 Smoke 运行共用 submission ID `3ac91524402b`，模型为 `deepseek-v4-flash`，视觉模型为 `deepseek-vl-flash-vision-exp`，推理级别为 `reasoning-none`，配置哈希为 `3976454af8e94f17b3725f2dc8aaba1bbdd8a1cd9d48ca7a46525411b7edfcc9`。
 - 平台入口已确认是 ZIP 根目录 `main.py`，测试来源已确认是 `/workspace/tests`，没有回退到 ZIP bundled tests；仓库不保存平台 API Key 值和原始平台日志。
 - 阶段 3（原始证据收集与冻结）、阶段 4（单任务只读诊断）和阶段 5（共性问题汇总、通用优化与 A/B 验证）现已按第 6 节闭环并行执行。这里的“正在执行”不等于阶段完成，仍需逐项满足各阶段门禁。
-- 当前已知的在途 Lite 运行包括 Lite Keep `0cef369cc925` 和 Lite BookStack `00c59e0762fb`；其附件和 meter 明细继续按阶段 3 补录，再由阶段 4 复核并交给阶段 5 决策。
+- Lite Keep `0cef369cc925` 的补充证据已完成阶段 3 归一化登记：最终平台结果为 `31/32`、score `96.9`、`FAILED`，最终权威失败是 `REQ-2.5.4 Unarchive` 的 10 秒 Playwright 超时；Agent 内部全量验收为 round 0 `31/32`（`REQ-2.8.2`）→ round 1 `32/32`。两者是不同验收层，不能合并成一个“修复后全过”的结论。
+- Lite Keep 的本次运行耗时 `13576s`（约 3.77 小时），平台 Token `58278570`，Provider `total_tokens=25433365`，请求数 `1004`，费用 `31.453807 CNY`，推理级别 `low`，时间预算 `48000s`。入口、`/workspace/tests`、未回退 bundled tests、run 归属和密钥脱敏均已核验通过。
+- Lite Keep 补充证据 manifest：[`evidence/arc-bench/runs/0cef369cc925/manifest.json`](../evidence/arc-bench/runs/0cef369cc925/manifest.json)。manifest 记录了 7 个外部附件的大小和 SHA-256；原始附件仍由操作人保存在外部下载目录，未将原始日志、模板 ZIP 或任何密钥复制进仓库。
+- 补充摘要中的“round 0: 26/32”与原始日志、run 对象和 Playwright 报告中的 `31/32` 冲突；按证据优先级保留该冲突并采用原始结构化字段，不静默改写摘要来源。
+- 当前已知的在途 Lite 运行包括 Lite BookStack `00c59e0762fb`；其附件和 meter 明细继续按阶段 3 补录，再由阶段 4 复核并交给阶段 5 决策。
 
 ## 4. 当前仓库状态
 
@@ -158,9 +162,34 @@
 
 阶段 3 的完成门禁是：run 身份没有混绑；原始文件清单和缺失项明确；敏感信息已脱敏；标准化记录能够回溯到原始证据。阶段 3 不因缺失部分附件而伪造完整状态，应明确标记 `missing` 或待补录项。
 
+### 6.1.1 阶段 3 证据摄取的分层读取与冲突处理（2026-09-19 优化）
+
+为了提高准确性并避免在每个会话反复消耗完整日志，阶段 3 固定使用“先索引、后定点”的读取顺序：
+
+1. 先生成附件 manifest：文件名、角色、字节数、SHA-256、是否已入库；不先把原始日志全文放入上下文。
+2. 读取 `run.json` 的最终状态、score、通过/失败数、失败测试、平台 Token、费用、总耗时、模型和 run/submission ID。
+3. 只对 `logs.json` 做定点提取：入口、`tests_dir`、bundled 回退、代理配置、provider totals、内部 acceptance round、最终结果和敏感信息扫描。
+4. 只有存在失败时，才读取 `playwright-report.json` 和 `failure-details.md`，提取失败测试、locator、超时、调用栈和 error-context 路径。
+5. 只有阶段 4 需要追溯生成状态时，才读取与失败节点及其直接依赖相关的 `.arc` snapshots；不默认展开全部 design/codegen 内容。
+6. 只有需要复现打包内容时，才读取 template ZIP 的文件清单、根目录和 SHA-256；不默认解压或把整包写入上下文。
+
+不同文件承担不同事实职责：`run.json` 负责最终平台结果，`logs.json` 负责运行过程和内部验收，Playwright 报告负责最终测试细节，failure details 负责可读定位，snapshots 负责生成状态，template ZIP 负责包内容身份。人工 summary 只作为导航和补充，发生冲突时不能覆盖结构化原始字段。
+
+每条记录必须拆开保存三类指标：
+
+- `internal_acceptance`：Agent 自己的节点验收、round 和修复状态；
+- `platform_final`：官网最终 Playwright 结果和 score；
+- `metering`：Provider Token、平台 Token、费用和请求数等计量口径。
+
+本次 Lite Keep 已验证该规则的必要性：Agent 内部 round 1 为 `32/32`，但最终平台仍因 `REQ-2.5.4` 超时而为 `31/32`；补充 summary 的 round 0 数字也与原始日志不同。后续不能使用“修复后全过”替代最终平台状态。
+
+为节省 Token，阶段 3 的对外汇总只输出一页归一化记录、失败节点和证据路径；原始日志不复制到聊天，不重复粘贴同一条 stdout/stderr，不把缓存 Token 或 reasoning Token重复加到 Provider 总 Token。所有未解决的字段冲突进入 `conflicts`，不得通过猜测填平。
+
 ### 6.2 阶段 4：基于单个 run 做只读诊断
 
 阶段 4 通过任务名和 `run_id` 读取对应的阶段 3 记录及原始附件，只做诊断，不创建新 run、不修改代码。会话标题和历史摘要只能用作索引，最终判断必须回到日志、测试产物、最终生成代码和平台权威结果。
+
+阶段 4 的最省上下文入口是先读 manifest 和归一化记录，再只读最终失败用例的报告与快照；只有当根因仍不明确时，才扩大到相邻节点或完整日志。阶段 4 必须分别报告内部 acceptance 结果和平台最终结果，不能用其中一个推断另一个。
 
 每个阶段 4 分析固定输出：
 
