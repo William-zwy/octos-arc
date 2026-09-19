@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 4 read-only diagnosis",
+  "status": "complete",
+  "handoff_id": "5669f7d1777c-DADB44C15C2B",
+  "run_id": "5669f7d1777c",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "completed_at": "2026-09-19T16:45:11.7022519Z",
+  "scope": {
+    "only_this_run": true,
+    "code_lineage": "first_modified_code_not_frozen_A0_not_stage5_output",
+    "other_runs_analyzed": false,
+    "new_run_created": false,
+    "rerun_performed": false,
+    "upload_performed": false,
+    "code_modified": false,
+    "tests_modified": false
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 94.1,
+    "passed": 32,
+    "total": 34,
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "failed_tests": [
+      {
+        "test": "REQ-5.6.1.spec.ts",
+        "requirement": "REQ-5.6.1: Fill out and Save Book with Shelf",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10012,
+        "locator": "getByRole('heading', { name: /Book\\\\s+Created\\\\s+5\\\\.6\\\\.1/i }).first()",
+        "failure_location": "/workspace/tests/helpers.ts:137; /workspace/tests/REQ-5.6.1.spec.ts:11"
+      },
+      {
+        "test": "REQ-6.1.1.spec.ts",
+        "requirement": "REQ-6.1.1: Save Page",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10016,
+        "locator": "getByRole('heading', { name: /Page\\\\s+Created\\\\s+6\\\\.1\\\\.1/i }).first()",
+        "failure_location": "/workspace/tests/helpers.ts:137; /workspace/tests/REQ-6.1.1.spec.ts:11",
+        "last_observed_url": "http://127.0.0.1:3000/books/8"
+      }
+    ]
+  },
+  "confirmed_facts": [
+    "The platform final run used main.py and /workspace/tests; bundled test fallback hits were zero and no plaintext API key was recorded.",
+    "The final frontend build and backend startup completed successfully; the application became reachable on http://127.0.0.1:3000.",
+    "REQ-5.6.1 failed while waiting for the created book name after clicking Save Book; the locator reported element(s) not found.",
+    "REQ-6.1.1 failed while waiting for the created page name after navigation to /books/8; the locator reported element(s) not found.",
+    "The final Playwright suite ran 34 tests with one worker, took 39918.587 ms, and had exactly the two target failures.",
+    "Internal acceptance is not equivalent to the platform final result: REQ-5.6.1 was 0/1 in round 0, round 1, and round 2; REQ-6.1.1 was 1/1 in round 0; the internal full suite later reported round 0 as 33/34 with REQ-2.2 failing and round 1 as 34/34.",
+    "The final package contains the expected REQ-5.6.1 shelf-context route, form, POST /api/books path, shelfId association logic, the expected REQ-6.1.1 page-create route, POST /api/pages path, and server-side book page injection.",
+    "The final template database contains Shelf 5.6.1 with id 10, Book Created 5.6.1 with shelfId 10, and Page Created 6.1.1 with bookId 8. The page updatedAt value 1789832818343 converts to 2026-09-19 15:46:58Z, inside the platform test window.",
+    "The final artifact therefore proves that at least the REQ-6.1.1 page mutation was persisted during the relevant execution window, but it does not prove that the browser DOM exposed the record on the subsequent /books/8 response.",
+    "The run used reasoning=low, 1275 provider requests, 32806461 platform tokens, 32806346 provider-total tokens, cost 17.124841 CNY, and run_duration_seconds 12739."
+  ],
+  "failure_chains": [
+    {
+      "node": "REQ-5.6.1",
+      "chain": "The official flow opens Shelf 5.6.1, opens the shelf-context New Book form, fills and submits the book, then checks the returned shelf page for Book Created 5.6.1 and Shelf 5.6.1. The final platform run reached the final text assertion, but the created-book locator never became visible before the 10-second test deadline.",
+      "direct_evidence": "The final Playwright report records only the missing Book Created 5.6.1 locator at helpers.ts:137. The static package has the route/form/API and shelf filtering code, while no final DOM, response body, or server request trace is available.",
+      "confidence": "confirmed_for_observed_failure; exact application cause unknown"
+    },
+    {
+      "node": "REQ-6.1.1",
+      "chain": "The official flow opens Book 6.1.1, opens /books/8/new, fills and submits the page form, redirects to /books/8, then checks for Page Created 6.1.1. The page mutation is present in the final database artifact during the test window, but the browser still cannot find the expected text on /books/8.",
+      "direct_evidence": "The final report records navigation to /books/8 followed by a missing-text timeout; the final database contains Page Created 6.1.1 with bookId 8 and a timestamp at 15:46:58Z.",
+      "confidence": "confirmed_for_observed_failure; post-save rendering/readback mismatch is a strong candidate"
+    },
+    {
+      "node": "internal_to_platform_boundary",
+      "chain": "The Agent's own targeted/full acceptance and the platform's fresh build/final Playwright evaluation did not produce the same outcome. The Agent process was stopped, the platform rebuilt the frontend, and the final platform suite then failed the two save-and-readback checks.",
+      "direct_evidence": "Logs show internal full-suite 34/34 at 15:46:21, process cleanup, a fresh platform frontend build at 15:46:31, and final failures at 15:46:56 and 15:47:07.",
+      "confidence": "confirmed_boundary; exact divergence mechanism unknown"
+    }
+  ],
+  "root_cause_candidates": [
+    {
+      "id": "RC-1",
+      "candidate": "Final platform post-save readback/rendering does not expose newly persisted book/page records in the DOM expected by the official helpers.",
+      "evidence_level": "strong_candidate",
+      "evidence": "Both failures occur after save at helpers.ts:137; REQ-6.1.1 has a persisted page record and a /books/8 navigation but still lacks visible text. The static source appears to implement the nominal routes, so the missing evidence is the actual final response DOM.",
+      "scope": "backend/server.js, backend/db.js, frontend/src/app.js, frontend/src/book-details.html, frontend/src/shelf-details.html"
+    },
+    {
+      "id": "RC-2",
+      "candidate": "Mutable database state was carried from Agent acceptance into the final platform evaluation, making the two execution modes non-equivalent.",
+      "evidence_level": "strong_candidate",
+      "evidence": "The final template database contains acceptance-created records, sessions, favorites, recently-viewed entries, and post-test mutations; no clean pre-platform database hash or reset event is recorded. The platform final run followed internal acceptance and a startup rehearsal in the same generated workspace.",
+      "scope": "backend/data/db.json and acceptance/package reset workflow"
+    },
+    {
+      "id": "RC-3",
+      "candidate": "The final platform package and the internal acceptance package were not semantically identical despite sharing the same generated workspace lineage.",
+      "evidence_level": "unknown_to_strong_candidate",
+      "evidence": "Internal REQ-6.1.1 passed while the final platform run failed, and the final platform rebuilt frontend/dist after the Agent process exited. No build manifest, pre/post file hashes, or DOM trace is available to prove where they diverged.",
+      "scope": "frontend build/package boundary and runner lifecycle"
+    },
+    {
+      "id": "RC-4",
+      "candidate": "The official 10-second timeout itself is the primary cause.",
+      "evidence_level": "unlikely",
+      "evidence": "The failure says element(s) not found; REQ-6.1.1's target record is persisted within the same test window, and no evidence shows a locator that became visible just after the deadline.",
+      "scope": "Playwright timing only"
+    }
+  ],
+  "excluded_causes": [
+    "Not a wrong entrypoint: main.py was executed.",
+    "Not a wrong test directory: /workspace/tests was used.",
+    "Not bundled-test fallback.",
+    "Not a plaintext API key leak.",
+    "Not a complete application outage: 32 of 34 public tests passed and the app was reachable.",
+    "Not a missing nominal route/form/API in the final static package; both target implementations are present in the artifact.",
+    "Not an OOM or runner-wide resource termination; the run completed its test report and no memory kill was recorded in the handoff evidence."
+  ],
+  "evidence_gaps": [
+    "No final Playwright trace, screenshot, DOM snapshot, response body, or network HAR for either failure.",
+    "No request-level server log showing POST status, redirect response, and GET /shelves/10 or GET /books/8 response body.",
+    "No clean database checksum immediately before the platform final suite, so the origin of Book Created 5.6.1 cannot be assigned to internal acceptance or the final suite with certainty.",
+    "No file/build manifest proving that the internal acceptance and final platform frontend artifacts were byte-identical.",
+    "The platform did not provide task_snapshot_id, agent_build_id, or code_sha."
+  ],
+  "minimal_reproduction_experiments": [
+    "From a pristine copy of the final template, run only REQ-5.6.1 with request logging and capture the POST /api/books response, redirect target, GET /shelves/10 HTML, and the rendered locator text.",
+    "From a pristine copy of the final template, run only REQ-6.1.1 with request logging and capture the POST /api/pages response, redirect target, GET /books/8 HTML, and the rendered locator text.",
+    "Run the two tests once after a clean database reset and once after the internal full suite without reset; compare db.json hashes, response bodies, and DOMs.",
+    "Before any next submission, build frontend/dist from frontend/src, record source/dist hashes, start the app, execute the exact two official specs, and restore or regenerate the clean seed before packaging."
+  ],
+  "stage5_recommendation": {
+    "handoff": true,
+    "priority": [
+      "P0: reproduce the two save-to-readback flows on a clean package before changing business logic.",
+      "P0: make final packaging and platform evaluation start from an immutable clean db.json; never reuse the mutable database from Agent acceptance.",
+      "P0: add a local verification gate that asserts POST success, redirect target, and target text in the returned HTML/DOM for both requirements.",
+      "P1: if clean reproduction confirms a real rendering/readback defect, make the smallest targeted change in server-side shelf/book page injection or the corresponding form redirect; do not rewrite the application.",
+      "P1: record source/dist/database hashes and a final targeted Playwright report so internal acceptance and platform evaluation are comparable.",
+      "Do not modify official tests or helpers."
+    ],
+    "change_boundary": [
+      "backend/server.js",
+      "backend/db.js",
+      "backend/data/db.json or deterministic packaging reset logic",
+      "frontend/src/app.js",
+      "frontend/src/book-create-shelf.html",
+      "frontend/src/page-create.html",
+      "frontend/src/shelf-details.html",
+      "frontend/src/book-details.html"
+    ],
+    "do_not_do": [
+      "No broad frontend rewrite.",
+      "No global Playwright timeout increase as the first fix.",
+      "No full platform rerun before the two targeted clean-state reproductions converge.",
+      "No mixing with frozen A0 or Stage5 conclusions."
+    ]
+  },
+  "impact_estimate": {
+    "completion_rate": "32/34 = 94.1%; fixing or stabilizing both save/readback paths would raise the expected score to 34/34 = 100%, a gain of 5.9 percentage points, subject to clean-state verification.",
+    "token": "This Run consumed 32806461 platform tokens across 1275 requests at 17.124841 CNY. Repeating the full generation to investigate two post-save assertions is high risk; targeted local reproduction should be used first. Exact savings are not measurable from this Run.",
+    "runtime": "The final Playwright suite took about 39.9 seconds, including approximately 20 seconds spent in the two 10-second timeouts. The total 12739-second Run is dominated by generation and repair, so fixing the public tests alone will not materially reduce end-to-end generation time unless the Agent also avoids long unverified repair loops.",
+    "risk": "The largest residual risk is a state/package boundary mismatch rather than the nominal presence of the two features. A code-only change made without a clean-state reproduction could regress the 32 currently passing scenarios."
+  },
+  "source_files": {
+    "manifest": "evidence/arc-bench/runs/5669f7d1777c/manifest.json",
+    "handoff": "evidence/arc-bench/runs/5669f7d1777c/phase4-handoff.json",
+    "ack": "evidence/arc-bench/runs/5669f7d1777c/phase4-ack.json",
+    "failure_details": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-5669f7d1777c-failure-details.md",
+    "run": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-5669f7d1777c.json",
+    "logs": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-5669f7d1777c-logs.json",
+    "snapshots": "C:/Users/dayuruozhi/Downloads/arcbench-5669f7d1777c-snapshots.json",
+    "template": "C:/Users/dayuruozhi/Downloads/5669f7d1777c-template.zip",
+    "official_specs": "workstreams/arc-bench/official-snapshots/20260917-150121Z/competitions/arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests"
+  }
+}
