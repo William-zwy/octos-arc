@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "handoff_id": "c31c51f2400b-readback-fix-01",
+  "run_id": "c31c51f2400b",
+  "task_key": "arc-bench-web--bookstack",
+  "thread_id": "01a0b8a0-1851-7693-b8cf-1fbbfcbbbf7e",
+  "status": "received",
+  "received_at": "2026-09-19T08:11:53.348Z"
+}

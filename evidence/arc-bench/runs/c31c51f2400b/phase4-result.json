@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "handoff_id": "c31c51f2400b-readback-fix-01",
+  "run_id": "c31c51f2400b",
+  "task_key": "arc-bench-web--bookstack",
+  "thread_id": "01a0b8a0-1851-7693-b8cf-1fbbfcbbbf7e",
+  "status": "complete",
+  "read_only": true,
+  "platform_final": {
+    "status": "PASSED",
+    "score": 100,
+    "passed": 34,
+    "total": 34
+  },
+  "evidence_manifest": "evidence/arc-bench/runs/c31c51f2400b/manifest.json",
+  "result_md_path": "evidence/arc-bench/runs/c31c51f2400b/phase4-result.md",
+  "stage5_recommendation": "review_only",
+  "generated_at": "2026-09-19T08:11:53.348Z"
+}
