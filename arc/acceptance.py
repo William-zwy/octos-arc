@@ -206,6 +206,31 @@ def failure_summaries(summary: RunSummary, max_steps: int = 8, max_observation: 
     return "\n".join(blocks)
 
 
+def interaction_failure_hints(summary: RunSummary, max_hints: int = 3) -> list[str]:
+    """Suggest bounded UI checks only when a failed Playwright message supports them."""
+    hints: list[str] = []
+    for result in summary.results:
+        if result.ok:
+            continue
+        message = result.message.lower()
+        candidates = []
+        if "getbyrole(" in message and "name:" in message:
+            candidates.append("Role/name locator: check the rendered accessible name and visibility; "
+                              "aria-label can override visible text.")
+        if "element was detached" in message or "element is not stable" in message:
+            candidates.append("Unstable target: check overlapping reads and re-renders replacing an active "
+                              "control or resetting its draft before increasing timeouts.")
+        if "locator.hover" in message and "getbytext(" in message:
+            candidates.append("Missing initial target: compare fresh-start and packaged data with the "
+                              "test's first action and the current view filters.")
+        for hint in candidates:
+            if hint not in hints:
+                hints.append(hint)
+            if len(hints) >= max_hints:
+                return hints
+    return hints
+
+
 _ROUTE_IF = re.compile(r"\bif\s*\(([^\n]{0,600})\)\s*\{")
 _ROUTE_METHOD = re.compile(r"\breq\.method\s*={2,3}\s*(['\"])([A-Z]+)\1")
 _ROUTE_LITERAL = re.compile(r"\bpathname\s*={2,3}\s*(['\"])(/[^'\"]*)\1")

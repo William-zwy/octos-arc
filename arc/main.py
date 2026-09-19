@@ -77,7 +77,8 @@ from arcbench_agent_runtime import AgentRuntime  # noqa: E402
 from acceptance import (  # noqa: E402
     workers_for_memory,
     AcceptanceRunner, AppServer, RunSummary, acceptance_work_dir, container_memory_limit, ensure_playwright,
-    failure_summaries, find_playwright_by_search, find_playwright_root, map_specs_to_nodes,
+    failure_summaries, find_playwright_by_search, find_playwright_root, interaction_failure_hints,
+    map_specs_to_nodes,
     nodes_for_failures, playwright_candidates, playwright_version_hint, route_contract_gaps, restore_tree,
     restore_worktree, snapshot_worktree, tree_digest,
 )
@@ -743,10 +744,10 @@ class OctosDriver:
 
 UI_CONTRACT_CORE = """\
 UI contract (the hidden Playwright tests depend on these; a violation scores 0):
-- Buttons are real <button> elements, links are <a href>, every form control has a visible <label for=id>; their texts are copied VERBATIM from the requirement/spec (anchored regexes like /^name$/i reject "Full Name"). Use plain text/password/email inputs, native <select>/checkbox/radio; NEVER type="date"/"number". All controls exist in the served HTML itself and stay visible, enabled and editable at all times; no CSS transitions/animations and no JavaScript that re-renders or re-creates form controls after load (Playwright waits for elements to be "stable" — cloud run 954a231a3d23 timed out on a checkbox that kept changing).
+- Buttons are real <button> elements, links are <a href>, every form control has a visible <label for=id>; their texts and accessible names are copied VERBATIM from the requirement/spec (anchored regexes like /^name$/i reject "Full Name"). Keep action feedback in its own message element: an aria-label on a control overrides its visible text, so never use a status message as the control's name. Use plain text/password/email inputs, native <select>/checkbox/radio; NEVER type="date"/"number". All controls exist in the served HTML itself and stay visible, enabled and editable during interaction; no CSS transitions/animations or async re-render that replaces a focused control or resets an unsaved draft (Playwright waits for elements to be "stable" — cloud run 954a231a3d23 timed out on a checkbox that kept changing).
 - No native HTML5 validation attributes; validate in JavaScript and show ONE inline error element (role="alert") naming the problem (required / invalid / match / terms / duplicate). On error stay on the page and create no record.
 - Strict mode: every echoed value (username, city, date) appears in EXACTLY ONE element per page; every link target appears in EXACTLY ONE <a> per page (one "Register" link, one "Login" link — never a nav link plus a call-to-action to the same href; the specs click `a[href="/register"]` and fail on two matches); never both a short and a long form of one entity, never a per-field error plus a summary. Serve a SEPARATE HTML document per route (`/`, `/register`, `/login`, ...) — never several forms in one document with hidden views: hidden inputs and labels still collide in getByLabel/getByRole.
-- State: persist ONLY what the requirement says is persisted and reproduce that seed on EVERY fresh start; a page's initial state (e.g. "the count is initially 0") is per-page-load client state, never a shared server value — the grader runs several test files in parallel against ONE server. The initial state must already be in the served HTML (e.g. the element contains `0` in the markup); never leave it empty until a fetch completes — the tests assert immediately after load.
+- State: persist ONLY what the requirement says is persisted and reproduce that seed on EVERY fresh start; before the test's first action, its target must exist in the visible starting view, not already in its post-action state. A packaged persistent store must agree with the intended seed and contain no state left by acceptance tests. A page's initial state (e.g. "the count is initially 0") is per-page-load client state, never a shared server value — the grader runs several test files in parallel against ONE server. The initial state must already be in the served HTML (e.g. the element contains `0` in the markup); never leave it empty until a fetch completes — the tests assert immediately after load.
 - Zero external requests (no CDN, fonts, analytics); assets small and same-origin.
 - Live indicators (password-strength meters, counters, previews) update their OWN element's text/attributes synchronously in the `input` event handler — never on change/blur, never debounced, never only a wrapper's class (specs compare the element's outerHTML before and after typing).
 - Text only: never OCR reference images. Write files in your first actions.
@@ -760,7 +761,7 @@ Requirement {node_id}: {description}
 Acceptance test (ground truth):
 {spec}
 Files: frontend/src/index.html (+ one html per further route); backend/server.js = CommonJS (require) Node http server on process.env.PORT||{port} serving ../frontend/dist files (index.html for /, <name>.html for /<name>) plus any API routes the requirement needs (in-memory state), 404 for anything else, wrapped in try/catch and process.on('uncaughtException').{ports} Both package.json files already exist (build copies src/* to dist; start runs server.js): do not output them.
-Rules: texts, button names, labels and test ids exactly as in the test; the initial state is literally in the HTML; state lives in the page script unless the requirement says it is persisted; no external resources, no CSS, no comments, no notes; Playwright strict mode: every locator in the test must match exactly one element on the served page (no duplicate links, labels, texts or ids; each label's for= resolves to its own control). {size_rule}
+Rules: texts, button accessible names, labels and test ids exactly as in the test; keep status text separate from a control's aria-label; the initial state is literally in the HTML and supports the test's first action, not its post-action state; state lives in the page script unless the requirement says it is persisted; async reads must not replace an active edit or reset its draft; no external resources, no CSS, no comments, no notes; Playwright strict mode: every locator in the test must match exactly one element on the served page (no duplicate links, labels, texts or ids; each label's for= resolves to its own control). {size_rule}
 """
 
 CODEGEN_SIZE_SMALL = "index.html <= 20 lines, server.js <= 20 lines."
@@ -835,8 +836,8 @@ Read the acceptance spec files for this node in full and the existing code they 
  "pages": [{{"path": "/...", "elements": [{{"role": "textbox|button|link|combobox|checkbox|radio|alert", "name": "exact accessible name", "notes": ""}}]}}],
  "data_model": {{"collection": {{"field": "type"}}}},
  "files": ["backend/server.js", "frontend/src/..."],
- "notes": "validation rules, session handling, seed data, performance decisions"}}
-Copy every accessible name verbatim from the specs. This is a reading turn: use only file reading, listing and grep — no builds, servers, curl or other shell commands — and do not create or modify any other file.\
+ "notes": "validation rules, session handling, fresh-start and packaged seed preconditions, async edit stability, performance decisions"}}
+Copy every accessible name verbatim from the specs. Distinguish control names from action-feedback text and record the initial state needed by the first test action. This is a reading turn: use only file reading, listing and grep — no builds, servers, curl or other shell commands — and do not create or modify any other file.\
 """
 
 NODE_PROMPT = """\
@@ -861,7 +862,7 @@ Mandatory files (all in this turn): frontend/package.json (with the `build` scri
 
 
 INLINE_DESIGN_NOTE = """\
-Before writing code, write your design for this node as ONE JSON object to .arc/design/{node_id}.json ({{"routes": [...], "pages": [{{"path", "elements": [{{"role", "name"}}]}}], "data_model": {{}}, "files": [...], "notes": ""}}; accessible names copied verbatim from the specs), then implement it.
+Before writing code, write your design for this node as ONE JSON object to .arc/design/{node_id}.json ({{"routes": [...], "pages": [{{"path", "elements": [{{"role", "name"}}]}}], "data_model": {{}}, "files": [...], "notes": "initial test preconditions, seed state, async edit stability"}}; accessible names copied verbatim from the specs and distinct from feedback text), then implement it.
 """
 
 EVOLUTION_NOTE = """\
@@ -882,6 +883,7 @@ Final end-to-end check of the web application in the current directory:
 1. `npm run build` in frontend/ — fix any error.
 2. Kill leftover servers, start the backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, confirm `curl http://127.0.0.1:{smoke}/` serves the app and every API endpoint answers (success and error cases).
 3. Audit every page against the contracts below and fix violations; run a mechanical strict-mode check: for each value the pages echo, count the elements containing it (`curl -s <page> | grep -o '<value>' | wc -l` for server-rendered pages, or read the render code) — the count must be 1.
+4. If a persistent data file ships with the app, start from the packaged file without deleting it and check that initial fixture state supports the first test action; do not ship state mutated by acceptance tests.
 {tests}
 {ui}{performance}
 """ + PORT_RULES
@@ -1389,8 +1391,11 @@ class Flow:
             log(f"[trace] test rows not recorded: {exc}")
 
     def failure_diagnostics(self, node_id: str, summary: RunSummary) -> str:
-        """Add bounded route candidates to the existing acceptance failure digest."""
+        """Add bounded interaction and route hypotheses to the repair digest."""
         failures = failure_summaries(summary)
+        hints = interaction_failure_hints(summary)
+        if hints:
+            failures += "\n  Interaction audit (hypotheses, not verdicts): " + " ".join(hints)
         design = self.designs.get(node_id)
         server = self.output_dir / "backend" / "server.js"
         if not isinstance(design, dict) or not any(not result.ok for result in summary.results):

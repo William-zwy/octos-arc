@@ -151,6 +151,33 @@ class RouteDiagnosticsTests(unittest.TestCase):
             self.assertEqual(flow.failure_diagnostics("REQ-1", summary), "")
 
 
+class InteractionDiagnosticsTests(unittest.TestCase):
+    def test_should_add_interaction_hint_without_design_or_extra_acceptance_loop(self):
+        import argparse, tempfile
+        from pathlib import Path
+        from acceptance import RunSummary, TestOutcome
+        with tempfile.TemporaryDirectory() as tmp:
+            flow = m.Flow(argparse.Namespace(web_port=3000), Path(tmp), Path(tmp))
+            summary = RunSummary(results=[TestOutcome(
+                title="Undo", ok=False, status="timedOut", duration_ms=10000,
+                message="waiting for getByRole('button', { name: /^Undo$/i })")])
+            digest = flow.failure_diagnostics("REQ-1", summary)
+            self.assertIn("Interaction audit (hypotheses, not verdicts)", digest)
+            self.assertIn("aria-label", digest)
+            self.assertNotIn("Route wiring audit", digest)
+
+
+class InteractionPromptTests(unittest.TestCase):
+    def test_should_cover_names_initial_state_and_active_edits_in_existing_prompts(self):
+        self.assertIn("aria-label on a control overrides its visible text", m.UI_CONTRACT_CORE)
+        self.assertIn("resets an unsaved draft", m.UI_CONTRACT_CORE)
+        self.assertIn("packaged persistent store", m.UI_CONTRACT_CORE)
+        self.assertIn("test's first action", m.UI_CONTRACT_CORE)
+        self.assertIn("status text separate", m.CODEGEN_PROMPT)
+        self.assertIn("initial test preconditions", m.INLINE_DESIGN_NOTE)
+        self.assertIn("start from the packaged file without deleting it", m.FINAL_CHECK_PROMPT)
+
+
 class CodegenPromptTests(unittest.TestCase):
     def test_should_format_without_placeholder_errors_and_keep_build_command(self):
         import main as m

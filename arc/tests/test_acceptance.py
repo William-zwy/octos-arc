@@ -5,6 +5,8 @@ from pathlib import Path
 
 from acceptance import (
     failure_summaries,
+    interaction_failure_hints,
+    RunSummary,
     isolated_install_env,
     map_specs_to_nodes,
     playwright_version_hint,
@@ -102,6 +104,23 @@ class ReportTests(unittest.TestCase):
         self.assertIn("timed out", text.lower())
         self.assertIn("cause not established", text)
         self.assertNotIn("request never settled", text)
+
+    def test_should_offer_bounded_interaction_hypotheses_from_failure_evidence(self):
+        summary = summarize_report(report(
+            ("undo", "timedOut", "waiting for getByRole('button', { name: /^Undo$/i })", [], 10000),
+            ("edit", "failed", "getByRole('button', { name: 'Save' }): element was detached from the DOM", [], 10000),
+            ("archive", "timedOut", "locator.hover: waiting for getByText('Travel plans')", [], 10000),
+        ))
+        hints = interaction_failure_hints(summary)
+        self.assertEqual(len(hints), 3)
+        self.assertIn("aria-label", hints[0])
+        self.assertIn("re-renders", hints[1])
+        self.assertIn("packaged data", hints[2])
+        self.assertEqual(len(interaction_failure_hints(summary, max_hints=2)), 2)
+        self.assertEqual(interaction_failure_hints(RunSummary(results=[])), [])
+        self.assertEqual(interaction_failure_hints(summarize_report(report(
+            ("route", "timedOut", "Test timeout of 10000ms exceeded.", [], 10000),
+        ))), [])
 
 
 class RouteContractTests(unittest.TestCase):
