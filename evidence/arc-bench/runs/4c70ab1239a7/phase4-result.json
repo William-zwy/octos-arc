@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "handoff_id": "4c70ab1239a7-3F4C53C132A1",
+  "run_id": "4c70ab1239a7",
+  "task_key": "smoke-evolution--dice",
+  "thread_id": "01a0b492-841a-7230-800f-5814c2a537b5",
+  "completed_at": "2026-09-19T13:23:29.4697454Z",
+  "scope": "read_only_phase4_diagnosis",
+  "verdict": {
+    "functional_failure": false,
+    "platform_status": "PASSED",
+    "score": 100.0,
+    "tests_passed": 2,
+    "tests_total": 2,
+    "feature_implementation_rate": 1.0,
+    "stage5_required": true,
+    "stage5_scope": "efficiency_observability_and_generalization; no task-specific correctness fix required",
+    "confidence": "high for this public run; limited for generalized Evolution because design snapshots are unavailable and immutable build/task snapshot fields are missing"
+  },
+  "identity": {
+    "submission_id": "4349bc89be76",
+    "display_name": "teammate-baseline-20260917-ea503546",
+    "competition_id": "smoke-evolution",
+    "requirement_id": "smoke-evolution--dice",
+    "catalog": "competition"
+  },
+  "validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "final_result": "PASSED score=100.0",
+    "new_run_created": false,
+    "code_or_test_files_modified": false
+  },
+  "evolution_diagnosis": {
+    "dependency_order": ["REQ-1", "REQ-2"],
+    "initial_unchanged_nodes": [],
+    "initial_nodes_to_implement": ["REQ-1", "REQ-2"],
+    "probe_results": {
+      "REQ-1": "1/1 passed",
+      "REQ-2": "0/1 passed"
+    },
+    "post_probe_unchanged_nodes": ["REQ-1"],
+    "post_probe_nodes_to_implement": ["REQ-2"],
+    "regression_results": {
+      "REQ-1": "1/1 passed",
+      "REQ-2": "1/1 passed"
+    },
+    "full_suite": "2/2 passed, failing nodes=[]",
+    "repair_rounds_completed": 0,
+    "interpretation": "The agent preserved the existing REQ-1 behavior and implemented only the missing REQ-2 roll counter. This run demonstrates test-based incremental Evolution, but the design snapshot artifacts for REQ-1 and REQ-2 were both unavailable (404)."
+  },
+  "token_observation": {
+    "provider_requests": 1,
+    "provider_prompt_tokens": 1037,
+    "provider_completion_tokens": 491,
+    "provider_reasoning_tokens": 0,
+    "provider_cache_hit_tokens": 0,
+    "provider_total_tokens": 1528,
+    "platform_token_count": 3221,
+    "platform_minus_provider_tokens": 1693,
+    "cost": 0.015651,
+    "currency": "CNY",
+    "observation": "The direct raw chat probe is logged before the local proxy usage summary. It is a plausible contributor to the 1693-token accounting delta, but this run does not expose probe usage separately; do not treat provider totals as the platform billing total."
+  },
+  "time_observation": {
+    "platform_run_duration_seconds": 34,
+    "wall_clock_start_to_finish_seconds": 49.801,
+    "generation_agent_interval_seconds_approx": 33,
+    "final_playwright_duration_ms": 2240.837,
+    "agent_acceptance_workers": 2,
+    "platform_test_workers": 1,
+    "observations": [
+      "The raw API probe succeeded quickly at 07:50:03 and did not show a timeout in this run.",
+      "Octos runtime download took approximately 7 seconds before the implementation turn.",
+      "REQ-2 implementation completed in approximately 4 seconds.",
+      "The final public test suite consumed approximately 2.24 seconds; the dominant cost was generation/setup rather than Playwright execution.",
+      "The platform run duration and start-to-finish timestamps represent different timing scopes and must be retained separately."
+    ]
+  },
+  "resource_observation": {
+    "memory_limit_bytes": 2147483648,
+    "memory_peak_bytes": 707928064,
+    "oom_kill_count": 0,
+    "stray_processes_killed_postflight": 12,
+    "interpretation": "No OOM or functional resource failure occurred, but repeated child-process cleanup remains a reliability and large-task scaling risk."
+  },
+  "coverage_limitations": [
+    "The task has no reference image assets, so this run does not validate multimodal understanding.",
+    "The public tests verify the six-sided range and the 0-to-2 counter path, but do not establish hidden-test generalization.",
+    "The platform did not provide task_snapshot_id, agent_build_id, or code_sha in the run object.",
+    "Design snapshot artifacts for REQ-1 and REQ-2 were 404, so semantic fingerprint evidence is incomplete."
+  ],
+  "stage5_recommendations": [
+    {
+      "priority": "P1",
+      "area": "metering boundary",
+      "action": "Record the raw probe as a separate request or route it through the same usage ledger so provider and platform token accounting can be reconciled."
+    },
+    {
+      "priority": "P1",
+      "area": "process lifecycle",
+      "action": "Investigate why 12 child processes require postflight killing; preserve process-group cleanup and wait semantics before large-task runs."
+    },
+    {
+      "priority": "P2",
+      "area": "runtime startup",
+      "action": "Use a safe runner cache or preinstalled path for the Octos binary where available; measure before changing the Evolution decision path."
+    },
+    {
+      "priority": "P2",
+      "area": "provenance and traceability",
+      "action": "Bind task snapshot, agent build, code SHA, ZIP SHA-256 and semantic design snapshots into the next run record."
+    }
+  ],
+  "evidence": {
+    "manifest": "evidence/arc-bench/runs/4c70ab1239a7/manifest.json",
+    "handoff": "evidence/arc-bench/runs/4c70ab1239a7/phase4-handoff.json",
+    "ack": "evidence/arc-bench/runs/4c70ab1239a7/phase4-ack.json",
+    "raw_run_filename": "arcbench-run-4c70ab1239a7.json",
+    "raw_logs_filename": "arcbench-run-4c70ab1239a7-logs.json",
+    "raw_artifacts_storage": "external_download_directory; hashes and filenames are recorded in manifest.json"
+  }
+}
