@@ -1,6 +1,6 @@
 # ARC-Bench 阶段 3 → 阶段 4 会话复用与分支工作流
 
-> 版本：v1.1；更新日期：2026-09-19
+> 版本：v1.2；更新日期：2026-09-19
 >
 > 适用范围：当前项目的 ARC-Bench 阶段 3 证据接收和阶段 4 单 run 只读诊断
 
@@ -103,6 +103,33 @@ NN 项目阶段4 + <competition_id>--<task_id>
 06 项目阶段4 + arc-bench-lite--bookstack
 ```
 
+### 3.3 任务键注册表与单次触发保护
+
+标题搜索只能用于发现候选，不能作为唯一的幂等依据。阶段 3 必须维护任务键注册表：
+
+```text
+evidence/arc-bench/phase4-thread-registry.json
+```
+
+注册表以规范化的 `<competition_id>--<task_id>` 为键，至少记录：
+
+- `thread_id`、`title`、`project_id`；
+- `status`：`candidate`、`handoff_sent`、`verified`、`quarantined` 或 `needs_reconciliation`；
+- 最近一次 `run_id`、`manifest`、`handoff_id`；
+- 最近一次验证时间、验证结果和失败原因。
+
+每次触发必须遵守单次触发状态机：
+
+1. 先读取注册表，再读取当前会话列表；
+2. 注册表中存在唯一 `verified` 会话时，只复用该会话；
+3. 存在多个候选、重复标题、注册表与会话列表不一致，或候选会话没有可读最终消息时，标记 `needs_reconciliation`，停止自动 fork；
+4. 只有注册表和会话列表都确认“没有候选”时，才允许 fork 一次；
+5. fork 后必须立即记录 Thread ID，再改名和发送 handoff；任何步骤失败都不得再次 fork；
+6. 只有收到带有相同 `handoff_id` 和 `run_id` 的阶段 4 确认消息，并且最终输出非空，才将状态改为 `verified`；
+7. 空输出、异常完成、Thread 不可回读或确认消息缺失的会话必须标记 `quarantined`，不能复用，也不能用同一触发事件继续创建第二个候选。
+
+`run_id` 可以变化，但任务键和规范化阶段 4 Thread ID 不变。同一任务的新 Run 必须在已验证会话中发送新的 `handoff_id`，不能因为旧 Run 分析未完成而再 fork。
+
 ## 4. 父会话执行步骤
 
 ### Step 1：建立轻量文件索引
@@ -166,17 +193,21 @@ manifest 是父会话与子会话之间的唯一事实入口。它必须包含�
 
 父会话在 manifest 完成后：
 
-1. 按规范化的 `<competition_id>--<task_id>` 查询当前阶段 4 标题；
-2. 如果恰好找到一个已有会话，直接向它发送包含新 `run_id` 的重置 handoff，不 fork；
-3. 如果没有找到，分配新的 `NN`，fork 当前会话到同一项目/工作目录，并将新会话重命名为标准标题；
-4. 如果找到多个候选会话，先停止自动分支，保留歧义记录，不把新 Run 混入任何一个会话；
-5. 发送紧凑 handoff；
-6. 记录会话 ID、标题、run ID 和 manifest 路径；
-7. 父会话停止该 run 的分析。
+1. 生成本次唯一 `handoff_id`，格式为 `<run_id>-<manifest_sha256_prefix>`；
+2. 读取任务键注册表和当前阶段 4 会话列表；
+3. 如果恰好找到一个 `verified` 会话，向它发送包含新 `run_id` 和 `handoff_id` 的重置 handoff，不 fork；
+4. 如果没有找到任何候选，分配新的 `NN`，fork 当前会话到同一项目/工作目录，立即记录 Thread ID，再重命名为标准标题；
+5. 如果发现多个候选、旧会话空输出、列表与注册表不一致或 Thread ID 无法回读，标记 `needs_reconciliation`，停止自动分流，不发送重复 handoff；
+6. 发送紧凑 handoff，并要求子会话先返回 `PHASE4_HANDOFF_ACK: <handoff_id>`；
+7. 用 `read_thread` 或 `wait_threads` 验证确认消息和最终非空结果，成功后再把注册表状态改为 `verified`；
+8. 记录会话 ID、标题、run ID、handoff ID 和 manifest 路径；
+9. 父会话停止该 run 的分析。
 
 应用层 fork 可能保留已完成的历史消息，无法在这里物理删除。子会话必须把 handoff 作为唯一工作上下文，明确忽略此前与该 run 无关的历史；若未来产品提供“无历史 fork”能力，优先使用该能力。
 
 已有会话收到新 Run 时，handoff 必须显式声明“切换当前分析对象”，并清空上一 Run 的工作假设；上一 Run 的结论只能作为已标记的历史记录保留，不能参与当前 Run 的事实判断。
+
+如果 fork 或 handoff 后在规定等待窗口内没有出现 `PHASE4_HANDOFF_ACK`，父会话只能记录 `handoff_unverified` 并停止；不得通过再次 fork 来“补偿”一次不确定的触发。
 
 ## 5. 阶段 4 handoff 模板
 
@@ -184,6 +215,10 @@ manifest 是父会话与子会话之间的唯一事实入口。它必须包含�
 
 ```text
 你是阶段 4 单 run 诊断会话，只处理以下 run。
+
+启动确认：
+- 第一条回复必须严格包含 `PHASE4_HANDOFF_ACK: <handoff_id>`；
+- 最终结论必须包含 `PHASE4_RESULT: complete|incomplete` 和当前 `run_id`；
 
 范围：
 - 只做只读分析；不创建新 run，不修改代码，不实施阶段 5。
@@ -199,6 +234,7 @@ Run 卡片：
 - metering: <requests/tokens/cost/duration>
 - platform_validation: <entrypoint/tests_dir/bundled/key scan>
 - manifest: <repo-relative path>
+- handoff_id: <...>
 - conflicts: <only unresolved conflicts>
 - missing: <only missing evidence>
 
@@ -244,6 +280,8 @@ Run 卡片：
 - 是否建议阶段 5；
 - 需要保留的证据路径。
 
+回交必须带有 `PHASE4_RESULT: complete|incomplete`。没有该标记、没有当前 `run_id`、正文为空或只返回工具过程的会话，不得视为阶段 4 完成。
+
 阶段 5 如需修改代码，应在另一个明确的优化工作流中进行；不得把阶段 4 子会话直接变成代码写入会话。
 
 ## 8. 失败保护
@@ -253,9 +291,11 @@ Run 卡片：
 - 发现多个 run 混在一起时，拆分 manifest 和子会话；
 - 发现 summary 与原始字段冲突时，保留 `conflicts`；
 - 发现重复标题或重复 run 时，更新已有阶段 4 会话，不创建重复分析线程；同一任务的新 Run 也复用同一任务会话，但必须使用新的 manifest 和重置 handoff；
-- 发现同一任务对应多个阶段 4 会话时，先标记 `thread_mapping_ambiguous`，不得自动选择或合并；
+- 发现同一任务对应多个阶段 4 会话时，先标记 `thread_mapping_ambiguous` / `needs_reconciliation`，不得自动选择、合并或再次 fork；
+- 发现阶段 4 Thread 完成但最终助手消息为空、不可回读或缺少确认标记时，标记 `quarantined`，不得将其当作成功结果；
+- 发现同一上传事件已经生成 `handoff_id` 时，后续自动继续必须等待原事件完成，禁止重复触发；
 - 父会话不得因为等待子会话而继续做阶段 4 分析。
 
 ## 9. 当前实现边界
 
-本 SOP 是当前 Codex 协作约定：收到文件夹后由 Agent 执行 fork、改名和 handoff。它不是后台文件系统监听器；用户未发送上传事件时，不会自行扫描 Downloads 或创建会话。用户明确要求“只记录”时，父会话只记录，不触发阶段 4 分析。
+本 SOP 是当前 Codex 协作约定：收到文件夹后由 Agent 执行 manifest 登记、任务键查找、复用或单次 fork、改名、handoff 和回读验证。它不是后台文件系统监听器；用户未发送上传事件时，不会自行扫描 Downloads 或创建会话。用户明确要求“只记录”时，父会话只记录，不触发阶段 4 分析。

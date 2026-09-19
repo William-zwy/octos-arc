@@ -240,7 +240,7 @@
 
 后续每个单 run 文件夹解析完成后，父会话只完成阶段 3 证据登记，然后按 [`ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md`](./ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md) 优先复用已有的同任务阶段 4 会话；找不到时才 fork 一个独立阶段 4 会话。父会话不在同一轮继续分析；阶段 4 会话只接收当前 run 的阶段 3 关键卡片、证据 manifest、冲突项和阶段 4 输出约束。
 
-阶段 4 标题统一为 `NN 项目阶段4 + <competition-task>`，例如 `05 项目阶段4 + arc-bench-lite--keep`。`<competition-task>` 是会话定位键；`run_id` 不进入标题，而是写入 manifest、handoff 和分析正文。同一任务后续收到新 Run 时复用同一会话，并用新 manifest 和重置 handoff 切换当前分析对象。阶段 4 会话不得创建新 run、修改 Agent 代码、实施阶段 5 优化或把其他 run 的诊断结论混入当前事实判断。
+阶段 4 标题统一为 `NN 项目阶段4 + <competition-task>`，例如 `05 项目阶段4 + arc-bench-lite--keep`。`<competition-task>` 是会话定位键；`run_id` 不进入标题，而是写入 manifest、handoff 和分析正文。标题不是幂等依据，任务映射以 `evidence/arc-bench/phase4-thread-registry.json` 为准。同一任务后续收到新 Run 时只能复用唯一且已验证的会话，并用新的 `handoff_id`、manifest 和重置 handoff 切换当前分析对象；重复标题、空输出或映射不一致时先进入 `needs_reconciliation`，不得继续 fork。阶段 4 会话不得创建新 run、修改 Agent 代码、实施阶段 5 优化或把其他 run 的诊断结论混入当前事实判断。
 
 ## 7. 后续工作原则
 

@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "purpose": "Idempotent ARC-Bench phase 4 task-to-thread routing",
+  "updated_at": "2026-09-19",
+  "rules": {
+    "identity_key": "competition_id--task_id",
+    "run_id_is_not_title_identity": true,
+    "only_verified_threads_are_reusable": true,
+    "duplicate_or_unreadable_mapping_requires_reconciliation": true
+  },
+  "tasks": {
+    "smoke--counter": {
+      "thread_id": "01a0b486-3714-7403-9062-9b2052b666a8",
+      "title": "01 项目阶段4 + smoke--counter",
+      "status": "verified",
+      "last_run_id": "a26913c7e4cf"
+    },
+    "smoke--dice": {
+      "thread_id": "01a0b480-3219-7610-8979-fc2d4f616e83",
+      "title": "02 项目阶段4 + smoke--dice",
+      "status": "verified",
+      "last_run_id": "1e9d8704a273"
+    },
+    "smoke-evolution--counter": {
+      "thread_id": "01a0b48b-b24d-7550-835c-6f8110aebfbd",
+      "title": "03 项目阶段4 + smoke-evolution--counter",
+      "status": "verified",
+      "last_run_id": "61f91039fbfb"
+    },
+    "smoke-evolution--dice": {
+      "thread_id": "01a0b492-841a-7230-800f-5814c2a537b5",
+      "title": "04 项目阶段4 + smoke-evolution--dice",
+      "status": "verified",
+      "last_run_id": "38d00cebf31c"
+    },
+    "arc-bench-lite--keep": {
+      "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
+      "title": "05 项目阶段4 + arc-bench-lite--keep",
+      "status": "verified",
+      "last_run_id": "0cef369cc925"
+    },
+    "arc-bench-lite--bookstack": {
+      "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+      "title": "06 项目阶段4 + arc-bench-lite--bookstack",
+      "status": "verified",
+      "last_run_id": "00c59e0762fb"
+    },
+    "arc-bench-web--keep": {
+      "thread_id": null,
+      "title": "07 项目阶段4 + arc-bench-web--keep",
+      "status": "needs_reconciliation",
+      "last_run_id": "4b792b72d7dd",
+      "candidate_thread_ids": [
+        "01a0b7e7-1cff-7380-ac81-ef35dbe70633"
+      ],
+      "reason": "用户报告存在两个同标题会话；当前 thread listing 未返回候选，已读取候选的 completed turn 但 latestAssistantMessageId 为空且无可验证最终消息。不得自动选择、复用或再次 fork，需先确认两个实际 Thread ID。"
+    }
+  }
+}
