@@ -10,6 +10,8 @@
 >
 > 阶段 3 文件摄取与阶段 4 自动分支 SOP 见 [`ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md`](./ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md)。
 >
+> 阶段 5 跨 Run 问题、暂缓项与优化决策见 [`ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md`](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)。首版为执行前核验稿，不代表已修改 Agent 或完成平台 A/B。
+>
 > 当前执行状态（2026-09-19）：阶段 2.5 已完成并通过；阶段 3、阶段 4、阶段 5 正在并行执行，尚未宣告完成。
 
 ## 1. 项目身份与范围
@@ -106,7 +108,7 @@
 - Lite Keep 的本次运行耗时 `13576s`（约 3.77 小时），平台 Token `58278570`，Provider `total_tokens=25433365`，请求数 `1004`，费用 `31.453807 CNY`，推理级别 `low`，时间预算 `48000s`。入口、`/workspace/tests`、未回退 bundled tests、run 归属和密钥脱敏均已核验通过。
 - Lite Keep 补充证据 manifest：[`evidence/arc-bench/runs/0cef369cc925/manifest.json`](../evidence/arc-bench/runs/0cef369cc925/manifest.json)。manifest 记录了 7 个外部附件的大小和 SHA-256；原始附件仍由操作人保存在外部下载目录，未将原始日志、模板 ZIP 或任何密钥复制进仓库。
 - 补充摘要中的“round 0: 26/32”与原始日志、run 对象和 Playwright 报告中的 `31/32` 冲突；按证据优先级保留该冲突并采用原始结构化字段，不静默改写摘要来源。
-- 当前已知的在途 Lite 运行包括 Lite BookStack `00c59e0762fb`；其附件和 meter 明细继续按阶段 3 补录，再由阶段 4 复核并交给阶段 5 决策。
+- Lite BookStack `00c59e0762fb` 已完成阶段 3 归一化登记，manifest 为 [`evidence/arc-bench/runs/00c59e0762fb/manifest.json`](../evidence/arc-bench/runs/00c59e0762fb/manifest.json)；最终平台结果为 `32/34`、`FAILED`，两项失败为 `REQ-4.5.1` 与 `REQ-6.1.3`。最终生成应用与 `.arc` 快照支持“处理函数存在但路由未接入”的判断，跨 Run 优化决策见阶段 5 台账。更细的 meter 请求明细及 BookStack 的独立构建/快照绑定仍待补齐。
 
 ## 4. 当前仓库状态
 
