@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "run": {
+    "run_id": "c31c51f2400b",
+    "submission_id": "a2b15e6dbf54",
+    "display_name": "teammate-baseline-20260917-ea503546",
+    "catalog": "competition",
+    "competition_id": "arc-bench-web",
+    "task_id": "arc-bench-web--bookstack",
+    "task_snapshot_id": null,
+    "created_at": "2026-09-19T04:04:32.455202",
+    "started_at": "2026-09-19T04:04:34.952497",
+    "finished_at": "2026-09-19T06:07:49.819312",
+    "status": "PASSED",
+    "score": 100,
+    "passed_count": 34,
+    "failed_count": 0,
+    "feature_implementation_rate": 1.0,
+    "failure_reason": null
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 51000,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0
+  },
+  "internal_acceptance": {
+    "round_0": {
+      "passed": 34,
+      "total": 34,
+      "failing_nodes": []
+    },
+    "repair_rounds_completed": 0
+  },
+  "platform_final": {
+    "passed": 34,
+    "total": 34,
+    "failed_tests": [],
+    "score": 100,
+    "failure_reason": null
+  },
+  "metering": {
+    "requests": 1095,
+    "prompt_tokens": 27791179,
+    "completion_tokens": 494827,
+    "reasoning_tokens": 243817,
+    "prompt_cache_hit_tokens": 25721344,
+    "provider_total_tokens": 28286006,
+    "platform_token_count": 28219131,
+    "cost": 13.216805,
+    "currency": "CNY",
+    "run_duration_seconds": 7362
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "log_result_finalized": "PASSED score=100.0"
+  },
+  "source_precedence": [
+    "run.json for final platform status, score and test list",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal rounds and provider usage",
+    "playwright-report.json for final test result details",
+    "failure-details.md for failure extraction (no failed tests reported)",
+    "snapshots.json for generated design/codegen state",
+    "template.zip for package identity and reproducibility",
+    "summary.md for navigation only; it cannot override raw structured fields"
+  ],
+  "conflicts": [],
+  "missing": [
+    "task_snapshot_id",
+    "agent_build_id",
+    "code_sha"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-c31c51f2400b-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 261,
+      "sha256": "68F9618DA0DF8FF58C8CCD7B1B84DD3D2EE70BDC1B9280352597408FC0C35CEF",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-c31c51f2400b.json",
+      "role": "raw_run_object",
+      "bytes": 12334,
+      "sha256": "F8DD46BA300866BF401D2542D91860AE039FAB6424701550880CA759F7296234",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-c31c51f2400b-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 320080,
+      "sha256": "B41DEA6FFBB218EDF5D41644D2D4E294490951096F5EE47CA96CC50751AD24BE",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-c31c51f2400b-summary.md",
+      "role": "human_normalized_summary",
+      "bytes": 3073,
+      "sha256": "490B23F4C4CAD923BA6561C25E621705A611A9F9FFFD5EB324B22054852C2B75",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-c31c51f2400b-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 63922,
+      "sha256": "207DFDF84D98A335E20B3238D8D7D0EFBD935E0FB01642A9026C23EB59D6C797",
+      "stored_in_repository": false
+    },
+    {
+      "name": "c31c51f2400b-template.zip",
+      "role": "template_or_generated_package_snapshot",
+      "bytes": 9804612,
+      "sha256": "F20CDB3BC48D77833CC40439EF8AB2A58C7CCD66AB7E97A8208C0E13583293BD",
+      "stored_in_repository": false
+    },
+    {
+      "name": "c31c51f2400b-playwright-report.json",
+      "role": "final_playwright_report",
+      "bytes": 45359,
+      "sha256": "FF76331C317488275D7BBD91C98C2A8B8EB0C287FB933170B66CB3542ACF1106",
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0
+  }
+}

@@ -52,6 +52,13 @@
       "last_run_id": "4b792b72d7dd",
       "last_handoff_id": "4b792b72d7dd-retrigger-01",
       "reason": "用户报告存在两个同标题会话；当前 thread listing 未返回候选。该候选原始执行和一次重触发均变为 completed/idle，但 latestAssistantMessageId 为空且无可验证最终消息，因此已隔离。不得复用或再次触发，需先确认另一个实际 Thread ID。"
+    },
+    "arc-bench-web--bookstack": {
+      "thread_id": null,
+      "title": "08 项目阶段4 + arc-bench-web--bookstack",
+      "status": "candidate",
+      "last_run_id": "c31c51f2400b",
+      "manifest": "evidence/arc-bench/runs/c31c51f2400b/manifest.json"
     }
   }
 }
