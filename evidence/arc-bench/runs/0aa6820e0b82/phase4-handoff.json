@@ -11,6 +11,7 @@
   "result_path": "evidence/arc-bench/runs/0aa6820e0b82/phase4-result.json",
   "result_md_path": "evidence/arc-bench/runs/0aa6820e0b82/phase4-result.md",
   "created_at": "2026-09-19T12:16:06.362Z",
-  "status": "handoff_unverified",
-  "verification_note": "The reused phase4 Thread has not produced phase4-ack.json within the observation window. Do not treat this Run as a completed phase4 result or trigger phase5."
+  "status": "ack_received",
+  "ack_received_at": "2026-09-19T12:21:08.775Z",
+  "verification_note": "phase4-ack.json exists and matches this handoff. Wait for phase4-result.json before marking the task verified or triggering phase5."
 }

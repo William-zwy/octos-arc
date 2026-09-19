@@ -36,7 +36,7 @@
     "arc-bench-lite--keep": {
       "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
       "title": "05 项目阶段4 + arc-bench-lite--keep",
-      "status": "handoff_unverified",
+      "status": "handoff_sent",
       "last_run_id": "0aa6820e0b82",
       "last_handoff_id": "0aa6820e0b82-80C37FA5A6E5",
       "previous_run_id": "0cef369cc925",
@@ -46,7 +46,7 @@
       "result_path": "evidence/arc-bench/runs/0aa6820e0b82/phase4-result.json",
       "result_md_path": "evidence/arc-bench/runs/0aa6820e0b82/phase4-result.md",
       "verification_method": "filesystem_required_but_missing",
-      "reason": "The reused phase4 Thread has not written phase4-ack.json within the observation window. Do not trigger phase5 or send a duplicate handoff."
+      "reason": "ACK received and identity fields match; waiting for phase4-result.json and phase4-result.md. Do not trigger phase5 until result validation completes."
     },
     "arc-bench-lite--bookstack": {
       "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
