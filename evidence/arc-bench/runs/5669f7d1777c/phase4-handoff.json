@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "purpose": "Persistent phase 3 to phase 4 handoff and readback",
+  "handoff_id": "5669f7d1777c-DADB44C15C2B",
+  "run_id": "5669f7d1777c",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "scope": "read_only_phase4_diagnosis",
+  "code_lineage": "first_modified_code_not_frozen_A0_not_stage5_output",
+  "manifest_path": "evidence/arc-bench/runs/5669f7d1777c/manifest.json",
+  "ack_path": "evidence/arc-bench/runs/5669f7d1777c/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/5669f7d1777c/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/5669f7d1777c/phase4-result.md",
+  "created_at": "2026-09-19T16:32:12.0777877Z",
+  "status": "handoff_sent",
+  "status_note": "Awaiting Phase 4 ACK and result; no platform rerun, upload, code edit, or test edit is authorized by this handoff."
+}

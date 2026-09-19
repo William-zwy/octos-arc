@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "code_lineage": {
+    "classification": "first_modified_code",
+    "first_modified_code": true,
+    "not_frozen_A0": true,
+    "not_stage5_output": true,
+    "provenance": "user_asserted_at_intake",
+    "source_display_name": "teammate-baseline-20260917-ea503546",
+    "submission_id": "b88949d044c2",
+    "note": "Treat this package as a separate version from frozen A0 and Stage5 output; do not mix conclusions."
+  },
+  "run": {
+    "run_id": "5669f7d1777c",
+    "submission_id": "b88949d044c2",
+    "display_name": "teammate-baseline-20260917-ea503546",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--bookstack",
+    "task_snapshot_id": null,
+    "created_at": "2026-09-19T12:14:07.006663",
+    "started_at": "2026-09-19T12:14:08.532801",
+    "finished_at": "2026-09-19T15:47:21.966284",
+    "status": "FAILED",
+    "score": 94.1,
+    "passed_count": 32,
+    "failed_count": 2,
+    "feature_implementation_rate": 0.9411764705882353,
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "run_duration_seconds": 12739
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 51000,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0
+  },
+  "internal_acceptance": {
+    "source": "logs.json",
+    "full_suite_round_0": {
+      "passed": 33,
+      "total": 34,
+      "failing_nodes": ["REQ-2.2"]
+    },
+    "full_suite_round_1": {
+      "passed": 34,
+      "total": 34,
+      "failing_nodes": []
+    },
+    "repair_rounds_completed": 1,
+    "targeted_node_history": {
+      "REQ-5.6.1": ["round 0: 0/1", "round 1: 0/1", "round 2: 0/1"],
+      "REQ-6.1.1": ["round 0: 1/1"]
+    }
+  },
+  "platform_final": {
+    "passed": 32,
+    "total": 34,
+    "failed_tests": [
+      {
+        "test": "REQ-5.6.1.spec.ts",
+        "requirement": "REQ-5.6.1: Fill out and Save Book with Shelf",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10012,
+        "locator_or_expected": "heading /Book\\s+Created\\s+5\\.6\\.1/i",
+        "failure_location": "/workspace/tests/helpers.ts:137"
+      },
+      {
+        "test": "REQ-6.1.1.spec.ts",
+        "requirement": "REQ-6.1.1: Save Page",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10016,
+        "locator_or_expected": "heading /Page\\s+Created\\s+6\\.1\\.1/i",
+        "failure_location": "/workspace/tests/helpers.ts:137",
+        "last_observed_url": "http://127.0.0.1:3000/books/8"
+      }
+    ],
+    "score": 94.1,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "metering": {
+    "requests": 1275,
+    "prompt_tokens": 32112397,
+    "completion_tokens": 693949,
+    "reasoning_tokens": 420911,
+    "prompt_cache_hit_tokens": 29468416,
+    "provider_total_tokens": 32806346,
+    "platform_token_count": 32806461,
+    "cost": 17.124841,
+    "currency": "CNY",
+    "run_duration_seconds": 12739
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "log_result_finalized": "FAILED score=94.1"
+  },
+  "source_precedence": [
+    "run.json for final platform status, score and test list",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal rounds and provider usage",
+    "playwright-report.json and failure-details.md for final timeout and locator details",
+    "summary.md for human-readable normalization, with conflicts retained",
+    "snapshots.json for generated design and codegen state",
+    "template.zip for package identity and reproducibility"
+  ],
+  "conflicts": [
+    {
+      "field": "internal_acceptance.full_suite_round_0",
+      "logs_value": "33/34, failing REQ-2.2",
+      "summary_value": "26/34",
+      "resolution": "Use the exact full-suite lines in logs.json as authoritative; retain the summary value as a reported discrepancy."
+    }
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "agent_build_id",
+    "code_sha"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-5669f7d1777c-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 19679,
+      "sha256": "2BD8F713BD1D50D3304D7FDD86F9484BF055CAAA3DBEAC5B8E5CFBDDB795A4D9",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-5669f7d1777c-summary.md",
+      "role": "human_readable_run_summary",
+      "bytes": 3828,
+      "sha256": "B5D3004D0065F96CEBF4335F516B3B51A34621FC1A88D76109828E3B4BF7D3F4",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-5669f7d1777c.json",
+      "role": "raw_run_object",
+      "bytes": 13863,
+      "sha256": "5AB0DF2454B9D7BC0C98AD4E5276D80D8504F08B894EAA69A6A23397720F6BAD",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-5669f7d1777c-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 269706,
+      "sha256": "7AC4C2EEBF380D27085F8F64FD9BE699AC82F0BA3511417C1E9640126B82A63A",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-5669f7d1777c-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 121991,
+      "sha256": "9FEAEB528FFCBB492097D7B2639AC80A9844FEFDBB43A3C6A63316CF61DACF4A",
+      "stored_in_repository": false
+    },
+    {
+      "name": "5669f7d1777c-template.zip",
+      "role": "template_or_generated_package_snapshot",
+      "bytes": 9797710,
+      "sha256": "9E4DF643D0352C55FBB01B4820091C9BB83018EB7649D1707CB638F5E781D062",
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0,
+    "lineage_note_contains_secret": false
+  }
+}
