@@ -1,6 +1,6 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.5；建立日期：2026-09-19；状态：路由诊断和 Keep 交互契约两个候选切片均已本地验证；生成应用干净 seed 为 `32/32`。原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点；平台启动内部策略和可比 A/B **仍未确认**（见第 11 节）。
+> 版本：v1.6；建立日期：2026-09-19；状态：路由诊断和 Keep 交互契约两个候选切片均已本地验证；`5669f7d1777c` 的首次修改版 BookStack 已纳入只读决策（第 12 节），并非阶段五候选 A/B。Keep 生成应用干净 seed 为 `32/32`；原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点。平台启动内部策略和可比 A/B **仍未确认**。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
@@ -18,7 +18,7 @@
 
 ## 2. 本版证据范围与基线
 
-本版纳入三个 Lite Run 和一个 Web BookStack Run。前两个 Lite Run 共享平台 submission ID `59debd594609`，但各自 manifest 尚未填入 `task_snapshot_id`，也缺少可核验的上传 Agent 构建/代码 SHA 绑定；**共享 submission ID 不足以单独证明构建、任务快照和配置均可比**。Web BookStack 的展示名同样指向冻结 A0，用户确认该次上传的是未修改且与远程一致的队友代码；其 manifest 仍缺独立的上传 ZIP SHA、`code_sha` 和 `task_snapshot_id`。新 Keep Run `0aa6820e0b82` 的上传 ZIP 由用户提供本地路径并与候选源码比对，但平台 manifest 未记录上传包哈希。各 Run 的 `template.zip` 是**生成应用快照**，不是上传的 Agent ZIP。
+本版纳入四个 Lite Run 和一个 Web BookStack Run。前两个 Lite Run 共享平台 submission ID `59debd594609`，但各自 manifest 尚未填入 `task_snapshot_id`，也缺少可核验的上传 Agent 构建/代码 SHA 绑定；**共享 submission ID 不足以单独证明构建、任务快照和配置均可比**。Web BookStack 的展示名同样指向冻结 A0，用户确认该次上传的是未修改且与远程一致的队友代码；其 manifest 仍缺独立的上传 ZIP SHA、`code_sha` 和 `task_snapshot_id`。新 Keep Run `0aa6820e0b82` 的上传 ZIP 由用户提供本地路径并与候选源码比对，但平台 manifest 未记录上传包哈希。新 BookStack Lite `5669f7d1777c` 经阶段 3 按用户说明标为**首次修改版**，不是冻结 A0，也不是阶段五输出；其构建 SHA 与任务快照 ID 仍缺。各 Run 的 `template.zip` 是**生成应用快照**，不是上传的 Agent ZIP。
 
 待纳入队列：[Web Keep `4b792b72d7dd`](../evidence/arc-bench/runs/4b792b72d7dd/manifest.json) 已有阶段 3 manifest（平台 `30/32`），但本台账尚未收到可复核的阶段 4 机制结论；暂不把它与 Lite Keep 的同名任务或本切片缺路由机制合并。
 
@@ -28,8 +28,9 @@
 | BookStack Lite [`00c59e0762fb`](../evidence/arc-bench/runs/00c59e0762fb/manifest.json) | 平台 `32/34`、FAILED，`REQ-4.5.1` 和 `REQ-6.1.3` 十秒超时；内部 round 0、round 1 均 `32/34`、同两题失败 | 1,324 次；输入 35,214,173、输出 681,758、缓存命中 32,267,264、推理 401,979、Provider total 35,895,931、平台 Token 60,951,255；14,338 秒；¥32.962032 | 已确认的功能缺陷及成本基线 |
 | BookStack Web [`c31c51f2400b`](../evidence/arc-bench/runs/c31c51f2400b/manifest.json)（[阶段 4 结果](../evidence/arc-bench/runs/c31c51f2400b/phase4-result.md)） | 冻结 A0；平台 `34/34`、PASSED、score 100；内部 round 0 `34/34`，修复轮次 0 | 1,095 次；输入 27,791,179、输出 494,827、缓存命中 25,721,344、推理 243,817、Provider total 28,286,006、平台 Token 28,219,131；7,362 秒；¥13.216805 | 功能通过样本；仅评审效率与回归门槛，不立功能补丁 |
 | Keep Lite [`0aa6820e0b82`](../evidence/arc-bench/runs/0aa6820e0b82/manifest.json)（[阶段 4 文稿](../evidence/arc-bench/runs/0aa6820e0b82/phase4-result.md)，交接已核验） | 候选 ZIP 用户指认；平台 `29/32`、FAILED：`REQ-2.3.2` Undo、`REQ-2.5.4` 归档前置、`REQ-2.7.5` Save 脱离 DOM；内部 round 0/1/2 均 `29/32` | 1,291 次；输入 34,395,140、输出 717,795、缓存命中 31,627,392、推理 444,073、Provider total 35,112,833、平台 Token 35,112,935；9,777 秒；¥17.926147 | 三种独立机制的诊断样本；**不是**已验证的候选收益/A-B |
+| BookStack Lite [`5669f7d1777c`](../evidence/arc-bench/runs/5669f7d1777c/manifest.json)（[阶段 4 结果](../evidence/arc-bench/runs/5669f7d1777c/phase4-result.json)） | 首次修改版；平台 `32/34`、FAILED：`REQ-5.6.1`、`REQ-6.1.1` 保存后目标文本定位超时；内部全套 round 0 `33/34` → round 1 `34/34`，但 `REQ-5.6.1` 定点验收三轮均 `0/1` | 1,275 次；输入 32,112,397、输出 693,949、缓存命中 29,468,416、推理 420,911、Provider total 32,806,346、平台 Token 32,806,461；12,739 秒；¥17.124841 | 保存后展示/定位器选择的新诊断样本；非冻结 A0 或阶段五 A/B |
 
-缓存命中 Token 是输入 Token 的子集，推理 Token 通常包含在输出口径内，不能再加到 Provider total；平台 Token 与 Provider total 口径不同，不能互相替代。旧 Keep 的人工摘要曾将内部 round 0 写为 `26/32`，与原始日志 `31/32` 冲突；本台账按 manifest 的原始证据口径使用 `31/32`。四个 Run 均核验平台入口 `main.py` 和 `/workspace/tests`，没有 bundled tests 回退；这不能代替未来每次 Run 的独立核验。Web 与 Lite 虽同为 BookStack、测试数量也同为 34，但属不同赛道，不构成同任务、同快照的 A/B；不得直接比较费用或把 Web 的成功当作阶段 5 候选代码的收益。两个 Keep Lite 的 `REQ-2.5.4` 失败发生在**不同操作阶段**，不能仅凭相同编号归并。
+缓存命中 Token 是输入 Token 的子集，推理 Token 通常包含在输出口径内，不能再加到 Provider total；平台 Token 与 Provider total 口径不同，不能互相替代。旧 Keep 的人工摘要曾将内部 round 0 写为 `26/32`，与原始日志 `31/32` 冲突；新 BookStack 的 summary 将内部 round 0 写为 `26/34`，原始日志是 `33/34`；本台账均按日志与 manifest 的口径保留冲突。五个 Run 均核验平台入口 `main.py` 和 `/workspace/tests`，没有 bundled tests 回退；这不能代替未来每次 Run 的独立核验。Web 与 Lite 虽同为 BookStack、测试数量也同为 34，但属不同赛道，不构成同任务、同快照的 A/B；两个 Lite BookStack 也因代码血缘与快照绑定不足，不得直接计算阶段五收益。两个 Keep Lite 的 `REQ-2.5.4` 失败发生在**不同操作阶段**，不能仅凭相同编号归并。
 
 ## 3. 跨 Run 问题索引
 
@@ -38,13 +39,14 @@
 | `P5-001` | 设计中声明的路由未接入生成应用主路由 | `confirmed`：BookStack 同一 Run 的两处漏接；**尚未跨 Run 确认** | 本地已验证；平台效果未验证 | P0；平台 A/B 前先确认身份 |
 | `P5-002` | 状态写入与随即导航/读取可能竞态 | `strong_candidate`：Keep 一处；缺最终网络/DOM 时序 | 待证据，不修改 | P1；需 Keep trace 或等效复现 |
 | `P5-003` | A0 超时摘要可能把缺路由误导成等待/性能问题 | A0 措辞 `confirmed`；对修复结果的因果影响 `unknown` | 已在 `P5-001` 同一切片本地修改；平台效果未验证 | P0，随 `P5-001` 一起 A/B |
-| `P5-004` | 四个 Run 的请求、Token、耗时均可计量，但瓶颈来源未定位 | 指标 `confirmed`；根因 `unknown`；新 Keep 有请求级 meter 但缺阶段归因 | 暂缓 5C/5D 调参 | P2；功能率稳定且完成请求级归因后重开 |
-| `P5-005` | A/B 的上传 Agent 构建、任务快照绑定不完整 | 四个 manifest 缺字段 `confirmed`；新 Keep 有用户指认的 ZIP 及本地源码比对，但无平台独立绑定 | 验证前门禁，不等于 Agent 功能修复 | P0；新候选复跑前处理 |
+| `P5-004` | 五个 Run 的请求、Token、耗时均可计量，但瓶颈来源未定位 | 指标 `confirmed`；根因 `unknown`；新 Keep 有请求级 meter 但缺阶段归因 | 暂缓 5C/5D 调参 | P2；功能率稳定且完成请求级归因后重开 |
+| `P5-005` | A/B 的上传 Agent 构建、任务快照绑定不完整 | 五个 manifest 缺字段 `confirmed`；新 Keep 有用户指认的 ZIP 及本地源码比对，但无平台独立绑定 | 验证前门禁，不等于 Agent 功能修复 | P0；新候选复跑前处理 |
 | `P5-006` | Undo 可访问名称被生成代码覆盖 | 原版失败、修正版及 32 题回归通过：产物级 `confirmed` | Agent 通用契约/失败提示本地已验证；平台未验证 | P0；与消息文本契约一起回归 |
 | `P5-007` | Keep 归档测试前置数据与生成应用 seed 不一致 | 原版与分步对照 `confirmed`；评分后 ZIP 的 `24/32` **不是**平台启动基线 | 默认 seed 和按钮修复在干净 seed 下通过；评分时目标仍为归档态，精确启动策略未知 | P0；不得用删库回归代替交付验收 |
 | `P5-008` | 重复加载标签与整表重绘打断编辑 | 干净 seed 的 50ms 对照原版 3/3 失败、去重版 3/3 通过；平台精确时序/根因 `unknown` | Agent 通用契约/失败提示本地已验证；平台未验证 | P0；保留全量回归和受控时序 |
+| `P5-009` | BookStack 异步保存后过早选择 heading 定位器，而结果页只以链接展示新实体 | 官方 helper、平台失败 locator、最终生成代码互相支持；实际最终 DOM/导航时序仍缺，`strong_candidate`，见第 12 节 | 先做隔离产物复现；不立刻增加 Agent 通用分支 | P0；先核验两题保存后 URL/HTML/DOM 与评分前状态 |
 
-**当前跨 Run 结论：**多个 Lite Run 都有十秒超时且请求较多，但 Keep 的可访问名称、seed、DOM 重绘与 BookStack 的缺路由是不同机制。A0 Web BookStack 已 `34/34` 通过，说明漏路由不是所有 BookStack Run 的必然结果，却不能推翻 Lite 的具体漏接证据。禁止按“超时”这一表面标签做单一补丁。后续发现同一机制时，在对应 ID 下追加 Run 证据；机制不同则新建 ID，并记录关联而不强行合并。
+**当前跨 Run 结论：**多个 Lite Run 都有十秒超时且请求较多，但 Keep 的可访问名称、seed、DOM 重绘，与 BookStack 的缺路由、保存后展示/定位边界是不同机制。旧 Lite BookStack `P5-001` 缺接线，新首次修改版 `P5-009` 的名义路由/API 已存在，不能把两次 `32/34` 合并成一种故障，亦不能把新版本变化归功于阶段五。A0 Web BookStack 已 `34/34` 通过，说明漏路由不是所有 BookStack Run 的必然结果，却不能推翻 Lite 的具体漏接证据。禁止按“超时”这一表面标签做单一补丁。后续发现同一机制时，在对应 ID 下追加 Run 证据；机制不同则新建 ID，并记录关联而不强行合并。
 
 ## 4. 决策记录与现有能力盘点
 
@@ -119,6 +121,7 @@
 | Keep 的具体生成代码补丁 | 旧 Keep `P5-002` 仍待证据；新 Keep 的四处生成应用改动已在隔离副本通过干净 seed 的 32 题，但不是永久 Agent 修改；评分后 ZIP 的 `24/32` 不能视作交付态验收 | 取得评分前状态/启动策略证据、可比平台 Run 或新 Run 同机制反证 |
 | 新 Keep 一律清库/全局等待/重写前端 | 决定不采用；`DEFAULT_DB` 自身就有错误归档前置状态，Undo 是名称契约，Save 是 DOM 替换候选；全局手段可能掩盖或制造新问题 | 有新的直接证据表明这些动作必要且不伤其他 fixture |
 | 为 Keep 引入 React、TanStack 或新验收循环 | 暂不修改；现有前端为原生 JS、Agent 已有验收/摘要循环，增加依赖或并行机制会放大维护成本 | 最小现有路径无法解决且有多 Run 复现 |
+| BookStack 一律清空 DB、全局加 heading 或改官方 helper | 暂不采用；`5669f7d1777c` 下载 ZIP 是评分后产物，不能证明评分前状态污染；新增 heading 应先在隔离产物中验证语义、时序和全套回归，官方测试不改 | 评分前 DB 哈希/快照与定点对照、真实浏览器 DOM/网络链路证明具体机制 |
 | 上传 ZIP 打包卫生 | 下次候选建议使用现有 [`arc/pack.sh`](../arc/pack.sh) 的白名单；`arc_first.zip` 根目录正确但含额外脚本、文档、缓存目录和 7 个 `.pyc`；**没有证据证明这些造成 Keep 失败** | 下次打包前做条目清单、入口与 SHA 校验 |
 | Web BookStack 功能补丁 | 决定不改；冻结 A0 的 `c31c51f2400b` 已首轮及最终 `34/34`，阶段 4 仅建议效率评审 | 新的同任务失败链路或可复现回归；效率优化必须保持 `34/34` |
 
@@ -151,6 +154,7 @@
 | 2026-09-19 | 纳入 A0 Web BookStack `c31c51f2400b` | 阶段 3/4 证据已验证；阶段 5 决定仅评审效率 | A0 原版 Run；非候选构建，非 A/B | 平台与内部首轮均 `34/34`；阶段 4 ACK/结果四项身份字段匹配；无功能补丁，`34/34` 作为回归门槛 |
 | 2026-09-19 | 纳入候选 Keep `0aa6820e0b82`，建立 `P5-006/007/008` | 平台最终事实已读；阶段 4 交接已核验；未做本地复现/Agent 新改动 | 用户指认 ZIP SHA-256 见 `P5-005`；生成包 `template.zip` SHA-256 `9B46EC5C3D55FEDD1E986BC6733E05CFA8C95C76723EFF42B67C22CF8DE93EC4` | 平台 `29/32`；三项失败机制分开记录，不能从 31/32→29/32 直接推断路由切片造成退步 |
 | 2026-09-19 | `P5-006/007/008` 定点复现后加入通用交互/种子契约与失败提示 | 生成产物干净 seed 本地 `32/32`；原包 DB `24/32` 为评分后快照重放；Agent 定向测试通过，平台收益未验证 | `codex/arc-bench-phase5-route-contract`，`dddc94312d4cd26babdbfb9d7df2a17f08f0a51d`；尚无此提交构建的上传 Agent ZIP/新平台 Run | `arc/main.py`、`arc/acceptance.py`、两份单测及根 `CHANGELOG.md`；定向 10/10，完整 84 项仍为原有 3 fail + 1 error；评分前 DB 精确状态和平台启动内部策略待核对 |
+| 2026-09-20 | 纳入首次修改版 BookStack Lite `5669f7d1777c`，建立 `P5-009` | 阶段 3 manifest/阶段 4 JSON 已读，平台 `32/34`；保存后定位机制为强候选，暂不改 Agent | 上传构建 SHA 与任务快照缺失；此 Run 非 `dddc943...` 阶段五产物 | 原始报告两题均固定等 `heading`，生成详情页以链接展示新实体；先在隔离生成包定点复现并收集 DOM/请求/评分前 DB 哈希，见第 12 节 |
 
 后续新增一行时，若状态为“实施中”或以上，必须写出实际文件、完整提交 SHA、构建 ID、测试命令及结果；若状态为“平台已验证”，还须写出新 Run ID 和 A/B 结论。不得把本文件的建立提交误写成 Agent 优化提交。
 
@@ -258,3 +262,13 @@ Pop-Location
 - **`P5-008` 未解：**导出 DB 的 `label-work-editable` 为 `Projects`，没有可用更新时间；它可能由评分时 Save 的部分写入、Agent 内部测试或更早持久化造成。故此值不能证明评分前标签已是 `Projects`；本地 50ms 双 GET 竞态虽已受控复现，平台 Save-detach 的精确触发链仍待评分前快照或带时间戳 trace 证实。
 - **决策影响：**保留 `32/32` 干净 seed 回归和 `24/32` 评分后快照重放这两项**不同实验**，撤回“`24/32` 证明候选包带旧 DB 开跑/只改默认 seed 不可交付”的推断；不据此追加清库、全局重写持久层或新 Agent 特例。已有通用 seed/可访问名称/交互稳定提示保持本地候选状态，平台收益仍待 A/B。
 - **下一步与所需协助：**优先查平台能否导出 Agent 结束、Playwright 开始之间的 `backend/data/db.json` 快照或 runner 启动/导出文档；若不能，待用户授权下一次平台 Run 时，可让候选 Agent 在生成结束前只读记录 DB SHA-256、目标 fixture 的状态及文件存在性，并与评分后的 ZIP 和日志对照。诊断日志不应包含密钥或完整用户数据。当前无需 Octos、Cargo 或 API Key 做本地分析；精确平台内部策略需要平台侧证据，不靠猜测补齐。
+
+## 12. 首次修改版 BookStack Lite `5669f7d1777c`：跨 Run 判别与下一实验（2026-09-20）
+
+- **身份与指标：**阶段 3 [manifest](../evidence/arc-bench/runs/5669f7d1777c/manifest.json) 将其按用户说明标为首次修改版，**既非冻结 A0，也非阶段五候选输出**；平台 `32/34`、耗时 `12,739` 秒、1,275 请求、Provider total 32,806,346 Token、平台 32,806,461 Token、¥17.124841。内部全套 round 0 `33/34`（`REQ-2.2`）→ round 1 `34/34`，但 `REQ-5.6.1` 定点三轮始终 `0/1`，内部全绿不等于最终这两题稳定通过。与旧 Lite `00c59e0762fb` 同为 `32/34` 但失败题不同、构建/快照不可比；不得宣称阶段五功能或成本收益。
+- **平台直接事实：**`REQ-5.6.1` 在 Save Book 后等待 `Book Created 5.6.1` 超时；`REQ-6.1.1` 在 Save Page 后已导航至 `/books/8`，仍等待 `Page Created 6.1.1` 超时。两项最终错误都固定为 `getByRole('heading', {name: ...}).first()`。最终生成 ZIP 中有 `Shelf 5.6.1`、关联的 `Book Created 5.6.1`，以及 `bookId=8` 的 `Page Created 6.1.1`；Page 的更新时间为正式平台测试期间，证明该次保存至少写入了持久层。Book 无同等时间字段，不能确定是内部验收还是最终测试写入。
+- **新的共性候选 `P5-009`：**冻结官方 `helpers.ts` 的 `firstVisible()` 在逐个检查定位器的**当下**找不到可见目标时，固定返回列表首个 `heading`；后续 `expect(...).toBeVisible()` 只等该 heading，不会重新选择随后出现的 link。最终生成的 `injectShelfDetails()` 与 `injectBookPages()` 都把新实体名称放在 `<a>` 中，而非 heading；两个表单都在异步 `POST /api/...` 成功后才设置 `window.location.href`。这与两题在跳转完成前选中 heading、跳转后只有 link 的失败链相吻合，`REQ-6.1.1` 还有最终 URL 与评分时 DB 写入佐证。**源码/失败 locator 已证实，浏览器实际选取瞬间与最终 DOM 尚缺 trace，故完整因果链仍标 `strong_candidate`。**
+- **与既有问题的边界：**旧 Lite BookStack `P5-001` 是声明的路由未接入主分发；此 Run 两题的名义路由、表单、POST/API、后端列表注入都存在，不应继续套用“缺路由”补丁。与 Keep `P5-006` 同属可访问语义，但 Keep 是按钮 `aria-label` 被覆盖；本项是保存后的结果页面角色和异步定位时序，属于**相关但不同机制**。候选 Agent 的通用精确角色/名称契约可能有帮助，但还没有本 Run 的阶段五收益证据。
+- **纠偏阶段 4 建议：**[阶段 4 结果](../evidence/arc-bench/runs/5669f7d1777c/phase4-result.json) 提出把最终评测改为“不可变干净 DB”并把状态污染列为强候选。本阶段保留它作为待排除解释，**不把评分后 ZIP 的 DB 当成评分前快照，也不授权全局清库**；上一 Run 第 11 节已实证导出 DB 会含平台测试写入。前后构建不一致亦缺源码/dist 哈希，不能先按此修改 Agent。平台没有提供两题最终 DOM、响应体、请求 trace 或评分前 DB 哈希。
+- **最小验证顺序：**在隔离副本使用同一冻结官方 spec：①先运行原版两题，记录点击 Save 前后时间、URL、POST 状态、重定向、返回 HTML、`heading` 与 `link` 可见性，并分别保存每次前后的 DB 哈希；②若目标数据已写入且结果页只呈现 link，则单变量把书/页卡片标题改为语义合理的 heading（可在其中保留 link），原样复跑两题；③两题通过后跑同一份 34 题、比较干净 seed 与预存 DB 两种**明确标记**的起点，防回归。若原版响应根本未含目标记录，再查写入/读取/构建边界；不要先增加超时、全局清库或改官方 helper。以上均为建议，**本次未执行本地复现或新平台 Run**。
+- **实现决策门槛：**仅当定点对照确认相同机制，才决定是否把“异步保存后的稳定结果角色与导航闭环”纳入现有 `arc/main.py` 提示或 `arc/acceptance.py` 摘要；先盘点已有精确 role/name 提示，避免与 `P5-006` 重复、过度嵌套或误导其他任务。产物级 h2/link 调整是 BookStack 特例，不能直接硬编码进通用 Agent。上传 Agent ZIP SHA、代码提交和 `task_snapshot_id` 仍须补齐，方可谈同条件平台 A/B。
