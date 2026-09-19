@@ -124,6 +124,33 @@ class FailureNormalizationTests(unittest.TestCase):
         self.assertEqual(re.sub(r"\d+", "#", a), re.sub(r"\d+", "#", b))
 
 
+class RouteDiagnosticsTests(unittest.TestCase):
+    def test_should_pass_bounded_route_hint_to_existing_repair_digest(self):
+        import argparse, tempfile
+        from pathlib import Path
+        from acceptance import RunSummary, TestOutcome
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "backend").mkdir()
+            (root / "backend/server.js").write_text(
+                "if (pathname === '/shelf/edit' && req.method === 'GET') {}", encoding="utf-8")
+            flow = m.Flow(argparse.Namespace(web_port=3000), root, root)
+            flow.designs["REQ-1"] = {"routes": [
+                {"method": "GET", "path": "/shelf/edit"},
+                {"method": "POST", "path": "/shelf/edit"},
+            ]}
+            summary = RunSummary(passed=0, total=1, results=[TestOutcome(
+                title="Save Shelf", ok=False, status="timedOut", duration_ms=10000,
+                message="waiting for updated shelf")])
+            digest = flow.failure_diagnostics("REQ-1", summary)
+            self.assertIn("POST /shelf/edit", digest)
+            self.assertIn("static hint, not a verdict", digest)
+            self.assertEqual(flow.failure_diagnostics("REQ-1", RunSummary(error="test loader failed")), "")
+            summary.passed = 1
+            summary.results[0].ok = True
+            self.assertEqual(flow.failure_diagnostics("REQ-1", summary), "")
+
+
 class CodegenPromptTests(unittest.TestCase):
     def test_should_format_without_placeholder_errors_and_keep_build_command(self):
         import main as m

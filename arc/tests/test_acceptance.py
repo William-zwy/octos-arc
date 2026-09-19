@@ -12,6 +12,7 @@ from acceptance import (
     restore_tree,
     restore_worktree,
     robustness_probe,
+    route_contract_gaps,
     workers_for_memory,
     snapshot_worktree,
     tree_digest,
@@ -95,10 +96,49 @@ class ReportTests(unittest.TestCase):
         summary = summarize_report(report(("t", "failed", msg, [], 100)))
         self.assertIn('Steps: navigating to "http://x/", waiting until "load"', failure_summaries(summary))
 
-    def test_should_mark_timeouts_as_performance_observations(self):
+    def test_should_report_timeouts_without_assigning_a_cause(self):
         summary = summarize_report(report(("slow one", "timedOut", "Test timeout of 10000ms exceeded.", ["page.reload"], 10000)))
         text = failure_summaries(summary)
         self.assertIn("timed out", text.lower())
+        self.assertIn("cause not established", text)
+        self.assertNotIn("request never settled", text)
+
+
+class RouteContractTests(unittest.TestCase):
+    def test_should_hint_at_missing_method_and_dynamic_route_wiring(self):
+        design = {"routes": [
+            "GET /shelf/:id/edit",
+            "POST /shelf/:id/edit",
+            {"method": "GET", "path": "/page/:id/delete"},
+            {"method": "POST", "path": "/page/:id/delete"},
+        ]}
+        server = """
+            function handleShelfEdit(req, res) {}
+            if (/^\\/shelf\\/[^\\/]+\\/edit$/.test(pathname) && req.method === 'GET') {
+              serveStatic(req, res, '/shelf_edit');
+            }
+            if (/^\\/page\\/[^\\/]+\\/edit$/.test(pathname) && req.method === 'GET') {
+              serveStatic(req, res, '/page_edit');
+            }
+            // if (/^\\/page\\/[^\\/]+\\/delete$/.test(pathname) && req.method === 'POST') {
+        """
+        self.assertEqual(route_contract_gaps(design, server), [
+            "POST /shelf/:id/edit", "GET /page/:id/delete", "POST /page/:id/delete",
+        ])
+        connected = server + """
+            if (/^\\/shelf\\/[^\\/]+\\/edit$/.test(pathname) && req.method === 'POST') {}
+            if (/^\\/page\\/[^\\/]+\\/delete$/.test(pathname) && req.method === 'GET') {}
+            if (/^\\/page\\/[^\\/]+\\/delete$/.test(pathname) && req.method === 'POST') {}
+        """
+        self.assertEqual(route_contract_gaps(design, connected), [])
+
+    def test_should_recognize_literal_routes_and_abstain_on_unknown_router(self):
+        design = {"routes": ["GET /shelf/new", "POST /shelf/create",
+                             {"method": "GET", "path": "/about"}]}
+        server = "if (pathname === '/shelf/new' && req.method === 'GET') {}"
+        self.assertEqual(route_contract_gaps(design, server), ["POST /shelf/create"])
+        self.assertEqual(route_contract_gaps(design, "router.post('/shelf/create', handler)"), [])
+        self.assertEqual(route_contract_gaps(None, server), [])
 
 
 if __name__ == "__main__":

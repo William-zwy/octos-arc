@@ -78,7 +78,7 @@ from acceptance import (  # noqa: E402
     workers_for_memory,
     AcceptanceRunner, AppServer, RunSummary, acceptance_work_dir, container_memory_limit, ensure_playwright,
     failure_summaries, find_playwright_by_search, find_playwright_root, map_specs_to_nodes,
-    nodes_for_failures, playwright_candidates, playwright_version_hint, restore_tree,
+    nodes_for_failures, playwright_candidates, playwright_version_hint, route_contract_gaps, restore_tree,
     restore_worktree, snapshot_worktree, tree_digest,
 )
 from codegen import FORMAT_INSTRUCTIONS, dedupe_nav_links, parse_file_blocks, write_files  # noqa: E402
@@ -1388,6 +1388,25 @@ class Flow:
         except Exception as exc:  # noqa: BLE001
             log(f"[trace] test rows not recorded: {exc}")
 
+    def failure_diagnostics(self, node_id: str, summary: RunSummary) -> str:
+        """Add bounded route candidates to the existing acceptance failure digest."""
+        failures = failure_summaries(summary)
+        design = self.designs.get(node_id)
+        server = self.output_dir / "backend" / "server.js"
+        if not isinstance(design, dict) or not any(not result.ok for result in summary.results):
+            return failures
+        try:
+            if not server.is_file() or server.stat().st_size > 1_000_000:
+                return failures
+            gaps = route_contract_gaps(design, server.read_text(encoding="utf-8", errors="replace"))
+        except OSError:
+            return failures
+        if gaps:
+            failures += ("\n  Route wiring audit (static hint, not a verdict): " + ", ".join(gaps)
+                         + ". These design method/path pairs were not detected in supported single-line backend "
+                         "route conditions; check active dispatch and fallback before editing the UI.")
+        return failures
+
     def acceptance_loop(self, node_id: str, specs: list[str], deadline: float,
                         rebuild_prompt=None) -> bool | None:
         """Returns True/False for a real verdict, None when no local run happened.
@@ -1412,7 +1431,7 @@ class Flow:
                 passed = 0
             else:
                 passed = summary.passed
-                failures = failure_summaries(summary)
+                failures = self.failure_diagnostics(node_id, summary)
                 self.record_tests(node_id, specs, summary)
             log(f"[acceptance] {node_id} round {attempt}: {passed}/{summary.total}")
             normalized = re.sub(r"\d+", "#", failures or "")

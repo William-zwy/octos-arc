@@ -194,8 +194,8 @@ def failure_summaries(summary: RunSummary, max_steps: int = 8, max_observation: 
             continue
         observation = r.message.strip() or f"status {r.status}"
         if r.status == "timedOut" or "timeout" in observation.lower()[:120]:
-            observation = (f"TIMED OUT after {r.duration_ms} ms (the grader kills a test at 10 s; the "
-                           f"page or a request never settled). " + observation)
+            observation = (f"TIMED OUT after {r.duration_ms} ms (test deadline exceeded; "
+                           f"cause not established). " + observation)
         observation = observation[:max_observation]
         where = r.location or r.file or "?"
         if r.location and r.file and not r.location.startswith(r.file):
@@ -204,6 +204,81 @@ def failure_summaries(summary: RunSummary, max_steps: int = 8, max_observation: 
         steps = " -> ".join(steps_src[-max_steps:]) if steps_src else "(no step trace)"
         blocks.append(f"- Feature: {r.title}\n  Failed at: {where}\n  Observation: {observation}\n  Steps: {steps}")
     return "\n".join(blocks)
+
+
+_ROUTE_IF = re.compile(r"\bif\s*\(([^\n]{0,600})\)\s*\{")
+_ROUTE_METHOD = re.compile(r"\breq\.method\s*={2,3}\s*(['\"])([A-Z]+)\1")
+_ROUTE_LITERAL = re.compile(r"\bpathname\s*={2,3}\s*(['\"])(/[^'\"]*)\1")
+_ROUTE_REGEX = re.compile(r"/((?:\\.|[^/])*)/[a-z]*\.test\(\s*pathname\s*\)")
+
+
+def route_contract_gaps(design: dict | None, server_js: str, max_hints: int = 3) -> list[str]:
+    """Flag design routes possibly absent from explicit Node `if` branches.
+
+    This is a repair hint, not a route verifier: unfamiliar routing styles and
+    route families without any recognized branch are left unclassified.
+    No generated code is executed and no state-changing request is sent.
+    """
+    if not isinstance(design, dict) or not isinstance(design.get("routes"), list) or max_hints <= 0:
+        return []
+    branches: list[tuple[str, str | None, re.Pattern | None]] = []
+    families: set[str] = set()
+    for line in server_js.splitlines():
+        if line.lstrip().startswith("//"):
+            continue
+        condition = _ROUTE_IF.search(line)
+        if not condition:
+            continue
+        method = _ROUTE_METHOD.search(condition.group(1))
+        if not method:
+            continue
+        literal = _ROUTE_LITERAL.search(condition.group(1))
+        path = literal.group(2) if literal else None
+        pattern = None
+        if path is None:
+            regex = _ROUTE_REGEX.search(condition.group(1))
+            if regex:
+                try:
+                    pattern = re.compile(regex.group(1).replace(r"\/", "/"))
+                except re.error:
+                    continue
+        if path is None and pattern is None:
+            continue
+        family_source = path if path is not None else pattern.pattern.lstrip("^")
+        family = re.match(r"/([A-Za-z0-9_-]+)(?:/|$)", family_source)
+        if family:
+            families.add(family.group(1))
+        elif family_source == "/":
+            families.add("")
+        branches.append((method.group(2), path, pattern))
+
+    gaps = []
+    for route in design["routes"]:
+        if isinstance(route, dict):
+            method, path = str(route.get("method") or "").strip().upper(), route.get("path")
+        elif isinstance(route, str):
+            parts = route.strip().split(None, 1)
+            if len(parts) != 2:
+                continue
+            method, path = parts[0].upper(), parts[1]
+        else:
+            continue
+        valid_path = (isinstance(path, str) and path.startswith("/") and len(path) <= 180
+                      and not any(char.isspace() for char in path))
+        if method not in {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"} or not valid_path:
+            continue
+        family = path.split("/", 2)[1]
+        if family not in families:
+            continue
+        sample = re.sub(r":[A-Za-z_][\w-]*", "route-probe", path)
+        if any(registered_method == method and
+               (literal == sample or (pattern is not None and pattern.fullmatch(sample)))
+               for registered_method, literal, pattern in branches):
+            continue
+        gaps.append(f"{method} {path}")
+        if len(gaps) >= max_hints:
+            break
+    return gaps
 
 
 # ---------------------------------------------------------------- processes
