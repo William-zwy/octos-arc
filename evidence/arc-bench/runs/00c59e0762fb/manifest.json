@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "run": {
+    "run_id": "00c59e0762fb",
+    "submission_id": "59debd594609",
+    "display_name": "teammate-baseline-20260917-ea503546",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--bookstack",
+    "task_snapshot_id": null,
+    "created_at": "2026-09-18T12:53:28.080272",
+    "started_at": "2026-09-18T12:53:30.481055",
+    "finished_at": "2026-09-18T16:53:16.124609",
+    "status": "FAILED",
+    "score": 94.1,
+    "passed_count": 32,
+    "failed_count": 2,
+    "feature_implementation_rate": 0.9411764705882353,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 51000,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0
+  },
+  "internal_acceptance": {
+    "round_0": {
+      "passed": 32,
+      "total": 34,
+      "failing_nodes": ["REQ-4.5.1", "REQ-6.1.3"]
+    },
+    "round_1": {
+      "passed": 32,
+      "total": 34,
+      "failing_nodes": ["REQ-4.5.1", "REQ-6.1.3"]
+    },
+    "repair_rounds_completed": 1,
+    "repaired_nodes_before_final_platform_run": []
+  },
+  "platform_final": {
+    "passed": 32,
+    "total": 34,
+    "failed_tests": [
+      {
+        "test": "REQ-4.5.1.spec.ts",
+        "requirement": "REQ-4.5.1: Save Shelf Edits",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "locator": "getByRole('heading', { name: /Shelf\\s+Updated\\s+4\\.5\\.1/i }).first()",
+        "failure_location": "/workspace/tests/helpers.ts:137; /workspace/tests/REQ-4.5.1.spec.ts:12"
+      },
+      {
+        "test": "REQ-6.1.3.spec.ts",
+        "requirement": "REQ-6.1.3: Delete Draft",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "locator": "getByRole('button', { name: /^Confirm Delete$/i }).first()",
+        "failure_location": "/workspace/tests/helpers.ts:122; /workspace/tests/REQ-6.1.3.spec.ts:10"
+      }
+    ],
+    "score": 94.1,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "metering": {
+    "requests": 1324,
+    "prompt_tokens": 35214173,
+    "completion_tokens": 681758,
+    "reasoning_tokens": 401979,
+    "prompt_cache_hit_tokens": 32267264,
+    "provider_total_tokens": 35895931,
+    "platform_token_count": 60951255,
+    "cost": 32.962032,
+    "currency": "CNY",
+    "run_duration_seconds": 14338
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "log_result_finalized": "FAILED score=94.1"
+  },
+  "source_precedence": [
+    "run.json for final platform status, score and test list",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal rounds and provider usage",
+    "playwright-report.json for final timeout configuration and test result details",
+    "failure-details.md for locator and call-log extraction",
+    "snapshots.json for generated design/codegen state",
+    "template.zip for package identity and reproducibility",
+    "summary.md for navigation only; it cannot override raw structured fields"
+  ],
+  "conflicts": [],
+  "missing": [
+    "task_snapshot_id",
+    "agent_build_id",
+    "code_sha"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-00c59e0762fb-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 4110,
+      "sha256": "BE267081FB732DB120EFB0A37CB049FD907AE3C831FB922897262D5732474FA1",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-00c59e0762fb-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 835583,
+      "sha256": "867C1A9DF7AAF02929A3FAD2B75DE86953B76C45F879C1BAA64938F0A1878E2F",
+      "stored_in_repository": false
+    },
+    {
+      "name": "00c59e0762fb-playwright-report.json",
+      "role": "final_playwright_report",
+      "bytes": 48777,
+      "sha256": "608EDE117345E534DC78DA402EF62923BED8C778D88B6393D2BF2A7D5B6064D5",
+      "stored_in_repository": false
+    },
+    {
+      "name": "00c59e0762fb-template.zip",
+      "role": "template_or_generated_package_snapshot",
+      "bytes": 9798694,
+      "sha256": "3D37B0B13D4A0413721B63CA8924063FAE0C57C3E614F8E086CB2CCDFC0ADD44",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-00c59e0762fb-summary.md",
+      "role": "human_normalized_summary",
+      "bytes": 2924,
+      "sha256": "5A092394CD65878B1D5FACB16C6E5950DDD2A2008C282952D780D38D83A48BE1",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-00c59e0762fb-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 782824,
+      "sha256": "2AD503E1ED0C197DE403E98E6D25B59E6984857535790309217489703B44BFFB",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-00c59e0762fb.json",
+      "role": "raw_run_object",
+      "bytes": 10372,
+      "sha256": "BAF1EEB38A72B3AF87CCE90E1242DC2AE5A5B51972DA1CF577A2B0C5AD027C9D",
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0
+  }
+}
