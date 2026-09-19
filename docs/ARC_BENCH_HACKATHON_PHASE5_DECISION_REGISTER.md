@@ -1,6 +1,6 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.4；建立日期：2026-09-19；状态：路由诊断和 Keep 交互契约两个候选切片均已本地验证；生成应用干净 seed 为 `32/32`，保留原 ZIP 数据库为 `24/32`；平台是否重置数据及可比 A/B **仍未确认**。
+> 版本：v1.5；建立日期：2026-09-19；状态：路由诊断和 Keep 交互契约两个候选切片均已本地验证；生成应用干净 seed 为 `32/32`。原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点；平台启动内部策略和可比 A/B **仍未确认**（见第 11 节）。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
@@ -41,8 +41,8 @@
 | `P5-004` | 四个 Run 的请求、Token、耗时均可计量，但瓶颈来源未定位 | 指标 `confirmed`；根因 `unknown`；新 Keep 有请求级 meter 但缺阶段归因 | 暂缓 5C/5D 调参 | P2；功能率稳定且完成请求级归因后重开 |
 | `P5-005` | A/B 的上传 Agent 构建、任务快照绑定不完整 | 四个 manifest 缺字段 `confirmed`；新 Keep 有用户指认的 ZIP 及本地源码比对，但无平台独立绑定 | 验证前门禁，不等于 Agent 功能修复 | P0；新候选复跑前处理 |
 | `P5-006` | Undo 可访问名称被生成代码覆盖 | 原版失败、修正版及 32 题回归通过：产物级 `confirmed` | Agent 通用契约/失败提示本地已验证；平台未验证 | P0；与消息文本契约一起回归 |
-| `P5-007` | Keep 归档测试前置数据与生成应用 seed 不一致 | 原版与分步对照 `confirmed`；保留原 ZIP 数据库的本地全套仅 `24/32` | 默认 seed 和按钮修复在干净 seed 下通过；交付态数据不一致已实测，平台启动策略未知 | P0；不得用删库回归代替交付验收 |
-| `P5-008` | 重复加载标签与整表重绘打断编辑 | 干净 seed 的 50ms 对照原版 3/3 失败、去重版 3/3 通过；平台同机制不同最终表象 | Agent 通用契约/失败提示本地已验证；平台未验证 | P0；保留全量回归和受控时序 |
+| `P5-007` | Keep 归档测试前置数据与生成应用 seed 不一致 | 原版与分步对照 `confirmed`；评分后 ZIP 的 `24/32` **不是**平台启动基线 | 默认 seed 和按钮修复在干净 seed 下通过；评分时目标仍为归档态，精确启动策略未知 | P0；不得用删库回归代替交付验收 |
+| `P5-008` | 重复加载标签与整表重绘打断编辑 | 干净 seed 的 50ms 对照原版 3/3 失败、去重版 3/3 通过；平台精确时序/根因 `unknown` | Agent 通用契约/失败提示本地已验证；平台未验证 | P0；保留全量回归和受控时序 |
 
 **当前跨 Run 结论：**多个 Lite Run 都有十秒超时且请求较多，但 Keep 的可访问名称、seed、DOM 重绘与 BookStack 的缺路由是不同机制。A0 Web BookStack 已 `34/34` 通过，说明漏路由不是所有 BookStack Run 的必然结果，却不能推翻 Lite 的具体漏接证据。禁止按“超时”这一表面标签做单一补丁。后续发现同一机制时，在对应 ID 下追加 Run 证据；机制不同则新建 ID，并记录关联而不强行合并。
 
@@ -96,14 +96,14 @@
 - **直接证据：**新 Keep 官方 `REQ-2.5.4` 是 `openHome → archiveNote('Travel plans 2.5.4') → openArchive → unarchiveNote`，失败发生在首个 `archiveNote` hover；生成应用 `renderNotes` 会过滤已归档 note。该生成包的 `backend/server.js` `DEFAULT_DB` 中 `seed-archive-254` 已为 `archived: true`，最终 `backend/data/db.json` 中也为 `true`。因此“只删或重建 `db.json`”会从同样不满足前置条件的 `DEFAULT_DB` 再生出错误状态；阶段 4 的清库建议**不能直接执行**。最终平台是否从此文件直接启动仍待平台构建/启动证据确认。
 - **最小方案：**在隔离副本中分别保存原始 `db.json`、从 `DEFAULT_DB` 再生的 seed、仅把该目标 note 设为 `archived:false` 的实验变体，三者各跑一次单题，记录 `GET /api/notes` 响应与首次首页 DOM。原始和 DEFAULT_DB 均缺目标首页卡片、实验变体通过，才支持前置 seed 是主因；若实验变体仍失败，再查网络/渲染时序。不要覆盖官方快照、原始 ZIP 或其他 fixture。
 - **Agent 方案形式：**优先让现有逐节点验收/修复回路携带“测试动作要求的初始数据状态”及失败首步，而不是写死 note 名称或全局清库。仅在跨 Run 反复出现相同 fixture 漂移且现有摘要不足时，考虑小型通用 seed 合同检查。旧 Keep `0cef369cc925` 在 **Unarchive 按钮**处失败，保留为 `P5-002`，不并入本项。
-- **复现后更新（2026-09-19）：**分步对照确认须同时修正 `DEFAULT_DB` 中该 note 的 `archived:false` 和归档态按钮的精确名称 `Unarchive`，干净 seed 全量 32/32。原始 `template.zip` **自带** `backend/data/db.json`，其中该 note 仍为 `archived:true`；`loadDb()` 只有文件不存在才使用修正后的默认值。保留原数据库并使用相同修复版前后端的全量对照实测 `24/32`，`REQ-2.5.4` 仍在首次首页 hover 失败；还有其他已被删除、归档或固定的旧 fixture。故“只改 `server.js` 的默认 seed”不能视为可交付修复。平台实际启动前是否重置数据库尚未知；不可盲目删除用户数据。Agent 改动只在共享契约中要求首步前置状态及打包状态一致，未写题目特例。
+- **复现后更新（2026-09-19）：**分步对照确认须同时修正 `DEFAULT_DB` 中该 note 的 `archived:false` 和归档态按钮的精确名称 `Unarchive`，干净 seed 全量 32/32。原始 `template.zip` **自带** `backend/data/db.json`，其中该 note 仍为 `archived:true`；`loadDb()` 只有文件不存在才使用修正后的默认值。保留该数据库并使用相同修复版前后端的全量对照实测 `24/32`，`REQ-2.5.4` 仍在首次首页 hover 失败；还有其他已被删除、归档或固定的 fixture。**时序纠偏：该 ZIP 数据库已被平台最终评分写入，不是评分前交付态；`24/32` 只能证明评分后状态重放会污染测试，不能据此断言平台以此状态开跑或仅改默认 seed 必然无法交付。**但本 Run 的 `DEFAULT_DB` 原本就把目标设为归档态，评分时首页也找不到它，仍须修正生成时的前置数据契约。平台具体重置/导出策略待确认；不可盲目删除数据。Agent 改动只在共享契约中要求首步前置状态及生成时持久数据一致，未写题目特例；详见第 11 节。
 
 ### `P5-008`｜标签重复加载与编辑行重绘
 
 - **直接证据：**新 Keep 生成前端 Edit labels 点击处理器连续调用两次 `loadLabels()`；每个响应都调用 `renderLabels()`，把 `labelsList.innerHTML` 清空重建。官方测试填入 `Work editable → Projects` 后点击 Save，平台报告按钮先解析成功，后因不稳定并从 DOM 脱离而失败。代码中的重复请求和重建已确认；第二个响应是否恰在点击期间触发，尚缺 trace/DOM mutation 时间戳。
 - **最小方案：**隔离副本中先只去掉重复调用，复跑本题；若仍不稳定，再以请求序号丢弃过期响应或在编辑期间保留当前行，优先避免重复拉取和 DOM 替换。必须回归标签创建、删除、重命名；不引入 React 或新状态管理依赖。
 - **Agent 方案形式：**复用现有 Playwright call log 摘要，针对“resolved but detached”给出检查并发请求/整表重绘的**候选**提示；只有 trace 证明后才加更窄的自动检测。不要因为所有失败都叫 timeout 而统一加等待。
-- **复现后更新（2026-09-19）：**旧 250ms 实验曾被复用数据库污染，已废弃。新实验每轮重建 seed，记录 DB 前后哈希及 DOM/请求时间线：第二次 `GET /api/labels` 在 fill 后、Save 完成前重建行；原版 +50ms 3/3 失败，删重复 `loadLabels()` 后 3/3 通过。平台 trace 是按钮脱离后超时，本地受控实验是 Playwright 重试后提交旧值、最终断言失败；**机制一致但失败表象不完全相同**，3/3 也不是生产抖动率估计。保留原包旧 DB 的全套对照中，去重版 `REQ-2.7.5` 仍 Save-detach：静态 HTML 是 `Work editable`，持久 DB 却已为 `Projects`，一次异步加载也会重建编辑行。因此去重只覆盖了干净 seed 下的重复请求问题，不能代替数据一致性。`renderLabels` 整表重建仍是潜在风险，现阶段不重写渲染层；若新 Run 再现才考虑 stale-response guard 或局部 patch。
+- **复现后更新（2026-09-19）：**旧 250ms 实验曾被复用数据库污染，已废弃。新实验每轮重建 seed，记录 DB 前后哈希及 DOM/请求时间线：第二次 `GET /api/labels` 在 fill 后、Save 完成前重建行；原版 +50ms 3/3 失败，删重复 `loadLabels()` 后 3/3 通过。平台 trace 是按钮脱离后超时，本地受控实验是 Playwright 重试后提交旧值、最终断言失败；**两者相容，但平台的精确因果链尚未证实**，3/3 也不是生产抖动率估计。评分后 ZIP 的本地重放中，去重版 `REQ-2.7.5` 仍 Save-detach：静态 HTML 是 `Work editable`，持久 DB 却已为 `Projects`，一次异步加载也会重建编辑行。由于此 DB 是评分后快照，不能据此证明平台评分前就有 `Projects`，也不能把该次重放当作去重方案的交付反证。`renderLabels` 整表重建仍是潜在风险，现阶段不重写渲染层；若新 Run 再现才考虑 stale-response guard 或局部 patch。
 
 ## 5. 暂不修改事项与重评条件
 
@@ -116,7 +116,7 @@
 | 5E 的任务名特例、全局延长超时、重复验收器 | 决定不采用；分别有过拟合、掩盖根因和代码冗余风险 | 仅在新证据推翻现有机制判断后重新论证 |
 | 5F Evolution 指纹与增量编译 | 本轮暂缓；两个 Lite Run 不足以证明 Evolution 故障 | 对应 Evolution 基线显示全量重建、错误影响范围或回归 |
 | 5G 进程/端口/OOM 治理 | 本轮暂缓；失败可定位到生成应用/交互，尚无进程资源故障证据 | 新 Run 提供端口冲突、启动失败、OOM、泄漏或超时层级证据 |
-| Keep 的具体生成代码补丁 | 旧 Keep `P5-002` 仍待证据；新 Keep 的四处生成应用改动已在隔离副本通过干净 seed 的 32 题，但不是永久 Agent 修改，也未验证包内旧 DB 交付态 | 保留 DB 的交付复验、可比平台 Run 或新 Run 同机制反证 |
+| Keep 的具体生成代码补丁 | 旧 Keep `P5-002` 仍待证据；新 Keep 的四处生成应用改动已在隔离副本通过干净 seed 的 32 题，但不是永久 Agent 修改；评分后 ZIP 的 `24/32` 不能视作交付态验收 | 取得评分前状态/启动策略证据、可比平台 Run 或新 Run 同机制反证 |
 | 新 Keep 一律清库/全局等待/重写前端 | 决定不采用；`DEFAULT_DB` 自身就有错误归档前置状态，Undo 是名称契约，Save 是 DOM 替换候选；全局手段可能掩盖或制造新问题 | 有新的直接证据表明这些动作必要且不伤其他 fixture |
 | 为 Keep 引入 React、TanStack 或新验收循环 | 暂不修改；现有前端为原生 JS、Agent 已有验收/摘要循环，增加依赖或并行机制会放大维护成本 | 最小现有路径无法解决且有多 Run 复现 |
 | 上传 ZIP 打包卫生 | 下次候选建议使用现有 [`arc/pack.sh`](../arc/pack.sh) 的白名单；`arc_first.zip` 根目录正确但含额外脚本、文档、缓存目录和 7 个 `.pyc`；**没有证据证明这些造成 Keep 失败** | 下次打包前做条目清单、入口与 SHA 校验 |
@@ -139,7 +139,7 @@
 
 1. 先解决 `P5-005` 的可比性记录：至少能区分 A0 与新候选上传包，并确认同任务官方版本、模型、推理级别、预算、测试来源和并发条件。Keep 与 BookStack 预算不同，**只能在各自任务内做同条件 A/B**，不能直接跨任务比绝对费用。
 2. `P5-001` 与 `P5-003` 已在一个本地切片实现并做最小样例、真实生成包核验；已有用户指认的候选 ZIP 和 Keep Run，但**仍未进行 BookStack 或 Smoke 的候选平台复跑**。后续复跑须在用户明确安排后进行，不混入 5B/5C/5D/F/G。
-3. 旧 Keep 的 `P5-002` 保持待证据。新 Keep `P5-006/007/008` 已按第 10 节完成定点复现及窄 Agent 切片；保留包内 DB 的本地对照为 `24/32`，下一门槛是查明平台/交付启动是否重置 DB、候选 ZIP 身份绑定和用户安排的同条件平台 A/B。不要把两个 Keep 的同编号失败混成一个“归档竞态”。
+3. 旧 Keep 的 `P5-002` 保持待证据。新 Keep `P5-006/007/008` 已按第 10 节完成定点复现及窄 Agent 切片；原包 DB 的本地 `24/32` 已重分类为**评分后快照重放**（第 11 节），下一门槛是取得评分前状态/启动策略证据、候选 ZIP 身份绑定和用户安排的同条件平台 A/B。不要把两个 Keep 的同编号失败混成一个“归档竞态”。
 4. A/B 比较至少覆盖：平台通过数、首轮通过数、请求数、输入/输出/缓存/推理 Token、平台 Token、费用、总耗时和修复轮数；功能下降默认拒绝，平台异常需标记而非静默挑选最好结果。
 
 ## 8. 当前实现与验证流水账
@@ -150,7 +150,7 @@
 | 2026-09-19 | `P5-001` + `P5-003` 保守路由诊断与中性超时摘要 | 本地已验证；BookStack 平台待验证 | `codex/arc-bench-phase5-route-contract`，`c53c333d5205fb98bf168c1f4fc670c0eec7432f`；用户指认 ZIP 见 `P5-005`；Keep `0aa6820e0b82` 仅供诊断 | 4 项定向测试通过；真实 BookStack 检出 3 条、Keep 0 条；完整候选 81 项/A0 78 项均为相同 3 fail + 1 error（Windows 基线问题） |
 | 2026-09-19 | 纳入 A0 Web BookStack `c31c51f2400b` | 阶段 3/4 证据已验证；阶段 5 决定仅评审效率 | A0 原版 Run；非候选构建，非 A/B | 平台与内部首轮均 `34/34`；阶段 4 ACK/结果四项身份字段匹配；无功能补丁，`34/34` 作为回归门槛 |
 | 2026-09-19 | 纳入候选 Keep `0aa6820e0b82`，建立 `P5-006/007/008` | 平台最终事实已读；阶段 4 交接已核验；未做本地复现/Agent 新改动 | 用户指认 ZIP SHA-256 见 `P5-005`；生成包 `template.zip` SHA-256 `9B46EC5C3D55FEDD1E986BC6733E05CFA8C95C76723EFF42B67C22CF8DE93EC4` | 平台 `29/32`；三项失败机制分开记录，不能从 31/32→29/32 直接推断路由切片造成退步 |
-| 2026-09-19 | `P5-006/007/008` 定点复现后加入通用交互/种子契约与失败提示 | 生成产物干净 seed 本地 `32/32`、保留原包 DB 为 `24/32`；Agent 定向测试通过，平台收益未验证 | `codex/arc-bench-phase5-route-contract`，`dddc94312d4cd26babdbfb9d7df2a17f08f0a51d`；尚无此提交构建的上传 Agent ZIP/新平台 Run | `arc/main.py`、`arc/acceptance.py`、两份单测及根 `CHANGELOG.md`；定向 10/10，完整 84 项仍为原有 3 fail + 1 error；包内 DB 不一致已实测，平台启动策略待核对 |
+| 2026-09-19 | `P5-006/007/008` 定点复现后加入通用交互/种子契约与失败提示 | 生成产物干净 seed 本地 `32/32`；原包 DB `24/32` 为评分后快照重放；Agent 定向测试通过，平台收益未验证 | `codex/arc-bench-phase5-route-contract`，`dddc94312d4cd26babdbfb9d7df2a17f08f0a51d`；尚无此提交构建的上传 Agent ZIP/新平台 Run | `arc/main.py`、`arc/acceptance.py`、两份单测及根 `CHANGELOG.md`；定向 10/10，完整 84 项仍为原有 3 fail + 1 error；评分前 DB 精确状态和平台启动内部策略待核对 |
 
 后续新增一行时，若状态为“实施中”或以上，必须写出实际文件、完整提交 SHA、构建 ID、测试命令及结果；若状态为“平台已验证”，还须写出新 Run ID 和 A/B 结论。不得把本文件的建立提交误写成 Agent 优化提交。
 
@@ -228,7 +228,7 @@ Pop-Location
 
 - 来源：用户提供的本地 `C:/Users/dayuruozhi/Doubao/chats/2026-09-19/new-chat-4/repro/REPRO-NOTES.md` 及 `evidence/`；生成应用输入 ZIP SHA-256 为 `9B46EC5C3D55FEDD1E986BC6733E05CFA8C95C76723EFF42B67C22CF8DE93EC4`，冻结官方 `helpers.ts` SHA-256 为 `42AE20F9D533C768E9A96A62F29FE8A36ED1C1CC366638671F4A07782D72C01A`。`final-32/full-regression.log` 为 `32 passed (25.2s)`、exit 0，`results.json` SHA-256 为 `4C5EEFF88849B6B43C82EFF9176FE5A1BB951E47BB97885FF40F8F25AF0DC868`。这是一份**修补生成应用后的重放**，不是 Agent 重跑，也没有 Agent Token/耗时收益数据。
 - `P5-006`：只去掉 `showSnackbar` 第三参会修好 Undo，却使 `REQ-2.3.1` 的消息断言回归失败；正确产物修复是消息 `Note trashed` 和按钮名称 `Undo` 分离。`P5-007`：产物需同时修正归档前置状态及归档态按钮名称 `Unarchive`。`P5-008`：用每轮新 seed、MutationObserver/请求时间戳和 50ms 第二响应延迟重做对照，原版 3/3 失败、去重版 3/3 通过；本地最终失败是旧值提交，不能写成与平台完全相同的 Save-detach 超时。
-- **交付条件对照：**`template.zip` 内含 `backend/data/db.json`，该文件 SHA-256 `D12C995848309373ED506E5C36756A9896170A733F8B02505ED0167EE1B8CEE6`，目标 note 仍 `archived:true`。生成后端仅在 DB 文件不存在时写入 `DEFAULT_DB`，读取现成 DB 时以其内容覆盖默认值。在同一修复版 `app.js`/`server.js` 下，删除 DB 后重新 seed 为 `32/32`，保留原 ZIP 的 DB 为 **`24/32`**（1 worker、零重试、相同 32 项）。失败：`REQ-2.3.1/.2/.3`、`REQ-2.5.1/.3/.4`、`REQ-2.7.5`、`REQ-2.8.1`；原 DB 中对应删除 note 已 trashed、归档 note 已 archived、目标 note 已 pinned，标签 `Projects` 与静态 HTML 的 `Work editable` 不一致。保留 DB 实验副本与 trace 位于 `D:/Temp/arc-keep-packaged-db-278848bf91cd4be9830fe8ed350336f8/`，前后 DB SHA-256 分别为 `D12C995848309373ED506E5C36756A9896170A733F8B02505ED0167EE1B8CEE6` / `7861C2D628944F3C51079567C88A742219BAFD2D387BCD38225DECCD0A190C14`，Playwright exit 1。**这不是平台成绩**；平台可能在评分前重置/替换数据，须查其实际交付流程。
+- **评分后快照重放对照（原称“交付条件对照”，现纠偏）：**`template.zip` 内含 `backend/data/db.json`，该文件 SHA-256 `D12C995848309373ED506E5C36756A9896170A733F8B02505ED0167EE1B8CEE6`，目标 note 仍 `archived:true`。生成后端仅在 DB 文件不存在时写入 `DEFAULT_DB`，读取现成 DB 时以其内容覆盖默认值。在同一修复版 `app.js`/`server.js` 下，删除 DB 后重新 seed 为 `32/32`，保留原 ZIP 的 DB 为 **`24/32`**（1 worker、零重试、相同 32 项）。失败：`REQ-2.3.1/.2/.3`、`REQ-2.5.1/.3/.4`、`REQ-2.7.5`、`REQ-2.8.1`；该 DB 中对应删除 note 已 trashed、归档 note 已 archived、目标 note 已 pinned，标签 `Projects` 与静态 HTML 的 `Work editable` 不一致。实验副本与 trace 位于 `D:/Temp/arc-keep-packaged-db-278848bf91cd4be9830fe8ed350336f8/`，前后 DB SHA-256 分别为 `D12C995848309373ED506E5C36756A9896170A733F8B02505ED0167EE1B8CEE6` / `7861C2D628944F3C51079567C88A742219BAFD2D387BCD38225DECCD0A190C14`，Playwright exit 1。**这既不是平台成绩，也不是评分前交付态验证**；时间戳证明 ZIP 含最终评分写入，第 11 节说明其解释边界。
 - Delete Note 菜单点击冒泡到卡片、意外打开编辑器是独立缺陷；最终四处产物修复**不含** `stopPropagation`。旧 Keep `0cef369cc925` 的同编号归档失败在 Unarchive 阶段，本 Run 在首次首页 hover 阶段，保持 `P5-002` 与 `P5-007` 分离。
 
 ### 10.2 方案选择、复用与代码边界
@@ -246,5 +246,15 @@ Pop-Location
 
 - `python -m unittest tests.test_acceptance.ReportTests tests.test_main_helpers.InteractionDiagnosticsTests tests.test_main_helpers.InteractionPromptTests tests.test_main_helpers.RouteDiagnosticsTests tests.test_main_helpers.CodegenPromptTests`：10/10，exit 0；`git diff --check`：exit 0。
 - `python -m unittest discover -s tests`：84 项，exit 1，仍是候选修改前相同的 3 fail + 1 error（Windows 路径表示、临时 Git 文件权限）；未把这四项算作本切片新增失败，也不能宣称全套绿灯。`python -m py_compile` 因本机 `__pycache__` 写入权限失败；单测已成功导入新代码，此错误不代表语法失败。
-- **尚未完成：**平台/交付启动是否重置或替换原包 DB 的确认；从该提交重新制作并核验 Agent ZIP 的源码 SHA/ZIP SHA；同任务同快照的 Smoke、Keep、BookStack 平台 A/B；请求级 meter 阶段归因。因此当前状态是“Agent 本地已验证、平台效果未知”，不能推断完成率、Token 或总耗时提升，也不推送远端。
-- **重评/回退条件：**若通用提示在新 Run 误导修复或增加显著 Token/修复轮，则先移除相应提示而保留已证实的产物问题；本地保留 DB 的失败要求先核对交付构建是否包含运行时数据及其初始化策略，不能自动清除持久数据；若另一个 Run 出现同类编辑重绘，才考虑比去重更深的 stale-response/局部 DOM 更新方案。
+- **尚未完成：**平台评分前 DB 精确快照及启动/导出内部策略的确认；从该提交重新制作并核验 Agent ZIP 的源码 SHA/ZIP SHA；同任务同快照的 Smoke、Keep、BookStack 平台 A/B；请求级 meter 阶段归因。因此当前状态是“Agent 本地已验证、平台效果未知”，不能推断完成率、Token 或总耗时提升，也不推送远端。
+- **重评/回退条件：**若通用提示在新 Run 误导修复或增加显著 Token/修复轮，则先移除相应提示而保留已证实的产物问题；评分后 DB 的重放失败不得直接触发清库或新补丁，应先取评分前状态/启动策略证据；若另一个 Run 出现同类编辑重绘，才考虑比去重更深的 stale-response/局部 DOM 更新方案。
+
+## 11. `0aa6820e0b82` 平台启动与导出时序纠偏（2026-09-19）
+
+- **证据源：**原始平台日志 `C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-0aa6820e0b82-logs.json`、最终产物 `0aa6820e0b82-template.zip`，以及同目录旧 Run `0cef369cc925` 的日志/产物。均为只读核查；未启动新平台 Run，也未修改官方测试或生成产物。
+- **平台可见顺序（UTC）：**runner 指向同一 `/workspace/template` 作为 `project_dir` 和 `output_dir`；Agent 的 `10:43:34` postflight 工作区目录清单已有 `template/backend/data/db.json`（只证明文件存在，未记录内容哈希）。Agent 于 `10:43:39` 退出，随后安装依赖、构建并于 `10:43:40` 启动 `template-app`，`10:43:44` 开始执行 32 项 Playwright，`10:44:31` 报 29/32，`10:44:38` 提交结束。可见日志没有 DB 重置记录；这提高了沿用现成 DB 的可能性，**不等于**证明内部没有未记录的复制、恢复或重置。
+- **ZIP 已含评分写入（已确认）：**`seed-delete-231` 的 `updatedAt` 为 `10:43:47.140`、`seed-delete-232` 为 `10:43:47.673`、`seed-archive-251` 为 `10:43:59.857`、`seed-meeting-agenda-281` 为 `10:44:27.455`（均为 UTC），与正式测试期间对应删除、归档、固定动作吻合。另一个 Run `0cef369cc925` 的导出 DB 也有测试期间 `seed-delete-231` 的 `deletedAt=2026-09-18T16:35:14.338Z`。因此导出 `template.zip` 的 DB **不是评分前静态快照**，跨 Run 可重复观察。
+- **`REQ-2.5.4` 能确定的范围：**导出 DB 中 `seed-archive-254` 仍 `archived:true`，其 `updatedAt=09:26:47.194 UTC`，早于最终评分；本题在首页第一次 hover 就失败，未执行会改变该 note 的归档动作；生成 `server.js` 的 `DEFAULT_DB` 也设为 `archived:true`。这些共同强力支持**评分时目标处于错误的归档前置状态**，但不区分平台直接沿用 Agent 退出前已有的 DB、重建自错误默认 seed，或恢复包含该状态的快照。不能把“平台必然直接使用最终下载 ZIP 的 DB”写成已证实事实。
+- **`P5-008` 未解：**导出 DB 的 `label-work-editable` 为 `Projects`，没有可用更新时间；它可能由评分时 Save 的部分写入、Agent 内部测试或更早持久化造成。故此值不能证明评分前标签已是 `Projects`；本地 50ms 双 GET 竞态虽已受控复现，平台 Save-detach 的精确触发链仍待评分前快照或带时间戳 trace 证实。
+- **决策影响：**保留 `32/32` 干净 seed 回归和 `24/32` 评分后快照重放这两项**不同实验**，撤回“`24/32` 证明候选包带旧 DB 开跑/只改默认 seed 不可交付”的推断；不据此追加清库、全局重写持久层或新 Agent 特例。已有通用 seed/可访问名称/交互稳定提示保持本地候选状态，平台收益仍待 A/B。
+- **下一步与所需协助：**优先查平台能否导出 Agent 结束、Playwright 开始之间的 `backend/data/db.json` 快照或 runner 启动/导出文档；若不能，待用户授权下一次平台 Run 时，可让候选 Agent 在生成结束前只读记录 DB SHA-256、目标 fixture 的状态及文件存在性，并与评分后的 ZIP 和日志对照。诊断日志不应包含密钥或完整用户数据。当前无需 Octos、Cargo 或 API Key 做本地分析；精确平台内部策略需要平台侧证据，不靠猜测补齐。
