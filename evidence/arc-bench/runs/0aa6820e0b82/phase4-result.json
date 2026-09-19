@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 4 read-only diagnosis",
+  "handoff_id": "0aa6820e0b82-80C37FA5A6E5",
+  "run_id": "0aa6820e0b82",
+  "task_key": "arc-bench-lite--keep",
+  "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
+  "status": "complete",
+  "analyzed_at": "2026-09-19T12:21:08.775Z",
+  "scope": "Only this run; no rerun, upload, new run, code change, or test change",
+  "platform_final": {
+    "passed": 29,
+    "total": 32,
+    "score": 90.6,
+    "status": "FAILED",
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "failed_tests": [
+      {
+        "test": "REQ-2.3.2.spec.ts",
+        "requirement": "REQ-2.3.2: Notification and Undo",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10023,
+        "locator": "getByRole('button', { name: /^Undo$/i })",
+        "failure_location": "/workspace/tests/helpers.ts:281; /workspace/tests/REQ-2.3.2.spec.ts:10"
+      },
+      {
+        "test": "REQ-2.5.4.spec.ts",
+        "requirement": "REQ-2.5.4: Unarchive",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10023,
+        "locator": "getByText(/Travel plans 2\\.5\\.4/i).first().getByRole('button', { name: /Travel\\s+plans\\s+2\\.5\\.4/i }).first()",
+        "failure_location": "/workspace/tests/helpers.ts:144,271; /workspace/tests/REQ-2.5.4.spec.ts:9"
+      },
+      {
+        "test": "REQ-2.7.5.spec.ts",
+        "requirement": "REQ-2.7.5: Edit labels",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10022,
+        "locator": "getByRole('group', { name: /^Label Work editable$/i }).getByRole('button', { name: /^Save$/i })",
+        "failure_detail": "button resolved but was not stable and was detached from the DOM during click",
+        "failure_location": "/workspace/tests/helpers.ts:355; /workspace/tests/REQ-2.7.5.spec.ts:11"
+      }
+    ]
+  },
+  "confirmed_facts": [
+    "The platform final run used main.py and /workspace/tests; bundled test fallback hits were zero and no plaintext API key was recorded.",
+    "All three platform failures were Playwright timeouts around 10 seconds; no platform-wide outage was reported.",
+    "REQ-2.3.2 failed while waiting for the Undo button after deleteNote; the clickUndo helper does not wait for the delete request or snackbar readiness.",
+    "REQ-2.5.4 failed before the Unarchive click, during the initial archiveNote path at hoverNamed/helpers.ts:144; the internal node result had also failed in earlier rounds and did not converge.",
+    "REQ-2.7.5 failed after the Save button resolved but while Playwright waited for it to be stable; the final DOM detached the button during the click.",
+    "The final frontend app calls loadLabels twice when the Edit labels sidebar item is clicked, and each loadLabels completion calls renderLabels, which clears and rebuilds labelsList.",
+    "The final frontend app renders notes only after an asynchronous fetch('/api/notes') and skips archived or trashed notes; the official openHome helper only performs page.goto('/').",
+    "The final app contains archive/unarchive endpoints and an Unarchive action; the failures do not establish that the endpoint or button implementation is absent.",
+    "The internal full-suite rounds remained 29/32: round 0 failed REQ-2.3.1, REQ-2.5.4, REQ-2.7.5; rounds 1 and 2 failed REQ-2.3.2, REQ-2.5.4, REQ-2.7.5."
+  ],
+  "failure_chains": [
+    {
+      "node": "REQ-2.3.2",
+      "chain": "deleteNote starts POST /api/notes/:id/trash -> Undo is exposed only in the fetch success callback -> the official test immediately calls clickUndo -> Undo is not visible or stable before the 10-second deadline.",
+      "direct_evidence": "Final locator waits for getByRole('button', { name: /^Undo$/i }); app.js only unhides that button inside showSnackbar after the trash request resolves.",
+      "confidence": "strong_candidate"
+    },
+    {
+      "node": "REQ-2.5.4",
+      "chain": "page.goto('/') -> notes are loaded asynchronously -> official noteCard performs only a short visibility probe and falls back to a title text locator -> target card/action is not ready or not present -> hover times out before Archive/Unarchive can execute.",
+      "direct_evidence": "Final locator is the fallback title-scoped locator at helpers.ts:144; app.js fetches notes asynchronously and renderNotes filters archived/trashed notes.",
+      "confidence": "strong_candidate"
+    },
+    {
+      "node": "REQ-2.7.5",
+      "chain": "Edit labels click -> two loadLabels requests start -> each response calls renderLabels and replaces labelsList -> helper fills the row and attempts Save while a later render replaces that row -> Save is detached or never stable.",
+      "direct_evidence": "app.js contains consecutive loadLabels() calls at the Edit labels handler; renderLabels assigns labelsList.innerHTML = '' and appends new rows; Playwright reports the resolved Save button was detached.",
+      "confidence": "confirmed_mechanism"
+    }
+  ],
+  "root_cause_candidates": [
+    {
+      "id": "RC-1",
+      "candidate": "Response-gated notification/action readiness for delete and undo",
+      "evidence_level": "strong_candidate",
+      "evidence": "Undo is made visible only after the POST promise resolves, while the official test immediately clicks Undo; the isolated node passed but the final full-suite run timed out, consistent with timing sensitivity.",
+      "scope": "frontend/src/app.js"
+    },
+    {
+      "id": "RC-2",
+      "candidate": "Asynchronous initial note loading is not coordinated with immediate official helper actions",
+      "evidence_level": "strong_candidate",
+      "evidence": "REQ-2.5.4 fails at the first hover, the app loads notes asynchronously, and the helper falls back when an article is not found quickly; the exact network/DOM timing is not present in the report.",
+      "scope": "frontend/src/app.js plus generated seed/runtime state"
+    },
+    {
+      "id": "RC-3",
+      "candidate": "Duplicate label loading causes DOM replacement during rename",
+      "evidence_level": "confirmed_mechanism",
+      "evidence": "The Edit labels handler invokes loadLabels twice; renderLabels clears and rebuilds the list; the final failure explicitly says the Save button detached during click.",
+      "scope": "frontend/src/app.js"
+    },
+    {
+      "id": "RC-4",
+      "candidate": "Mutable db.json state carried between internal acceptance and final packaging",
+      "evidence_level": "unknown_to_strong_candidate",
+      "evidence": "The final template snapshot contains post-test mutations such as trashed delete fixtures, archived fixtures, and the renamed Projects label. This proves mutable state exists in the artifact, but the available evidence does not prove whether the platform final run started from that exact file state.",
+      "scope": "backend/data/db.json and packaging/reset workflow"
+    }
+  ],
+  "excluded_causes": [
+    "Not a missing main.py entrypoint.",
+    "Not use of the wrong test directory or bundled test fallback.",
+    "Not an API key plaintext leak.",
+    "Not a complete application outage; 29 of 32 tests passed.",
+    "Not evidence of a missing archive/unarchive backend route or missing Unarchive control.",
+    "Not a total time-budget exhaustion; each failure is an individual Playwright timeout under the 10-second test limit."
+  ],
+  "evidence_gaps": [
+    "No Playwright trace, DOM snapshot, screenshot, or network HAR was available for the three final failures.",
+    "No direct request timing/status evidence for the trash, notes, archive, or labels fetches was available.",
+    "The platform artifact does not prove whether template/backend/data/db.json was reset before the final platform suite.",
+    "Codegen snapshots were unavailable for this teammate-baseline run; the final template zip was used for static code inspection instead."
+  ],
+  "minimal_reproduction_experiments": [
+    "Run only REQ-2.3.2 against a clean copy of the final template with Playwright trace and capture POST /api/notes/:id/trash response time plus the moment the Undo button becomes visible.",
+    "Run only REQ-2.5.4 from a clean seed and record initial GET /api/notes timing, target article appearance, and whether the target note is active before archiveNote starts.",
+    "Run only REQ-2.7.5 with DOM mutation logging on #labels-list; verify whether the second loadLabels response replaces the row between fill and Save click.",
+    "Before any next platform submission, delete or deterministically regenerate mutable db.json state so all fixture notes and labels start from the official clean seed."
+  ],
+  "stage5_recommendation": {
+    "handoff": true,
+    "priority": [
+      "P0: remove the duplicate loadLabels call and make label-row rendering single-flight or stable while an edit is active.",
+      "P0: make delete/undo and note-loading interactions expose stable UI state without requiring an unobserved fetch to finish between official helper calls.",
+      "P0: enforce clean fixture-state reset before packaging the final template.",
+      "P1: add targeted readiness instrumentation or a local diagnostic mode, without changing official tests/helpers."
+    ],
+    "change_boundary": [
+      "frontend/src/app.js",
+      "backend/data/db.json or packaging reset logic only if the clean-state experiment confirms contamination",
+      "Do not modify official /workspace/tests in the product submission"
+    ],
+    "do_not_do": [
+      "No broad frontend rewrite.",
+      "No backend API redesign unless targeted reproduction proves an endpoint failure.",
+      "No full-suite rerun before the three targeted fixes are verified locally."
+    ]
+  },
+  "impact_estimate": {
+    "completion_rate": "29/32 = 90.6%; fixing all three failure mechanisms would raise the expected score to 32/32 = 100%, a gain of 9.4 percentage points, subject to targeted verification.",
+    "token": "Current platform count is 35,112,935 tokens across 1,291 requests at 17.926147 CNY. A frontend/state fix has no runtime LLM-token cost; generator-level savings from avoiding repair loops are possible but not quantifiable from this Run.",
+    "runtime": "The final Playwright suite took about 47.5 seconds and spent about 30 seconds in three 10-second timeouts. Fixing the waits could recover roughly 30 seconds in the final suite; the 9,777-second total Run is dominated by generation, so the direct runtime reduction is below 0.4%.",
+    "risk": "The highest residual risk is state contamination or another unobserved network/DOM timing issue; the targeted clean-seed traces are required before claiming 100% certainty."
+  },
+  "source_files": {
+    "manifest": "evidence/arc-bench/runs/0aa6820e0b82/manifest.json",
+    "ack": "evidence/arc-bench/runs/0aa6820e0b82/phase4-ack.json",
+    "failure_details": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-0aa6820e0b82-failure-details.md",
+    "playwright_report": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/0aa6820e0b82-playwright-report.json",
+    "snapshots": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-0aa6820e0b82-snapshots.json",
+    "template": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/0aa6820e0b82-template.zip",
+    "logs": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-0aa6820e0b82-logs.json"
+  }
+}

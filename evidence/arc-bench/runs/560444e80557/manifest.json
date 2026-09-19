@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "run": {
+    "run_id": "560444e80557",
+    "submission_id": "4349bc89be76",
+    "display_name": "teammate-baseline-20260917-ea503546",
+    "catalog": "competition",
+    "competition_id": "smoke-evolution",
+    "task_id": "smoke-evolution--counter",
+    "task_snapshot_id": null,
+    "created_at": "2026-09-19T07:49:54.123701",
+    "started_at": "2026-09-19T07:49:54.995897",
+    "finished_at": "2026-09-19T07:50:42.710594",
+    "status": "PASSED",
+    "score": 100,
+    "passed_count": 2,
+    "failed_count": 0,
+    "feature_implementation_rate": 1.0,
+    "failure_reason": null
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "none",
+    "time_budget_seconds": 3600,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0
+  },
+  "internal_acceptance": {
+    "round_0": {
+      "passed": 2,
+      "total": 2,
+      "failing_nodes": []
+    },
+    "repair_rounds_completed": 0,
+    "regression_nodes": {
+      "REQ-1": "1/1",
+      "REQ-2": "1/1"
+    }
+  },
+  "platform_final": {
+    "passed": 2,
+    "total": 2,
+    "failed_tests": [],
+    "score": 100,
+    "failure_reason": null
+  },
+  "metering": {
+    "requests": 1,
+    "prompt_tokens": 1010,
+    "completion_tokens": 468,
+    "reasoning_tokens": 0,
+    "prompt_cache_hit_tokens": 0,
+    "provider_total_tokens": 1478,
+    "platform_token_count": 3221,
+    "cost": 0.015651,
+    "currency": "CNY",
+    "run_duration_seconds": 34
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "log_result_finalized": "PASSED score=100.0"
+  },
+  "source_precedence": [
+    "run.json for final platform status, score and test list",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal rounds and provider usage",
+    "playwright-report data embedded in logs and failure-details for final test result details",
+    "snapshots.json for generated design and codegen state",
+    "template.zip for package identity and reproducibility",
+    "summary.md for navigation only; it cannot override raw structured fields"
+  ],
+  "conflicts": [],
+  "missing": [
+    "task_snapshot_id",
+    "agent_build_id",
+    "code_sha"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-560444e80557-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 2109,
+      "sha256": "95DE7FDDF07A6E474F62AEE1119DA8A07A47E311C74B6F3FE53508736EE31A90",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-560444e80557-summary.md",
+      "role": "human_normalized_summary",
+      "bytes": 3532,
+      "sha256": "1BBF1FF15AB47DB308093C8C3CB37794A20A0FF9DC67D45DBEF4D952A376EF2E",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-560444e80557.json",
+      "role": "raw_run_object",
+      "bytes": 4250,
+      "sha256": "A25A6DDBE36DD48097258323557DB4EB79F8D62E225155E80A5293BBB3FFC73E",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-560444e80557-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 35435,
+      "sha256": "94204EE746EF1356418B6976A2B06AC3E212421E918373F95BBAC56B605BD836",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-560444e80557-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 4461,
+      "sha256": "7F48BC4A1B5019CF6B0F6D602A7415D3280636C0990F692A24DE24B339082A4A",
+      "stored_in_repository": false
+    },
+    {
+      "name": "560444e80557-template.zip",
+      "role": "template_or_generated_package_snapshot",
+      "bytes": 5048,
+      "sha256": "A833A3C8118922A6196884AF7CC5E1D04798B2A149BF5DBE0C822AD96F62306C",
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0
+  }
+}

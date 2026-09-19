@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "purpose": "Persistent phase 3 to phase 4 handoff and readback",
+  "handoff_id": "560444e80557-4CD2DC152A3E",
+  "run_id": "560444e80557",
+  "task_key": "smoke-evolution--counter",
+  "thread_id": "01a0b48b-b24d-7550-835c-6f8110aebfbd",
+  "scope": "read_only_phase4_diagnosis",
+  "manifest_path": "evidence/arc-bench/runs/560444e80557/manifest.json",
+  "ack_path": "evidence/arc-bench/runs/560444e80557/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/560444e80557/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/560444e80557/phase4-result.md",
+  "created_at": "2026-09-19T12:30:00Z",
+  "status": "sent_for_readback"
+}
