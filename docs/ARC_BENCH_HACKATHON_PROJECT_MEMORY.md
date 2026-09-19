@@ -8,6 +8,8 @@
 >
 > 面向队友的完整执行计划见 [`ARC_BENCH_HACKATHON_EXECUTION_PLAN.md`](./ARC_BENCH_HACKATHON_EXECUTION_PLAN.md)。
 >
+> 阶段 3 文件摄取与阶段 4 自动分支 SOP 见 [`ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md`](./ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md)。
+>
 > 当前执行状态（2026-09-19）：阶段 2.5 已完成并通过；阶段 3、阶段 4、阶段 5 正在并行执行，尚未宣告完成。
 
 ## 1. 项目身份与范围
@@ -231,6 +233,12 @@
 5. 历史项目记忆和旧会话摘要。
 
 当前 Lite Keep `0cef369cc925` 和 Lite BookStack `00c59e0762fb` 的后续 `error-context.md`、截图/trace、最终代码、`.arc` 快照和 meter 明细，统一作为阶段 3 证据补录；补录后先由阶段 4 复核，再由阶段 5 决定修改和验证方案。
+
+### 6.5 文件夹上传后的阶段 4 会话分支
+
+后续每个单 run 文件夹解析完成后，父会话只完成阶段 3 证据登记，然后按 [`ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md`](./ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md) fork 一个独立阶段 4 会话。父会话不在同一轮继续分析；子会话只接收该 run 的阶段 3 关键卡片、证据 manifest、冲突项和阶段 4 输出约束。
+
+分支标题统一为 `NN 项目阶段4 + <competition-task> + <run_id>`。编号由当前已有阶段 4 分支标题计算，避免重复。阶段 4 分支不得创建新 run、修改 Agent 代码、实施阶段 5 优化或复用其他 run 的诊断结论。
 
 ## 7. 后续工作原则
 
