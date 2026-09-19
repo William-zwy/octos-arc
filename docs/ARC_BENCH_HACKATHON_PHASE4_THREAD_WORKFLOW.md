@@ -130,6 +130,27 @@ evidence/arc-bench/phase4-thread-registry.json
 
 `run_id` 可以变化，但任务键和规范化阶段 4 Thread ID 不变。同一任务的新 Run 必须在已验证会话中发送新的 `handoff_id`，不能因为旧 Run 分析未完成而再 fork。
 
+### 3.4 持久化回读通道
+
+Thread 消息不是可靠的唯一回读通道。每个 Run 的 manifest 目录必须使用以下三个小文件建立持久化交接：
+
+```text
+evidence/arc-bench/runs/<run_id>/phase4-handoff.json
+evidence/arc-bench/runs/<run_id>/phase4-ack.json
+evidence/arc-bench/runs/<run_id>/phase4-result.json
+```
+
+约定如下：
+
+- 阶段 3 在发送 handoff 前写入 `phase4-handoff.json`，记录 `handoff_id`、`run_id`、task key、Thread ID、manifest 和输出文件路径；
+- 阶段 4 收到交接后，先写入 `phase4-ack.json`，只记录已收到的 `handoff_id`、`run_id`、Thread ID 和时间，不复制长文本；
+- 阶段 4 完成诊断后写入 `phase4-result.json`，正文放在同目录的 `phase4-result.md`，JSON 只保存状态、结论索引、证据路径和阶段 5 建议；
+- 阶段 3 直接读取并校验这两个 JSON；Thread 的 `latestAssistantMessageId` 只作为辅助观测，不再决定结果是否可回读；
+- 只有 `phase4-ack.json` 与 `phase4-result.json` 的 `handoff_id`、`run_id`、task key 和 Thread ID 全部一致，注册表才可从 `handoff_sent` 变为 `verified`；
+- 阶段 5 只消费已验证的 `phase4-result.json`，不消费聊天摘要、空消息或未验证的 Thread 状态。
+
+如果 Thread 已结束但文件回读成功，阶段 4仍视为成功；如果 Thread 有消息但文件缺失或字段不匹配，阶段 4仍视为未验证。
+
 ## 4. 父会话执行步骤
 
 ### Step 1：建立轻量文件索引
@@ -198,16 +219,17 @@ manifest 是父会话与子会话之间的唯一事实入口。它必须包含�
 3. 如果恰好找到一个 `verified` 会话，向它发送包含新 `run_id` 和 `handoff_id` 的重置 handoff，不 fork；
 4. 如果没有找到任何候选，分配新的 `NN`，fork 当前会话到同一项目/工作目录，立即记录 Thread ID，再重命名为标准标题；
 5. 如果发现多个候选、旧会话空输出、列表与注册表不一致或 Thread ID 无法回读，标记 `needs_reconciliation`，停止自动分流，不发送重复 handoff；
-6. 发送紧凑 handoff，并要求子会话先返回 `PHASE4_HANDOFF_ACK: <handoff_id>`；
-7. 用 `read_thread` 或 `wait_threads` 验证确认消息和最终非空结果，成功后再把注册表状态改为 `verified`；
-8. 记录会话 ID、标题、run ID、handoff ID 和 manifest 路径；
-9. 父会话停止该 run 的分析。
+6. 写入 `phase4-handoff.json`，再发送紧凑 handoff，并要求子会话立即写 `phase4-ack.json`；
+7. 用直接文件读取验证 ACK，再等待 `phase4-result.json`；`read_thread` 或 `wait_threads` 只用于辅助观察；
+8. 校验两个文件中的 `handoff_id`、`run_id`、task key 和 Thread ID，成功后再把注册表状态改为 `verified`；
+9. 记录会话 ID、标题、run ID、handoff ID 和 manifest 路径；
+10. 父会话停止该 run 的分析。
 
 应用层 fork 可能保留已完成的历史消息，无法在这里物理删除。子会话必须把 handoff 作为唯一工作上下文，明确忽略此前与该 run 无关的历史；若未来产品提供“无历史 fork”能力，优先使用该能力。
 
 已有会话收到新 Run 时，handoff 必须显式声明“切换当前分析对象”，并清空上一 Run 的工作假设；上一 Run 的结论只能作为已标记的历史记录保留，不能参与当前 Run 的事实判断。
 
-如果 fork 或 handoff 后在规定等待窗口内没有出现 `PHASE4_HANDOFF_ACK`，父会话只能记录 `handoff_unverified` 并停止；不得通过再次 fork 来“补偿”一次不确定的触发。
+如果 fork 或 handoff 后在规定等待窗口内没有出现 `phase4-ack.json`，父会话只能记录 `handoff_unverified` 并停止；不得通过再次 fork 来“补偿”一次不确定的触发。聊天中的 `PHASE4_HANDOFF_ACK` 可作为人类可读提示，但不能替代文件 ACK。
 
 ## 5. 阶段 4 handoff 模板
 
@@ -217,8 +239,8 @@ manifest 是父会话与子会话之间的唯一事实入口。它必须包含�
 你是阶段 4 单 run 诊断会话，只处理以下 run。
 
 启动确认：
-- 第一条回复必须严格包含 `PHASE4_HANDOFF_ACK: <handoff_id>`；
-- 最终结论必须包含 `PHASE4_RESULT: complete|incomplete` 和当前 `run_id`；
+- 收到后必须先写入 `phase4-ack.json`，再进行证据读取；如 Thread 可正常回复，再额外包含 `PHASE4_HANDOFF_ACK: <handoff_id>`；
+- 最终结论必须写入 `phase4-result.json` 和 `phase4-result.md`，并包含 `PHASE4_RESULT: complete|incomplete` 和当前 `run_id`；
 
 范围：
 - 只做只读分析；不创建新 run，不修改代码，不实施阶段 5。
@@ -235,6 +257,8 @@ Run 卡片：
 - platform_validation: <entrypoint/tests_dir/bundled/key scan>
 - manifest: <repo-relative path>
 - handoff_id: <...>
+- ack_path: <repo-relative path>
+- result_path: <repo-relative path>
 - conflicts: <only unresolved conflicts>
 - missing: <only missing evidence>
 
@@ -280,7 +304,7 @@ Run 卡片：
 - 是否建议阶段 5；
 - 需要保留的证据路径。
 
-回交必须带有 `PHASE4_RESULT: complete|incomplete`。没有该标记、没有当前 `run_id`、正文为空或只返回工具过程的会话，不得视为阶段 4 完成。
+回交必须写入 `phase4-result.json` 和 `phase4-result.md`，并带有 `PHASE4_RESULT: complete|incomplete`。没有结果文件、没有当前 `run_id`、正文为空或只返回工具过程的会话，不得视为阶段 4 完成。聊天回读失败但结果文件校验通过时，仍可视为阶段 4 完成。
 
 阶段 5 如需修改代码，应在另一个明确的优化工作流中进行；不得把阶段 4 子会话直接变成代码写入会话。
 
@@ -293,9 +317,10 @@ Run 卡片：
 - 发现重复标题或重复 run 时，更新已有阶段 4 会话，不创建重复分析线程；同一任务的新 Run 也复用同一任务会话，但必须使用新的 manifest 和重置 handoff；
 - 发现同一任务对应多个阶段 4 会话时，先标记 `thread_mapping_ambiguous` / `needs_reconciliation`，不得自动选择、合并或再次 fork；
 - 发现阶段 4 Thread 完成但最终助手消息为空、不可回读或缺少确认标记时，标记 `quarantined`，不得将其当作成功结果；
+- 发现 Thread 完成但 `phase4-ack.json` / `phase4-result.json` 缺失时，标记 `handoff_unverified`；只有文件存在但字段不一致时才标记 `quarantined`；
 - 发现同一上传事件已经生成 `handoff_id` 时，后续自动继续必须等待原事件完成，禁止重复触发；
 - 父会话不得因为等待子会话而继续做阶段 4 分析。
 
 ## 9. 当前实现边界
 
-本 SOP 是当前 Codex 协作约定：收到文件夹后由 Agent 执行 manifest 登记、任务键查找、复用或单次 fork、改名、handoff 和回读验证。它不是后台文件系统监听器；用户未发送上传事件时，不会自行扫描 Downloads 或创建会话。用户明确要求“只记录”时，父会话只记录，不触发阶段 4 分析。
+本 SOP 是当前 Codex 协作约定：收到文件夹后由 Agent 执行 manifest 登记、任务键查找、复用或单次 fork、改名、持久化 handoff、文件 ACK/结果回读和注册表更新。它不是后台文件系统监听器；用户未发送上传事件时，不会自行扫描 Downloads 或创建会话。用户明确要求“只记录”时，父会话只记录，不触发阶段 4 分析。

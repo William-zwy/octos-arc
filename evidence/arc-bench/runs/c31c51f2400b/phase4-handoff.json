@@ -12,5 +12,8 @@
   "result_path": "evidence/arc-bench/runs/c31c51f2400b/phase4-result.json",
   "result_md_path": "evidence/arc-bench/runs/c31c51f2400b/phase4-result.md",
   "created_at": "2026-09-19T00:00:00Z",
-  "status": "sent_for_readback_repair"
+  "status": "verified",
+  "verified_at": "2026-09-19T08:11:53.348Z",
+  "verification_method": "filesystem",
+  "verification_note": "phase4-ack.json and phase4-result.json exist and their handoff_id, run_id, task_key, and thread_id match this handoff."
 }
