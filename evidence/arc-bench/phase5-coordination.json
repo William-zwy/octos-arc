@@ -9,12 +9,13 @@
     "automatic_agent_code_edits_authorized": false
   },
   "automation": {
-    "mode": "disabled_pending_manual_pilot",
+    "mode": "disabled_pending_dispatch_safety_review",
     "heartbeat_id": null,
     "proposed_check_interval_minutes": 15,
-    "read_only_dispatch_only": true
+    "read_only_dispatch_only": true,
+    "activation_gate": "Read-only pilot completed. Before enabling a recurring monitor, confirm idempotent dispatch and a safe writer/baseline handoff for formal ledger decisions; never automate Agent edits or platform runs."
   },
-  "provisioning_note": "Four stable thread IDs were verified through read_thread; each role acknowledged phase5-role-20260920-v1 after read-only checks. All four detached worktrees remain at A0, while authoritative Phase 5 evidence lives in source_checkout. Automatic dispatch and scheduled monitoring remain disabled until the manual pilot and approval gates are satisfied.",
+  "provisioning_note": "Four stable thread IDs were verified through read_thread; each role acknowledged phase5-role-20260920-v1 after read-only checks. The first read-only Keep intake pilot was acknowledged. All four detached worktrees remain at A0, while authoritative Phase 5 evidence lives in source_checkout. Automatic dispatch and scheduled monitoring remain disabled pending safety review and authorization gates.",
   "role_handoff_id": "phase5-role-20260920-v1",
   "role_handoff_source_commit": "ad4f818a9f83b4a7c082d3e5da0b39855fcc9bd9",
   "baseline_gate": "Read-only ACK does not authorize writes. Before writing, verify the actual Git root and HEAD, acquire single-writer ownership, and use a worktree containing the authoritative Phase 5 commit; do not edit detached A0 role worktrees as current candidates.",
@@ -68,9 +69,29 @@
       "manifest_sha256": "D020E69FCE81C56E5BAF041FC3AD25B43AC02F3FEA57CEF3A6F28141125BCC8B",
       "phase4_result": "evidence/arc-bench/runs/737b56972d5a/phase4-result.json",
       "phase4_result_sha256": "9E56ACC74F76F157B926162F9A7ED9FCE20B274765CA2D10E7C29F903FA79855",
-      "status": "ready_for_ledger_after_role_ack",
+      "status": "read_only_pilot_acknowledged_needs_evidence_proposed",
+      "dispatch_id": "737b56972d5a-P5-intake-9E56ACC74F76-v1",
+      "ack_id": "msg_0c9cfb4eff4eb795016aaf81e0f52487d094ef432094b26892",
+      "ledger_decision_recorded": false,
+      "next_gate": "Obtain missing pre-score state and build/snapshot identity; record a formal ledger decision before any reproduction or implementation dispatch."
+    },
+    {
+      "key": "737b56972d5a:intake:BC8FE404B86B",
+      "run_id": "737b56972d5a",
+      "task_key": "arc-bench-lite--keep",
+      "issue_id": "confirmed-evidence-revision",
+      "source_handoff_id": "737b56972d5a-0BCD0657E978",
+      "manifest": "evidence/arc-bench/runs/737b56972d5a/manifest.json",
+      "manifest_sha256": "0BCD0657E978B28B08A0C3F985A31D4D112164B907544B33201072876560883E",
+      "phase4_result": "evidence/arc-bench/runs/737b56972d5a/phase4-result.json",
+      "phase4_result_sha256": "BC8FE404B86BE53C64434DE06F2294CF88C0CDC0DFE74CEBB260EC7B38C12119",
+      "supplemental_evidence": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-737b56972d5a-evidence-chain.md",
+      "supplemental_evidence_sha256": "2B38407F84689446ABBEA79237782E2FD52585797C58AF76FF5261978A3C51E2",
+      "status": "phase4_verified_pending_ledger_intake",
       "dispatch_id": null,
-      "ack_id": null
+      "ack_id": null,
+      "ledger_decision_recorded": false,
+      "next_gate": "Send one short intake card to the canonical Phase 5 ledger; do not dispatch reproduction or implementation before its decision."
     },
     {
       "key": "5669f7d1777c:P5-009:3E8E87EAE11F",

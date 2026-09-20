@@ -12,7 +12,7 @@
 >
 > 阶段 5 跨 Run 问题、暂缓项与优化决策见 [`ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md`](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)。已记录首个独立本地优化候选；尚未打包或完成平台 A/B。
 
-> 阶段 5 四个独立会话已核实稳定 Thread ID，并分别完成只读职责交接 ACK；具体映射见[协同索引](../evidence/arc-bench/phase5-coordination.json)。首个工作项的正式转派、手工演练和自动巡检均未完成，自动巡检仍关闭。唯一工作流与启动卡分别见[多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)和[精简交接](./ARC_BENCH_HACKATHON_PHASE5_CONTEXT_HANDOFF.md)。会话自动记忆不是权威交接源。
+> 阶段 5 四个独立会话已核实稳定 Thread ID，并分别完成只读职责交接 ACK；`737b56972d5a` 的首轮只读转派演练亦已 ACK，提出 `needs_evidence`，但尚无正式台账决议或下游转派。具体映射见[协同索引](../evidence/arc-bench/phase5-coordination.json)。自动巡检仍关闭。唯一工作流与启动卡分别见[多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)和[精简交接](./ARC_BENCH_HACKATHON_PHASE5_CONTEXT_HANDOFF.md)。会话自动记忆不是权威交接源。
 >
 > 当前执行状态（2026-09-20）：阶段 2.5 已完成并通过；阶段 3、阶段 4、阶段 5 滚动执行，尚未宣告完成；本地候选已验证，平台 A/B 未完成。
 

@@ -2,7 +2,7 @@
 
 > 2026-09-20 启动版。用于会话和队友快速上手；详细推理、证据及后续变动以[决策台账](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)、各 Run 的阶段 3/4 文件和当前代码为准。不要把本文件当新的平台成绩表。
 
-> 交接状态：四个会话已核实稳定 Thread ID，并完成 `phase5-role-20260920-v1` 的只读 ACK；正式映射和 ACK 消息见 [`phase5-coordination.json`](../evidence/arc-bench/phase5-coordination.json)。这仅代表职责与证据入口交接完成，**不代表 Run 已转派、实验已执行或自动巡检已启用**。后续工作项仍按身份、授权和单写入者门禁逐项转派。
+> 交接状态：四个会话已核实稳定 Thread ID，并完成 `phase5-role-20260920-v1` 的只读 ACK；`737b56972d5a` 已完成首轮只读转派演练。正式映射、ACK 和演练状态见 [`phase5-coordination.json`](../evidence/arc-bench/phase5-coordination.json)。这**不代表正式台账决议、实验已执行或自动巡检已启用**；后续工作项仍按身份、授权和单写入者门禁逐项转派。
 
 ## 先读什么
 
@@ -36,12 +36,13 @@
 ## 新到但尚未决策的输入
 
 - Lite Keep `737b56972d5a` 已有阶段 3 [manifest](../evidence/arc-bench/runs/737b56972d5a/manifest.json)和阶段 4 [结果](../evidence/arc-bench/runs/737b56972d5a/phase4-result.json)，注册表标为 `verified`；平台最终 `30/32`，失败 `REQ-2.7.5`、`REQ-2.7.6.3`，并出现内部全套 `31/32 → 24/32 → 30/32` 的回归轨迹。来源标为 post-fix candidate，但上传 Agent/任务快照绑定不足；**应由新决策会话首次正式纳入台账，不能把阶段 4 候选根因自动当成阶段 5 决议。**
+  - 首轮只读演练已由台账会话 ACK，建议暂列 `needs_evidence`：初始缺少 `Work editable` 与旧 `P5-008` 的重绘竞态不同，`Reminders` 同名按钮冲突与旧 `P5-006` 的 Undo 契约不同；缺评分前状态、DOM/trace 和构建/快照绑定。该建议**尚未写入正式决策台账**，不得因此转派复现或实现。
 - Web Keep `4b792b72d7dd` 的阶段 4 会话映射在[注册表](../evidence/arc-bench/phase4-thread-registry.json)为 `quarantined`，不自动进入阶段 5；先核对实际 Thread ID 和可读结果。
 - `5669f7d1777c` 的阶段 4 注册表仅标 `complete`，不是新的自动转派门禁 `verified`；台账已有人工分析，后续若补证据仍需按身份字段复核。
 
 ## 四个新会话如何使用本交接
 
-- 决策台账：先审 `737b56972d5a` 的身份与旧 `P5-006/007/008` 的关系，再决定新 ID、复现或暂缓；不能直接派发代码修改。
+- 决策台账：`737b56972d5a` 已完成只读身份与机制初审，现需补证据并在获得正确写入基线后正式记录新 ID、复现或暂缓决策；不能直接派发代码修改。
 - 隔离复现：待台账发实验卡；用户提交本地复现时记录原版/对照、单变量、干净 seed、命令/退出码、trace 与哈希，并把结论回交台账。
 - Agent 实现：只在获授权的小切片上核对候选分支当前 HEAD、现有提示/验收入口和用户 ZIP；不重复造验收层，不按任务名硬编码。
 - 指标与 A/B 验收：先建可比性清单与缺失字段表；没有获准的新平台 Run 时只做只读审计，不发布收益百分比。

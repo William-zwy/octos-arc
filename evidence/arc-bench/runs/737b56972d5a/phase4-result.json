@@ -1,11 +1,12 @@
 {
   "schema_version": 1,
   "status": "complete",
-  "handoff_id": "737b56972d5a-D020E69FCE81",
+  "handoff_id": "737b56972d5a-0BCD0657E978",
   "run_id": "737b56972d5a",
   "task_key": "arc-bench-lite--keep",
   "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
-  "scope": "read_only_phase4_diagnosis",
+  "scope": "read_only_phase4_incremental_recheck",
+  "phase4_result_marker": "PHASE4_RESULT: complete",
   "submission_id": "42f4e4ae1e6c",
   "run_summary": {
     "status": "FAILED",
@@ -23,6 +24,22 @@
     "final_playwright_duration_ms": 26996.226,
     "final_playwright_unexpected": 2
   },
+  "incremental_recheck": {
+    "handoff_id": "737b56972d5a-0BCD0657E978",
+    "supersedes_handoff_id": "737b56972d5a-D020E69FCE81",
+    "supplemental_evidence": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-737b56972d5a-evidence-chain.md",
+    "expected_sha256": "2B38407F84689446ABBEA79237782E2FD52585797C58AF76FF5261978A3C51E2",
+    "observed_sha256": "2B38407F84689446ABBEA79237782E2FD52585797C58AF76FF5261978A3C51E2",
+    "sha256_match": true,
+    "root_cause_decision": "confirmed",
+    "needs_repro": false,
+    "basis": [
+      "补充链条确认 runner 直接读取 bundle 的 backend/data/db.json，未在评分前重置为另一份数据库。",
+      "补充链条确认 loadDB() 启动时清空 labels，seedDefaults() 只重种 Work 与 Reminders，解释了 targeted 自验通过与平台全量失败的差异。",
+      "补充链条给出评分前初始 DOM：#nav-reminders 与 data-label=Reminders 两个按钮的 accessible name 都是 Reminders。",
+      "设计快照的 data_model.labels 明确要求 Work editable；平台失败、bundle 状态和运行链路形成闭合证据。"
+    ]
+  },
   "confirmed_facts": [
     "入口为 main.py，测试目录为 /workspace/tests，未命中 bundled tests；日志中未发现明文 API Key。",
     "平台最终权威结果为 30/32、score 93.8、FAILED；失败原因是 Runner exited with test failures or runtime errors。",
@@ -31,6 +48,9 @@
     "最终包的 server.js seedDefaults() 只保证 Work 与 Reminders 两个标签，不包含 Work editable；最终 db.json 也没有 Work editable。",
     "最终包的静态 Reminders 导航按钮和动态 Reminders 标签按钮具有相同可访问名称，分别由 #nav-reminders 和 data-label=Reminders 产生。",
     "最终 ZIP 中 Work editable 出现次数为 0，Reminders view 出现次数为 0，nav-reminders 出现次数为 1。",
+    "补充证据确认 runner 未在评分前重置 db.json，而是直接启动 bundle；loadDB() 清空 labels 后由 seedDefaults() 只重种 Work 与 Reminders。",
+    "补充证据确认评分前 DOM 同时存在 #nav-reminders 和 data-label=Reminders 两个 accessible name 均为 Reminders 的按钮。",
+    "补充证据中的设计快照 data_model.labels 要求 Work editable，解释了单节点 Agent 自验与平台全量执行之间的状态差异。",
     "原始日志显示全套验收从 round 0 的 31/32，退化为 round 1 的 24/32，再恢复到 round 2 的 30/32；最终平台执行仍为 30/32。",
     "针对单节点的 REQ-2.7.5 与 REQ-2.7.6.3 round 0 均为 1/1，但这不能证明最终全套测试稳定通过。"
   ],
@@ -39,41 +59,45 @@
       "test": "REQ-2.7.5",
       "observed_failure": "locator.fill timed out after 10000ms",
       "locator": "getByRole('group', { name: /^Label Work editable$/i }).getByLabel(/^Label Work editable$/i)",
-      "evidence": "failure-details.md; playwright-report.json; final template ZIP",
-      "diagnosis": "干净启动时缺少 Work editable 标签，因而标签管理页不会渲染该标签对应的 group/input；现有管理器结构本身能够为存在的标签生成关联 label/input。"
+      "evidence": "failure-details.md; playwright-report.json; final template ZIP; evidence-chain.md",
+      "judgement": "confirmed",
+      "diagnosis": "runner 直接从 bundle 加载 db.json，loadDB() 清空 labels 后 seedDefaults() 只重种 Work 与 Reminders；因此评分前不存在 Work editable，标签管理页不会渲染对应 group/input。"
     },
     {
       "test": "REQ-2.7.6.3",
       "observed_failure": "strict mode violation; two Reminders buttons matched",
       "locator": "getByRole('complementary').getByRole('button', { name: /^Reminders$/i })",
-      "evidence": "failure-details.md; playwright-report.json; final template ZIP",
-      "diagnosis": "静态 Reminders 视图导航与动态 Reminders 标签按钮共享同一 accessible name，导致 helper 的唯一定位假设失效。"
+      "evidence": "failure-details.md; playwright-report.json; final template ZIP; evidence-chain.md",
+      "judgement": "confirmed",
+      "diagnosis": "评分前初始 DOM 同时存在 #nav-reminders 和 .sidebar-label[data-label=Reminders]，二者 accessible name 都为 Reminders，导致 helper 的唯一定位假设失效。"
     }
   ],
   "root_cause_candidates": [
     {
       "id": "RC-1",
       "issue": "缺少 Work editable 初始标签",
-      "confidence": "high",
-      "evidence_level": "direct_static_and_runtime",
+      "confidence": "confirmed",
+      "evidence_level": "confirmed_three_way",
       "evidence": [
         "平台最终失败明确等待 Label Work editable 输入框并超时。",
         "server.js 的 seedDefaults() 只有 Work 与 Reminders。",
         "db.json 与整个最终 ZIP 均不包含 Work editable。",
-        "代码修复记录提出同一候选修复，但该记录本身仅是诊断假设；最终 ZIP 静态证据独立支持该判断。"
+        "补充 evidence-chain 确认 runner 直接加载 bundle，loadDB() 会清空 labels，seedDefaults() 不会生成 Work editable；设计快照要求该标签。",
+        "代码修复记录提出同一候选修复，但该记录本身仍不是平台成功证明；确认结论来自平台失败、运行链路和最终包三类证据。"
       ],
       "minimal_fix_hypothesis": "在后端干净初始化路径中补齐 Work editable 标签，并验证实际提交包使用的是干净、可复现的数据库状态。"
     },
     {
       "id": "RC-2",
       "issue": "Reminders 导航与 Reminders 标签的 accessible name 冲突",
-      "confidence": "high",
-      "evidence_level": "direct_static_and_runtime",
+      "confidence": "confirmed",
+      "evidence_level": "confirmed_three_way",
       "evidence": [
         "平台严格模式错误列出 #nav-reminders 与 data-label=Reminders 两个按钮。",
         "index.html 的静态导航按钮没有区分性 aria-label。",
         "app.js 的动态标签按钮直接使用标签名作为可访问名称。",
-        "最终 ZIP 没有 Reminders view 字样，说明候选的导航命名修复未进入最终包。"
+        "最终 ZIP 没有 Reminders view 字样，说明候选的导航命名修复未进入最终包。",
+        "补充 evidence-chain 给出评分前 DOM 实况，直接确认两个按钮的 accessible name 均为 Reminders。"
       ],
       "minimal_fix_hypothesis": "仅为静态导航按钮增加与标签不同的 accessible name，例如 aria-label=Reminders view；保留标签名 Reminders，避免破坏依赖该标签名的其他测试。"
     },
@@ -101,9 +125,9 @@
   ],
   "evidence_gaps": [
     "平台未提供 task_snapshot_id、agent build id、代码 SHA 或上传 ZIP SHA-256。",
-    "没有 clean-seed 前后的数据库哈希或浏览器 DOM 快照，无法直接证明运行时数据库初始化的全部状态。",
-    "没有 trace.zip、HAR 或失败时 error-context body；REQ-2.7.5 的缺失标签判断由 locator 超时与最终包静态证据共同支持。",
+    "补充证据已提供评分前 bundle DB 内容、loadDB()/seedDefaults() 运行链路和初始 DOM 结构；仍没有独立 clean-seed 哈希、trace.zip、HAR 或失败时 error-context body，但这些不再阻碍本次两个确定性根因升级为 confirmed。",
     "无法从当前材料证明代码修复候选包是否曾经实际上传或被平台执行；只能确认当前 Run 的最终模板包未包含候选改动。",
+    "补充证据的 notes 数量描述存在文字算术不一致（28 条总数与 23+8 的分项不完全相符）；该冲突不影响 labels、DOM 或两个失败根因。",
     "无法把平台总耗时精确拆分为 LLM、浏览器和测试耗时。"
   ],
   "minimal_stage5_experiments": [
@@ -148,7 +172,9 @@
       "使用干净状态执行完整 /workspace/tests；不修改官方测试与 helper。",
       "禁止扩大为数据库重构、导航重构或无关 UI 重构。"
     ],
-    "not_implemented_in_phase4": true
+    "not_implemented_in_phase4": true,
+    "direct_stage5_message_sent": false,
+    "needs_repro": false
   },
   "metric_impact": {
     "completion_rate_current": "30/32 = 93.8%",
@@ -166,7 +192,9 @@
     "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-737b56972d5a-playwright-report.json",
     "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-737b56972d5a-failure-details.md",
     "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/737b56972d5a-template.zip",
-    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arc_2rd.zip"
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arc_2rd.zip",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-737b56972d5a-evidence-chain.md",
+    "docs/ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md"
   ],
   "write_policy": {
     "code_changed": false,

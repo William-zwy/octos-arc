@@ -1,20 +1,22 @@
 {
   "schema_version": 1,
   "purpose": "Persistent phase 3 to phase 4 handoff and readback",
-  "handoff_id": "737b56972d5a-D020E69FCE81",
+  "handoff_id": "737b56972d5a-0BCD0657E978",
   "run_id": "737b56972d5a",
   "task_key": "arc-bench-lite--keep",
   "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
-  "scope": "read_only_phase4_diagnosis",
+  "scope": "read_only_phase4_incremental_recheck",
   "code_lineage": "stage5_candidate_code_fix_inferred_not_platform_bound",
   "manifest_path": "evidence/arc-bench/runs/737b56972d5a/manifest.json",
   "ack_path": "evidence/arc-bench/runs/737b56972d5a/phase4-ack.json",
   "result_path": "evidence/arc-bench/runs/737b56972d5a/phase4-result.json",
   "result_md_path": "evidence/arc-bench/runs/737b56972d5a/phase4-result.md",
-  "created_at": "2026-09-20T04:59:31.1874393Z",
+  "supplemental_evidence_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-737b56972d5a-evidence-chain.md",
+  "supplemental_evidence_sha256": "2B38407F84689446ABBEA79237782E2FD52585797C58AF76FF5261978A3C51E2",
+  "created_at": "2026-09-20T14:22:50.3720021Z",
   "status": "verified",
-  "ack_received_at": "2026-09-20T05:03:03.860Z",
-  "verified_at": "2026-09-20T05:13:14.7567126Z",
+  "prior_handoff_id": "737b56972d5a-D020E69FCE81",
+  "verified_at": "2026-09-20T14:34:14.3523197Z",
   "verification_method": "filesystem",
-  "verification_note": "phase4-ack.json and phase4-result.json exist; handoff_id, run_id, task_key, and thread_id match; result status is complete."
+  "verification_note": "Supplemental phase4 recheck completed; phase4-ack.json and phase4-result.json now match this handoff_id, run_id, task_key, and thread_id."
 }

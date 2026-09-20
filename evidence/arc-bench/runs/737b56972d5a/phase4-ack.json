@@ -1,9 +1,10 @@
 {
   "schema_version": 1,
-  "handoff_id": "737b56972d5a-D020E69FCE81",
+  "handoff_id": "737b56972d5a-0BCD0657E978",
   "run_id": "737b56972d5a",
   "task_key": "arc-bench-lite--keep",
   "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
   "status": "received",
+  "supersedes_handoff_id": "737b56972d5a-D020E69FCE81",
   "received_at": "2026-09-20T05:03:03.860Z"
 }

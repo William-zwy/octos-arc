@@ -2,6 +2,21 @@
   "schema_version": 1,
   "purpose": "ARC-Bench phase 3 normalized evidence intake",
   "status": "normalized_intake_complete_raw_attachments_external",
+  "supplemental_evidence": {
+    "status": "received_external_pending_phase4_incremental_recheck",
+    "artifact_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-737b56972d5a-evidence-chain.md",
+    "artifact_sha256": "2B38407F84689446ABBEA79237782E2FD52585797C58AF76FF5261978A3C51E2",
+    "artifact_bytes": 6424,
+    "source_role": "user_supplied_evidence_chain",
+    "recorded_claims": [
+      "runner chain and /workspace/tests execution path are documented",
+      "clean-seed labels and loadDB/seedDefaults behavior are documented",
+      "static and dynamic Reminders buttons are documented with the same accessible name",
+      "user requests no needs_repro and no implementation until phase4 recheck"
+    ],
+    "phase4_recheck_required": true,
+    "phase5_consumption": "do_not_consume_until_new_phase4_result_is_verified"
+  },
   "code_lineage": {
     "classification": "stage5_candidate_code_fix",
     "provenance": "inferred_from_attached_code_fix_notes_and_original_filename",
@@ -201,6 +216,14 @@
       "role": "raw_run_object",
       "bytes": 10666,
       "sha256": "9895374B748B74294B1730D39B1A9918D20C93E90562EF10F98B2B8FE2F37D09",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-737b56972d5a-evidence-chain.md",
+      "role": "supplemental_evidence_chain",
+      "bytes": 6424,
+      "sha256": "2B38407F84689446ABBEA79237782E2FD52585797C58AF76FF5261978A3C51E2",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-737b56972d5a-evidence-chain.md",
       "stored_in_repository": false
     }
   ],

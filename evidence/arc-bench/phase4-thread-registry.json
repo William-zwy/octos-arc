@@ -58,7 +58,7 @@
       "title": "05 项目阶段4 + arc-bench-lite--keep",
       "status": "verified",
       "last_run_id": "737b56972d5a",
-      "last_handoff_id": "737b56972d5a-D020E69FCE81",
+      "last_handoff_id": "737b56972d5a-0BCD0657E978",
       "previous_run_id": "0aa6820e0b82",
       "previous_handoff_id": "0aa6820e0b82-80C37FA5A6E5",
       "manifest": "evidence/arc-bench/runs/737b56972d5a/manifest.json",
@@ -68,8 +68,10 @@
       "result_md_path": "evidence/arc-bench/runs/737b56972d5a/phase4-result.md",
       "result_status": "complete",
       "verification_method": "filesystem",
-      "verified_at": "2026-09-20T05:13:14.7567126Z",
-      "reason": "ACK and complete result exist with all identity fields matching. This is a post-fix candidate diagnosis, not proof of Stage5 platform success."
+      "verified_at": "2026-09-20T14:34:14.3523197Z",
+      "reason": "Supplemental evidence revision ACK and complete result exist with all identity fields matching. The revised result upgrades the two Run-local root causes to confirmed; this remains a post-fix candidate diagnosis, not proof of Stage5 platform success.",
+      "prior_handoff_id": "737b56972d5a-D020E69FCE81",
+      "prior_result_status": "complete"
     },
     "arc-bench-lite--bookstack": {
       "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
