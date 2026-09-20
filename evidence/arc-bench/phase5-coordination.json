@@ -207,6 +207,44 @@
       "ack_id": null,
       "ledger_decision_recorded": true,
       "next_gate": "Run isolated pristine-package reproductions with request/DOM/DB evidence; do not dispatch implementation or create a platform Run before the ledger receives the result."
+    },
+    {
+      "key": "5669f7d1777c:P5-009:impl:d2fe4dbc7601",
+      "run_id": "5669f7d1777c",
+      "task_key": "arc-bench-lite--bookstack",
+      "issue_id": "P5-009",
+      "source_handoff_id": "phase5-p5009-impl-20260921-d2fe4dbc",
+      "candidate_worktree": "D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松/.worktrees/phase5-route-contract",
+      "implementation_commit": "d2fe4dbc7601242896b61b3a790a912732bc5d57",
+      "changed_files": [
+        "arc/main.py",
+        "arc/acceptance.py",
+        "arc/tests/test_acceptance.py",
+        "arc/tests/test_main_helpers.py",
+        "CHANGELOG.md"
+      ],
+      "targeted_tests": {
+        "passed": 11,
+        "total": 11,
+        "exit_code": 0
+      },
+      "full_suite": {
+        "total": 85,
+        "failed": 3,
+        "errors": 1,
+        "baseline_failures": true,
+        "new_failures": false
+      },
+      "status": "local_implementation_candidate_verified_pending_platform_ab",
+      "decision": "local_candidate_no_platform_claim",
+      "needs_repro": false,
+      "dispatch_id": null,
+      "ack_id": null,
+      "platform_run_created": false,
+      "uploaded": false,
+      "platform_verified": false,
+      "ledger_decision_recorded": true,
+      "next_gate": "Bind the candidate code to an Agent ZIP, platform build, and task_snapshot_id, then run same-condition platform A/B; do not claim platform benefit from local tests alone."
     }
   ]
 }
