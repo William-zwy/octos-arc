@@ -22,7 +22,9 @@
     "E489D219ACD5915D9207B2A36C1DDD30B93BC0754371B3984511C9716DD2FFFF"
   ],
   "created_at": "2026-09-20T14:59:43.6475787Z",
-  "status": "pending_send",
+  "status": "verified",
   "prior_handoff_id": "5669f7d1777c-DADB44C15C2B",
-  "status_note": "Incremental phase4 recheck required for refreshed human-readable evidence; prior ACK/result remain historical until replaced with matching new handoff_id. No platform rerun, upload, code edit, or test edit is authorized by this handoff."
+  "verified_at": "2026-09-20T15:11:33.3886448Z",
+  "verification_method": "filesystem",
+  "status_note": "Incremental phase4 recheck completed; ACK and result identity fields match this handoff_id, run_id, task_key, and thread_id. Prior ACK/result remain historical. No platform rerun, upload, code edit, or test edit was authorized by this handoff."
 }
