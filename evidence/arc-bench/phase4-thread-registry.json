@@ -56,7 +56,7 @@
     "arc-bench-lite--keep": {
       "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
       "title": "05 项目阶段4 + arc-bench-lite--keep",
-      "status": "handoff_sent",
+      "status": "verified",
       "last_run_id": "737b56972d5a",
       "last_handoff_id": "737b56972d5a-D020E69FCE81",
       "previous_run_id": "0aa6820e0b82",
@@ -66,7 +66,10 @@
       "ack_path": "evidence/arc-bench/runs/737b56972d5a/phase4-ack.json",
       "result_path": "evidence/arc-bench/runs/737b56972d5a/phase4-result.json",
       "result_md_path": "evidence/arc-bench/runs/737b56972d5a/phase4-result.md",
-      "reason": "New Keep Lite post-fix candidate Run routed to the canonical Phase4 task. Code-fix notes are hypotheses, not proof of Stage5 success."
+      "result_status": "complete",
+      "verification_method": "filesystem",
+      "verified_at": "2026-09-20T05:13:14.7567126Z",
+      "reason": "ACK and complete result exist with all identity fields matching. This is a post-fix candidate diagnosis, not proof of Stage5 platform success."
     },
     "arc-bench-lite--bookstack": {
       "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
