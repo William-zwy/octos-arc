@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "source_folder": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite",
+  "code_lineage": {
+    "classification": "same_submission_unverified_build",
+    "submission_id": "42f4e4ae1e6c",
+    "source_display_name": "teammate-baseline-20260917-ea503546",
+    "same_submission_as_prior_run": "5669f7d1777c",
+    "platform_build_binding": "missing",
+    "not_frozen_A0": "unverified",
+    "not_stage5_output": "unverified",
+    "note": "Keep this Run separate from 5669f7d1777c and 00c59e0762fb. A shared submission_id does not prove identical code or build contents."
+  },
+  "run": {
+    "run_id": "4ef2cf139806",
+    "submission_id": "42f4e4ae1e6c",
+    "display_name": "teammate-baseline-20260917-ea503546",
+    "original_filename": "arc_2rd.zip",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--bookstack",
+    "task_snapshot_id": null,
+    "model_name": "deepseek-v4-flash",
+    "runtime": "python",
+    "agent_source": "upload",
+    "created_at": "2026-09-20T04:49:19.541222",
+    "started_at": "2026-09-20T04:49:22.812952",
+    "finished_at": "2026-09-20T07:52:55.500061",
+    "status": "FAILED",
+    "score": 91.2,
+    "passed_count": 31,
+    "failed_count": 3,
+    "feature_implemented_count": 31,
+    "feature_total_count": 34,
+    "feature_implementation_rate": 0.9117647058823529,
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "run_duration_seconds": 10948
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 51000,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0
+  },
+  "internal_acceptance": {
+    "source": "logs.json",
+    "full_suite_round_0": {
+      "passed": 31,
+      "total": 34,
+      "failing_nodes": ["REQ-2.2", "REQ-6.3.1", "REQ-9.1"]
+    },
+    "full_suite_round_1": {
+      "passed": 32,
+      "total": 34,
+      "failing_nodes": ["REQ-6.3.1", "REQ-9.1"]
+    },
+    "full_suite_round_2": {
+      "passed": 31,
+      "total": 34,
+      "failing_nodes": ["REQ-2.2", "REQ-6.3.1", "REQ-9.1"]
+    },
+    "targeted_node_history": {
+      "REQ-2.2": ["round 0: 0/1", "round 1: 0/1", "round 2: 0/1"],
+      "REQ-6.3.1": ["round 0: 0/1", "round 1: 0/1", "round 2: 0/1"],
+      "REQ-9.1": ["round 0: 0/1", "round 1: 0/1", "round 2: 0/1"]
+    }
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 91.2,
+    "passed": 31,
+    "total": 34,
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "failed_tests": [
+      {
+        "test": "REQ-2.2.spec.ts",
+        "requirement": "REQ-2.2: Log In Successfully",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10020,
+        "locator": "getByRole('heading', { name: /BookStack\\s+User/i }).first()",
+        "failure_location": "/workspace/tests/helpers.ts:137; /workspace/tests/REQ-2.2.spec.ts:9",
+        "last_observed_url": "http://127.0.0.1:3000/"
+      },
+      {
+        "test": "REQ-6.3.1.spec.ts",
+        "requirement": "REQ-6.3.1: Enter Page Reading Page",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10014,
+        "locator": "getByRole('heading', { name: /Page\\s+6\\.3\\.1/i }).first()",
+        "failure_location": "/workspace/tests/helpers.ts:137; /workspace/tests/REQ-6.3.1.spec.ts:9"
+      },
+      {
+        "test": "REQ-9.1.spec.ts",
+        "requirement": "REQ-9.1: Quick Navigation from Recently Updated",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10014,
+        "locator": "getByRole('heading', { name: /Page\\s+Updated\\s+9\\.1/i }).first()",
+        "failure_location": "/workspace/tests/helpers.ts:137; /workspace/tests/REQ-9.1.spec.ts:13"
+      }
+    ]
+  },
+  "metering": {
+    "requests": 1219,
+    "prompt_tokens": 31111359,
+    "completion_tokens": 666159,
+    "reasoning_tokens": 412914,
+    "prompt_cache_hit_tokens": 28352256,
+    "provider_total_tokens": 31777518,
+    "platform_token_count": 31777631,
+    "cost": 17.108443,
+    "currency": "CNY",
+    "run_duration_seconds": 10948,
+    "request_bytes": 114054541,
+    "response_bytes": 3295035
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "log_result_finalized": "FAILED score=91.2"
+  },
+  "source_precedence": [
+    "run.json for final platform status, score, IDs and failed tests",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal rounds and provider usage",
+    "failure-details.md for final timeout, locator and call-log details",
+    "summary.md for human-readable normalization, with conflicts retained",
+    "snapshots.json for design and codegen state",
+    "template.zip for package identity and reproducibility"
+  ],
+  "conflicts": [
+    {
+      "field": "internal_acceptance.full_suite_round_0",
+      "logs_value": "31/34, failing REQ-2.2, REQ-6.3.1, REQ-9.1",
+      "summary_value": "28/34",
+      "resolution": "Use exact full-suite lines in logs.json as authoritative; retain the summary value as a reported discrepancy."
+    }
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "agent_build_id",
+    "code_sha",
+    "final DOM, trace, HAR and request-level server evidence for the three timeouts",
+    "platform-provided binding proving the uploaded ZIP is the exact executed build"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-4ef2cf139806-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 26224,
+      "sha256": "9ACDCAA24D511D61C86D164237884A8B5C84310D68D61B2D5FDFA972B1C40315",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-4ef2cf139806-failure-details.md",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-4ef2cf139806-summary.md",
+      "role": "human_readable_run_summary",
+      "bytes": 3874,
+      "sha256": "74EF5CDB410C7AC1B13139C1BBA595A83BAB2FEBC884F699764FCD3DCACFB142",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-4ef2cf139806-summary.md",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-4ef2cf139806.json",
+      "role": "raw_run_object",
+      "bytes": 13872,
+      "sha256": "EC9CFF397DF84A6CA0416AFDC0A809907CED0CB93AC3BB3EB22B6B070A7B0679",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-4ef2cf139806.json",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-4ef2cf139806-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 251535,
+      "sha256": "E7BD26C283BBE156F1DE581C57DE6ED8FF4C7D6767A4F9F7C1C25345D9A46D78",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-4ef2cf139806-logs.json",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-4ef2cf139806-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 144533,
+      "sha256": "49937B1A9E255047C7D2C568BD5B2D43419CFCBFBF96A0D97165B8B53A978E0A",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-4ef2cf139806-snapshots.json",
+      "stored_in_repository": false
+    },
+    {
+      "name": "4ef2cf139806-template.zip",
+      "role": "template_or_generated_package_snapshot",
+      "bytes": 9804658,
+      "sha256": "FAC8A8279573FD83AD5F62B5DA3A50092D3ABB85F0036448BCA3D56244511469",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/4ef2cf139806-template.zip",
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0
+  }
+}

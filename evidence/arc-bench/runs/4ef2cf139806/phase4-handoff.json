@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "purpose": "Persistent phase 3 to phase 4 handoff and readback",
+  "handoff_id": "4ef2cf139806-F10B7A1DE23B8",
+  "run_id": "4ef2cf139806",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "scope": "read_only_phase4_diagnosis",
+  "code_lineage": "same_submission_unverified_build; keep separate from prior runs",
+  "manifest_path": "evidence/arc-bench/runs/4ef2cf139806/manifest.json",
+  "ack_path": "evidence/arc-bench/runs/4ef2cf139806/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/4ef2cf139806/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/4ef2cf139806/phase4-result.md",
+  "manifest_sha256": "F10B7A1DE23B83BF39B46F1CFD76140911C065F75E516CD74BA5685E7D68A5A0",
+  "evidence_revision": "4ef2cf139806-initial-intake",
+  "changed_artifacts": [
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-4ef2cf139806-failure-details.md",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-4ef2cf139806.json",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-4ef2cf139806-logs.json",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-4ef2cf139806-summary.md",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-4ef2cf139806-snapshots.json",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/4ef2cf139806-template.zip"
+  ],
+  "changed_artifact_sha256": [
+    "9ACDCAA24D511D61C86D164237884A8B5C84310D68D61B2D5FDFA972B1C40315",
+    "EC9CFF397DF84A6CA0416AFDC0A809907CED0CB93AC3BB3EB22B6B070A7B0679",
+    "E7BD26C283BBE156F1DE581C57DE6ED8FF4C7D6767A4F9F7C1C25345D9A46D78",
+    "74EF5CDB410C7AC1B13139C1BBA595A83BAB2FEBC884F699764FCD3DCACFB142",
+    "49937B1A9E255047C7D2C568BD5B2D43419CFCBFBF96A0D97165B8B53A978E0A",
+    "FAC8A8279573FD83AD5F62B5DA3A50092D3ABB85F0036448BCA3D56244511469"
+  ],
+  "platform_snapshot": {
+    "status": "FAILED",
+    "score": 91.2,
+    "passed": 31,
+    "total": 34,
+    "failed_requirements": ["REQ-2.2", "REQ-6.3.1", "REQ-9.1"],
+    "failure_kind": "timedOut"
+  },
+  "constraints": {
+    "read_only": true,
+    "new_platform_run": false,
+    "code_edit": false,
+    "test_edit": false,
+    "upload": false,
+    "remote_push": false
+  },
+  "created_at": "2026-09-20T15:32:20.0987265Z",
+  "status": "pending_send"
+}
