@@ -177,12 +177,15 @@
       "phase4_result": "evidence/arc-bench/runs/5669f7d1777c/phase4-result.json",
       "phase4_result_sha256": "DD1EA3905B4A3BD40E544BAAE1D04A5FC5B41AF734379B3855CD285A57BACD6E",
       "evidence_revision": "5669f7d1777c-external-refresh-01",
-      "status": "phase4_verified_refresh_sent_awaiting_ledger_ack",
+      "status": "ledger_audit_recorded_preserve_repro_verified_no_dispatch",
       "dispatch_id": "5669f7d1777c-P5-009-refresh-DD1EA3905B4A-v1",
       "ack_id": null,
-      "ledger_decision_recorded": false,
+      "ledger_decision_recorded": true,
+      "audit_of": "5669f7d1777c:P5-009:9B98634EAC3E",
+      "decision": "preserve_existing_repro_verified_approval_required_no_dispatch",
+      "needs_repro": false,
       "decision_expected": "preserve_existing_repro_verified_approval_required_no_dispatch",
-      "next_gate": "Await canonical Phase 5 ledger audit acknowledgment; do not dispatch new reproduction or implementation from this refresh."
+      "next_gate": "No new dispatch; await user authorization for the existing minimal generalized Agent slice and preserve platform identity gates."
     }
   ]
 }

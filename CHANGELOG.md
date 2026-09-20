@@ -9,6 +9,7 @@ All notable changes to octos will be documented in this file.
 - Split phase 5 responsibilities into cross-run decision, isolated reproduction, Agent implementation, and metrics/A-B review; document verified handoffs, approval gates, and compact context transfer without changing the Agent or official tests.
 - Record the confirmed Run-local Keep evidence revision `737b56972d5a` as P5-010/P5-011, retain the superseded pilot revision, and require explicit authorization before any Agent implementation or platform A/B work.
 - Record controlled reproduction of BookStack Lite `P5-009` for both save flows; keep implementation authorization and platform identity gates unchanged.
+- Record the `P5-009` external evidence refresh as an audit-only revision; preserve the existing repro-verified, no-dispatch decision.
 
 ### Features
 

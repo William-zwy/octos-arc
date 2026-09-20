@@ -1,6 +1,6 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.9；建立日期：2026-09-19；状态：`P5-009` 已通过两题受控复现并进入实现授权门禁；`737b56972d5a` 的新证据 revision 已确认两个 Run-local 根因并进入台账审批门禁；`5669f7d1777c` 的首次修改版 BookStack 已纳入只读决策（第 12 节），并非阶段五候选 A/B。Keep 生成应用干净 seed 为 `32/32`；原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点。平台启动内部策略和可比 A/B **仍未确认**。
+> 版本：v1.10；建立日期：2026-09-19；状态：`P5-009` 已通过两题受控复现并完成 evidence refresh 审计，保持实现授权门禁；`737b56972d5a` 的新证据 revision 已确认两个 Run-local 根因并进入台账审批门禁；`5669f7d1777c` 的首次修改版 BookStack 已纳入只读决策（第 12 节），并非阶段五候选 A/B。Keep 生成应用干净 seed 为 `32/32`；原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点。平台启动内部策略和可比 A/B **仍未确认**。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
@@ -277,6 +277,7 @@ Pop-Location
 - **平台直接事实：**`REQ-5.6.1` 在 Save Book 后等待 `Book Created 5.6.1` 超时；`REQ-6.1.1` 在 Save Page 后已导航至 `/books/8`，仍等待 `Page Created 6.1.1` 超时。两项最终错误都固定为 `getByRole('heading', {name: ...}).first()`。最终生成 ZIP 中有 `Shelf 5.6.1`、关联的 `Book Created 5.6.1`，以及 `bookId=8` 的 `Page Created 6.1.1`；Page 的更新时间为正式平台测试期间，证明该次保存至少写入了持久层。Book 无同等时间字段，不能确定是内部验收还是最终测试写入。
 - **新的共性候选 `P5-009`：**冻结官方 `helpers.ts` 的 `firstVisible()` 在逐个检查定位器的**当下**找不到可见目标时，固定返回列表首个 `heading`；后续 `expect(...).toBeVisible()` 只等该 heading，不会重新选择随后出现的 link。最终生成的 `injectShelfDetails()` 与 `injectBookPages()` 都把新实体名称放在 `<a>` 中，而非 heading；两个表单都在异步 `POST /api/...` 成功后才设置 `window.location.href`。这与两题在跳转完成前选中 heading、跳转后只有 link 的失败链相吻合，`REQ-6.1.1` 还有最终 URL 与评分时 DB 写入佐证。
 - **受控复现更新（2026-09-20）：**`REPRO-NOTES.md`（SHA-256 `9B98634EAC3E4D73ADB4DDD50154BFB9C35BF5E356331809A3CA200CB35F5583`）在两个独立副本、每轮全新 seed 下验证：无延迟时 `REQ-6.1.1` 与 `REQ-5.6.1` 分别通过；仅对对应 POST 增加 150ms 延迟时两题各 3/3 失败，失败 locator 均为目标名称的 `heading`，而 GET HTML 中目标实体均为 `a.shelf-link` 且 DB 已写入。官方 spec/helpers 未修改，因此 `P5-009` 从 `strong_candidate` 升级为 `confirmed`，状态为 `repro_verified`。150ms 只是触发受控竞态的变量，不冒充平台真实延迟。
+- **Evidence refresh 审计（2026-09-20）：**revision `5669f7d1777c-external-refresh-01`、handoff `5669f7d1777c-EC5A608BB104` 的新 manifest SHA-256 为 `EC5A608BB104C2A9B68249BF6B2B2094AEE107CD9DDA574F75892F6FF19B0BAD`，phase4-result SHA-256 为 `DD1EA3905B4A3BD40E544BAAE1D04A5FC5B41AF734379B3855CD285A57BACD6E`；刷新后的 summary/failure-details 未改变根因、证据缺口或阶段5建议。因此本次只作审计确认，保留 `repro_verified_approval_required_no_dispatch`，不新建问题、不重复复现、不派发实现。
 - **与既有问题的边界：**旧 Lite BookStack `P5-001` 是声明的路由未接入主分发；此 Run 两题的名义路由、表单、POST/API、后端列表注入都存在，不应继续套用“缺路由”补丁。与 Keep `P5-006` 同属可访问语义，但 Keep 是按钮 `aria-label` 被覆盖；本项是保存后的结果页面角色和异步定位时序，属于**相关但不同机制**。候选 Agent 的通用精确角色/名称契约可能有帮助，但还没有本 Run 的阶段五收益证据。
 - **纠偏阶段 4 建议：**[阶段 4 结果](../evidence/arc-bench/runs/5669f7d1777c/phase4-result.json) 提出把最终评测改为“不可变干净 DB”并把状态污染列为强候选。本阶段保留它作为待排除解释，**不把评分后 ZIP 的 DB 当成评分前快照，也不授权全局清库**；上一 Run 第 11 节已实证导出 DB 会含平台测试写入。前后构建不一致亦缺源码/dist 哈希，不能先按此修改 Agent。平台没有提供两题最终 DOM、响应体、请求 trace 或评分前 DB 哈希。
 - **最小验证顺序：**在隔离副本使用同一冻结官方 spec：①先运行原版两题，记录点击 Save 前后时间、URL、POST 状态、重定向、返回 HTML、`heading` 与 `link` 可见性，并分别保存每次前后的 DB 哈希；②若目标数据已写入且结果页只呈现 link，则单变量把书/页卡片标题改为语义合理的 heading（可在其中保留 link），原样复跑两题；③两题通过后跑同一份 34 题、比较干净 seed 与预存 DB 两种**明确标记**的起点，防回归。若原版响应根本未含目标记录，再查写入/读取/构建边界；不要先增加超时、全局清库或改官方 helper。以上均为建议，**本次未执行本地复现或新平台 Run**。
