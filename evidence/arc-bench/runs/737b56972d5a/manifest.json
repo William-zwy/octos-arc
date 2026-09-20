@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "code_lineage": {
+    "classification": "stage5_candidate_code_fix",
+    "provenance": "inferred_from_attached_code_fix_notes_and_original_filename",
+    "source_display_name": "teammate-baseline-20260917-ea503546",
+    "original_filename": "arc_2rd.zip",
+    "submission_id": "42f4e4ae1e6c",
+    "not_frozen_A0": true,
+    "stage5_effect_platform_proven": false,
+    "platform_independent_binding": "missing",
+    "note": "Treat this as a separate post-fix candidate Run. The attached code-fix notes are evidence of intended changes, not proof that the uploaded Agent or final generated package contains them."
+  },
+  "run": {
+    "run_id": "737b56972d5a",
+    "submission_id": "42f4e4ae1e6c",
+    "display_name": "teammate-baseline-20260917-ea503546",
+    "original_filename": "arc_2rd.zip",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--keep",
+    "task_snapshot_id": null,
+    "created_at": "2026-09-19T16:28:12.244648",
+    "started_at": "2026-09-19T16:28:13.498252",
+    "finished_at": "2026-09-19T18:45:57.729621",
+    "status": "FAILED",
+    "score": 93.8,
+    "passed_count": 30,
+    "failed_count": 2,
+    "feature_implementation_rate": 0.9375,
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "run_duration_seconds": 8224
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 48000,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0
+  },
+  "internal_acceptance": {
+    "source": "logs.json",
+    "full_suite_round_0": {
+      "passed": 31,
+      "total": 32,
+      "failing_nodes": ["REQ-2.7.6.3"]
+    },
+    "full_suite_round_1": {
+      "passed": 24,
+      "total": 32,
+      "failing_nodes": ["REQ-2.7.1", "REQ-2.7.2", "REQ-2.7.4", "REQ-2.7.5", "REQ-2.7.6.1", "REQ-2.7.6.2", "REQ-2.7.6.3", "REQ-3.1"]
+    },
+    "full_suite_round_2": {
+      "passed": 30,
+      "total": 32,
+      "failing_nodes": ["REQ-2.7.5", "REQ-2.7.6.3"]
+    },
+    "targeted_node_history": {
+      "REQ-2.7.5": ["round 0: 1/1"],
+      "REQ-2.7.6.3": ["round 0: 1/1"]
+    },
+    "repair_rounds_completed": 2,
+    "regression_signal": "full_suite_round_1_regressed_to_24/32_before_recovering_to_30/32"
+  },
+  "platform_final": {
+    "passed": 30,
+    "total": 32,
+    "failed_tests": [
+      {
+        "test": "REQ-2.7.5.spec.ts",
+        "requirement": "REQ-2.7.5: Edit labels",
+        "failure_kind": "timedOut",
+        "timeout_ms": 10000,
+        "duration_ms": 10012,
+        "locator_or_expected": "getByRole('group', { name: /^Label Work editable$/i }).getByLabel(/^Label Work editable$/i)",
+        "failure_location": "/workspace/tests/helpers.ts:354; /workspace/tests/REQ-2.7.5.spec.ts:11"
+      },
+      {
+        "test": "REQ-2.7.6.3.spec.ts",
+        "requirement": "REQ-2.7.6.3: View Reminders",
+        "failure_kind": "strict_mode_violation",
+        "duration_ms": 244,
+        "locator_or_expected": "getByRole('complementary').getByRole('button', { name: /^Reminders$/i })",
+        "failure_detail": "Two buttons matched: #nav-reminders and the sidebar label button with data-label=Reminders.",
+        "failure_location": "/workspace/tests/helpers.ts:285; /workspace/tests/REQ-2.7.6.3.spec.ts:10"
+      }
+    ],
+    "score": 93.8,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "metering": {
+    "requests": 980,
+    "prompt_tokens": 22790886,
+    "completion_tokens": 661941,
+    "reasoning_tokens": 446468,
+    "prompt_cache_hit_tokens": 20834048,
+    "provider_total_tokens": 23452827,
+    "platform_token_count": 23452931,
+    "cost": 13.911794,
+    "currency": "CNY",
+    "run_duration_seconds": 8224,
+    "request_bytes": 85726305,
+    "response_bytes": 3237475
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "log_result_finalized": "FAILED score=93.8"
+  },
+  "code_fix_notes": {
+    "status": "attached_hypothesis_not_platform_proof",
+    "REQ-2.7.5": "Notes attribute the missing editable label row to absent Work editable seed data.",
+    "REQ-2.7.6.3": "Notes identify an accessible-name collision between the Reminders navigation button and the Reminders label button.",
+    "result_interpretation": "The final platform failures show the candidate did not establish a stable 32/32 outcome; the notes must be checked against generated package and clean-seed behavior."
+  },
+  "source_precedence": [
+    "run.json for final platform status, score and test list",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal rounds and provider usage",
+    "playwright-report.json and failure-details.md for final failure locators and call logs",
+    "code-fix-notes.md for proposed code-level explanations, not authoritative runtime proof",
+    "summary.md for human-readable normalization, with conflicts retained",
+    "template.zip for generated package identity and reproducibility"
+  ],
+  "conflicts": [
+    {
+      "field": "REQ-2.7.5_root_cause",
+      "code_fix_notes_value": "Work editable seed label is absent.",
+      "platform_evidence": "The editable input locator is not found, but no final DOM or clean pre-run seed snapshot is available.",
+      "resolution": "Treat missing seed data as a candidate explanation; confirm with clean-seed DOM and database evidence."
+    },
+    {
+      "field": "internal_acceptance_vs_platform_final",
+      "internal_value": "Targeted nodes passed in round 0; full suite ended 30/32 after regression and repair rounds.",
+      "platform_value": "Final Playwright ended 30/32 with the same two target failures.",
+      "resolution": "Do not treat targeted round-0 passes as proof of stable full-suite or platform success."
+    }
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "agent_build_id",
+    "agent_code_sha",
+    "uploaded_agent_zip_sha256",
+    "error-context.md bodies",
+    "Playwright trace or HAR",
+    "clean-seed pre-run database hash"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-737b56972d5a-code-fix-notes.md",
+      "role": "attached_code_fix_hypotheses",
+      "bytes": 4941,
+      "sha256": "26023587102DB60E6A9613CE324F04EABB41FACCB5B30D3B4F6EFD21C4910F40",
+      "stored_in_repository": false
+    },
+    {
+      "name": "737b56972d5a-template.zip",
+      "role": "generated_template_package_snapshot",
+      "bytes": 1834590,
+      "sha256": "A84BA6C3CD51DC3F9D2B50E0DBB4F89F2DEC173EA580011578D10F995859D32F",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-737b56972d5a-summary.md",
+      "role": "human_readable_run_summary",
+      "bytes": 3569,
+      "sha256": "B9F004165F72B17E1ED842880CF09473355307224044634FCB67F708B6256E7E",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-737b56972d5a-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 4897,
+      "sha256": "5C1B00EE20E00DD4A4C6F8C05A2EA3CC563129361F9B81F3F5D494FD83281C98",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-737b56972d5a-playwright-report.json",
+      "role": "final_playwright_report",
+      "bytes": 45512,
+      "sha256": "0F99F1606F222CA24F88C6C9705B7CAE4A7FAAEBE41CB264465477E1E423A964",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-737b56972d5a-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 633573,
+      "sha256": "AEAF90849D2059E33D949435798BDB7C40F385933FD58727AEFD1D3A7EDC70D1",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-737b56972d5a.json",
+      "role": "raw_run_object",
+      "bytes": 10666,
+      "sha256": "9895374B748B74294B1730D39B1A9918D20C93E90562EF10F98B2B8FE2F37D09",
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0
+  }
+}

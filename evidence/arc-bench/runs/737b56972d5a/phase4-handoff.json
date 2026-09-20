@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "purpose": "Persistent phase 3 to phase 4 handoff and readback",
+  "handoff_id": "737b56972d5a-D020E69FCE81",
+  "run_id": "737b56972d5a",
+  "task_key": "arc-bench-lite--keep",
+  "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
+  "scope": "read_only_phase4_diagnosis",
+  "code_lineage": "stage5_candidate_code_fix_inferred_not_platform_bound",
+  "manifest_path": "evidence/arc-bench/runs/737b56972d5a/manifest.json",
+  "ack_path": "evidence/arc-bench/runs/737b56972d5a/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/737b56972d5a/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/737b56972d5a/phase4-result.md",
+  "created_at": "2026-09-20T04:59:31.1874393Z",
+  "status": "handoff_sent",
+  "status_note": "Analyze only this Run. Do not create a new Run, upload, edit code or tests, or treat code-fix notes as proof of a successful Stage5 candidate."
+}
