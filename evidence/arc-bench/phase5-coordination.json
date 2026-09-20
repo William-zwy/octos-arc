@@ -186,6 +186,27 @@
       "needs_repro": false,
       "decision_expected": "preserve_existing_repro_verified_approval_required_no_dispatch",
       "next_gate": "No new dispatch; await user authorization for the existing minimal generalized Agent slice and preserve platform identity gates."
+    },
+    {
+      "key": "4ef2cf139806:intake:F10B7A1DE23B",
+      "run_id": "4ef2cf139806",
+      "submission_id": "42f4e4ae1e6c",
+      "task_key": "arc-bench-lite--bookstack",
+      "issue_id": "untriaged",
+      "source_handoff_id": "4ef2cf139806-F10B7A1DE23B8",
+      "manifest": "evidence/arc-bench/runs/4ef2cf139806/manifest.json",
+      "manifest_sha256": "F10B7A1DE23B83BF39B46F1CFD76140911C065F75E516CD74BA5685E7D68A5A0",
+      "phase4_result": "evidence/arc-bench/runs/4ef2cf139806/phase4-result.json",
+      "phase4_result_sha256": "B0AA9FCEDC6719C9527432A2DB6AA6AA4383C978CC00EAB89AF38808527414E9",
+      "phase4_result_md": "evidence/arc-bench/runs/4ef2cf139806/phase4-result.md",
+      "phase4_result_md_sha256": "619D344C89290588C94664EAB43756C9C3E58D4BD39062225DB5CA4B07BCEFE3",
+      "status": "ledger_triaged_needs_repro",
+      "decision": "conditional_intake_needs_repro",
+      "needs_repro": true,
+      "dispatch_id": null,
+      "ack_id": null,
+      "ledger_decision_recorded": true,
+      "next_gate": "Run isolated pristine-package reproductions with request/DOM/DB evidence; do not dispatch implementation or create a platform Run before the ledger receives the result."
     }
   ]
 }

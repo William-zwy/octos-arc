@@ -1,6 +1,6 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.10；建立日期：2026-09-19；状态：`P5-009` 已通过两题受控复现并完成 evidence refresh 审计，保持实现授权门禁；`737b56972d5a` 的新证据 revision 已确认两个 Run-local 根因并进入台账审批门禁；`5669f7d1777c` 的首次修改版 BookStack 已纳入只读决策（第 12 节），并非阶段五候选 A/B。Keep 生成应用干净 seed 为 `32/32`；原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点。平台启动内部策略和可比 A/B **仍未确认**。
+> 版本：v1.11；建立日期：2026-09-19；状态：`P5-009` 已通过两题受控复现并完成 evidence refresh 审计，保持实现授权门禁；`4ef2cf139806` 已条件接收并进入隔离复现门禁；`737b56972d5a` 的新证据 revision 已确认两个 Run-local 根因并进入台账审批门禁；`5669f7d1777c` 的首次修改版 BookStack 已纳入只读决策（第 12 节），并非阶段五候选 A/B。Keep 生成应用干净 seed 为 `32/32`；原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点。平台启动内部策略和可比 A/B **仍未确认**。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
@@ -25,6 +25,8 @@
 待纳入队列：[Web Keep `4b792b72d7dd`](../evidence/arc-bench/runs/4b792b72d7dd/manifest.json) 已有阶段 3 manifest（平台 `30/32`），但阶段 4 会话映射处于 `quarantined`，本台账尚未收到可复核的机制结论；先解决会话身份与结果回读，不自动转派，也不把它与 Lite Keep 的同名任务或本切片缺路由机制合并。
 
 新待纳入队列：Lite Keep [`737b56972d5a`](../evidence/arc-bench/runs/737b56972d5a/manifest.json) 已有阶段 4 [核验结果](../evidence/arc-bench/runs/737b56972d5a/phase4-result.json)，平台 `30/32`；此为来源尚需进一步绑定的 post-fix candidate，不能直接与旧 Run 计算阶段 5 A/B。新决策会话须检查它与 `P5-006/007/008` 的机制异同、内部回归和证据缺口，再决定是否追加旧 ID 或新建 ID。当前仅登记**待分析**，不据阶段 4 候选建议自动开工。
+
+新条件接收队列：Lite BookStack [`4ef2cf139806`](../evidence/arc-bench/runs/4ef2cf139806/manifest.json) 的阶段 4 结果已核验，平台 `31/34`，失败 `REQ-2.2`、`REQ-6.3.1`、`REQ-9.1`。三项观察到的失败可确认，具体运行时机制仍未闭合；同 submission ID `42f4e4ae1e6c` 不证明与 `5669f7d1777c` 是同一构建，必须保持独立。当前进入 `needs_repro`，不直接并入 `P5-009` 或旧 BookStack Lite 记录。
 
 | Run 与原始证据索引 | 平台最终结果 / 内部验收 | 请求与计量 | 当前用途 |
 |---|---|---|---|
@@ -291,3 +293,11 @@ Pop-Location
 - **`P5-011`｜Reminders accessible-name 冲突：**评分前 DOM 同时存在 `#nav-reminders` 与 `data-label=Reminders` 按钮，二者 accessible name 均为 `Reminders`，直接解释 `REQ-2.7.6.3` strict-mode failure。它与 `P5-006` 同属可访问语义契约家族，但不是 Undo 名称被覆盖，而是两个控件名称不唯一；建议复用既有 role/name 诊断能力，不硬编码 Keep 导航名；状态为 `approval_required`，不派发实现。
 - **转派与复现决策：**本 revision 标记 `needs_repro=false`；不再为这两个 Run-local 根因自动创建隔离复现卡。由于仍缺 `task_snapshot_id`、Agent build/code SHA、上传 Agent ZIP SHA-256，当前不标 `platform_verified`，也不计算阶段 5 A/B 收益。只有用户明确授权两个最小实现切片后，才能进入 `implementation_authorized`；实现后仍须本地全套 `/workspace/tests` 回归，再按阶段 3→4→台账流程处理平台 Run。
 - **保留缺口：**外部补充证据的 notes 数量存在文字算术不一致，但不影响两个根因的闭合证据；平台总耗时仍不能拆分为 LLM、浏览器和测试阶段。身份缺口是平台 A/B 门禁，不否定本次 Run-local 根因确认。
+
+## 14. Lite BookStack `4ef2cf139806`：条件接收，先做隔离复现（2026-09-20）
+
+- **身份与边界：**manifest SHA-256 为 `F10B7A1DE23B83BF39B46F1CFD76140911C065F75E516CD74BA5685E7D68A5A0`；phase4-result SHA-256 为 `B0AA9FCEDC6719C9527432A2DB6AA6AA4383C978CC00EAB89AF38808527414E9`；result Markdown SHA-256 为 `619D344C89290588C94664EAB43756C9C3E58D4BD39062225DB5CA4B07BCEFE3`。handoff `4ef2cf139806-F10B7A1DE23B8`、Run/task/thread 字段一致，阶段4注册表为 `verified`。该 Run 与 `5669f7d1777c`、`00c59e0762fb` 分离；共享 submission `42f4e4ae1e6c` 不足以证明同一代码或构建。
+- **平台事实：**平台最终 `31/34`、score `91.2`、`FAILED`；入口为 `main.py`，测试目录为 `/workspace/tests`，bundled fallback 为 `0`。失败为 `REQ-2.2` 登录后昵称、`REQ-6.3.1` 阅读页、`REQ-9.1` Recently Updated 导航后三个 heading locator 超时。内部全套为 `31/34 → 32/34 → 31/34`，三个 targeted 节点三轮均失败；不能把局部修复轮或 31 个通过项解释为稳定机制确认。
+- **机制分叉：**`REQ-2.2` 的 authenticated nickname role/DOM 与 session readback 是独立候选；`REQ-6.3.1`/`REQ-9.1` 都涉及页面读回、recently-updated 链路和最终 DOM 暴露，但目前只有缺失 locator 与静态源码/DB 证据。它们与已 `repro_verified` 的 `P5-009` 保存后 link/heading 机制相关但未证实相同，不能合并；可变 DB/session 和 acceptance→package→platform 边界也可能是共同上游解释。
+- **台账决策：**条件接收为 `needs_repro`，暂不分配新的 P5 问题 ID；先在 pristine 副本分别复现三条失败链，保存 login cookie/GET `/`、页面链接/阅读页 GET、create/home/recently-updated 请求、响应体、DOM、trace 和前后 DB 哈希，并对比“干净状态”和“内部全套后状态”。复现结果返回台账后再按机制拆分 ID；不派发实现、不创建平台 Run。
+- **门禁与缺口：**仍缺 `task_snapshot_id`、agent build/code SHA、上传 ZIP 到平台构建的绑定，以及三条失败的最终 DOM/trace/HAR/响应体/请求级证据。即使隔离复现成立，也不能声明平台 A/B 收益；修复前必须保留 31 个通过场景，并记录 source/dist/database/package 哈希。

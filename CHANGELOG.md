@@ -10,6 +10,7 @@ All notable changes to octos will be documented in this file.
 - Record the confirmed Run-local Keep evidence revision `737b56972d5a` as P5-010/P5-011, retain the superseded pilot revision, and require explicit authorization before any Agent implementation or platform A/B work.
 - Record controlled reproduction of BookStack Lite `P5-009` for both save flows; keep implementation authorization and platform identity gates unchanged.
 - Record the `P5-009` external evidence refresh as an audit-only revision; preserve the existing repro-verified, no-dispatch decision.
+- Register Lite BookStack Run `4ef2cf139806` as a conditional `needs_repro` intake, keeping it separate from prior BookStack runs and without dispatching downstream work.
 
 ### Features
 
