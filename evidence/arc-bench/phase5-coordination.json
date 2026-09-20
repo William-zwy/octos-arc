@@ -141,9 +141,30 @@
       "issue_id": "P5-009",
       "phase4_result": "evidence/arc-bench/runs/5669f7d1777c/phase4-result.json",
       "phase4_result_sha256": "3E8E87EAE11F4AC1856EE179F6AEB29E0A79745F8A0B3057ECD92E645766A6BD",
-      "status": "ledger_recorded_awaiting_reproduction_task_card",
+      "status": "historical_revision_superseded_by_repro_verified_revision",
       "dispatch_id": null,
-      "ack_id": null
+      "ack_id": null,
+      "historical_revision": true,
+      "superseded_by": "5669f7d1777c:P5-009:9B98634EAC3E",
+      "next_gate": "Retain prior strong-candidate decision for audit history; use the controlled-reproduction revision for current gating."
+    },
+    {
+      "key": "5669f7d1777c:P5-009:9B98634EAC3E",
+      "run_id": "5669f7d1777c",
+      "task_key": "arc-bench-lite--bookstack",
+      "issue_id": "P5-009",
+      "source_handoff_id": "5669f7d1777c-DADB44C15C2B",
+      "phase4_result": "evidence/arc-bench/runs/5669f7d1777c/phase4-result.json",
+      "phase4_result_sha256": "3E8E87EAE11F4AC1856EE179F6AEB29E0A79745F8A0B3057ECD92E645766A6BD",
+      "reproduction_evidence": "C:/Users/dayuruozhi/Doubao/chats/2026-09-19/new-chat-4/repro-bookstack/REPRO-NOTES.md",
+      "reproduction_evidence_sha256": "9B98634EAC3E4D73ADB4DDD50154BFB9C35BF5E356331809A3CA200CB35F5583",
+      "status": "repro_verified_approval_required_no_dispatch",
+      "decision": "confirmed_controlled_reproduction",
+      "needs_repro": false,
+      "dispatch_id": null,
+      "ack_id": null,
+      "ledger_decision_recorded": true,
+      "next_gate": "User authorization for one minimal generalized Agent slice, then targeted and 34/34 local regression; preserve platform build/task-snapshot/ZIP identity gates."
     }
   ]
 }
