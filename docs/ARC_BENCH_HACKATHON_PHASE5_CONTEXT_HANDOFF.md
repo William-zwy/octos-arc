@@ -2,6 +2,8 @@
 
 > 2026-09-20 启动版。用于会话和队友快速上手；详细推理、证据及后续变动以[决策台账](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)、各 Run 的阶段 3/4 文件和当前代码为准。不要把本文件当新的平台成绩表。
 
+> 初始化状态：四个会话的创建请求已返回临时 `clientThreadId`，但尚未取得稳定 Thread ID 或交接 ACK；独立工作树已生成。当前**不能宣称会话交接完成，也未启用定时巡检**。临时 ID 与幂等状态见 [`phase5-coordination.json`](../evidence/arc-bench/phase5-coordination.json)；先核对应用中的任务创建结果，不重复创建或用临时 ID 发消息。
+
 ## 先读什么
 
 1. [阶段 5 多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)：职责、交接和授权门禁。

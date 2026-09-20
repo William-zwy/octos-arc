@@ -9,34 +9,45 @@
     "automatic_agent_code_edits_authorized": false
   },
   "automation": {
-    "mode": "manual_pilot",
+    "mode": "disabled_pending_stable_thread_ids",
     "heartbeat_id": null,
     "proposed_check_interval_minutes": 15,
     "read_only_dispatch_only": true
   },
+  "provisioning_note": "Four create_thread calls returned clientThreadId and created detached worktrees, but no stable threadId appeared in list_threads during this setup attempt. Do not retry creation or dispatch with clientThreadId; reconcile app state first. No automation was enabled.",
+  "unmapped_worktree_paths": [
+    "D:/DataMove/codex/worktrees/2c74/AI智能体软件工厂黑客松",
+    "D:/DataMove/codex/worktrees/79d1/AI智能体软件工厂黑客松",
+    "D:/DataMove/codex/worktrees/bfb3/AI智能体软件工厂黑客松",
+    "D:/DataMove/codex/worktrees/cf1a/AI智能体软件工厂黑客松"
+  ],
   "roles": {
     "ledger": {
       "title": "项目阶段5｜跨 Run 决策台账",
+      "client_thread_id": "client-new-thread:b725d0f9-dd86-447e-b0bc-a5e9ebe6bff6",
       "thread_id": null,
-      "status": "provisioning",
+      "status": "provisioning_unconfirmed",
       "write_scope": "docs/ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md"
     },
     "reproduction": {
       "title": "项目阶段5｜隔离复现",
+      "client_thread_id": "client-new-thread:a7425a00-60aa-421a-9edb-8dd6ca443dd7",
       "thread_id": null,
-      "status": "provisioning",
+      "status": "provisioning_unconfirmed",
       "write_scope": "isolated experiment evidence only"
     },
     "implementation": {
       "title": "项目阶段5｜Agent 实现",
+      "client_thread_id": "client-new-thread:6b9cd0c0-a065-4bd1-8b15-3da845fd3287",
       "thread_id": null,
-      "status": "provisioning",
+      "status": "provisioning_unconfirmed",
       "write_scope": "authorized candidate-code worktree only"
     },
     "metrics": {
       "title": "项目阶段5｜指标与 A/B 验收",
+      "client_thread_id": "client-new-thread:b20decaa-c513-4710-85a9-91402db4e652",
       "thread_id": null,
-      "status": "provisioning",
+      "status": "provisioning_unconfirmed",
       "write_scope": "metrics review in own worktree only"
     }
   },

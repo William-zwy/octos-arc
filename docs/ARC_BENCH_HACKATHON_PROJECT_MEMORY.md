@@ -1,6 +1,6 @@
 # AI 智能体软件工厂黑客松项目记忆
 
-> 记录时间：2026-09-17；最近核验：2026-09-19
+> 记录时间：2026-09-17；最近核验：2026-09-20
 >
 > 本文是当前项目的持续交接记录。它把外部交接文档、当前 `octos-arc` 仓库状态和已验证的 ARC-Bench 结果合并在一起，便于后续 Agent 或队员继续工作。
 >
@@ -12,7 +12,7 @@
 >
 > 阶段 5 跨 Run 问题、暂缓项与优化决策见 [`ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md`](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)。已记录首个独立本地优化候选；尚未打包或完成平台 A/B。
 
-> 阶段 5 已设计四会话职责，当前正在初始化独立会话；唯一工作流与新会话启动卡分别见[多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)和[精简交接](./ARC_BENCH_HACKATHON_PHASE5_CONTEXT_HANDOFF.md)。会话自动记忆不是权威交接源。
+> 阶段 5 已设计四会话职责；四次创建请求目前只有临时 `clientThreadId`，尚未获得稳定 Thread ID/交接 ACK，自动巡检未启用。当前状态与恢复门禁见[协同索引](../evidence/arc-bench/phase5-coordination.json)。唯一工作流与启动卡分别见[多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)和[精简交接](./ARC_BENCH_HACKATHON_PHASE5_CONTEXT_HANDOFF.md)。会话自动记忆不是权威交接源。
 >
 > 当前执行状态（2026-09-20）：阶段 2.5 已完成并通过；阶段 3、阶段 4、阶段 5 滚动执行，尚未宣告完成；本地候选已验证，平台 A/B 未完成。
 
