@@ -87,11 +87,11 @@
       "phase4_result_sha256": "BC8FE404B86BE53C64434DE06F2294CF88C0CDC0DFE74CEBB260EC7B38C12119",
       "supplemental_evidence": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-737b56972d5a-evidence-chain.md",
       "supplemental_evidence_sha256": "2B38407F84689446ABBEA79237782E2FD52585797C58AF76FF5261978A3C51E2",
-      "status": "phase4_verified_pending_ledger_intake",
-      "dispatch_id": null,
+      "status": "phase4_verified_intake_sent_awaiting_ledger_ack",
+      "dispatch_id": "737b56972d5a-P5-intake-BC8FE404B86B-v1",
       "ack_id": null,
       "ledger_decision_recorded": false,
-      "next_gate": "Send one short intake card to the canonical Phase 5 ledger; do not dispatch reproduction or implementation before its decision."
+      "next_gate": "Await canonical Phase 5 ledger ACK/decision; do not dispatch reproduction or implementation before its decision."
     },
     {
       "key": "5669f7d1777c:P5-009:3E8E87EAE11F",
