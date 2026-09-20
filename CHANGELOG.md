@@ -5,6 +5,7 @@ All notable changes to octos will be documented in this file.
 
 ### ARC-Bench collaboration
 
+- Verify and acknowledge the four dedicated Phase 5 task identities; record their worktree mapping and keep automatic dispatch disabled pending a manual pilot.
 - Split phase 5 responsibilities into cross-run decision, isolated reproduction, Agent implementation, and metrics/A-B review; document verified handoffs, approval gates, and compact context transfer without changing the Agent or official tests.
 
 ### Features

@@ -15,6 +15,8 @@
 
 每个写入中的工作树同一时刻只有一名写入者。阶段 3/4 的证据写入与台账写入若共用工作树，必须串行交接；实现使用独立工作树。不同工作树的未提交文件不会自动共享，交接必须引用可读绝对路径或已提交的完整 SHA。候选工作树中的未跟踪 ZIP 属用户资产，不自动移动、暂存或覆盖。
 
+四个新会话目前各自落在 A0 的 detached 工作树，尚未包含阶段 5 文档提交；只读 ACK 不等于获得写入权。任何会话开始写文件前，须先核对实际 Git 根与 HEAD，并通过单写入者交接选择已含权威提交的工作树或安全对齐独立基线；不得在 detached A0 上把旧代码误当当前候选直接提交。
+
 ## 2. 事实来源与身份门禁
 
 阶段 5 首入口只接收经阶段 3→4 SOP 验证的 `phase4-result.json`。先用 `manifest.json` 核对 `run_id`、任务身份和原始来源，再核对 `phase4-handoff.json`、`phase4-ack.json`、`phase4-result.json` 的 `run_id`、`task_key`、`handoff_id` 和 Thread ID；阶段 4 注册表状态须为 `verified`。只有聊天“完成”、`result.status=complete` 但注册表未核验，或文件字段冲突时，进入 `needs_reconciliation`，不自动向下游转派。历史上已被台账人工纳入的记录保留原结论，但不因此放宽未来门禁。

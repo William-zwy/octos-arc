@@ -2,7 +2,7 @@
 
 > 2026-09-20 启动版。用于会话和队友快速上手；详细推理、证据及后续变动以[决策台账](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)、各 Run 的阶段 3/4 文件和当前代码为准。不要把本文件当新的平台成绩表。
 
-> 初始化状态：四个会话的创建请求已返回临时 `clientThreadId`，但尚未取得稳定 Thread ID 或交接 ACK；独立工作树已生成。当前**不能宣称会话交接完成，也未启用定时巡检**。临时 ID 与幂等状态见 [`phase5-coordination.json`](../evidence/arc-bench/phase5-coordination.json)；先核对应用中的任务创建结果，不重复创建或用临时 ID 发消息。
+> 交接状态：四个会话已核实稳定 Thread ID，并完成 `phase5-role-20260920-v1` 的只读 ACK；正式映射和 ACK 消息见 [`phase5-coordination.json`](../evidence/arc-bench/phase5-coordination.json)。这仅代表职责与证据入口交接完成，**不代表 Run 已转派、实验已执行或自动巡检已启用**。后续工作项仍按身份、授权和单写入者门禁逐项转派。
 
 ## 先读什么
 
@@ -15,8 +15,7 @@
 
 - 比赛有 6 个赛道、当前 13 个已发布可运行子任务；官方历史 Demo/Playground 不代表队友 Agent 基线。原始 Agent A0 代码 `ea503546aad31b2e3b887235e3b35cc0a8b9cfe8`。官方快照和原始 Agent 均在本地证据分支保存。
 - 当前证据工作树在 `D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松`，本地分支为 `codex/arc-bench-official-snapshot-20260917`；Codex 保存的项目默认目录在 `C:/Users/dayuruozhi/Documents/ChatGPT/AI智能体软件工厂黑客松`，其 `main` 仍是 A0。**新会话必须核对实际 cwd/HEAD；不能假定默认项目 worktree 已含证据分支的文档或未提交文件。**
-- 上述绝对路径仅用于这台机器上的会话交接；队友在别的电脑应以仓库相对路径、完整提交 SHA 和文件哈希定位，不照抄本机盘符。
-- 上述绝对路径仅用于这台机器上的会话交接；队友在别的电脑应以仓库相对路径、完整提交 SHA 和文件哈希定位，不照抄本机盘符。
+- 四个新会话已 ACK，但它们的独立工作树当前仍是 detached A0；后续写入前必须完成单写入者交接与基线对齐，不能在旧树上直接修改台账或 Agent。
 - 上述绝对路径仅用于这台机器上的会话交接；队友在别的电脑应以仓库相对路径、完整提交 SHA 和文件哈希定位，不照抄本机盘符。
 - 阶段 5 Agent 候选位于独立工作树 `.worktrees/phase5-route-contract`、分支 `codex/arc-bench-phase5-route-contract`，截至交接前完整 HEAD 为 `dddc94312d4cd26babdbfb9d7df2a17f08f0a51d`。它是在先前路由诊断切片之上增加 Keep 交互/种子契约的本地候选；不是原始 A0，也尚无该提交对应的可比平台 A/B。该工作树中的未跟踪 ZIP 为用户资产，不自动修改或暂存。
 - 完成率和回归可靠性优先；功能相同时比较 Token，再比较耗时/请求。平台最终结果与 Agent 内部验收必须分开。生成应用 `template.zip` 不是上传 Agent ZIP；评分后导出的 DB 不能冒充评分前状态。缓存/推理 Token 不重复求和。所有身份、模型和任务快照冲突必须显式保留。

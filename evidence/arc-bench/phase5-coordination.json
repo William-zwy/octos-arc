@@ -9,45 +9,51 @@
     "automatic_agent_code_edits_authorized": false
   },
   "automation": {
-    "mode": "disabled_pending_stable_thread_ids",
+    "mode": "disabled_pending_manual_pilot",
     "heartbeat_id": null,
     "proposed_check_interval_minutes": 15,
     "read_only_dispatch_only": true
   },
-  "provisioning_note": "Four create_thread calls returned clientThreadId and created detached worktrees, but no stable threadId appeared in list_threads during this setup attempt. Do not retry creation or dispatch with clientThreadId; reconcile app state first. No automation was enabled.",
-  "unmapped_worktree_paths": [
-    "D:/DataMove/codex/worktrees/2c74/AI智能体软件工厂黑客松",
-    "D:/DataMove/codex/worktrees/79d1/AI智能体软件工厂黑客松",
-    "D:/DataMove/codex/worktrees/bfb3/AI智能体软件工厂黑客松",
-    "D:/DataMove/codex/worktrees/cf1a/AI智能体软件工厂黑客松"
-  ],
+  "provisioning_note": "Four stable thread IDs were verified through read_thread; each role acknowledged phase5-role-20260920-v1 after read-only checks. All four detached worktrees remain at A0, while authoritative Phase 5 evidence lives in source_checkout. Automatic dispatch and scheduled monitoring remain disabled until the manual pilot and approval gates are satisfied.",
+  "role_handoff_id": "phase5-role-20260920-v1",
+  "role_handoff_source_commit": "ad4f818a9f83b4a7c082d3e5da0b39855fcc9bd9",
+  "baseline_gate": "Read-only ACK does not authorize writes. Before writing, verify the actual Git root and HEAD, acquire single-writer ownership, and use a worktree containing the authoritative Phase 5 commit; do not edit detached A0 role worktrees as current candidates.",
+  "unmapped_worktree_paths": [],
   "roles": {
     "ledger": {
       "title": "项目阶段5｜跨 Run 决策台账",
       "client_thread_id": "client-new-thread:b725d0f9-dd86-447e-b0bc-a5e9ebe6bff6",
-      "thread_id": null,
-      "status": "provisioning_unconfirmed",
+      "thread_id": "01a0bd66-5680-7e72-9e8a-24290780525e",
+      "worktree_path": "D:/DataMove/codex/worktrees/2c74/AI智能体软件工厂黑客松",
+      "status": "acknowledged_read_only",
+      "ack_message_id": "msg_0c9cfb4eff4eb795016aaf7ffb6ef487d0aa06857f58b383a1",
       "write_scope": "docs/ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md"
     },
     "reproduction": {
       "title": "项目阶段5｜隔离复现",
       "client_thread_id": "client-new-thread:a7425a00-60aa-421a-9edb-8dd6ca443dd7",
-      "thread_id": null,
-      "status": "provisioning_unconfirmed",
+      "thread_id": "01a0bd66-60c2-7441-9a85-332c0af24886",
+      "worktree_path": "D:/DataMove/codex/worktrees/79d1/AI智能体软件工厂黑客松",
+      "status": "acknowledged_read_only",
+      "ack_message_id": "msg_0173b77fb783042c016aaf7fb9576487d0b89b817a53f37829",
       "write_scope": "isolated experiment evidence only"
     },
     "implementation": {
       "title": "项目阶段5｜Agent 实现",
       "client_thread_id": "client-new-thread:6b9cd0c0-a065-4bd1-8b15-3da845fd3287",
-      "thread_id": null,
-      "status": "provisioning_unconfirmed",
+      "thread_id": "01a0bd66-75bd-7801-97fc-b3d1e136c112",
+      "worktree_path": "D:/DataMove/codex/worktrees/bfb3/AI智能体软件工厂黑客松",
+      "status": "acknowledged_read_only",
+      "ack_message_id": "msg_0a88429c8f1c6aa9016aaf7ffb6dbc87d0ac5fc5f5b1921d3a",
       "write_scope": "authorized candidate-code worktree only"
     },
     "metrics": {
       "title": "项目阶段5｜指标与 A/B 验收",
       "client_thread_id": "client-new-thread:b20decaa-c513-4710-85a9-91402db4e652",
-      "thread_id": null,
-      "status": "provisioning_unconfirmed",
+      "thread_id": "01a0bd66-8b2a-7fb3-9a25-269204f6dbf1",
+      "worktree_path": "D:/DataMove/codex/worktrees/cf1a/AI智能体软件工厂黑客松",
+      "status": "acknowledged_read_only",
+      "ack_message_id": "msg_0c13633d681ff7a9016aaf7f9e398887d08ad38f8ca006f860",
       "write_scope": "metrics review in own worktree only"
     }
   },

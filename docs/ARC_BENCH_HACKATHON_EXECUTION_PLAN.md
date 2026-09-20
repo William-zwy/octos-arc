@@ -228,6 +228,8 @@ A0 是不可变的对照组。后续不得覆盖、重打包后仍沿用同一�
 
 本阶段规划由“跨 Run 决策台账、隔离复现、Agent 实现、指标与 A/B 验收”四个独立会话承接，身份核验、条件转派、单写入者和审批边界见[阶段 5 多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)。这些是职责拆分，不改变 5A～5G 技术工作包；已完成的本地候选不等于平台验证。
 
+2026-09-20 交接状态：四个独立会话已完成只读职责 ACK；首个 Run 的正式转派与手工演练尚未完成，自动巡检未启用。会话 ID、ACK 和下一门禁见[阶段 5 协同索引](../evidence/arc-bench/phase5-coordination.json)。
+
 #### 5A. TaskContext 与任务身份隔离
 
 - 用 `catalog + competition_id + task_id + snapshot_id` 形成唯一身份；
