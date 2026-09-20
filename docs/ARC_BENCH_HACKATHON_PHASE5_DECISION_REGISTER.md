@@ -1,6 +1,6 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.7；建立日期：2026-09-19；状态：路由诊断和 Keep 交互契约两个候选切片均已本地验证；`5669f7d1777c` 的首次修改版 BookStack 已纳入只读决策（第 12 节），并非阶段五候选 A/B。Keep 生成应用干净 seed 为 `32/32`；原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点。平台启动内部策略和可比 A/B **仍未确认**。
+> 版本：v1.8；建立日期：2026-09-19；状态：路由诊断和 Keep 交互契约两个候选切片均已本地验证；`737b56972d5a` 的新证据 revision 已确认两个 Run-local 根因并进入台账审批门禁；`5669f7d1777c` 的首次修改版 BookStack 已纳入只读决策（第 12 节），并非阶段五候选 A/B。Keep 生成应用干净 seed 为 `32/32`；原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点。平台启动内部策略和可比 A/B **仍未确认**。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
@@ -49,6 +49,8 @@
 | `P5-007` | Keep 归档测试前置数据与生成应用 seed 不一致 | 原版与分步对照 `confirmed`；评分后 ZIP 的 `24/32` **不是**平台启动基线 | 默认 seed 和按钮修复在干净 seed 下通过；评分时目标仍为归档态，精确启动策略未知 | P0；不得用删库回归代替交付验收 |
 | `P5-008` | 重复加载标签与整表重绘打断编辑 | 干净 seed 的 50ms 对照原版 3/3 失败、去重版 3/3 通过；平台精确时序/根因 `unknown` | Agent 通用契约/失败提示本地已验证；平台未验证 | P0；保留全量回归和受控时序 |
 | `P5-009` | BookStack 异步保存后过早选择 heading 定位器，而结果页只以链接展示新实体 | 官方 helper、平台失败 locator、最终生成代码互相支持；实际最终 DOM/导航时序仍缺，`strong_candidate`，见第 12 节 | 先做隔离产物复现；不立刻增加 Agent 通用分支 | P0；先核验两题保存后 URL/HTML/DOM 与评分前状态 |
+| `P5-010` | Keep 初始数据契约遗漏必需的 `Work editable` 标签 | `confirmed`：平台失败、bundle `loadDB()`/`seedDefaults()` 链路、设计快照三方闭合；当前仅 Run-local，跨 Run 适用性未知 | `approval_required`；不直接修改 Agent，不做 Keep 名称特例 | P0；复用既有 seed 契约能力，先获用户授权 |
+| `P5-011` | Keep 静态 Reminders 导航与动态 Reminders 标签产生重复 accessible name | `confirmed`：平台 strict-mode 失败、评分前 DOM、最终包源码三方闭合；当前仅 Run-local，跨 Run 适用性未知 | `approval_required`；与 `P5-006` 相关但机制不同，不重复派发 | P0；复用既有 role/name 契约，先获用户授权 |
 
 **当前跨 Run 结论：**多个 Lite Run 都有十秒超时且请求较多，但 Keep 的可访问名称、seed、DOM 重绘，与 BookStack 的缺路由、保存后展示/定位边界是不同机制。旧 Lite BookStack `P5-001` 缺接线，新首次修改版 `P5-009` 的名义路由/API 已存在，不能把两次 `32/34` 合并成一种故障，亦不能把新版本变化归功于阶段五。A0 Web BookStack 已 `34/34` 通过，说明漏路由不是所有 BookStack Run 的必然结果，却不能推翻 Lite 的具体漏接证据。禁止按“超时”这一表面标签做单一补丁。后续发现同一机制时，在对应 ID 下追加 Run 证据；机制不同则新建 ID，并记录关联而不强行合并。
 
@@ -278,3 +280,12 @@ Pop-Location
 - **纠偏阶段 4 建议：**[阶段 4 结果](../evidence/arc-bench/runs/5669f7d1777c/phase4-result.json) 提出把最终评测改为“不可变干净 DB”并把状态污染列为强候选。本阶段保留它作为待排除解释，**不把评分后 ZIP 的 DB 当成评分前快照，也不授权全局清库**；上一 Run 第 11 节已实证导出 DB 会含平台测试写入。前后构建不一致亦缺源码/dist 哈希，不能先按此修改 Agent。平台没有提供两题最终 DOM、响应体、请求 trace 或评分前 DB 哈希。
 - **最小验证顺序：**在隔离副本使用同一冻结官方 spec：①先运行原版两题，记录点击 Save 前后时间、URL、POST 状态、重定向、返回 HTML、`heading` 与 `link` 可见性，并分别保存每次前后的 DB 哈希；②若目标数据已写入且结果页只呈现 link，则单变量把书/页卡片标题改为语义合理的 heading（可在其中保留 link），原样复跑两题；③两题通过后跑同一份 34 题、比较干净 seed 与预存 DB 两种**明确标记**的起点，防回归。若原版响应根本未含目标记录，再查写入/读取/构建边界；不要先增加超时、全局清库或改官方 helper。以上均为建议，**本次未执行本地复现或新平台 Run**。
 - **实现决策门槛：**仅当定点对照确认相同机制，才决定是否把“异步保存后的稳定结果角色与导航闭环”纳入现有 `arc/main.py` 提示或 `arc/acceptance.py` 摘要；先盘点已有精确 role/name 提示，避免与 `P5-006` 重复、过度嵌套或误导其他任务。产物级 h2/link 调整是 BookStack 特例，不能直接硬编码进通用 Agent。上传 Agent ZIP SHA、代码提交和 `task_snapshot_id` 仍须补齐，方可谈同条件平台 A/B。
+
+## 13. Lite Keep `737b56972d5a` confirmed evidence revision：Run-local 根因已确认，等待实现授权（2026-09-20）
+
+- **revision 与身份：**本 revision 的 intake key 为 `737b56972d5a:intake:BC8FE404B86B`，来源 handoff 为 `737b56972d5a-0BCD0657E978`。`manifest.json` SHA-256 为 `0BCD0657E978B28B08A0C3F985A31D4D112164B907544B33201072876560883E`；增量 `phase4-result.json` SHA-256 为 `BC8FE404B86BE53C64434DE06F2294CF88C0CDC0DFE74CEBB260EC7B38C12119`；外部补充证据 `arcbench-737b56972d5a-evidence-chain.md` SHA-256 为 `2B38407F84689446ABBEA79237782E2FD52585797C58AF76FF5261978A3C51E2`。阶段 4 注册表为 `verified`，四个身份字段一致，结果状态为 `complete`。旧 `9E56ACC74F76` pilot revision 保留为历史记录，不被覆盖。
+- **平台与边界：**平台仍为 `30/32`、score `93.8`、`FAILED`；入口 `main.py`、测试目录 `/workspace/tests`、bundled fallback `0` 未变。新增证据闭合 runner → bundle DB/启动链路 → 生成源码/设计快照 → 评分前 DOM 的 Run-local 链条，因此两个失败机制从阶段 4 的候选升级为 `confirmed`。这不等于 Agent 构建、上传 ZIP、任务快照或平台 A/B 身份已确认。
+- **`P5-010`｜Work editable seed 契约：**`loadDB()` 清空 labels 后，`seedDefaults()` 只重种 `Work` 与 `Reminders`；设计快照要求 `Work editable`，平台首步定位该标签输入框超时，故“生成应用初始数据未满足需求契约”在本 Run 内确认。它与 `P5-007` 同属 seed/前置数据契约家族，但不是同一 fixture 或归档操作，不把 `Work editable` 写成 `P5-007` 的平台复现。建议复用已有通用 seed 契约提示/验收入口，不写死 Keep 标签名；状态为 `approval_required`，不派发实现。
+- **`P5-011`｜Reminders accessible-name 冲突：**评分前 DOM 同时存在 `#nav-reminders` 与 `data-label=Reminders` 按钮，二者 accessible name 均为 `Reminders`，直接解释 `REQ-2.7.6.3` strict-mode failure。它与 `P5-006` 同属可访问语义契约家族，但不是 Undo 名称被覆盖，而是两个控件名称不唯一；建议复用既有 role/name 诊断能力，不硬编码 Keep 导航名；状态为 `approval_required`，不派发实现。
+- **转派与复现决策：**本 revision 标记 `needs_repro=false`；不再为这两个 Run-local 根因自动创建隔离复现卡。由于仍缺 `task_snapshot_id`、Agent build/code SHA、上传 Agent ZIP SHA-256，当前不标 `platform_verified`，也不计算阶段 5 A/B 收益。只有用户明确授权两个最小实现切片后，才能进入 `implementation_authorized`；实现后仍须本地全套 `/workspace/tests` 回归，再按阶段 3→4→台账流程处理平台 Run。
+- **保留缺口：**外部补充证据的 notes 数量存在文字算术不一致，但不影响两个根因的闭合证据；平台总耗时仍不能拆分为 LLM、浏览器和测试阶段。身份缺口是平台 A/B 门禁，不否定本次 Run-local 根因确认。
