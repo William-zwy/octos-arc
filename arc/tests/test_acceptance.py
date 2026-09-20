@@ -122,6 +122,20 @@ class ReportTests(unittest.TestCase):
             ("route", "timedOut", "Test timeout of 10000ms exceeded.", [], 10000),
         ))), [])
 
+    def test_should_hint_at_async_result_role_selected_before_navigation(self):
+        summary = summarize_report(report((
+            "Save book",
+            "timedOut",
+            "waiting for getByRole('heading', { name: 'Book Created' }).toBeVisible()",
+            ["locator.click", "page.goto"],
+            10000,
+        )))
+        hints = interaction_failure_hints(summary)
+        hint_text = " ".join(hints)
+        self.assertIn("Post-save result", hint_text)
+        self.assertIn("before navigation", hint_text)
+        self.assertIn("exact tested role/name", hint_text)
+
 
 class RouteContractTests(unittest.TestCase):
     def test_should_hint_at_missing_method_and_dynamic_route_wiring(self):

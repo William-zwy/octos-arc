@@ -217,6 +217,11 @@ def interaction_failure_hints(summary: RunSummary, max_hints: int = 3) -> list[s
         if "getbyrole(" in message and "name:" in message:
             candidates.append("Role/name locator: check the rendered accessible name and visibility; "
                               "aria-label can override visible text.")
+        if ("heading" in message and "getbyrole(" in message and
+                any(token in message for token in ("visible", "waiting", "tobevisible"))):
+            candidates.append("Post-save result: verify the write completes before navigation and the "
+                              "destination exposes the entity with the exact tested role/name; do not "
+                              "rely on a pre-navigation match.")
         if "element was detached" in message or "element is not stable" in message:
             candidates.append("Unstable target: check overlapping reads and re-renders replacing an active "
                               "control or resetting its draft before increasing timeouts.")

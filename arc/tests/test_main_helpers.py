@@ -173,9 +173,15 @@ class InteractionPromptTests(unittest.TestCase):
         self.assertIn("resets an unsaved draft", m.UI_CONTRACT_CORE)
         self.assertIn("packaged persistent store", m.UI_CONTRACT_CORE)
         self.assertIn("test's first action", m.UI_CONTRACT_CORE)
+        self.assertIn("complete the write before navigating", m.UI_CONTRACT_CORE)
+        self.assertIn("exact semantic role/name required by the spec", m.UI_CONTRACT_CORE)
         self.assertIn("status text separate", m.CODEGEN_PROMPT)
+        self.assertIn("wait for success before navigation", m.CODEGEN_PROMPT)
+        self.assertIn("pre-navigation match", m.CODEGEN_PROMPT)
         self.assertIn("initial test preconditions", m.INLINE_DESIGN_NOTE)
+        self.assertIn("save-success navigation", m.INLINE_DESIGN_NOTE)
         self.assertIn("start from the packaged file without deleting it", m.FINAL_CHECK_PROMPT)
+        self.assertIn("successful write is observed before navigation", m.FINAL_CHECK_PROMPT)
 
 
 class CodegenPromptTests(unittest.TestCase):

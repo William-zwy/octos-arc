@@ -748,6 +748,7 @@ UI contract (the hidden Playwright tests depend on these; a violation scores 0):
 - No native HTML5 validation attributes; validate in JavaScript and show ONE inline error element (role="alert") naming the problem (required / invalid / match / terms / duplicate). On error stay on the page and create no record.
 - Strict mode: every echoed value (username, city, date) appears in EXACTLY ONE element per page; every link target appears in EXACTLY ONE <a> per page (one "Register" link, one "Login" link — never a nav link plus a call-to-action to the same href; the specs click `a[href="/register"]` and fail on two matches); never both a short and a long form of one entity, never a per-field error plus a summary. Serve a SEPARATE HTML document per route (`/`, `/register`, `/login`, ...) — never several forms in one document with hidden views: hidden inputs and labels still collide in getByLabel/getByRole.
 - State: persist ONLY what the requirement says is persisted and reproduce that seed on EVERY fresh start; before the test's first action, its target must exist in the visible starting view, not already in its post-action state. A packaged persistent store must agree with the intended seed and contain no state left by acceptance tests. A page's initial state (e.g. "the count is initially 0") is per-page-load client state, never a shared server value — the grader runs several test files in parallel against ONE server. The initial state must already be in the served HTML (e.g. the element contains `0` in the markup); never leave it empty until a fetch completes — the tests assert immediately after load.
+- Async result flow: after a successful save/create/update, complete the write before navigating; on the destination, render the changed entity with the exact semantic role/name required by the spec in the final DOM. Do not rely on a locator selected before navigation or change the result's role while async content arrives.
 - Zero external requests (no CDN, fonts, analytics); assets small and same-origin.
 - Live indicators (password-strength meters, counters, previews) update their OWN element's text/attributes synchronously in the `input` event handler — never on change/blur, never debounced, never only a wrapper's class (specs compare the element's outerHTML before and after typing).
 - Text only: never OCR reference images. Write files in your first actions.
@@ -761,7 +762,7 @@ Requirement {node_id}: {description}
 Acceptance test (ground truth):
 {spec}
 Files: frontend/src/index.html (+ one html per further route); backend/server.js = CommonJS (require) Node http server on process.env.PORT||{port} serving ../frontend/dist files (index.html for /, <name>.html for /<name>) plus any API routes the requirement needs (in-memory state), 404 for anything else, wrapped in try/catch and process.on('uncaughtException').{ports} Both package.json files already exist (build copies src/* to dist; start runs server.js): do not output them.
-Rules: texts, button accessible names, labels and test ids exactly as in the test; keep status text separate from a control's aria-label; the initial state is literally in the HTML and supports the test's first action, not its post-action state; state lives in the page script unless the requirement says it is persisted; async reads must not replace an active edit or reset its draft; no external resources, no CSS, no comments, no notes; Playwright strict mode: every locator in the test must match exactly one element on the served page (no duplicate links, labels, texts or ids; each label's for= resolves to its own control). {size_rule}
+Rules: texts, button accessible names, labels and test ids exactly as in the test; keep status text separate from a control's aria-label; the initial state is literally in the HTML and supports the test's first action, not its post-action state; after an async save/create/update, wait for success before navigation and expose the resulting entity with the exact tested role/name on the destination; do not rely on a pre-navigation match; state lives in the page script unless the requirement says it is persisted; async reads must not replace an active edit or reset its draft; no external resources, no CSS, no comments, no notes; Playwright strict mode: every locator in the test must match exactly one element on the served page (no duplicate links, labels, texts or ids; each label's for= resolves to its own control). {size_rule}
 """
 
 CODEGEN_SIZE_SMALL = "index.html <= 20 lines, server.js <= 20 lines."
@@ -862,7 +863,7 @@ Mandatory files (all in this turn): frontend/package.json (with the `build` scri
 
 
 INLINE_DESIGN_NOTE = """\
-Before writing code, write your design for this node as ONE JSON object to .arc/design/{node_id}.json ({{"routes": [...], "pages": [{{"path", "elements": [{{"role", "name"}}]}}], "data_model": {{}}, "files": [...], "notes": "initial test preconditions, seed state, async edit stability"}}; accessible names copied verbatim from the specs and distinct from feedback text), then implement it.
+Before writing code, write your design for this node as ONE JSON object to .arc/design/{node_id}.json ({{"routes": [...], "pages": [{{"path", "elements": [{{"role", "name"}}]}}], "data_model": {{}}, "files": [...], "notes": "initial test preconditions, seed state, async edit stability, save-success navigation and final result role/name"}}; accessible names copied verbatim from the specs and distinct from feedback text), then implement it.
 """
 
 EVOLUTION_NOTE = """\
@@ -884,6 +885,7 @@ Final end-to-end check of the web application in the current directory:
 2. Kill leftover servers, start the backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, confirm `curl http://127.0.0.1:{smoke}/` serves the app and every API endpoint answers (success and error cases).
 3. Audit every page against the contracts below and fix violations; run a mechanical strict-mode check: for each value the pages echo, count the elements containing it (`curl -s <page> | grep -o '<value>' | wc -l` for server-rendered pages, or read the render code) — the count must be 1.
 4. If a persistent data file ships with the app, start from the packaged file without deleting it and check that initial fixture state supports the first test action; do not ship state mutated by acceptance tests.
+5. For each async save/create/update flow, verify the successful write is observed before navigation and re-check the destination's final DOM for exactly one expected semantic role/name for the changed entity; do not rely on a pre-navigation locator.
 {tests}
 {ui}{performance}
 """ + PORT_RULES
