@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 4 read-only diagnosis",
+  "status": "complete",
+  "PHASE4_RESULT": "complete",
+  "handoff_id": "1aac5ece078e-E437B342477B",
+  "run_id": "1aac5ece078e",
+  "task_key": "ticket-booking--ticket-booking",
+  "thread_id": "01a0bf9e-d69b-7f63-a11b-e321298e4292",
+  "completed_at": "2026-09-20T16:28:00Z",
+  "scope": {
+    "only_this_run": true,
+    "submission_id": "67a8e2ef92a4",
+    "code_lineage": "submission_upload_build_unverified",
+    "other_runs_analyzed": false,
+    "new_run_created": false,
+    "rerun_performed": false,
+    "upload_performed": false,
+    "code_modified": false,
+    "tests_modified": false,
+    "remote_push_performed": false
+  },
+  "identity_verification": {
+    "manifest_path": "evidence/arc-bench/runs/1aac5ece078e/manifest.json",
+    "manifest_sha256": "E437B342477B7987F1214CCB94E95F032A9AC7CB87D386F256217B7D1CD455DC",
+    "handoff_manifest_sha256_match": true,
+    "handoff_run_id_match": true,
+    "handoff_task_key_match": true,
+    "handoff_thread_id_match": true,
+    "platform_build_binding_available": false,
+    "task_snapshot_id": null,
+    "agent_build_id": null,
+    "code_sha": null,
+    "canonical_duplicate_assets_match": true
+  },
+  "platform_final": {
+    "status": "PASSED",
+    "score": 100.0,
+    "passed": 10,
+    "total": 10,
+    "failure_reason": null,
+    "failed_tests": [],
+    "requirements": [
+      "ticket-booking--ticket-booking: REQ-1.1 registration",
+      "ticket-booking--ticket-booking: REQ-1.2 login"
+    ],
+    "playwright_duration_ms": 11500
+  },
+  "confirmed_facts": [
+    "The platform finalized this Run as PASSED with score 100.0 and 10/10 tests passed.",
+    "The internal acceptance full suite also reported round 0 as 10/10 with no failing nodes.",
+    "The final Playwright suite used one worker and completed 10 tests in about 11.5 seconds; no failure test or error-context was produced.",
+    "The runner invoked main.py and used /workspace/tests; bundled-test fallback hits were zero.",
+    "The logs show the intended ticket-booking requirement mapping: two atomic nodes and two official spec files covering registration and login scenarios.",
+    "The finalization log records status=PASSED, score=100.0, platform token count 79281, and cost 0.484403 CNY.",
+    "The canonical folder artifacts and the four duplicate Downloads-root artifacts have identical sizes and SHA-256 values where compared.",
+    "No plaintext API key was recorded; the logs only show OPENAI_API_KEY=set or masked environment metadata."
+  ],
+  "failure_chains": [],
+  "root_cause_candidates": [],
+  "excluded_causes": [
+    "No platform failure was observed in this Run, so there is no failure chain to attribute to an application, test, environment, or packaging cause.",
+    "This result does not prove that the uploaded ZIP is byte-identical to the platform-executed build because the platform did not provide a build binding."
+  ],
+  "evidence_gaps": [
+    "The platform did not provide task_snapshot_id, agent_build_id, or code_sha.",
+    "The platform did not provide a ZIP-to-executed-build binding beyond the Run and submission identifiers.",
+    "A standalone playwright-report.json and error-context.md were not provided; failure-details.md records that there were no failures.",
+    "The two token counts use different accounting scopes: run.json platform token_count=79281 versus logs provider total_tokens=37107."
+  ],
+  "minimal_reproduction_experiments": [
+    "None required for this passed Run. Preserve the canonical ZIP, manifest, and official test identity as a successful ticket-booking baseline; any future comparison must use a new Run ID."
+  ],
+  "stage5_recommendation": {
+    "handoff": true,
+    "acceptance": "Record this Run as a passed ticket-booking baseline; no defect diagnosis, implementation dispatch, or platform rerun is indicated.",
+    "decision": "passed_baseline_no_issue",
+    "needs_repro": false,
+    "priority": [
+      "Use the 10/10 result as a ticket-booking baseline for later Agent or build comparisons.",
+      "Preserve the distinction between platform token_count and provider total_tokens when comparing efficiency."
+    ],
+    "do_not_do": [
+      "Do not infer code identity from the reused display name or submission metadata alone.",
+      "Do not modify Agent code or official tests based on this passed Run.",
+      "Do not create a platform rerun solely to close the existing metadata gaps."
+    ]
+  },
+  "impact_estimate": {
+    "completion_rate": "10/10 = 100%; no failed requirement is available for a score gain.",
+    "token": "The Run used 79281 platform tokens, 37107 provider-total tokens across 2 requests, and cost 0.484403 CNY; this is a measurement baseline, not a basis for optimization from this Run alone.",
+    "runtime": "The platform Run duration was 231 seconds; the final Playwright suite took about 11.5 seconds.",
+    "risk": "The remaining risk is identity comparability: missing build/task snapshot/code binding prevents proving which exact code package produced the successful result."
+  },
+  "source_precedence": [
+    "run.json for final status, score, IDs, test list and platform token count",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal acceptance and provider usage",
+    "failure-details.md for final Playwright result and absence of failures",
+    "summary.md for human-readable normalization, with measurement conflicts retained",
+    "snapshots.json for design and codegen state",
+    "template.zip for package identity and reproducibility"
+  ],
+  "conflicts": [
+    {
+      "field": "token_count",
+      "run_json_value": 79281,
+      "logs_provider_total_tokens": 37107,
+      "resolution": "Retain both values as different accounting scopes."
+    },
+    {
+      "field": "duplicate_uploaded_assets",
+      "resolution": "Use the ticket-booking folder copies as canonical; root Downloads copies are byte-identical aliases and were not reanalyzed."
+    }
+  ],
+  "source_files": {
+    "manifest": "evidence/arc-bench/runs/1aac5ece078e/manifest.json",
+    "handoff": "evidence/arc-bench/runs/1aac5ece078e/phase4-handoff.json",
+    "ack": "evidence/arc-bench/runs/1aac5ece078e/phase4-ack.json",
+    "failure_details": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-ticket-booking/arcbench-1aac5ece078e-failure-details.md",
+    "summary": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-ticket-booking/arcbench-run-1aac5ece078e-summary.md",
+    "run": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-ticket-booking/arcbench-run-1aac5ece078e.json",
+    "logs": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-ticket-booking/arcbench-run-1aac5ece078e-logs.json",
+    "snapshots": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-ticket-booking/arcbench-1aac5ece078e-snapshots.json",
+    "template": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-ticket-booking/1aac5ece078e-template.zip",
+    "official_specs": "workstreams/arc-bench/official-snapshots/20260917-150121Z/competitions/ticket-booking/tasks/ticket-booking--ticket-booking/public-tests"
+  },
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0
+  }
+}

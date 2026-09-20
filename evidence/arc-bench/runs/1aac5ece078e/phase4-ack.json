@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "handoff_id": "1aac5ece078e-E437B342477B",
+  "run_id": "1aac5ece078e",
+  "task_key": "ticket-booking--ticket-booking",
+  "thread_id": "01a0bf9e-d69b-7f63-a11b-e321298e4292",
+  "status": "received",
+  "received_at": "2026-09-20T16:24:21.3054983Z",
+  "evidence_revision": "1aac5ece078e-initial-intake",
+  "manifest_sha256": "E437B342477B7987F1214CCB94E95F032A9AC7CB87D386F256217B7D1CD455DC"
+}

@@ -114,6 +114,23 @@
       "result_md_path": "evidence/arc-bench/runs/c31c51f2400b/phase4-result.md",
       "verification_method": "filesystem",
       "reason": "Readback repair completed through the persistent ACK/result files. Chat output remains optional; phase5 may consume phase4-result.json after normal validation."
+    },
+    "ticket-booking--ticket-booking": {
+      "thread_id": "01a0bf9e-d69b-7f63-a11b-e321298e4292",
+      "title": "09 项目阶段4 + ticket-booking--ticket-booking",
+      "status": "verified",
+      "last_run_id": "1aac5ece078e",
+      "last_handoff_id": "1aac5ece078e-E437B342477B",
+      "manifest": "evidence/arc-bench/runs/1aac5ece078e/manifest.json",
+      "handoff_path": "evidence/arc-bench/runs/1aac5ece078e/phase4-handoff.json",
+      "ack_path": "evidence/arc-bench/runs/1aac5ece078e/phase4-ack.json",
+      "result_path": "evidence/arc-bench/runs/1aac5ece078e/phase4-result.json",
+      "result_md_path": "evidence/arc-bench/runs/1aac5ece078e/phase4-result.md",
+      "result_status": "complete",
+      "evidence_revision": "1aac5ece078e-initial-intake",
+      "verification_method": "filesystem",
+      "verified_at": "2026-09-20T16:28:00Z",
+      "reason": "ACK and result identity fields match the handoff; the Run passed 10/10 with no failure chain. Stage5 may consume this Run as a successful ticket-booking baseline."
     }
   }
 }

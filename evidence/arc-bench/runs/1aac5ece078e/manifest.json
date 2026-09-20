@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "source_folder": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-ticket-booking",
+  "code_lineage": {
+    "classification": "submission_upload_build_unverified",
+    "submission_id": "67a8e2ef92a4",
+    "source_display_name": "teammate-baseline-20260917-ea503546",
+    "platform_build_binding": "missing",
+    "not_frozen_A0": "unverified",
+    "not_stage5_output": "unverified",
+    "note": "The platform did not provide agent_build_id, code_sha, or ZIP-to-build binding. Keep this Run's evidence separate from all other Runs even though the display name is reused."
+  },
+  "run": {
+    "run_id": "1aac5ece078e",
+    "submission_id": "67a8e2ef92a4",
+    "display_name": "teammate-baseline-20260917-ea503546",
+    "original_filename": "arc_2rd.zip",
+    "catalog": "competition",
+    "competition_id": "ticket-booking",
+    "task_id": "ticket-booking--ticket-booking",
+    "task_snapshot_id": null,
+    "model_name": "deepseek-v4-flash",
+    "runtime": "python",
+    "agent_source": "upload",
+    "created_at": "2026-09-20T15:43:12.108543",
+    "started_at": "2026-09-20T15:43:14.141714",
+    "finished_at": "2026-09-20T15:47:29.393655",
+    "status": "PASSED",
+    "score": 100.0,
+    "passed_count": 10,
+    "failed_count": 0,
+    "feature_implemented_count": 2,
+    "feature_total_count": 2,
+    "feature_implementation_rate": 1.0,
+    "failure_reason": null,
+    "run_duration_seconds": 231
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 3600,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0
+  },
+  "internal_acceptance": {
+    "source": "logs.json",
+    "full_suite_round_0": {
+      "passed": 10,
+      "total": 10,
+      "failing_nodes": []
+    },
+    "repair_rounds_completed": 0
+  },
+  "platform_final": {
+    "status": "PASSED",
+    "score": 100.0,
+    "passed": 10,
+    "total": 10,
+    "failure_reason": null,
+    "failed_tests": [],
+    "test_files": [
+      "REQ-1.1-user-registration.spec.ts",
+      "REQ-1.2-user-login.spec.ts"
+    ],
+    "playwright_duration_ms": 11500
+  },
+  "metering": {
+    "requests": 2,
+    "prompt_tokens": 13150,
+    "completion_tokens": 23957,
+    "reasoning_tokens": 17269,
+    "prompt_cache_hit_tokens": 8960,
+    "provider_total_tokens": 37107,
+    "platform_token_count": 79281,
+    "cost": 0.484403,
+    "currency": "CNY",
+    "run_duration_seconds": 231,
+    "request_bytes": 55027,
+    "response_bytes": 106262
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "log_result_finalized": "PASSED score=100.0"
+  },
+  "source_precedence": [
+    "run.json for final platform status, score, IDs, test list and platform token count",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal rounds and provider usage",
+    "failure-details.md for final Playwright execution and error-context availability",
+    "summary.md for human-readable normalization, with measurement conflicts retained",
+    "snapshots.json for design and codegen state",
+    "template.zip for package identity and reproducibility"
+  ],
+  "conflicts": [
+    {
+      "field": "token_count",
+      "run_json_value": 79281,
+      "logs_provider_total_tokens": 37107,
+      "resolution": "Retain both values as different platform and provider accounting scopes; do not overwrite either."
+    },
+    {
+      "field": "duplicate_uploaded_assets",
+      "resolution": "The folder copy and Downloads-root copy of snapshots, template, run JSON and logs JSON have identical byte counts and SHA-256; register the folder copy as canonical and the root copy as a duplicate alias."
+    }
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "agent_build_id",
+    "code_sha",
+    "platform-provided ZIP-to-build binding",
+    "standalone raw playwright-report.json and error-context.md files; failure-details.md records that there were no failures"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-1aac5ece078e-failure-details.md",
+      "role": "human_readable_failure_details_and_playwright_summary",
+      "bytes": 6126,
+      "sha256": "12C8AAC00615B3C6F026358F13BA0AA5B499F68E2FF2FA5C1B8BE313A848CDA9",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-ticket-booking/arcbench-1aac5ece078e-failure-details.md",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-1aac5ece078e.json",
+      "role": "raw_run_object",
+      "bytes": 6796,
+      "sha256": "9537880C2BA91201CA75B4B5898EE22EE0E89247B528E6D796AE508EB88D56B0",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-ticket-booking/arcbench-run-1aac5ece078e.json",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-1aac5ece078e-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 43925,
+      "sha256": "37B2C48701BF0CC77551C5990DDD3730BBC9D3896B2BC666C1B804BC29FEE07A",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-ticket-booking/arcbench-run-1aac5ece078e-logs.json",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-1aac5ece078e-summary.md",
+      "role": "human_readable_run_summary",
+      "bytes": 3546,
+      "sha256": "0079DAEC5993ED7171358E94A7A4AC0F31A3BC868CECCA27BE0708E5FFF46038",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-ticket-booking/arcbench-run-1aac5ece078e-summary.md",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-1aac5ece078e-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 14047,
+      "sha256": "ED2738DF7A2FCD6815A729A21DE6248424A15617E5537A5083533B58A91AB280",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-ticket-booking/arcbench-1aac5ece078e-snapshots.json",
+      "stored_in_repository": false
+    },
+    {
+      "name": "1aac5ece078e-template.zip",
+      "role": "template_or_generated_package_snapshot",
+      "bytes": 8215085,
+      "sha256": "34806173FCD6182522FDAD46AA942740B72A6F7C8E14DEAD41B6551236ED8ACF",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-ticket-booking/1aac5ece078e-template.zip",
+      "stored_in_repository": false
+    },
+    {
+      "name": "duplicate_root_assets",
+      "role": "duplicate_aliases_not_canonical",
+      "source_paths": [
+        "C:/Users/dayuruozhi/Downloads/arcbench-1aac5ece078e-snapshots.json",
+        "C:/Users/dayuruozhi/Downloads/1aac5ece078e-template.zip",
+        "C:/Users/dayuruozhi/Downloads/arcbench-run-1aac5ece078e-logs.json",
+        "C:/Users/dayuruozhi/Downloads/arcbench-run-1aac5ece078e.json"
+      ],
+      "sha256s_match_canonical": true,
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0,
+    "masked_environment_observation": "OPENAI_API_KEY=set"
+  }
+}
