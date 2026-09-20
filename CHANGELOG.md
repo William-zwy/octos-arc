@@ -3,6 +3,10 @@
 All notable changes to octos will be documented in this file.
 ## [Unreleased]
 
+### ARC-Bench collaboration
+
+- Split phase 5 responsibilities into cross-run decision, isolated reproduction, Agent implementation, and metrics/A-B review; document verified handoffs, approval gates, and compact context transfer without changing the Agent or official tests.
+
 ### Features
 
 - Smart Home control — list and control smart-home devices (lights, thermostats, curtains, etc.) via a per-profile bridge (e.g. Home Assistant), through both the UI Protocol (`smart_home/*` WS methods, backing octos-web's Smart Home panel) and a new bundled `smart-home` agent skill (`smart_home_list_devices`, `smart_home_control_device`). Camera video streaming stays a human-facing, WebSocket-only feature and is not exposed to the agent.

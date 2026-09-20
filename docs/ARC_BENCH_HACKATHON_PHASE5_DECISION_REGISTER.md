@@ -1,10 +1,12 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.6；建立日期：2026-09-19；状态：路由诊断和 Keep 交互契约两个候选切片均已本地验证；`5669f7d1777c` 的首次修改版 BookStack 已纳入只读决策（第 12 节），并非阶段五候选 A/B。Keep 生成应用干净 seed 为 `32/32`；原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点。平台启动内部策略和可比 A/B **仍未确认**。
+> 版本：v1.7；建立日期：2026-09-19；状态：路由诊断和 Keep 交互契约两个候选切片均已本地验证；`5669f7d1777c` 的首次修改版 BookStack 已纳入只读决策（第 12 节），并非阶段五候选 A/B。Keep 生成应用干净 seed 为 `32/32`；原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点。平台启动内部策略和可比 A/B **仍未确认**。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
 > 当前用户授权：已允许按首个 5E 建议做本地 Agent 修改；**未授权启动新平台 Run；暂不推送远程。**
+
+> 会话分工：本文件是唯一跨 Run 决策记录；新会话职责、复现回交、指标门禁和条件转派见[阶段 5 多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)。2026-09-20 新建会话的精简入口见[上下文交接](./ARC_BENCH_HACKATHON_PHASE5_CONTEXT_HANDOFF.md)。
 
 ## 1. 决策原则与证据口径
 
@@ -20,7 +22,9 @@
 
 本版纳入四个 Lite Run 和一个 Web BookStack Run。前两个 Lite Run 共享平台 submission ID `59debd594609`，但各自 manifest 尚未填入 `task_snapshot_id`，也缺少可核验的上传 Agent 构建/代码 SHA 绑定；**共享 submission ID 不足以单独证明构建、任务快照和配置均可比**。Web BookStack 的展示名同样指向冻结 A0，用户确认该次上传的是未修改且与远程一致的队友代码；其 manifest 仍缺独立的上传 ZIP SHA、`code_sha` 和 `task_snapshot_id`。新 Keep Run `0aa6820e0b82` 的上传 ZIP 由用户提供本地路径并与候选源码比对，但平台 manifest 未记录上传包哈希。新 BookStack Lite `5669f7d1777c` 经阶段 3 按用户说明标为**首次修改版**，不是冻结 A0，也不是阶段五输出；其构建 SHA 与任务快照 ID 仍缺。各 Run 的 `template.zip` 是**生成应用快照**，不是上传的 Agent ZIP。
 
-待纳入队列：[Web Keep `4b792b72d7dd`](../evidence/arc-bench/runs/4b792b72d7dd/manifest.json) 已有阶段 3 manifest（平台 `30/32`），但本台账尚未收到可复核的阶段 4 机制结论；暂不把它与 Lite Keep 的同名任务或本切片缺路由机制合并。
+待纳入队列：[Web Keep `4b792b72d7dd`](../evidence/arc-bench/runs/4b792b72d7dd/manifest.json) 已有阶段 3 manifest（平台 `30/32`），但阶段 4 会话映射处于 `quarantined`，本台账尚未收到可复核的机制结论；先解决会话身份与结果回读，不自动转派，也不把它与 Lite Keep 的同名任务或本切片缺路由机制合并。
+
+新待纳入队列：Lite Keep [`737b56972d5a`](../evidence/arc-bench/runs/737b56972d5a/manifest.json) 已有阶段 4 [核验结果](../evidence/arc-bench/runs/737b56972d5a/phase4-result.json)，平台 `30/32`；此为来源尚需进一步绑定的 post-fix candidate，不能直接与旧 Run 计算阶段 5 A/B。新决策会话须检查它与 `P5-006/007/008` 的机制异同、内部回归和证据缺口，再决定是否追加旧 ID 或新建 ID。当前仅登记**待分析**，不据阶段 4 候选建议自动开工。
 
 | Run 与原始证据索引 | 平台最终结果 / 内部验收 | 请求与计量 | 当前用途 |
 |---|---|---|---|
@@ -82,7 +86,7 @@
 
 ### `P5-005`｜A/B 身份与任务快照绑定
 
-- **已确认事实：**四份 manifest 的 `task_snapshot_id` 均为 `null`；缺少平台独立记录的上传 Agent ZIP SHA 和代码 SHA 绑定。Web BookStack 的 A0 身份有用户明确确认。新 Keep 的展示名仍为 A0，**不能据此断定上传了旧代码**：用户指认上传 `D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松/.worktrees/phase5-route-contract/arc/arc_first.zip`，本地 SHA-256 `483BB260AB8DAC167059D21E0947DFFEA5495C16EA25510C01BA7DF5A4B2DB21`，ZIP 内 `main.py`/`acceptance.py` 哈希与候选提交 `c53c333d5205fb98bf168c1f4fc670c0eec7432f` 源码一致。这证明本地 ZIP 的内容，不等于平台独立证明该 ZIP 被接收；生成应用 `template.zip` 的 SHA 不能充当上传 Agent ZIP 的 SHA。
+- **已确认事实：**本台账最初审查的四份 manifest 的 `task_snapshot_id` 均为 `null`；后纳入的 `5669f7d1777c` 和待决策的 `737b56972d5a` 也缺此字段。各 Run 缺少平台独立记录的上传 Agent ZIP SHA 和代码 SHA 绑定。Web BookStack 的 A0 身份有用户明确确认。新 Keep 的展示名仍为 A0，**不能据此断定上传了旧代码**：用户指认上传 `D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松/.worktrees/phase5-route-contract/arc/arc_first.zip`，本地 SHA-256 `483BB260AB8DAC167059D21E0947DFFEA5495C16EA25510C01BA7DF5A4B2DB21`，ZIP 内 `main.py`/`acceptance.py` 哈希与候选提交 `c53c333d5205fb98bf168c1f4fc670c0eec7432f` 源码一致。这证明本地 ZIP 的内容，不等于平台独立证明该 ZIP 被接收；生成应用 `template.zip` 的 SHA 不能充当上传 Agent ZIP 的 SHA。
 - **当前决策：**此项是候选平台复跑前的证据门禁，不默认引发 Agent 主流程改造。先用现有上传、运行和官方快照材料补充/核验 build ID、代码 SHA、上传 ZIP SHA、任务快照或官方任务资产哈希及配置哈希；平台无法给出时记录不可比限制，不填猜测值。
 - **重开条件：**现有记录无法完成绑定，且确认需在 `arc/metrics.py` 或运行清单中加入最小元数据输出时，再立项 5A 的窄切片。不要因此提前重构完整 TaskContext。
 
@@ -128,6 +132,8 @@
 暂缓不是“永不处理”。每个新 Run 都须检索上述触发条件；无新证据时保留决定，不因看到同名任务或同样的超时字符串就自动翻案。
 
 ## 6. 新 Run 进入阶段 5 时的更新流程
+
+此节由专门的“跨 Run 决策台账”会话执行；复现、Agent 实现和指标会话仅通过[多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)中的核验状态与短卡回交，不平行修改本台账。
 
 1. 以 `run_id` 找到阶段 3 manifest、阶段 4 单 Run 结论和必要原始附件；核对 competition/task、submission、构建、快照、模型与最终平台状态，保留缺失和冲突。
 2. 把失败拆成**现象、可证实的机制、仍待排除的解释**。对照第 3 节的机制 ID：相同机制追加 Run 证据；只相似但机制不同则建新 ID；不足以判断时列为开放关联，不强行归并。

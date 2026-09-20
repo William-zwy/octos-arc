@@ -11,8 +11,10 @@
 > 阶段 3 文件摄取与阶段 4 自动分支 SOP 见 [`ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md`](./ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md)。
 >
 > 阶段 5 跨 Run 问题、暂缓项与优化决策见 [`ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md`](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)。已记录首个独立本地优化候选；尚未打包或完成平台 A/B。
+
+> 阶段 5 已设计四会话职责，当前正在初始化独立会话；唯一工作流与新会话启动卡分别见[多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)和[精简交接](./ARC_BENCH_HACKATHON_PHASE5_CONTEXT_HANDOFF.md)。会话自动记忆不是权威交接源。
 >
-> 当前执行状态（2026-09-19）：阶段 2.5 已完成并通过；阶段 3、阶段 4、阶段 5 正在并行执行，尚未宣告完成。
+> 当前执行状态（2026-09-20）：阶段 2.5 已完成并通过；阶段 3、阶段 4、阶段 5 滚动执行，尚未宣告完成；本地候选已验证，平台 A/B 未完成。
 
 ## 1. 项目身份与范围
 
@@ -115,7 +117,7 @@
 - 当前代码基线：`ea503546aad31b2e3b887235e3b35cc0a8b9cfe8`。
 - 远程 `origin/main` 当前仍为上述代码基线；本地证据分支在该基线上保存 Agent 冻结、官方快照、Smoke 门禁证据、执行计划和阶段 3–5 协作记录。
 - 当前证据分支为 `codex/arc-bench-official-snapshot-20260917`。后续优化代码应从原始代码基线建立独立分支/工作树，避免把约 95 MB 官方资产历史带入最终代码分支。
-- 首个阶段 5 本地代码候选已从 A0 基线建立独立分支 `codex/arc-bench-phase5-route-contract`，提交 `c53c333d5205fb98bf168c1f4fc670c0eec7432f`；其修改范围、测试结果和未验证事项见阶段 5 决策台账。该候选尚未打包、未提交平台运行、未推送远程。
+- 首个阶段 5 路由诊断切片位于独立分支 `codex/arc-bench-phase5-route-contract` 的提交 `c53c333d5205fb98bf168c1f4fc670c0eec7432f`；其后同分支加入 Keep 交互/种子契约，当前已核对完整 HEAD 为 `dddc94312d4cd26babdbfb9d7df2a17f08f0a51d`。两者是先后本地候选，不能混为同一构建或平台 A/B；该最新提交尚无可比的新平台验证。工作树 `.worktrees/phase5-route-contract/arc/` 中另有用户未跟踪 ZIP，不自动暂存或覆盖。
 - 当前本地环境没有 Octos、Cargo 和 ARC-Bench API Key，但既定执行方式是把 ZIP 上传到官网，由平台注入运行时、模型服务、任务和公开测试，因此这些本地缺口不阻塞官网基线；它们只限制本地端到端复现。
 - 仓库内没有复制外部资料中的 API Key；任何 Key 都必须通过环境变量或平台密钥管理，不得写入代码、日志、提交信息或公开文档。
 - 阶段 2.5 已完成并通过；阶段 3、阶段 4、阶段 5 正常并行执行中。后续状态以 run 绑定、阶段 3 原始证据、阶段 4 诊断和阶段 5 A/B 结果为准。
@@ -242,6 +244,12 @@
 后续每个单 run 文件夹解析完成后，父会话只完成阶段 3 证据登记，然后按 [`ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md`](./ARC_BENCH_HACKATHON_PHASE4_THREAD_WORKFLOW.md) 优先复用已有的同任务阶段 4 会话；找不到时才 fork 一个独立阶段 4 会话。父会话不在同一轮继续分析；阶段 4 会话只接收当前 run 的阶段 3 关键卡片、证据 manifest、冲突项和阶段 4 输出约束。
 
 阶段 4 标题统一为 `NN 项目阶段4 + <competition-task>`，例如 `05 项目阶段4 + arc-bench-lite--keep`。`<competition-task>` 是会话定位键；`run_id` 不进入标题，而是写入 manifest、持久化 handoff/ACK/result 文件和分析正文。标题不是幂等依据，任务映射以 `evidence/arc-bench/phase4-thread-registry.json` 为准。同一任务后续收到新 Run 时只能复用唯一且已验证的会话，并用新的 `handoff_id`、manifest 和持久化结果文件切换当前分析对象；重复标题、空输出或映射不一致时先进入 `needs_reconciliation`，不得继续 fork。阶段 4 会话不得创建新 run、修改 Agent 代码、实施阶段 5 优化或把其他 run 的诊断结论混入当前事实判断。
+
+### 6.6 阶段 5 多会话与记忆交接（2026-09-20）
+
+阶段 5 固定区分“跨 Run 决策台账、隔离复现、Agent 实现、指标与 A/B 验收”四项职责。阶段 4 经持久化字段和注册表核验后，**先进入决策台账**，不直接修改代码；台账需要复现才转给隔离复现，复现结果必须返回台账裁决，获授权的 Agent 切片才进入实现。指标会话独立审计构建、任务快照、模型/配置、功能率及 Token/耗时可比性；平台新 Run 仍从阶段 3→4 回流。具体状态、幂等保护和自动化边界见[阶段 5 多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)。
+
+新会话只接收[精简上下文交接](./ARC_BENCH_HACKATHON_PHASE5_CONTEXT_HANDOFF.md)及其职责相关的证据路径；旧会话长历史可回读但不整段复制，更不能把聊天摘要当权威。用户提供的本地隔离复现交给复现会话，新的平台 Run 交给阶段 3。当前 `737b56972d5a` 已有已核验的阶段 4 结果，尚待新决策会话正式纳入；`4b792b72d7dd` 的阶段 4 路由仍在隔离状态，不自动分流。当前继续遵守“暂不推送远程、未经授权不启动新平台 Run”。
 
 ## 7. 后续工作原则
 

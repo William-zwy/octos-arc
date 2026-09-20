@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "purpose": "Phase 5 role mapping and idempotent handoff index; decisions live only in the Markdown register",
+  "updated_at": "2026-09-20",
+  "source_checkout": "D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松",
+  "user_limits": {
+    "remote_push_authorized": false,
+    "new_platform_run_authorized": false,
+    "automatic_agent_code_edits_authorized": false
+  },
+  "automation": {
+    "mode": "manual_pilot",
+    "heartbeat_id": null,
+    "proposed_check_interval_minutes": 15,
+    "read_only_dispatch_only": true
+  },
+  "roles": {
+    "ledger": {
+      "title": "项目阶段5｜跨 Run 决策台账",
+      "thread_id": null,
+      "status": "provisioning",
+      "write_scope": "docs/ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md"
+    },
+    "reproduction": {
+      "title": "项目阶段5｜隔离复现",
+      "thread_id": null,
+      "status": "provisioning",
+      "write_scope": "isolated experiment evidence only"
+    },
+    "implementation": {
+      "title": "项目阶段5｜Agent 实现",
+      "thread_id": null,
+      "status": "provisioning",
+      "write_scope": "authorized candidate-code worktree only"
+    },
+    "metrics": {
+      "title": "项目阶段5｜指标与 A/B 验收",
+      "thread_id": null,
+      "status": "provisioning",
+      "write_scope": "metrics review in own worktree only"
+    }
+  },
+  "work_items": [
+    {
+      "key": "737b56972d5a:intake:9E56ACC74F76",
+      "run_id": "737b56972d5a",
+      "task_key": "arc-bench-lite--keep",
+      "issue_id": "untriaged",
+      "source_handoff_id": "737b56972d5a-D020E69FCE81",
+      "manifest": "evidence/arc-bench/runs/737b56972d5a/manifest.json",
+      "manifest_sha256": "D020E69FCE81C56E5BAF041FC3AD25B43AC02F3FEA57CEF3A6F28141125BCC8B",
+      "phase4_result": "evidence/arc-bench/runs/737b56972d5a/phase4-result.json",
+      "phase4_result_sha256": "9E56ACC74F76F157B926162F9A7ED9FCE20B274765CA2D10E7C29F903FA79855",
+      "status": "ready_for_ledger_after_role_ack",
+      "dispatch_id": null,
+      "ack_id": null
+    },
+    {
+      "key": "5669f7d1777c:P5-009:3E8E87EAE11F",
+      "run_id": "5669f7d1777c",
+      "task_key": "arc-bench-lite--bookstack",
+      "issue_id": "P5-009",
+      "phase4_result": "evidence/arc-bench/runs/5669f7d1777c/phase4-result.json",
+      "phase4_result_sha256": "3E8E87EAE11F4AC1856EE179F6AEB29E0A79745F8A0B3057ECD92E645766A6BD",
+      "status": "ledger_recorded_awaiting_reproduction_task_card",
+      "dispatch_id": null,
+      "ack_id": null
+    }
+  ]
+}

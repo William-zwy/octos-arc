@@ -1,8 +1,8 @@
 # ARC-Bench AI Agent 黑客松完整执行计划（队内共享版）
 
-> 版本：v1.0；更新日期：2026-09-18
+> 版本：v1.1；更新日期：2026-09-20
 >
-> 当前状态：阶段 0、1、2 已完成；阶段 2.5 已准备、等待官网首个 Smoke 提交
+> 当前状态：阶段 0、1、2 和 2.5 已完成；阶段 3/4 滚动执行，阶段 5 本地候选和跨 Run 决策在进行中，平台 A/B 尚未完成。下文早期“待执行/立即执行”保留为原始里程碑，不代表今日门禁状态；以[项目记忆](./ARC_BENCH_HACKATHON_PROJECT_MEMORY.md)、[阶段 5 决策台账](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)和[多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)的当前证据为准。
 >
 > 适用范围：基于队友现有 Agent，完成当前 6 个官方赛道的基线复跑、通用优化、回归验证与最终候选交付
 
@@ -225,6 +225,8 @@ A0 是不可变的对照组。后续不得覆盖、重打包后仍沿用同一�
 当 Smoke、Smoke Evolution 和 Lite Keep 的代表性基线完成后，可以启动对应优化工作流；Ticket Booking 的状态/后端工作流必须等它自己的基线证据。
 
 ### 阶段 5：Agent 通用优化——多工作流并行
+
+本阶段规划由“跨 Run 决策台账、隔离复现、Agent 实现、指标与 A/B 验收”四个独立会话承接，身份核验、条件转派、单写入者和审批边界见[阶段 5 多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)。这些是职责拆分，不改变 5A～5G 技术工作包；已完成的本地候选不等于平台验证。
 
 #### 5A. TaskContext 与任务身份隔离
 
