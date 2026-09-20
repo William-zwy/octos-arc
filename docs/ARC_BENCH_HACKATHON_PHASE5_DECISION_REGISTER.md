@@ -1,6 +1,6 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.12；建立日期：2026-09-19；状态：`P5-009` 已通过两题受控复现并完成 evidence refresh 审计，且收到一个本地实现候选（定向 11/11、全量 85 项保持既有 3 fail + 1 error），仍未通过平台构建与 A/B 门禁；`4ef2cf139806` 已条件接收并进入隔离复现门禁；`737b56972d5a` 的新证据 revision 已确认两个 Run-local 根因并进入台账审批门禁；`5669f7d1777c` 的首次修改版 BookStack 已纳入只读决策（第 12 节），并非阶段五候选 A/B。Keep 生成应用干净 seed 为 `32/32`；原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点。平台启动内部策略和可比 A/B **仍未确认**。
+> 版本：v1.13；建立日期：2026-09-19；状态：`P5-009` 已通过两题受控复现并完成 evidence refresh 审计，且收到一个本地实现候选（定向 11/11、全量 85 项保持既有 3 fail + 1 error），仍未通过平台构建与 A/B 门禁；`1aac5ece078e` 已登记为 ticket-booking `10/10` 成功基线，但构建身份仍不完整；`4ef2cf139806` 已条件接收并进入隔离复现门禁；`737b56972d5a` 的新证据 revision 已确认两个 Run-local 根因并进入台账审批门禁；`5669f7d1777c` 的首次修改版 BookStack 已纳入只读决策（第 12 节），并非阶段五候选 A/B。Keep 生成应用干净 seed 为 `32/32`；原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点。平台启动内部策略和可比 A/B **仍未确认**。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
@@ -28,6 +28,8 @@
 
 新条件接收队列：Lite BookStack [`4ef2cf139806`](../evidence/arc-bench/runs/4ef2cf139806/manifest.json) 的阶段 4 结果已核验，平台 `31/34`，失败 `REQ-2.2`、`REQ-6.3.1`、`REQ-9.1`。三项观察到的失败可确认，具体运行时机制仍未闭合；同 submission ID `42f4e4ae1e6c` 不证明与 `5669f7d1777c` 是同一构建，必须保持独立。当前进入 `needs_repro`，不直接并入 `P5-009` 或旧 BookStack Lite 记录。
 
+新成功基线：ticket-booking [`1aac5ece078e`](../evidence/arc-bench/runs/1aac5ece078e/manifest.json) 的阶段 4 结果已核验，平台与内部验收均为 `10/10`、`PASSED`、score `100.0`；无失败链、无 P5 问题、无需复现。它可作为后续 ticket-booking 比较的成功基线，但缺少 `agent_build_id`、`code_sha`、`task_snapshot_id` 和 ZIP-to-build 绑定，不能单独证明代码包身份或阶段五 A/B 可比性。
+
 | Run 与原始证据索引 | 平台最终结果 / 内部验收 | 请求与计量 | 当前用途 |
 |---|---|---|---|
 | Keep Lite [`0cef369cc925`](../evidence/arc-bench/runs/0cef369cc925/manifest.json) | 平台 `31/32`、FAILED，`REQ-2.5.4 Unarchive` 十秒超时；内部 round 0 `31/32`（失败 `REQ-2.8.2`）→ round 1 `32/32` | 1,004 次；输入 24,772,611、输出 660,754、缓存命中 22,496,000、推理 436,764、Provider total 25,433,365、平台 Token 58,278,570；13,576 秒；¥31.453807 | 功能可靠性疑点及成本基线 |
@@ -35,8 +37,9 @@
 | BookStack Web [`c31c51f2400b`](../evidence/arc-bench/runs/c31c51f2400b/manifest.json)（[阶段 4 结果](../evidence/arc-bench/runs/c31c51f2400b/phase4-result.md)） | 冻结 A0；平台 `34/34`、PASSED、score 100；内部 round 0 `34/34`，修复轮次 0 | 1,095 次；输入 27,791,179、输出 494,827、缓存命中 25,721,344、推理 243,817、Provider total 28,286,006、平台 Token 28,219,131；7,362 秒；¥13.216805 | 功能通过样本；仅评审效率与回归门槛，不立功能补丁 |
 | Keep Lite [`0aa6820e0b82`](../evidence/arc-bench/runs/0aa6820e0b82/manifest.json)（[阶段 4 文稿](../evidence/arc-bench/runs/0aa6820e0b82/phase4-result.md)，交接已核验） | 候选 ZIP 用户指认；平台 `29/32`、FAILED：`REQ-2.3.2` Undo、`REQ-2.5.4` 归档前置、`REQ-2.7.5` Save 脱离 DOM；内部 round 0/1/2 均 `29/32` | 1,291 次；输入 34,395,140、输出 717,795、缓存命中 31,627,392、推理 444,073、Provider total 35,112,833、平台 Token 35,112,935；9,777 秒；¥17.926147 | 三种独立机制的诊断样本；**不是**已验证的候选收益/A-B |
 | BookStack Lite [`5669f7d1777c`](../evidence/arc-bench/runs/5669f7d1777c/manifest.json)（[阶段 4 结果](../evidence/arc-bench/runs/5669f7d1777c/phase4-result.json)） | 首次修改版；平台 `32/34`、FAILED：`REQ-5.6.1`、`REQ-6.1.1` 保存后目标文本定位超时；内部全套 round 0 `33/34` → round 1 `34/34`，但 `REQ-5.6.1` 定点验收三轮均 `0/1` | 1,275 次；输入 32,112,397、输出 693,949、缓存命中 29,468,416、推理 420,911、Provider total 32,806,346、平台 Token 32,806,461；12,739 秒；¥17.124841 | 保存后展示/定位器选择的新诊断样本；非冻结 A0 或阶段五 A/B |
+| ticket-booking [`1aac5ece078e`](../evidence/arc-bench/runs/1aac5ece078e/manifest.json)（[阶段 4 结果](../evidence/arc-bench/runs/1aac5ece078e/phase4-result.json)） | submission `67a8e2ef92a4`；平台与内部均 `10/10`、PASSED、score 100；无失败链 | 2 次；Provider total 37,107、平台 Token 79,281；231 秒；¥0.484403 | 成功基线；身份缺口保留，不作为已绑定的阶段五 A/B |
 
-缓存命中 Token 是输入 Token 的子集，推理 Token 通常包含在输出口径内，不能再加到 Provider total；平台 Token 与 Provider total 口径不同，不能互相替代。旧 Keep 的人工摘要曾将内部 round 0 写为 `26/32`，与原始日志 `31/32` 冲突；新 BookStack 的 summary 将内部 round 0 写为 `26/34`，原始日志是 `33/34`；本台账均按日志与 manifest 的口径保留冲突。五个 Run 均核验平台入口 `main.py` 和 `/workspace/tests`，没有 bundled tests 回退；这不能代替未来每次 Run 的独立核验。Web 与 Lite 虽同为 BookStack、测试数量也同为 34，但属不同赛道，不构成同任务、同快照的 A/B；两个 Lite BookStack 也因代码血缘与快照绑定不足，不得直接计算阶段五收益。两个 Keep Lite 的 `REQ-2.5.4` 失败发生在**不同操作阶段**，不能仅凭相同编号归并。
+缓存命中 Token 是输入 Token 的子集，推理 Token 通常包含在输出口径内，不能再加到 Provider total；平台 Token 与 Provider total 口径不同，不能互相替代。旧 Keep 的人工摘要曾将内部 round 0 写为 `26/32`，与原始日志 `31/32` 冲突；新 BookStack 的 summary 将内部 round 0 写为 `26/34`，原始日志是 `33/34`；本台账均按日志与 manifest 的口径保留冲突。六个 Run 均核验平台入口 `main.py` 和 `/workspace/tests`，没有 bundled tests 回退；这不能代替未来每次 Run 的独立核验。Web 与 Lite 虽同为 BookStack、测试数量也同为 34，但属不同赛道，不构成同任务、同快照的 A/B；两个 Lite BookStack 也因代码血缘与快照绑定不足，不得直接计算阶段五收益。两个 Keep Lite 的 `REQ-2.5.4` 失败发生在**不同操作阶段**，不能仅凭相同编号归并。
 
 ## 3. 跨 Run 问题索引
 
@@ -302,3 +305,10 @@ Pop-Location
 - **机制分叉：**`REQ-2.2` 的 authenticated nickname role/DOM 与 session readback 是独立候选；`REQ-6.3.1`/`REQ-9.1` 都涉及页面读回、recently-updated 链路和最终 DOM 暴露，但目前只有缺失 locator 与静态源码/DB 证据。它们与已 `repro_verified` 的 `P5-009` 保存后 link/heading 机制相关但未证实相同，不能合并；可变 DB/session 和 acceptance→package→platform 边界也可能是共同上游解释。
 - **台账决策：**条件接收为 `needs_repro`，暂不分配新的 P5 问题 ID；先在 pristine 副本分别复现三条失败链，保存 login cookie/GET `/`、页面链接/阅读页 GET、create/home/recently-updated 请求、响应体、DOM、trace 和前后 DB 哈希，并对比“干净状态”和“内部全套后状态”。复现结果返回台账后再按机制拆分 ID；不派发实现、不创建平台 Run。
 - **门禁与缺口：**仍缺 `task_snapshot_id`、agent build/code SHA、上传 ZIP 到平台构建的绑定，以及三条失败的最终 DOM/trace/HAR/响应体/请求级证据。即使隔离复现成立，也不能声明平台 A/B 收益；修复前必须保留 31 个通过场景，并记录 source/dist/database/package 哈希。
+
+## 15. Ticket-booking `1aac5ece078e`：成功基线登记（2026-09-21）
+
+- **身份与证据：**submission `67a8e2ef92a4`；阶段 4 handoff `1aac5ece078e-E437B342477B`；阶段 4 Thread `01a0bf9e-d69b-7f63-a11b-e321298e4292`；registry `status=verified`。manifest SHA-256 为 `E437B342477B7987F1214CCB94E95F032A9AC7CB87D386F256217B7D1CD455DC`；phase4-result SHA-256 为 `A16419527D28163D65BDC948849C5D18B27406AA4BF339E92A9A2AA258527BFC`；result Markdown SHA-256 为 `EBDBACAF3D9AEE16A7649FBD2A0D6C6925DB56116DFC1D639E3662A47FB13758`。ACK、handoff、result 的 run/task/thread/manifest 字段一致，result `status=complete`。
+- **成功事实：**平台最终 `PASSED`、score `100.0`、`10/10`；内部验收 round 0 同为 `10/10`；失败链与 root-cause candidates 均为空。入口 `main.py`、测试目录 `/workspace/tests`、bundled fallback `0`、明文 API Key 命中 `0` 均已核验。计量保留两种口径：2 requests、platform token `79,281`、provider total `37,107`、耗时 `231s`、费用 `¥0.484403`。
+- **阶段 5 决策：**登记为 `passed_baseline_no_issue`，`needs_repro=false`；不创建 P5 问题、不派发 Agent 实现、不创建平台 Run、不上传、不修改官方测试。阶段 4 明确“无需最小复现”；未来比较必须使用新的 Run ID，不能把本次成功直接归因于某个未绑定的代码包或构建。
+- **身份缺口与基线边界：**仍缺 `agent_build_id`、`code_sha`、`task_snapshot_id` 和 ZIP-to-build 绑定；规范化证据已确认 canonical 与根目录重复附件 SHA 一致，但这不替代平台执行构建绑定。缺口不影响本次 `10/10` 成功结果的基线登记，却阻止 `platform_verified` 身份结论和阶段五 A/B 收益声明。

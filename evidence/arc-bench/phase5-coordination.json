@@ -245,6 +245,59 @@
       "platform_verified": false,
       "ledger_decision_recorded": true,
       "next_gate": "Bind the candidate code to an Agent ZIP, platform build, and task_snapshot_id, then run same-condition platform A/B; do not claim platform benefit from local tests alone."
+    },
+    {
+      "key": "1aac5ece078e:baseline:E437B342477B",
+      "run_id": "1aac5ece078e",
+      "submission_id": "67a8e2ef92a4",
+      "task_key": "ticket-booking--ticket-booking",
+      "issue_id": "none",
+      "source_handoff_id": "1aac5ece078e-E437B342477B",
+      "phase4_thread_id": "01a0bf9e-d69b-7f63-a11b-e321298e4292",
+      "manifest": "evidence/arc-bench/runs/1aac5ece078e/manifest.json",
+      "manifest_sha256": "E437B342477B7987F1214CCB94E95F032A9AC7CB87D386F256217B7D1CD455DC",
+      "phase4_result": "evidence/arc-bench/runs/1aac5ece078e/phase4-result.json",
+      "phase4_result_sha256": "A16419527D28163D65BDC948849C5D18B27406AA4BF339E92A9A2AA258527BFC",
+      "phase4_result_md": "evidence/arc-bench/runs/1aac5ece078e/phase4-result.md",
+      "phase4_result_md_sha256": "EBDBACAF3D9AEE16A7649FBD2A0D6C6925DB56116DFC1D639E3662A47FB13758",
+      "platform_final": {
+        "status": "PASSED",
+        "score": 100.0,
+        "passed": 10,
+        "total": 10,
+        "failure_reason": null
+      },
+      "internal_acceptance": {
+        "round_0_passed": 10,
+        "round_0_total": 10,
+        "failing_nodes": []
+      },
+      "metering": {
+        "requests": 2,
+        "platform_token_count": 79281,
+        "provider_total_tokens": 37107,
+        "run_duration_seconds": 231,
+        "cost_cny": 0.484403
+      },
+      "status": "baseline_registered_passed_no_issue",
+      "decision": "passed_baseline_no_issue",
+      "needs_repro": false,
+      "dispatch_id": null,
+      "ack_id": null,
+      "new_platform_run_created": false,
+      "implementation_dispatched": false,
+      "upload_performed": false,
+      "official_tests_modified": false,
+      "platform_result_verified": true,
+      "platform_identity_verified": false,
+      "identity_gaps": [
+        "agent_build_id",
+        "code_sha",
+        "task_snapshot_id",
+        "zip_to_build_binding"
+      ],
+      "ledger_decision_recorded": true,
+      "next_gate": "Preserve this Run as a successful ticket-booking baseline; use a new Run ID for comparisons and require build/task-snapshot/ZIP binding before claiming platform A/B comparability."
     }
   ]
 }

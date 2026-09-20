@@ -12,6 +12,7 @@ All notable changes to octos will be documented in this file.
 - Record the `P5-009` external evidence refresh as an audit-only revision; preserve the existing repro-verified, no-dispatch decision.
 - Register Lite BookStack Run `4ef2cf139806` as a conditional `needs_repro` intake, keeping it separate from prior BookStack runs and without dispatching downstream work.
 - Register the authorized `P5-009` local implementation candidate `d2fe4dbc7601242896b61b3a790a912732bc5d57` as locally verified only; preserve the platform build, task-snapshot, ZIP, and A/B gates.
+- Register ticket-booking Run `1aac5ece078e` as a passed 10/10 baseline with no issue or repro dispatch; retain the missing build/task-snapshot/ZIP binding as an identity gap.
 
 ### Features
 
