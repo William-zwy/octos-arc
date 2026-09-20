@@ -1,17 +1,28 @@
 {
   "schema_version": 1,
   "purpose": "Persistent phase 3 to phase 4 handoff and readback",
-  "handoff_id": "5669f7d1777c-DADB44C15C2B",
+  "handoff_id": "5669f7d1777c-EC5A608BB104",
   "run_id": "5669f7d1777c",
   "task_key": "arc-bench-lite--bookstack",
   "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
-  "scope": "read_only_phase4_diagnosis",
+  "scope": "read_only_phase4_incremental_evidence_refresh",
   "code_lineage": "first_modified_code_not_frozen_A0_not_stage5_output",
   "manifest_path": "evidence/arc-bench/runs/5669f7d1777c/manifest.json",
   "ack_path": "evidence/arc-bench/runs/5669f7d1777c/phase4-ack.json",
   "result_path": "evidence/arc-bench/runs/5669f7d1777c/phase4-result.json",
   "result_md_path": "evidence/arc-bench/runs/5669f7d1777c/phase4-result.md",
-  "created_at": "2026-09-19T16:32:12.0777877Z",
-  "status": "handoff_sent",
-  "status_note": "Awaiting Phase 4 ACK and result; no platform rerun, upload, code edit, or test edit is authorized by this handoff."
+  "manifest_sha256": "EC5A608BB104C2A9B68249BF6B2B2094AEE107CD9DDA574F75892F6FF19B0BAD",
+  "evidence_revision": "5669f7d1777c-external-refresh-01",
+  "changed_artifacts": [
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-5669f7d1777c-failure-details.md",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-5669f7d1777c-summary.md"
+  ],
+  "changed_artifact_sha256": [
+    "12B065BC28A76E73E909E024FA5980B47B96401D66B878959889EEADA4CA627D",
+    "E489D219ACD5915D9207B2A36C1DDD30B93BC0754371B3984511C9716DD2FFFF"
+  ],
+  "created_at": "2026-09-20T14:59:43.6475787Z",
+  "status": "pending_send",
+  "prior_handoff_id": "5669f7d1777c-DADB44C15C2B",
+  "status_note": "Incremental phase4 recheck required for refreshed human-readable evidence; prior ACK/result remain historical until replaced with matching new handoff_id. No platform rerun, upload, code edit, or test edit is authorized by this handoff."
 }

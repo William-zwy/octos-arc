@@ -1,5 +1,17 @@
 # 阶段 4 只读诊断：arc-bench-lite--bookstack
 
+PHASE4_RESULT: complete
+handoff_id: `5669f7d1777c-EC5A608BB104`
+run_id: `5669f7d1777c`
+evidence_revision: `5669f7d1777c-external-refresh-01`
+
+## 增量复核：external-refresh-01
+
+- 已核验新 handoff、manifest 及两份刷新后的人类可读证据；身份、Run、代码谱系和原始 JSON/日志/快照/ZIP 均未改变。
+- 刷新文件哈希：`failure-details.md` = `12B065BC28A76E73E909E024FA5980B47B96401D66B878959889EEADA4CA627D`；`summary.md` = `E489D219ACD5915D9207B2A36C1DDD30B93BC0754371B3984511C9716DD2FFFF`。
+- 刷新后的 summary 将内部 full-suite round 0 汇总为 26/34；原始 logs.json 的权威记录为 33/34、失败 REQ-2.2。该口径冲突已保留在 manifest.json，不改变最终平台 32/34、两个保存后断言超时的事实。
+- **结论不变**：没有新增最终 DOM、trace、HAR、响应体或请求级日志，因此根因候选置信度、证据缺口、阶段5建议和修改边界均不变。
+
 ## Run 范围
 
 - Run：5669f7d1777c

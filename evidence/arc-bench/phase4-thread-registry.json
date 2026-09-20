@@ -79,14 +79,15 @@
       "status": "complete",
       "last_run_id": "5669f7d1777c",
       "previous_run_id": "00c59e0762fb",
-      "last_handoff_id": "5669f7d1777c-DADB44C15C2B",
+      "last_handoff_id": "5669f7d1777c-EC5A608BB104",
       "manifest": "evidence/arc-bench/runs/5669f7d1777c/manifest.json",
       "handoff_path": "evidence/arc-bench/runs/5669f7d1777c/phase4-handoff.json",
       "ack_path": "evidence/arc-bench/runs/5669f7d1777c/phase4-ack.json",
       "result_path": "evidence/arc-bench/runs/5669f7d1777c/phase4-result.json",
       "result_md_path": "evidence/arc-bench/runs/5669f7d1777c/phase4-result.md",
       "result_status": "complete",
-      "reason": "First-modified-code evidence package is routed to the canonical BookStack Phase4 task; conclusions must not be mixed with frozen A0 or Stage5 output."
+      "evidence_revision": "5669f7d1777c-external-refresh-01",
+      "reason": "First-modified-code evidence package is routed to the canonical BookStack Phase4 task; external-refresh-01 was rechecked and the phase4 conclusion is unchanged. Conclusions must not be mixed with frozen A0 or Stage5 output."
     },
     "arc-bench-web--keep": {
       "thread_id": "01a0b7e7-1cff-7380-ac81-ef35dbe70633",

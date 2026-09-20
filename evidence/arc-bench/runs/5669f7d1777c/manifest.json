@@ -2,6 +2,38 @@
   "schema_version": 1,
   "purpose": "ARC-Bench phase 3 normalized evidence intake",
   "status": "normalized_intake_complete_raw_attachments_external",
+  "evidence_revisions": [
+    {
+      "revision_id": "5669f7d1777c-external-refresh-01",
+      "received_at": "2026-09-20T14:59:43.6475787Z",
+      "source_folder": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite",
+      "run_identity_unchanged": true,
+      "changed_artifacts": [
+        {
+          "name": "arcbench-5669f7d1777c-failure-details.md",
+          "role": "human_readable_failure_details_refresh",
+          "bytes": 22186,
+          "sha256": "12B065BC28A76E73E909E024FA5980B47B96401D66B878959889EEADA4CA627D",
+          "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-5669f7d1777c-failure-details.md"
+        },
+        {
+          "name": "arcbench-run-5669f7d1777c-summary.md",
+          "role": "human_readable_run_summary_refresh",
+          "bytes": 3830,
+          "sha256": "E489D219ACD5915D9207B2A36C1DDD30B93BC0754371B3984511C9716DD2FFFF",
+          "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-5669f7d1777c-summary.md"
+        }
+      ],
+      "unchanged_identity_artifacts": [
+        "arcbench-run-5669f7d1777c.json",
+        "arcbench-run-5669f7d1777c-logs.json",
+        "arcbench-5669f7d1777c-snapshots.json",
+        "5669f7d1777c-template.zip"
+      ],
+      "phase4_recheck_required": true,
+      "prior_evidence_preserved": true
+    }
+  ],
   "code_lineage": {
     "classification": "first_modified_code",
     "first_modified_code": true,
