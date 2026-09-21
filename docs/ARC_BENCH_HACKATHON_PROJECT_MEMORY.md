@@ -22,7 +22,7 @@
 
 ### 0.1 最近一次代码交付
 
-2026-09-21 已按上述规则归档 V3.1/V4 控制面切片：候选分支 `codex/arc-bench-v4-control-plane-gates`，基线 `d2fe4dbc7601242896b61b3a790a912732bc5d57`，最终 HEAD `c5546e5a05bc6d377b8f3b21f43f2ca70ef9629e`。下一次受控平台测试包为 `octos-arc-bundle-c5546e5a05bc.zip`，SHA-256 `80026108E24A10F73E4842B6C024D9FF4810D8860351E57F2D805F07D924D682`；Agent 根层级门禁通过。完整提交链、测试、已知 Windows 基线失败与平台边界见[阶段 5 决策台账第 20 节](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)。本轮未推送、未上传、未启动平台 Run。
+2026-09-21 已按上述规则归档 V3.1/V4 控制面切片：候选分支 `codex/arc-bench-v4-control-plane-gates`，基线 `d2fe4dbc7601242896b61b3a790a912732bc5d57`，最终 HEAD `13173bb50e556c78bcd9cfdcc25c5449eee37f65`。下一次受控平台测试包为 `octos-arc-bundle-13173bb50e55.zip`，SHA-256 `FDFA6090FDCCB18553ABEF07C6B5429AAB9B0979FB69A9A5D0053730A159EE1A`；Agent 根层级门禁通过，抽样入口文件与提交 blob 原字节一致。完整提交链、测试、已知 Windows 基线失败与平台边界见[阶段 5 决策台账第 20 节](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)。本轮未推送、未上传、未启动平台 Run。
 
 ## 1. 项目身份与范围
 

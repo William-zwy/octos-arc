@@ -527,7 +527,7 @@
       "next_gate": "Run the same root-level shape gate on this ZIP and a known-good package, freeze workspace/staging/final-ZIP manifests plus stdout/stderr, locate the first missing stage, and bind platform build identity to the ZIP before authorizing a fix or new platform Run."
     },
     {
-      "key": "phase5:v4-control-plane:c5546e5a05bc",
+      "key": "phase5:v4-control-plane:13173bb50e55",
       "issue_ids": ["P5-012", "P5-013"],
       "authorization": "User explicitly authorized V3.1/V4 repair slices and requested delivery of the next platform-test archive.",
       "status": "local_verified_candidate_packaged_not_uploaded",
@@ -574,7 +574,12 @@
         {
           "sha": "c5546e5a05bc6d377b8f3b21f43f2ca70ef9629e",
           "message": "fix(arc): hash bundles without shasum",
-          "scope": "self-contained archive SHA-256 and final candidate HEAD"
+          "scope": "self-contained archive SHA-256"
+        },
+        {
+          "sha": "13173bb50e556c78bcd9cfdcc25c5449eee37f65",
+          "message": "fix(arc): preserve Git blob bytes in bundles",
+          "scope": "disable Windows autocrlf conversion for archive byte identity and final candidate HEAD"
         }
       ],
       "validation": {
@@ -592,16 +597,17 @@
         "pack_exit_code": 0
       },
       "artifact": {
-        "filename": "octos-arc-bundle-c5546e5a05bc.zip",
-        "size_bytes": 341609,
-        "sha256": "80026108E24A10F73E4842B6C024D9FF4810D8860351E57F2D805F07D924D682",
-        "shape_manifest": "octos-arc-bundle-c5546e5a05bc.shape.json",
+        "filename": "octos-arc-bundle-13173bb50e55.zip",
+        "size_bytes": 339060,
+        "sha256": "FDFA6090FDCCB18553ABEF07C6B5429AAB9B0979FB69A9A5D0053730A159EE1A",
+        "shape_manifest": "octos-arc-bundle-13173bb50e55.shape.json",
         "shape_contract": "arc_agent_bundle_v1",
         "shape_ok": true,
         "entry_count": 508,
         "entries_sha256": "D24FF569A0105AC5E960D3ACB1448C8D9B5BF685F999F2D86DE1CD3C2EB7DF6C",
         "missing_required_entries": 0,
-        "unsafe_entries": 0
+        "unsafe_entries": 0,
+        "sampled_git_blob_byte_matches": ["main.py", "package_shape.py", "acceptance.py"]
       },
       "official_tests_modified": false,
       "remote_pushed": false,
