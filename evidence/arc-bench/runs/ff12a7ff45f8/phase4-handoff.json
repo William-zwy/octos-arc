@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "purpose": "Persistent phase 3 to phase 4 handoff and readback",
+  "handoff_id": "ff12a7ff45f8-D42FCA49784D",
+  "run_id": "ff12a7ff45f8",
+  "task_key": "arc-bench-lite--keep",
+  "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
+  "thread_title": "05 项目阶段4 + arc-bench-lite--keep",
+  "scope": "read_only_phase4_diagnosis",
+  "code_lineage": "submission_upload_build_unverified",
+  "manifest_path": "evidence/arc-bench/runs/ff12a7ff45f8/manifest.json",
+  "ack_path": "evidence/arc-bench/runs/ff12a7ff45f8/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/ff12a7ff45f8/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/ff12a7ff45f8/phase4-result.md",
+  "manifest_sha256": "D42FCA49784DCFF82C502474AA17A676C8C7028E048AD4196645ABC6B2942F6E",
+  "evidence_revision": "ff12a7ff45f8-initial-intake",
+  "changed_artifacts": [
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-ff12a7ff45f8-failure-details.md",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-ff12a7ff45f8.json",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-ff12a7ff45f8-logs.json",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-ff12a7ff45f8-summary.md",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/ff12a7ff45f8-template.zip"
+  ],
+  "changed_artifact_sha256": [
+    "3C6F8802D1E4F1E92C8F89528F95D358B4DBD02DFD0F5010CA51A19555A78F74",
+    "58822E51322B53BAF9B3C6C87DA7DB8D707E4A3C76858165929403EE66465808",
+    "7C6E50E3631A0670F16C7DDA8A80F62BEDA93904321B1E07C98C4686D84D60EA",
+    "E8A5FA458EA4282CB44CD925B571229257CB53F57693253DE6F150712677FC20",
+    "76D07A00001270484AC9CBBFE8598ED559D55D4420ED7DAC4C1514D6F3319B5C"
+  ],
+  "platform_snapshot": {
+    "status": "FAILED",
+    "score": 0.0,
+    "passed": 0,
+    "total": 0,
+    "failure_kind": "generation_runtime_error_then_template_incomplete",
+    "failure_reason": "web template is incomplete: expected frontend/ and backend/ directories"
+  },
+  "constraints": {
+    "read_only": true,
+    "new_platform_run": false,
+    "code_edit": false,
+    "test_edit": false,
+    "upload": false,
+    "remote_push": false,
+    "api_key_value_propagation": false
+  },
+  "created_at": "2026-09-21T05:58:34.8937747Z",
+  "status": "pending_send"
+}

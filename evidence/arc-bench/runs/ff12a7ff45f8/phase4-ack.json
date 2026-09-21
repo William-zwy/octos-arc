@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "handoff_id": "ff12a7ff45f8-D42FCA49784D",
+  "run_id": "ff12a7ff45f8",
+  "task_key": "arc-bench-lite--keep",
+  "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
+  "status": "received",
+  "received_at": "2026-09-21",
+  "scope": "read_only_phase4_diagnosis"
+}

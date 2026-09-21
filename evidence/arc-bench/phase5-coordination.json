@@ -401,6 +401,60 @@
       "platform_verified": false,
       "ledger_decision_recorded": true,
       "next_gate": "Wait for the V3 Run ID and required result fields, then bind each comparison to the platform build, task snapshot or official asset hash, uploaded ZIP, and metrics before any strict A/B or platform_verified claim."
+    },
+    {
+      "key": "ff12a7ff45f8:P5-012:18EB3778B6C0",
+      "run_id": "ff12a7ff45f8",
+      "submission_id": "535d25f72007",
+      "task_key": "arc-bench-lite--keep",
+      "issue_id": "P5-012",
+      "source_handoff_id": "ff12a7ff45f8-D42FCA49784D",
+      "phase4_thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
+      "manifest": "evidence/arc-bench/runs/ff12a7ff45f8/manifest.json",
+      "manifest_sha256": "D42FCA49784DCFF82C502474AA17A676C8C7028E048AD4196645ABC6B2942F6E",
+      "phase4_handoff": "evidence/arc-bench/runs/ff12a7ff45f8/phase4-handoff.json",
+      "phase4_handoff_sha256": "23517093C1A91CE802EFB3B77E7F707852025092E67D81187E01C95C3A9D4C7F",
+      "phase4_ack": "evidence/arc-bench/runs/ff12a7ff45f8/phase4-ack.json",
+      "phase4_ack_sha256": "692D02F41091040D48CE599FEF7CCF73F419A28703461D190DDE9C5A50490BEA",
+      "phase4_result": "evidence/arc-bench/runs/ff12a7ff45f8/phase4-result.json",
+      "phase4_result_sha256": "18EB3778B6C0AF563DAC53594938CC494456DD1F2FD5129D78EE431C7DC6B36E",
+      "phase4_result_md": "evidence/arc-bench/runs/ff12a7ff45f8/phase4-result.md",
+      "phase4_result_md_sha256": "9DD0566C66720366CF2017E228E5292D405C45B59088BD3639D2C35DE8A0AEBE",
+      "status": "ledger_triaged_needs_repro_generation_auth_gate",
+      "decision": "confirmed_pretest_generation_blocker_auth_attribution_unknown",
+      "scope_is_run_local": true,
+      "needs_repro": true,
+      "repro_scope": "Authentication responsibility, deterministic skeleton generation under a successful response, and bounded retry/fail-fast behavior for a deterministic 401 only.",
+      "confirmed_observations": [
+        "Generation requests returned masked HTTP 401 invalid_api_key observations.",
+        "Four skeleton attempts wrote and verified no output.",
+        "frontend/ and backend/ were absent and the runner rejected the template before tests."
+      ],
+      "underlying_auth_attribution": "unknown",
+      "business_tests_executed": false,
+      "business_result_usable": false,
+      "platform_final": {
+        "status": "FAILED",
+        "score": 0.0,
+        "passed": 0,
+        "total": 0,
+        "failure_reason": "web template is incomplete: expected frontend/ and backend/ directories"
+      },
+      "metering": {
+        "requests": null,
+        "platform_token_count": null,
+        "provider_total_tokens": null,
+        "cost": null,
+        "run_duration_seconds": 1095
+      },
+      "dispatch_id": null,
+      "ack_id": null,
+      "implementation_dispatched": false,
+      "new_platform_run_created": false,
+      "upload_performed": false,
+      "official_tests_modified": false,
+      "ledger_decision_recorded": true,
+      "next_gate": "First isolate model endpoint, entitlement/account/provider routing and meter authentication; then verify deterministic successful skeleton output and measure deterministic 401 retry bounds. Do not implement Keep business fixes or create a platform Run before those gates close."
     }
   ]
 }

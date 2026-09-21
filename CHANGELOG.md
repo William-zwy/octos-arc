@@ -14,6 +14,7 @@ All notable changes to octos will be documented in this file.
 - Register the authorized `P5-009` local implementation candidate `d2fe4dbc7601242896b61b3a790a912732bc5d57` as locally verified only; preserve the platform build, task-snapshot, ZIP, and A/B gates.
 - Register ticket-booking Run `1aac5ece078e` as a passed 10/10 baseline with no issue or repro dispatch; retain the missing build/task-snapshot/ZIP binding as an identity gap.
 - Register the A0/V1/V2/V3 Lite Agent lineage and same-manifest-configuration descriptive BookStack/Keep sequences from handoffs `phase5-lite-lineage-ledger-20260921-v1` and `phase5-lite-lineage-ledger-manifest-20260921-v1`; keep platform build and task-snapshot binding as the strict A/B gate.
+- Register Keep Lite Run `ff12a7ff45f8` as `P5-012`, a pre-test authentication/generation gate requiring isolated reproduction; exclude its `0/0` result from business completion comparisons.
 
 ### Features
 

@@ -1,6 +1,6 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.14；建立日期：2026-09-19；状态：Lite Agent 的 A0/V1/V2/V3 ZIP↔提交谱系已本地核对并形成临时对照分组，Run 映射仍是用户 provenance，平台 build/task_snapshot→ZIP 绑定未独立确认；`P5-009` 已通过两题受控复现并收到本地实现候选，仍未通过平台 A/B 门禁；`1aac5ece078e` 已登记为 ticket-booking `10/10` 成功基线；`4ef2cf139806` 已条件接收并进入隔离复现门禁；`737b56972d5a` 的两个 Run-local 根因已确认并进入台账审批门禁。Keep 生成应用干净 seed 为 `32/32`；原 ZIP 数据库重放的 `24/32` 是**评分后快照对照**，不能代表平台评分起点。平台启动内部策略和可比 A/B **仍未确认**。
+> 版本：v1.15；建立日期：2026-09-19；状态：`ff12a7ff45f8` 已登记为 `P5-012` 生成管线/认证门禁，`0/0` 不计业务完成率并进入限定范围的 `needs_repro`；Lite Agent 的 A0/V1/V2/V3 ZIP↔提交谱系已本地核对，Run 映射仍是用户 provenance，平台 build/task_snapshot→ZIP 绑定未独立确认；`P5-009` 已通过受控复现并收到本地实现候选，仍未通过平台 A/B 门禁；`1aac5ece078e` 是 ticket-booking `10/10` 成功基线。平台启动内部策略和可比 A/B **仍未确认**。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
@@ -20,7 +20,7 @@
 
 ## 2. 本版证据范围与基线
 
-本版纳入四个 Lite Run、一个 Web BookStack Run 和一个 ticket-booking Run。Lite Run 现按用户提供的 provenance 暂标为 A0/V1/V2：A0=`ea503546`、V1=`c53c333d`、V2=`dddc9431`；V3=`d2fe4dbc` 已人工上传但 Run ID 待回传。本地冻结 ZIP 的 `main.py`/`acceptance.py` 规范化 Git blob 已由实现线程核对为与对应提交精确一致，本台账复核了完整提交和 ZIP SHA；但各 manifest 仍缺 `task_snapshot_id` 及平台独立的 build/code/ZIP 绑定，故版本标签可用于组织证据，**不能单独证明平台执行构建、任务快照和配置可比**。各 Run 的 `template.zip` 是生成应用快照，不是上传的 Agent ZIP。
+本版基线表列出四个历史 Lite Run、一个 Web BookStack Run 和一个 ticket-booking Run；其余已登记 Run 在后续单独章节保留。Lite Run 现按用户提供的 provenance 暂标为 A0/V1/V2：A0=`ea503546`、V1=`c53c333d`、V2=`dddc9431`；V3=`d2fe4dbc` 已人工上传但 Run ID 待回传。本地冻结 ZIP 的 `main.py`/`acceptance.py` 规范化 Git blob 已由实现线程核对为与对应提交精确一致，本台账复核了完整提交和 ZIP SHA；但各 manifest 仍缺 `task_snapshot_id` 及平台独立的 build/code/ZIP 绑定，故版本标签可用于组织证据，**不能单独证明平台执行构建、任务快照和配置可比**。各 Run 的 `template.zip` 是生成应用快照，不是上传的 Agent ZIP。
 
 待纳入队列：[Web Keep `4b792b72d7dd`](../evidence/arc-bench/runs/4b792b72d7dd/manifest.json) 已有阶段 3 manifest（平台 `30/32`），但阶段 4 会话映射处于 `quarantined`，本台账尚未收到可复核的机制结论；先解决会话身份与结果回读，不自动转派，也不把它与 Lite Keep 的同名任务或本切片缺路由机制合并。
 
@@ -29,6 +29,8 @@
 新条件接收队列：Lite BookStack V2 [`4ef2cf139806`](../evidence/arc-bench/runs/4ef2cf139806/manifest.json) 的阶段 4 结果已核验，平台 `31/34`，失败 `REQ-2.2`、`REQ-6.3.1`、`REQ-9.1`。用户 provenance 将其映射到 `dddc9431`/ZIP `984D818A…`，而 `5669f7d1777c` 映射为 V1；这修正了临时版本标签，但不替代平台构建绑定。三项具体运行时机制仍未闭合，当前保持 `needs_repro`，不直接并入 `P5-009`。
 
 新成功基线：ticket-booking [`1aac5ece078e`](../evidence/arc-bench/runs/1aac5ece078e/manifest.json) 的阶段 4 结果已核验，平台与内部验收均为 `10/10`、`PASSED`、score `100.0`；无失败链、无 P5 问题、无需复现。它可作为后续 ticket-booking 比较的成功基线，但缺少 `agent_build_id`、`code_sha`、`task_snapshot_id` 和 ZIP-to-build 绑定，不能单独证明代码包身份或阶段五 A/B 可比性。
+
+新生成门禁 intake：Keep Lite [`ff12a7ff45f8`](../evidence/arc-bench/runs/ff12a7ff45f8/manifest.json) 的平台结果为 `FAILED`、score `0`、`0/0`，但应用服务与 Playwright 均未启动。该 Run 只证明认证失败观察、skeleton 无产出和模板前置拒绝，不能判断 Keep 业务功能，也不进入业务完成率或版本 A/B 表；详见 `P5-012` 与第 17 节。
 
 | Run 与原始证据索引 | 平台最终结果 / 内部验收 | 请求与计量 | 当前用途 |
 |---|---|---|---|
@@ -56,6 +58,7 @@
 | `P5-009` | BookStack 异步保存后过早选择 heading 定位器，而结果页只以链接展示新实体 | `confirmed`；两题 POST/DB/HTML/helper 链条在受控 150ms 延迟下各 3/3 复现；平台收益和 Agent 归因未知 | `repro_verified`；等待实现授权，不直接修改 Agent | P0；先做单变量实现与 34/34 回归，再谈平台 A/B |
 | `P5-010` | Keep 初始数据契约遗漏必需的 `Work editable` 标签 | `confirmed`：平台失败、bundle `loadDB()`/`seedDefaults()` 链路、设计快照三方闭合；当前仅 Run-local，跨 Run 适用性未知 | `approval_required`；不直接修改 Agent，不做 Keep 名称特例 | P0；复用既有 seed 契约能力，先获用户授权 |
 | `P5-011` | Keep 静态 Reminders 导航与动态 Reminders 标签产生重复 accessible name | `confirmed`：平台 strict-mode 失败、评分前 DOM、最终包源码三方闭合；当前仅 Run-local，跨 Run 适用性未知 | `approval_required`；与 `P5-006` 相关但机制不同，不重复派发 | P0；复用既有 role/name 契约，先获用户授权 |
+| `P5-012` | 模型认证失败后 skeleton 连续无产出，平台在业务测试前拒绝缺少 frontend/backend 的模板 | 401、四次无写入和模板拒绝为 Run-local `confirmed`；认证责任归因 `unknown`；重试耗时为 `strong_candidate` | `needs_repro`；仅复现认证/生成链路，不实施 Keep 业务修复 | P0 blocker；先核验 endpoint/权限/meter，再测确定性成功与 401 |
 
 **当前跨 Run 结论：**多个 Lite Run 都有十秒超时且请求较多，但 Keep 的可访问名称、seed、DOM 重绘，与 BookStack 的缺路由、保存后展示/定位边界是不同机制。A0 BookStack 的 `P5-001` 缺接线，V1 BookStack 的 `P5-009` 名义路由/API 已存在，不能把两次 `32/34` 合并成一种故障；A0/V1/V2 标签只修正谱系组织，不自动证明阶段五收益。A0 Web BookStack 已 `34/34` 通过，说明漏路由不是所有 BookStack Run 的必然结果，却不能推翻 Lite 的具体漏接证据。禁止按“超时”这一表面标签做单一补丁。
 
@@ -327,3 +330,11 @@ Pop-Location
 **manifest 配置复核：**六个历史 Run 均为 `deepseek-v4-flash`、vision `deepseek-v4-flash-vision-exp`、reasoning `low`、acceptance workers `2`、test workers `1`、`main.py`、`/workspace/tests`、fallback `0`；BookStack 三版 budget 均为 `51,000`，Keep 三版均为 `48,000`。六个 `task_snapshot_id` 全为空，且仍无平台 build/code/ZIP→build 绑定。因此它们最多是**同 manifest 配置的描述性版本序列**，不是严格可比 A/B。
 
 **临时对照规则：**BookStack 只沿 `00c59e0762fb`（A0）→`5669f7d1777c`（V1）→`4ef2cf139806`（V2）→V3 新 Run 比较；Keep 只沿 `0cef369cc925`（A0）→`0aa6820e0b82`（V1）→`737b56972d5a`（V2）→V3 新 Run 比较。不同任务之间不计算 A/B；同任务也必须补齐 task snapshot 或官方资产哈希、平台 build/code/ZIP 绑定及同口径指标后，才能升级为严格可比 A/B 或 `platform_verified`。V3 Run 回传至少包含 run/submission/build、snapshot 或官方资产哈希、通过数、首轮通过数、失败样本、请求、Token、费用、耗时和修复轮次。本卡不触发 Agent 实现、平台 Run、上传或旧主会话路由。
+
+## 17. Keep Lite `ff12a7ff45f8`：测试前认证/生成门禁（2026-09-21）
+
+- **身份与持久证据：**submission `535d25f72007`；handoff `ff12a7ff45f8-D42FCA49784D`；阶段 4 Thread `01a0b57a-7a65-77d0-a08a-e202167e4f70`。manifest SHA-256 为 `D42FCA49784DCFF82C502474AA17A676C8C7028E048AD4196645ABC6B2942F6E`；handoff 为 `23517093C1A91CE802EFB3B77E7F707852025092E67D81187E01C95C3A9D4C7F`；ACK 为 `692D02F41091040D48CE599FEF7CCF73F419A28703461D190DDE9C5A50490BEA`；phase4-result JSON 为 `18EB3778B6C0AF563DAC53594938CC494456DD1F2FD5129D78EE431C7DC6B36E`；Markdown 为 `9DD0566C66720366CF2017E228E5292D405C45B59088BD3639D2C35DE8A0AEBE`。ACK/结果身份字段一致，两份结果均标记 `PHASE4_RESULT: complete`。
+- **已确认失败链：**生成端模型探测连续返回脱敏的 HTTP `401 invalid_api_key`；四次 skeleton 尝试均 `tools=0`、`wrote=false`、`verified=false`，没有生成 `frontend/` 或 `backend/`；runner 随后以 `web template is incomplete: expected frontend/ and backend/ directories` 在测试前拒绝模板。应用服务和 Playwright 均未执行，因此平台 `FAILED / score 0 / 0/0` 不是业务测试结果。
+- **责任边界：**已确认“发生认证失败并阻断生成”，未确认具体是密钥有效性、账号/模型权限、provider 路由、平台凭据绑定或临时状态。约 10 分钟的 21 次探测与后续四次 skeleton 重试支持“应评估有界重试/快速失败”的候选，但不能直接据此修改 Agent。日志无明文密钥命中；Token、请求数、provider totals 与费用均不可用，总耗时 `1,095s`。
+- **阶段 5 决策：**新建 `P5-012`，状态 `needs_repro`，范围仅限：①分离模型 endpoint 与 meter 认证；②用确定性成功 mock/fixture 验证现有入口能写出并验证 `frontend/`、`backend/`；③注入确定性 401 测量重试次数、耗时和安全 fail-fast 边界。认证与 skeleton 产出未确认前，不实施 Keep 业务修复、不创建新平台 Run、不上传、不修改官方测试。
+- **重开与交付门禁：**隔离复现须只记录状态码、错误类别和非秘密指标；若成功响应仍不能产出 skeleton，再定位 Agent 具体写入/验证路径。只有认证链路、skeleton 产出和有界重试均有证据后，才决定是否授权实现或新平台 Run。本 Run 永不用于推断 Keep 页面业务完成率。

@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "source_folder": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite",
+  "code_lineage": {
+    "classification": "submission_upload_build_unverified",
+    "submission_id": "535d25f72007",
+    "source_display_name": "luyun18029839909@163.com",
+    "original_filename": "octos-arc-bundle.zip",
+    "platform_build_binding": "missing",
+    "not_frozen_A0": "unverified",
+    "not_stage5_output": "unverified",
+    "note": "Keep this Run separate from prior arc-bench-lite--keep Runs. Platform build identity and ZIP-to-build binding were not supplied."
+  },
+  "run": {
+    "run_id": "ff12a7ff45f8",
+    "submission_id": "535d25f72007",
+    "display_name": "luyun18029839909@163.com",
+    "original_filename": "octos-arc-bundle.zip",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--keep",
+    "task_snapshot_id": null,
+    "model_name": "deepseek-v4-flash",
+    "runtime": "python",
+    "agent_source": "upload",
+    "created_at": "2026-09-20T16:53:19.007184",
+    "started_at": "2026-09-20T16:53:21.023957",
+    "finished_at": "2026-09-20T17:11:39.182099",
+    "status": "FAILED",
+    "score": 0.0,
+    "passed_count": 0,
+    "failed_count": 0,
+    "feature_implemented_count": 0,
+    "feature_total_count": 0,
+    "feature_implementation_rate": 0.0,
+    "failure_reason": "web template is incomplete: expected frontend/ and backend/ directories",
+    "run_duration_seconds": 1095
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 48000,
+    "agent_acceptance_workers": 2,
+    "test_workers": null,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0
+  },
+  "generation": {
+    "generation_completed": false,
+    "skeleton_attempts": 4,
+    "skeleton_attempts_failed": 4,
+    "frontend_directory_generated": false,
+    "backend_directory_generated": false,
+    "acceptance_records": [],
+    "observed_agent_runtime_error": "Authentication failed for openai@127/deepseek-v4-flash; HTTP 401 invalid_api_key; value remained masked",
+    "final_agent_abort": "skeleton scaffolding failed: no frontend/ and backend/ after 4 attempts"
+  },
+  "internal_acceptance": {
+    "source": "logs.json",
+    "full_suite_round_0": null,
+    "repair_rounds_completed": null,
+    "note": "No acceptance round was recorded because generation aborted before a web template existed."
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 0.0,
+    "passed": 0,
+    "total": 0,
+    "failure_reason": "web template is incomplete: expected frontend/ and backend/ directories",
+    "failed_tests": [],
+    "test_execution_started": false,
+    "runner_validation_failure": true
+  },
+  "metering": {
+    "requests": null,
+    "prompt_tokens": null,
+    "completion_tokens": null,
+    "reasoning_tokens": null,
+    "prompt_cache_hit_tokens": null,
+    "provider_total_tokens": null,
+    "platform_token_count": null,
+    "cost": null,
+    "currency": null,
+    "run_duration_seconds": 1095
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "log_result_finalized": "FAILED; web template is incomplete: expected frontend/ and backend/ directories",
+    "application_server_started": false,
+    "playwright_tests_executed": false
+  },
+  "source_precedence": [
+    "run.json for final platform status, score, IDs and failure_reason",
+    "logs.json for lifecycle, entrypoint, tests_dir, generation attempts, runtime error and final abort",
+    "failure-details.md for test execution availability; it records no failed tests because tests never started",
+    "summary.md for human-readable normalization, with missing metering retained",
+    "snapshots.json for design and codegen state",
+    "template.zip for package identity and reproducibility"
+  ],
+  "conflicts": [],
+  "missing": [
+    "task_snapshot_id",
+    "agent_build_id",
+    "code_sha",
+    "platform-provided ZIP-to-build binding",
+    "provider totals and token usage because generation aborted during authentication failures",
+    "standalone raw playwright-report.json and error-context.md; no tests executed",
+    "test worker count because Playwright execution never started"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-ff12a7ff45f8-failure-details.md",
+      "role": "human_readable_failure_details_and_test_execution_summary",
+      "bytes": 496,
+      "sha256": "3C6F8802D1E4F1E92C8F89528F95D358B4DBD02DFD0F5010CA51A19555A78F74",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-ff12a7ff45f8-failure-details.md",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-ff12a7ff45f8.json",
+      "role": "raw_run_object",
+      "bytes": 4180,
+      "sha256": "58822E51322B53BAF9B3C6C87DA7DB8D707E4A3C76858165929403EE66465808",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-ff12a7ff45f8.json",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-ff12a7ff45f8-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 45616,
+      "sha256": "7C6E50E3631A0670F16C7DDA8A80F62BEDA93904321B1E07C98C4686D84D60EA",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-ff12a7ff45f8-logs.json",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-ff12a7ff45f8-summary.md",
+      "role": "human_readable_run_summary",
+      "bytes": 2839,
+      "sha256": "E8A5FA458EA4282CB44CD925B571229257CB53F57693253DE6F150712677FC20",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-ff12a7ff45f8-summary.md",
+      "stored_in_repository": false
+    },
+    {
+      "name": "ff12a7ff45f8-template.zip",
+      "role": "template_or_generated_package_snapshot",
+      "bytes": 1817245,
+      "sha256": "76D07A00001270484AC9CBBFE8598ED559D55D4420ED7DAC4C1514D6F3319B5C",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/ff12a7ff45f8-template.zip",
+      "stored_in_repository": false
+    },
+    {
+      "name": "duplicate_root_assets",
+      "role": "duplicate_aliases_not_canonical",
+      "source_paths": [
+        "C:/Users/dayuruozhi/Downloads/ff12a7ff45f8-template.zip",
+        "C:/Users/dayuruozhi/Downloads/arcbench-run-ff12a7ff45f8-logs.json",
+        "C:/Users/dayuruozhi/Downloads/arcbench-run-ff12a7ff45f8.json"
+      ],
+      "sha256s_match_canonical": true,
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0,
+    "masked_environment_observation": "OPENAI_API_KEY=set; no secret value copied"
+  }
+}
