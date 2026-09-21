@@ -781,7 +781,7 @@
         "authorized_at": "2026-09-21",
         "scope": "Have the dedicated Agent implementation task implement the current modification, test and packaging recommendations; this ledger task remains decision-only."
       },
-      "status": "implementation_local_verified_reproduction_in_progress_metrics_approved",
+      "status": "conditional_go_exact_artifact_for_controlled_platform_test",
       "implementation_owner_thread_id": "01a0bd66-75bd-7801-97fc-b3d1e136c112",
       "reproduction_thread_id": "01a0bd66-60c2-7441-9a85-332c0af24886",
       "metrics_thread_id": "01a0bd66-8b2a-7fb3-9a25-269204f6dbf1",
@@ -840,7 +840,7 @@
         "official_tests_modified"
       ],
       "reproduction_plan": {
-        "status": "exact_artifact_received_in_progress",
+        "status": "complete_all_assertions_passed",
         "cases": ["offline_mock_401", "offline_mock_403", "offline_known_good_positive"],
         "capture": ["exact_zip_sha256", "build_id", "stdout_stderr", "exit_code", "request_count", "elapsed_time", "output_tree", "output_identity", "pipeline_manifest"],
         "platform_run_authorized": false,
@@ -856,7 +856,7 @@
         "review_ack_thread_id": "01a0bd66-8b2a-7fb3-9a25-269204f6dbf1",
         "additional_required_configuration": ["visual_model", "entrypoint"],
         "official_asset_digest_scope": ["requirements", "tests", "helpers", "assets"],
-        "platform_upload_recommendation": "NO-GO pending implementation artifact and offline reproduction"
+        "platform_upload_recommendation": "CONDITIONAL GO for the exact immutable artifact only; not release, platform or business approval"
       },
       "implementation_ack": {
         "thread_id": "01a0bd66-75bd-7801-97fc-b3d1e136c112",
@@ -870,7 +870,7 @@
         "thread_id": "01a0bd66-60c2-7441-9a85-332c0af24886",
         "handoff_id": "phase5-p5005-build-provenance-v41-20260921-v1",
         "accepted": true,
-        "status": "exact_artifact_received_in_progress",
+        "status": "complete_all_assertions_passed",
         "missing_fields": []
       },
       "metrics_review_ack": {
@@ -942,6 +942,39 @@
         "uploaded": false,
         "platform_run_created": false
       },
+      "reproduction_result": {
+        "handoff_id": "phase5-v41-artifact-repro-20260921-v1",
+        "evidence_root": "D:/DataMove/codex/visualizations/2026/09/20/01a0bd66-60c2-7441-9a85-332c0af24886/phase5-p5005-v41-repro/evidence-final",
+        "superseded_summary_path": "D:/DataMove/codex/visualizations/2026/09/20/01a0bd66-60c2-7441-9a85-332c0af24886/phase5-p5005-v41-repro/evidence-final/summary.json",
+        "superseded_summary_sha256": "33774386A74EE28274CD3F0B7CAE11AB15955B4CD0D7CA144D1C727496C6E249",
+        "corrected_summary_path": "D:/DataMove/codex/visualizations/2026/09/20/01a0bd66-60c2-7441-9a85-332c0af24886/phase5-p5005-v41-repro/evidence-final/summary-v2.json",
+        "corrected_summary_sha256": "4606B529924429CBCEFF6BA444320EC810684E5A357BE598B38E39CD7AC05110",
+        "runs_reexecuted_for_summary_correction": false,
+        "raw_run_evidence_unchanged": true,
+        "all_assertions_passed": true,
+        "cases": [
+          {"case": "offline_mock_401", "exit_code": 2, "request_count": 1, "elapsed_seconds": 0.547140, "frontend_present": false, "backend_present": false, "flow_kind": "not_created", "pipeline_status": "initialized_before_provider_probe", "pipeline_ok": null, "identity_precedes_probe_result": true, "passed": true},
+          {"case": "offline_mock_403", "exit_code": 2, "request_count": 1, "elapsed_seconds": 0.501784, "frontend_present": false, "backend_present": false, "flow_kind": "not_created", "pipeline_status": "initialized_before_provider_probe", "pipeline_ok": null, "identity_precedes_probe_result": true, "passed": true},
+          {"case": "offline_known_good_positive", "exit_code": 0, "request_count": 1, "elapsed_seconds": 0.555926, "frontend_present": true, "backend_present": true, "flow_kind": "external_deterministic_known_good_mock", "pipeline_status": null, "pipeline_ok": true, "identity_precedes_probe_result": true, "passed": true}
+        ],
+        "capability_boundary": "The positive case validates the real packaged identity, HTTP probe, output identity persistence, frontend/backend presence and real shape gate, but its Flow is an external deterministic mock and is not real LLM or business-test evidence.",
+        "official_tests_or_zip_modified": false,
+        "real_secret_used_or_logged": false,
+        "platform_run_started": false,
+        "ledger_read_only_verification": true
+      },
+      "platform_readiness_review": {
+        "handoff_id": "phase5-v41-metrics-platform-readiness-ack-20260921-v1",
+        "decision": "CONDITIONAL GO",
+        "scope": "Deliver the exact immutable ZIP to the user for the next controlled platform test only.",
+        "rebuild_repack_rename_or_substitution_allowed": false,
+        "pre_run_auth_preflight": "Exactly one request in the same platform environment, credential, endpoint, model entitlement and network path; only 2xx permits the business Run.",
+        "run_order": ["BookStack budget 51000", "Keep budget 48000"],
+        "bookstack_no_regression_floor": "32/34",
+        "keep_no_regression_floor": "31/32",
+        "business_go": {"bookstack": "34/34", "keep": "32/32"},
+        "still_no_go": ["platform_verified", "business_go_before_both_thresholds", "cost_or_efficiency_claim", "historical_run_retroactive_binding", "zero_of_zero_as_business_result"]
+      },
       "implementation_dispatched": true,
       "reproduction_dispatched": true,
       "metrics_review_dispatched": true,
@@ -949,7 +982,7 @@
       "upload_performed_by_ledger": false,
       "official_tests_modified_by_ledger": false,
       "remote_pushed_by_ledger": false,
-      "next_gate": "Wait for the reproduction thread to return exact-package mock 401, mock 403 and known-good positive results. Platform upload remains NO-GO until the ledger validates all three cases; historical Runs remain unbound."
+      "next_gate": "Deliver the exact immutable ZIP and sidecars to the user. Before upload, re-hash the ZIP and record artifact/operator/task/config fields; perform a one-request same-environment auth preflight. Run BookStack first and apply the documented stop conditions before any Keep Run."
     }
   ]
 }
