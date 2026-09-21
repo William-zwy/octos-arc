@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 4 read-only diagnosis",
+  "status": "complete",
+  "PHASE4_RESULT": "complete",
+  "handoff_id": "cca008377368-A8540D0184BB",
+  "run_id": "cca008377368",
+  "submission_id": "0b90e43b07b7",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "manifest_sha256": "A8540D0184BBCB16249C7D09BA41DA0318705159DF9F2AF00F903C9217ACABA5",
+  "completed_at": "2026-09-21T10:30:30.2228284Z",
+  "scope": {
+    "only_this_run": true,
+    "same_submission_as_prior_runs": false,
+    "same_submission_does_not_prove_same_build": true,
+    "code_lineage": "new_submission_unverified_build",
+    "keep_separate_from": ["d4acec5dbbdf", "ff12a7ff45f8"],
+    "other_runs_analyzed": false,
+    "new_thread_created": false,
+    "new_run_created": false,
+    "rerun_performed": false,
+    "upload_performed": false,
+    "code_or_official_tests_modified": false
+  },
+  "identity_verification": {
+    "handoff_id_match": true,
+    "run_id_match": true,
+    "submission_id_match": true,
+    "task_key_match": true,
+    "thread_id_match": true,
+    "manifest_sha256_match": true,
+    "manifest_sha256": "A8540D0184BBCB16249C7D09BA41DA0318705159DF9F2AF00F903C9217ACABA5",
+    "evidence_revision": "cca008377368-initial-intake"
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 0.0,
+    "passed": 0,
+    "total": 0,
+    "feature_implementation_rate": 0.0,
+    "failure_reason": "Command ['python3', '/workspace/submission/main.py', '/tmp/arcbench/requirements-source', '--output-dir', '/workspace/template'] returned non-zero exit status 2.",
+    "run_duration_seconds": 0,
+    "wall_clock_derived_seconds": 7.331646,
+    "business_tests_executed": false,
+    "failed_tests": []
+  },
+  "confirmed_facts": [
+    {
+      "fact": "Environment preflight and dependency installation completed; the generation command then ran and exited with status 2.",
+      "evidence_level": "confirmed",
+      "source": "run.json steps and raw logs"
+    },
+    {
+      "fact": "The generation probe logged a permanent authentication failure with HTTP 401 and aborted before generation.",
+      "evidence_level": "confirmed",
+      "source": "raw logs generation-agent stdout/stderr"
+    },
+    {
+      "fact": "The meter baseline separately logged HTTP 401 Unauthorized; this is an authentication observation, not a secret value.",
+      "evidence_level": "confirmed",
+      "source": "raw logs backend stdout"
+    },
+    {
+      "fact": "The final template ZIP has 23 entries, all in template/requirements; frontend/, backend/, main.py and tests entries are zero.",
+      "evidence_level": "confirmed",
+      "source": "manifest inventory and ZIP listing"
+    },
+    {
+      "fact": "run_tests was pending/not reached, tests[] is empty, no application server started, and Playwright did not execute.",
+      "evidence_level": "confirmed",
+      "source": "run.json, manifest and failure-details.md"
+    },
+    {
+      "fact": "Raw logs verify the command used main.py, the runner spec used /workspace/tests, bundled fallback hits were zero, and no sk- plaintext was present; the key was only logged as masked OPENAI_API_KEY=set(len=9).",
+      "evidence_level": "confirmed",
+      "source": "raw logs"
+    },
+    {
+      "fact": "No acceptance rounds, provider totals, token count or cost were recorded.",
+      "evidence_level": "confirmed",
+      "source": "raw logs and run object"
+    }
+  ],
+  "failure_chains": [
+    {
+      "chain": [
+        "Environment preflight passed",
+        "Runner prepared requirements and launched python3 /workspace/submission/main.py",
+        "Generation probe received a permanent HTTP 401 authentication failure",
+        "main.py exited with status 2 before producing the application tree",
+        "Template inventory contained only requirements assets",
+        "run_tests remained pending",
+        "Platform finalized FAILED with score 0 and 0/0"
+      ],
+      "classification": "generation_authentication_pretest_blocker",
+      "confidence": "confirmed"
+    }
+  ],
+  "root_cause_candidates": [
+    {
+      "candidate": "The generation path was blocked by an authentication failure before the Agent could generate the application.",
+      "evidence_level": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        "generation-agent stdout/stderr both record permanent authentication failure and HTTP 401",
+        "main.py exit code is 2",
+        "template has no generated application tree"
+      ],
+      "boundary": "The observed blocker is confirmed; the underlying credential or service configuration cause is not identified by this Run."
+    },
+    {
+      "candidate": "The generation API credential, endpoint authentication path or account authorization was invalid or rejected.",
+      "evidence_level": "strong_candidate",
+      "confidence": "high",
+      "evidence": [
+        "Generation probe returned HTTP 401",
+        "Meter baseline also returned HTTP 401",
+        "Only a masked key-presence marker is available"
+      ],
+      "boundary": "The key value, account state, endpoint response body and platform authorization mapping are unavailable; do not assign the failure to a specific secret or person."
+    },
+    {
+      "candidate": "The incomplete ZIP caused the failure independently of authentication.",
+      "evidence_level": "unknown_as_primary_cause",
+      "confidence": "low",
+      "evidence": [
+        "The final ZIP lacks frontend/backend/main.py/tests"
+      ],
+      "boundary": "The missing tree is consistent with generation abort and is a consequence or artifact state; the logs show authentication failure occurred first."
+    },
+    {
+      "candidate": "BookStack business implementation, Playwright selectors, runtime server behavior or visual-model quality caused the failure.",
+      "evidence_level": "unknown",
+      "confidence": "none",
+      "evidence": [
+        "No application server started",
+        "No business test executed",
+        "No browser pages or test error context captured"
+      ]
+    }
+  ],
+  "excluded_causes": [
+    {
+      "cause": "A specific BookStack requirement failed",
+      "reason": "No business test ran; tests[] and failure-details are empty."
+    },
+    {
+      "cause": "Official Playwright test/helper regression",
+      "reason": "The runner stopped during generation before test invocation."
+    },
+    {
+      "cause": "A template completeness check independently caused the initial failure",
+      "reason": "The raw generation log places the HTTP 401 abort before generation; incomplete template is the resulting artifact state."
+    },
+    {
+      "cause": "A leaked API key",
+      "reason": "Raw logs contain no sk- plaintext and only a masked presence marker; the credential value is not recorded."
+    }
+  ],
+  "evidence_gaps": [
+    "The credential value, response body and authorization policy for the HTTP 401 are unavailable and must not be reconstructed.",
+    "Generation workspace manifest and non-redacted-but-safe generator diagnostics are unavailable.",
+    "Platform-provided agent_build_id, code SHA and ZIP-to-build binding are missing.",
+    "Task snapshot ID, reasoning level, time budget and worker counts are missing.",
+    "Provider request/token/cost totals are missing.",
+    "Snapshots, Playwright report, trace, HAR, browser pages and application response bodies are absent.",
+    "The generated frontend/backend source tree was never produced."
+  ],
+  "minimal_read_only_reproduction": [
+    {
+      "priority": "P0",
+      "action": "Check that the generation endpoint/account authorization is valid using the platform's approved health or authentication diagnostic, recording only status code and redacted metadata.",
+      "expected_observation": "The current Run's generation probe would reproduce HTTP 401 without exposing a credential value."
+    },
+    {
+      "priority": "P0",
+      "action": "Run the exact submitted main.py command in a controlled environment with a known-valid, separately authorized runtime configuration, without changing the official tests or task requirements.",
+      "expected_observation": "If authentication succeeds, distinguish generator behavior from the current pre-generation 401; if it still fails, preserve the new exit code and redacted diagnostic."
+    },
+    {
+      "priority": "P0",
+      "action": "After a successful generation-only attempt, inspect the output tree and archive shape for frontend/, backend/, main.py and tests/ before starting any server or browser test.",
+      "expected_observation": "The current artifact fails this gate because it contains only requirements assets."
+    }
+  ],
+  "stage5_recommendation": {
+    "handoff": true,
+    "acceptance": "Stage5 may consume this as a confirmed generation/authentication pre-test blocker, not as a business-code or completion-rate diagnosis.",
+    "priority": [
+      "P0: verify the platform/account authentication path and endpoint configuration through approved redacted diagnostics; do not log or share key values.",
+      "P0: make generation fail fast with a clear redacted auth error and preserve exit code, stderr and a generation manifest.",
+      "P0: add an archive-shape gate requiring frontend/, backend/, main.py and tests/ before evaluation starts.",
+      "P1: after auth and shape gates pass, run one generation-only/local smoke validation before spending on an official platform Run.",
+      "P1: only then evaluate BookStack business behavior and optimize Agent code for tokens/runtime/completion rate.",
+      "Do not modify official tests or infer business failures from 0/0 or node states."
+    ],
+    "change_boundary": [
+      "Generation authentication/configuration diagnostics with redaction",
+      "Agent output/package assembly and archive validation",
+      "Build artifact identity and reproducibility records"
+    ],
+    "do_not_do": [
+      "No business-feature rewrite based on this Run",
+      "No selector or timeout changes based on this Run",
+      "No full platform rerun before authentication and archive-shape gates pass",
+      "Do not merge this Run with d4acec5dbbdf or other BookStack Run conclusions"
+    ]
+  },
+  "impact_estimate": {
+    "completion_rate": "0/0 is a generation pre-test failure, not a measured business completion rate",
+    "token_and_cost": "Unavailable; no provider totals were recorded",
+    "runtime": "Platform run object reports 0 seconds; timestamp-derived wall-clock duration is approximately 7.33 seconds",
+    "optimization_priority": "Authentication and generation artifact availability dominate token/runtime/feature optimization until a runnable package exists"
+  },
+  "source_precedence": [
+    "run.json for final status, score, IDs, lifecycle and exit status",
+    "logs.json for command, authentication observation, entrypoint, tests_dir and security scan",
+    "failure-details.md for test-level failure extraction; none present",
+    "summary.md for normalization, with its category/verification limitations retained",
+    "template.zip for package inventory and reproducibility"
+  ],
+  "conflicts": [
+    {
+      "field": "run_duration_seconds",
+      "run_value": 0,
+      "derived_value": 7.331646,
+      "resolution": "Retain 0 from the authoritative run object and label the timestamp-derived value as wall-clock context."
+    },
+    {
+      "field": "failure_classification",
+      "run_value": "generation command returned exit status 2",
+      "summary_value": "failure category listed as none",
+      "resolution": "Use the structured run failure reason and raw generation log; retain the summary blank as a discrepancy."
+    },
+    {
+      "field": "business_test_state",
+      "run_value": "tests=[] and run_tests pending/not reached",
+      "summary_value": "0/0 and no acceptance records",
+      "resolution": "Classify as generation/authentication pre-test failure; do not interpret node states as executed business-test failures."
+    }
+  ],
+  "source_files": [
+    {
+      "name": "manifest.json",
+      "path": "evidence/arc-bench/runs/cca008377368/manifest.json",
+      "sha256": "A8540D0184BBCB16249C7D09BA41DA0318705159DF9F2AF00F903C9217ACABA5"
+    },
+    {
+      "name": "arcbench-run-cca008377368.json",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-cca008377368.json",
+      "sha256": "701FFA30DD5FA6281797A60662FD9D7672B576CA97FEBA8B36B913ECAF3CD185"
+    },
+    {
+      "name": "arcbench-run-cca008377368-logs.json",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-cca008377368-logs.json",
+      "sha256": "BDBB9518196AB655D5FB6AB29A71A9E1905689AF5FDFED7FDE1D1357145485F8"
+    },
+    {
+      "name": "arcbench-cca008377368-failure-details.md",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-cca008377368-failure-details.md",
+      "sha256": "37345DDE9CC0CD1C0EC64CEA0985F0316D88933B11662DD59753A5746A183E75"
+    },
+    {
+      "name": "arcbench-run-cca008377368-summary.md",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-cca008377368-summary.md",
+      "sha256": "BD02A541E3C771943BC592533CF36D6264EB47F66E18D9C544D388E9B2AFA9C9"
+    },
+    {
+      "name": "cca008377368-template.zip",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/cca008377368-template.zip",
+      "sha256": "834117533A70FFA8A9D4B16FAF610D0E96CC2DDA35FB9115A1B46B786FDF547E"
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_raw_logs": 0,
+    "masked_key_observations": 2
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "handoff_id": "cca008377368-A8540D0184BB",
+  "run_id": "cca008377368",
+  "submission_id": "0b90e43b07b7",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "status": "received",
+  "received_at": "2026-09-21T10:30:30.2228284Z",
+  "manifest_sha256": "A8540D0184BBCB16249C7D09BA41DA0318705159DF9F2AF00F903C9217ACABA5",
+  "evidence_revision": "cca008377368-initial-intake"
+}

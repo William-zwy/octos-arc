@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "source_folder": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite",
+  "code_lineage": {
+    "classification": "new_submission_unverified_build",
+    "submission_id": "0b90e43b07b7",
+    "source_display_name": "luyun18029839909@163.com",
+    "same_submission_as_prior_run": null,
+    "platform_build_binding": "missing",
+    "not_frozen_A0": "unverified",
+    "not_stage5_output": "unverified",
+    "note": "Keep this Run separate from d4acec5dbbdf, ff12a7ff45f8 and all prior BookStack Runs. This Run has a different submission_id."
+  },
+  "run": {
+    "run_id": "cca008377368",
+    "submission_id": "0b90e43b07b7",
+    "display_name": "luyun18029839909@163.com",
+    "original_filename": "octos-arc-bundle-13173bb50e55.zip",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--bookstack",
+    "task_snapshot_id": null,
+    "model_name": "deepseek-v4-flash",
+    "runtime": "python",
+    "agent_source": "upload",
+    "created_at": "2026-09-21T10:02:28.151822",
+    "started_at": "2026-09-21T10:02:29.064561",
+    "finished_at": "2026-09-21T10:02:36.396207",
+    "status": "FAILED",
+    "score": 0.0,
+    "passed_count": 0,
+    "failed_count": 0,
+    "feature_implemented_count": 0,
+    "feature_total_count": 0,
+    "feature_implementation_rate": 0.0,
+    "failure_reason": "Command '['python3', '/workspace/submission/main.py', '/tmp/arcbench/requirements-source', '--output-dir', '/workspace/template']' returned non-zero exit status 2.",
+    "run_duration_seconds": 0
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": null,
+    "time_budget_seconds": null,
+    "agent_acceptance_workers": null,
+    "test_workers": null,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "verification_source": "raw logs.json"
+  },
+  "generation": {
+    "command": "python3 /workspace/submission/main.py /tmp/arcbench/requirements-source --output-dir /workspace/template",
+    "exit_code": 2,
+    "failure_observation": "permanent authentication failure; aborting before generation (HTTP 401)",
+    "meter_baseline_observation": "meter login failed with HTTP 401 Unauthorized",
+    "run_steps": {
+      "deploy_agent": "completed; environment preflight passed",
+      "start_agent": "failed; generation command returned exit status 2",
+      "run_tests": "pending; not reached"
+    },
+    "template_archive_entries": 23,
+    "template_frontend_entries": 0,
+    "template_backend_entries": 0,
+    "template_main_py_entries": 0,
+    "template_tests_entries": 0,
+    "application_server_started": false,
+    "playwright_executed": false,
+    "failure_classification": "generation_authentication_gate",
+    "failure_details": "No business test executed; the generation agent aborted before producing the application tree."
+  },
+  "internal_acceptance": {
+    "source": "logs.json",
+    "available": false,
+    "rounds": [],
+    "note": "The raw logs contain lifecycle and generation output but no acceptance rounds, provider totals or test execution records."
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 0.0,
+    "passed": 0,
+    "total": 0,
+    "failure_reason": "Command '['python3', '/workspace/submission/main.py', '/tmp/arcbench/requirements-source', '--output-dir', '/workspace/template']' returned non-zero exit status 2.",
+    "failed_tests": [],
+    "business_tests_executed": false
+  },
+  "metering": {
+    "requests": null,
+    "prompt_tokens": null,
+    "completion_tokens": null,
+    "reasoning_tokens": null,
+    "prompt_cache_hit_tokens": null,
+    "provider_total_tokens": null,
+    "platform_token_count": null,
+    "cost": null,
+    "currency": null,
+    "run_duration_seconds": 0,
+    "wall_clock_derived_seconds": 7.331646
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "masked_api_key_observed": true,
+    "log_result_finalized": "run object reports FAILED score=0",
+    "raw_logs_available": true,
+    "raw_logs_pages": 2
+  },
+  "source_precedence": [
+    "run.json for final platform status, score, IDs, lifecycle and generation steps",
+    "logs.json for lifecycle, entrypoint, tests_dir, authentication observations and platform validation",
+    "failure-details.md for final test/error-context extraction; it reports no executed failure test",
+    "summary.md for human-readable normalization, with conflicts retained",
+    "template.zip for package identity and reproducibility"
+  ],
+  "conflicts": [
+    {
+      "field": "run_duration_seconds",
+      "run_value": 0,
+      "derived_value": 7.331646,
+      "resolution": "Retain the platform run object's value as authoritative and preserve the timestamp-derived wall-clock duration separately."
+    },
+    {
+      "field": "failure_classification",
+      "run_value": "generation command returned exit status 2",
+      "summary_value": "failure category listed as none",
+      "resolution": "Use the structured run failure reason and raw generation log; summary's blank category is retained as a discrepancy."
+    },
+    {
+      "field": "business_test_state",
+      "run_value": "tests=[] and run_tests=pending/not reached",
+      "summary_value": "0/0 and no acceptance records",
+      "resolution": "Classify as generation/authentication pre-test failure; do not interpret node states as executed business-test failures."
+    }
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "agent_build_id",
+    "code_sha",
+    "platform-provided ZIP-to-build binding",
+    "reasoning level, time budget and worker counts",
+    "provider token totals, request count and cost",
+    "snapshots.json, Playwright report, trace/HAR and error-context body",
+    "generated frontend/backend source tree and generation workspace manifest"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-cca008377368-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 501,
+      "sha256": "37345DDE9CC0CD1C0EC64CEA0985F0316D88933B11662DD59753A5746A183E75",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-cca008377368-failure-details.md",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-cca008377368-summary.md",
+      "role": "human_readable_run_summary",
+      "bytes": 2586,
+      "sha256": "BD02A541E3C771943BC592533CF36D6264EB47F66E18D9C544D388E9B2AFA9C9",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-cca008377368-summary.md",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-cca008377368.json",
+      "role": "raw_run_object",
+      "bytes": 3088,
+      "sha256": "701FFA30DD5FA6281797A60662FD9D7672B576CA97FEBA8B36B913ECAF3CD185",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-cca008377368.json",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-cca008377368-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 7687,
+      "sha256": "BDBB9518196AB655D5FB6AB29A71A9E1905689AF5FDFED7FDE1D1357145485F8",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-cca008377368-logs.json",
+      "stored_in_repository": false
+    },
+    {
+      "name": "cca008377368-template.zip",
+      "role": "template_or_generated_package_snapshot",
+      "bytes": 9767822,
+      "sha256": "834117533A70FFA8A9D4B16FAF610D0E96CC2DDA35FB9115A1B46B786FDF547E",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/cca008377368-template.zip",
+      "stored_in_repository": false,
+      "archive_inventory": {
+        "entries": 23,
+        "frontend_entries": 0,
+        "backend_entries": 0,
+        "main_py_entries": 0,
+        "tests_entries": 0
+      }
+    }
+  ],
+  "duplicate_aliases": [
+    {
+      "source_path": "C:/Users/dayuruozhi/Downloads/cca008377368-template.zip",
+      "sha256": "834117533A70FFA8A9D4B16FAF610D0E96CC2DDA35FB9115A1B46B786FDF547E",
+      "same_as": "cca008377368-template.zip"
+    },
+    {
+      "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-cca008377368-logs.json",
+      "sha256": "BDBB9518196AB655D5FB6AB29A71A9E1905689AF5FDFED7FDE1D1357145485F8",
+      "same_as": "arcbench-run-cca008377368-logs.json"
+    },
+    {
+      "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-cca008377368.json",
+      "sha256": "701FFA30DD5FA6281797A60662FD9D7672B576CA97FEBA8B36B913ECAF3CD185",
+      "same_as": "arcbench-run-cca008377368.json"
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_raw_logs": 0,
+    "masked_key_observations": 2
+  }
+}
