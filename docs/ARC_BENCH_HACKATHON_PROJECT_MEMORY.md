@@ -24,6 +24,10 @@
 
 2026-09-21 已按上述规则归档 V3.1/V4 控制面切片：候选分支 `codex/arc-bench-v4-control-plane-gates`，基线 `d2fe4dbc7601242896b61b3a790a912732bc5d57`，最终 HEAD `13173bb50e556c78bcd9cfdcc25c5449eee37f65`。下一次受控平台测试包为 `octos-arc-bundle-13173bb50e55.zip`，SHA-256 `FDFA6090FDCCB18553ABEF07C6B5429AAB9B0979FB69A9A5D0053730A159EE1A`；Agent 根层级门禁通过，抽样入口文件与提交 blob 原字节一致。完整提交链、测试、已知 Windows 基线失败与平台边界见[阶段 5 决策台账第 20 节](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)。本轮未推送、未上传、未启动平台 Run。
 
+### 0.2 阶段 5 会话写入边界（用户长期指令，2026-09-21）
+
+当前“项目阶段5｜跨 Run 决策台账”会话（Thread `01a0bd66-5680-7e72-9e8a-24290780525e`）今后只做证据读取、事实核对、判断、信息收敛和决策/协同记录维护，**不得直接修改 Agent、业务代码、测试代码或打包实现**。任何需要代码写入的决定，必须先在本会话形成清楚的 issue、证据边界、授权状态、验收标准和 handoff，再交给“项目阶段5｜Agent 实现”会话（Thread `01a0bd66-75bd-7801-97fc-b3d1e136c112`）执行；实现结果通过提交 SHA、验证命令与产物哈希回交本会话归档。没有明确代码任务时不创建空转派。
+
 ## 1. 项目身份与范围
 
 - 当前工作区是 `William-zwy/octos-arc`，远程为 `git@github.com:William-zwy/octos-arc.git`。

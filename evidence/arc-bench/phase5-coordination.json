@@ -19,6 +19,18 @@
   "role_handoff_id": "phase5-role-20260920-v1",
   "role_handoff_source_commit": "ad4f818a9f83b4a7c082d3e5da0b39855fcc9bd9",
   "baseline_gate": "Read-only ACK does not authorize writes. Before writing, verify the actual Git root and HEAD, acquire single-writer ownership, and use a worktree containing the authoritative Phase 5 commit; do not edit detached A0 role worktrees as current candidates.",
+  "routing_policy": {
+    "effective_at": "2026-09-21",
+    "source": "explicit_user_instruction",
+    "ledger_thread_id": "01a0bd66-5680-7e72-9e8a-24290780525e",
+    "ledger_scope": ["evidence_reading", "fact_checking", "decision_making", "information_consolidation", "decision_and_coordination_records"],
+    "ledger_code_writes_forbidden": true,
+    "code_change_owner_role": "implementation",
+    "code_change_owner_thread_id": "01a0bd66-75bd-7801-97fc-b3d1e136c112",
+    "handoff_required_fields": ["issue_id", "evidence_boundary", "authorization", "acceptance_criteria", "baseline_sha"],
+    "implementation_return_fields": ["commit_sha", "changed_files", "validation_commands", "exit_codes", "artifact_identity"],
+    "dispatch_without_code_task": false
+  },
   "unmapped_worktree_paths": [],
   "roles": {
     "ledger": {
@@ -26,9 +38,9 @@
       "client_thread_id": "client-new-thread:b725d0f9-dd86-447e-b0bc-a5e9ebe6bff6",
       "thread_id": "01a0bd66-5680-7e72-9e8a-24290780525e",
       "worktree_path": "D:/DataMove/codex/worktrees/2c74/AI智能体软件工厂黑客松",
-      "status": "acknowledged_read_only",
+      "status": "active_decision_only",
       "ack_message_id": "msg_0c9cfb4eff4eb795016aaf7ffb6ef487d0aa06857f58b383a1",
-      "write_scope": "docs/ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md"
+      "write_scope": "decision ledger, project memory, and coordination/evidence metadata only; no Agent, product, test, or packer code"
     },
     "reproduction": {
       "title": "项目阶段5｜隔离复现",
@@ -44,9 +56,9 @@
       "client_thread_id": "client-new-thread:6b9cd0c0-a065-4bd1-8b15-3da845fd3287",
       "thread_id": "01a0bd66-75bd-7801-97fc-b3d1e136c112",
       "worktree_path": "D:/DataMove/codex/worktrees/bfb3/AI智能体软件工厂黑客松",
-      "status": "acknowledged_read_only",
+      "status": "designated_code_change_owner",
       "ack_message_id": "msg_0a88429c8f1c6aa9016aaf7ffb6dbc87d0ac5fc5f5b1921d3a",
-      "write_scope": "authorized candidate-code worktree only"
+      "write_scope": "all explicitly authorized Agent, product, test, and packer code changes in an isolated candidate-code worktree"
     },
     "metrics": {
       "title": "项目阶段5｜指标与 A/B 验收",
