@@ -1,6 +1,6 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.20；建立日期：2026-09-19；状态：V3 已冻结；用户已授权并完成 V3.1/V4 本地控制面切片，候选提交 `13173bb50e556c78bcd9cfdcc25c5449eee37f65` / ZIP `FDFA6090…` 已通过 Agent 根层级与提交 blob 字节绑定门禁。新 Run `cca008377368` 已在平台观察到 HTTP 401 后 fail-fast exit 2，但平台仍未独立绑定上传 ZIP、build/code 与 task snapshot，也未跑通认证正路径；该观察不构成业务验收、平台收益或严格可比 A/B，`P5-012` 仍未闭合，`P5-013` 的历史首断点也未由本 Run 重开。
+> 版本：v1.21；建立日期：2026-09-19；状态：V3 已冻结；用户已授权并完成 V3.1/V4 本地控制面切片，候选提交 `13173bb50e556c78bcd9cfdcc25c5449eee37f65` / ZIP `FDFA6090…` 已通过 Agent 根层级与提交 blob 字节绑定门禁。新 Run `cca008377368` 已在平台观察到 HTTP 401 后 fail-fast exit 2，但平台仍未独立绑定上传 ZIP、build/code 与 task snapshot，也未跑通认证正路径；该观察不构成业务验收、平台收益或严格可比 A/B，`P5-012` 仍未闭合，`P5-013` 的历史首断点也未由本 Run 重开。Keep Run `bf5e742c15a4` 因阶段 4 迟到结果身份不完整而保持隔离，不进入机制裁决。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
@@ -37,6 +37,8 @@
 新包形状门禁 intake：BookStack Lite [`d4acec5dbbdf`](../evidence/arc-bench/runs/d4acec5dbbdf/manifest.json) 的平台结果为 `FAILED`、score `0`、`0/0`，runner 在业务测试前因最终 ZIP 缺少 `frontend/` 与 `backend/` 拒绝模板；归档清单还显示 `main.py` 与 `tests/` 均不存在。该 Run 仅用于追查 workspace/staging 到最终 ZIP 的生成与打包链路，必须与其他 BookStack Run 分开，不进入业务完成率、失败机制归并或版本 A/B 表；详见 `P5-013` 与第 18 节。
 
 新 fail-fast 平台观察：BookStack Lite [`cca008377368`](../evidence/arc-bench/runs/cca008377368/manifest.json) 是 submission `0b90e43b07b7` 下的独立 Run。平台执行 `/workspace/submission/main.py` 后遇到 HTTP `401` 永久认证失败并以 exit `2` 在生成前终止，最终 `0/0`；这与 V3.1 fail-fast 行为相符，可作为 `P5-012` 的平台行为观察，但上传文件名只能提供候选来源线索，缺少平台 ZIP SHA/build/code 绑定，不能升级为已验证的构建归因。空模板是认证中止后的下游状态，不作为 `P5-013` 的独立根因；详见第 21 节。
+
+隔离 intake：Keep Lite [`bf5e742c15a4`](../evidence/arc-bench/runs/bf5e742c15a4/manifest.json) 在阶段 4 连续两次返回空回合，随后才迟到写入 ACK/result。ACK 身份可匹配，但 `phase4-result.json` 的 `manifest_sha256` 为空，约定的 JSON 完成标记字段也未通过校验；Markdown 标记不能替代结构化身份验证。注册表现为 `quarantined / late_result_incomplete_unverified`，因此本台账不读取其诊断结论、不创建 P5 问题、不判断是否复现、不派 Agent 实现；下一步只允许修复并复核既有阶段 4 会话，不 fork 补偿性重复会话。
 
 | Run 与原始证据索引 | 平台最终结果 / 内部验收 | 请求与计量 | 当前用途 |
 |---|---|---|---|
