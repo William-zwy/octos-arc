@@ -781,7 +781,7 @@
         "authorized_at": "2026-09-21",
         "scope": "Have the dedicated Agent implementation task implement the current modification, test and packaging recommendations; this ledger task remains decision-only."
       },
-      "status": "authorized_ready_to_dispatch",
+      "status": "implementation_in_progress_reproduction_waiting_metrics_approved",
       "implementation_owner_thread_id": "01a0bd66-75bd-7801-97fc-b3d1e136c112",
       "reproduction_thread_id": "01a0bd66-60c2-7441-9a85-332c0af24886",
       "metrics_thread_id": "01a0bd66-8b2a-7fb3-9a25-269204f6dbf1",
@@ -851,16 +851,42 @@
         "exclude_zero_of_zero_from_business_metrics": true,
         "auth_fail_fast_metrics": ["request_count", "termination_latency"],
         "cost_claim_without_tokens_or_cost_allowed": false,
-        "business_go": {"bookstack": "34/34", "keep": "32/32"}
+        "business_go": {"bookstack": "34/34", "keep": "32/32"},
+        "review_status": "approved_and_frozen",
+        "review_ack_thread_id": "01a0bd66-8b2a-7fb3-9a25-269204f6dbf1",
+        "additional_required_configuration": ["visual_model", "entrypoint"],
+        "official_asset_digest_scope": ["requirements", "tests", "helpers", "assets"],
+        "platform_upload_recommendation": "NO-GO pending implementation artifact and offline reproduction"
       },
-      "implementation_dispatched": false,
-      "reproduction_dispatched": false,
-      "metrics_review_dispatched": false,
+      "implementation_ack": {
+        "thread_id": "01a0bd66-75bd-7801-97fc-b3d1e136c112",
+        "handoff_id": "phase5-p5005-build-provenance-v41-20260921-v1",
+        "accepted": true,
+        "baseline_commit": "13173bb50e556c78bcd9cfdcc25c5449eee37f65",
+        "single_code_writer": true,
+        "status": "in_progress"
+      },
+      "reproduction_ack": {
+        "thread_id": "01a0bd66-60c2-7441-9a85-332c0af24886",
+        "handoff_id": "phase5-p5005-build-provenance-v41-20260921-v1",
+        "accepted": true,
+        "status": "waiting_for_implementation_artifact",
+        "missing_fields": ["artifact_path", "artifact_filename", "artifact_sha256", "build_id"]
+      },
+      "metrics_review_ack": {
+        "thread_id": "01a0bd66-8b2a-7fb3-9a25-269204f6dbf1",
+        "handoff_id": "phase5-p5005-build-provenance-v41-20260921-v1",
+        "accepted": true,
+        "status": "approved_and_frozen"
+      },
+      "implementation_dispatched": true,
+      "reproduction_dispatched": true,
+      "metrics_review_dispatched": true,
       "new_platform_run_created_by_ledger": false,
       "upload_performed_by_ledger": false,
       "official_tests_modified_by_ledger": false,
       "remote_pushed_by_ledger": false,
-      "next_gate": "Persist this handoff, dispatch it to the three role tasks, then require implementation ACK and exact artifact return before controlled reproduction or any platform upload recommendation."
+      "next_gate": "Wait for the implementation thread to return the complete implementation_return_fields and exact artifact identity. Then bind that artifact into the reproduction card; platform upload remains NO-GO until all three offline cases pass and the ledger verifies the returned commit, package and sidecars."
     }
   ]
 }
