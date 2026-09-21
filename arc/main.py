@@ -52,6 +52,8 @@ Environment (all optional):
     OCTOS_ARC_INSTALL_PLAYWRIGHT  "0" never installs Playwright on the fly
     OCTOS_ARC_ALIAS_SPEC_IDS  "0" stops mirroring node states onto spec ids
     OCTOS_PERF_CONTRACT       "0" drops the performance rules from prompts
+    ARCBENCH_STAGING_DIR      optional packaging staging directory to audit at postflight
+    ARCBENCH_FINAL_ZIP        optional generated-app ZIP to audit at postflight
     OCTOS_GUARD               "0" logs guard findings without injecting them
 """
 
@@ -85,6 +87,8 @@ from acceptance import (  # noqa: E402
 from codegen import FORMAT_INSTRUCTIONS, dedupe_nav_links, parse_file_blocks, write_files  # noqa: E402
 from guard import TurnMonitor  # noqa: E402
 from llm_proxy import LlmProxy  # noqa: E402
+from package_shape import (PackageShapeError, inspect_pipeline, require_report,  # noqa: E402
+                           stage_summary, write_report)
 from requirement_order import ancestors_of, node_fingerprint, topo_order  # noqa: E402
 
 BUNDLE_DIR = Path(__file__).resolve().parent
@@ -147,8 +151,8 @@ def log(msg: str) -> None:
 
 # ---------------------------------------------------------------- postflight
 
-def _postflight_structure_check(output_dir: Path) -> None:
-    """Log the deliverable tree; lift a one-level-nested app into place."""
+def _postflight_structure_check(output_dir: Path, *, strict: bool = False) -> None:
+    """Lift one nested app, then freeze and enforce the available shape stages."""
     tree_lines = []
     for root, dirs, files in os.walk(output_dir):
         dirs[:] = [d for d in dirs if d not in ("node_modules", ".git", "dist", "__pycache__")]
@@ -164,18 +168,40 @@ def _postflight_structure_check(output_dir: Path) -> None:
             tree_lines.append("... (truncated)")
             break
     log("[postflight] workspace tree:\n" + "\n".join(tree_lines))
-    if (output_dir / "frontend").is_dir() and (output_dir / "backend").is_dir():
-        log("[postflight] frontend/ and backend/ present at workspace root")
-        return
-    for child in [p for p in output_dir.iterdir() if p.is_dir() and p.name not in (".git", ".arc", "requirements")]:
-        if (child / "frontend").is_dir() and (child / "backend").is_dir():
-            log(f"[postflight] app found nested at {child.name}/; lifting to root")
-            for item in child.iterdir():
-                dest = output_dir / item.name
-                if not dest.exists():
-                    shutil.move(str(item), str(dest))
-            return
-    log("[postflight] WARNING: no frontend/+backend/ found anywhere; runner will reject the template")
+    if not ((output_dir / "frontend").is_dir() and (output_dir / "backend").is_dir()):
+        for child in [p for p in output_dir.iterdir()
+                      if p.is_dir() and p.name not in (".git", ".arc", "requirements")]:
+            if (child / "frontend").is_dir() and (child / "backend").is_dir():
+                log(f"[postflight] app found nested at {child.name}/; lifting to root")
+                for item in child.iterdir():
+                    dest = output_dir / item.name
+                    if not dest.exists():
+                        shutil.move(str(item), str(dest))
+                break
+
+    staging_value = os.environ.get("ARCBENCH_STAGING_DIR")
+    archive_value = os.environ.get("ARCBENCH_FINAL_ZIP")
+    report = inspect_pipeline(
+        output_dir,
+        Path(staging_value) if staging_value else None,
+        Path(archive_value) if archive_value else None,
+    )
+    report_path = output_dir / ".arc" / "package-shape" / "pipeline.json"
+    try:
+        write_report(report, report_path)
+        log(f"[package-shape] manifest={report_path}")
+    except OSError as exc:
+        log(f"[package-shape] could not write manifest: {exc}")
+        if strict:
+            raise
+    for stage in report["stages"]:
+        log("[package-shape] " + stage_summary(stage))
+    try:
+        require_report(report)
+    except PackageShapeError as exc:
+        if strict:
+            raise RuntimeError(str(exc)) from exc
+        log(f"[package-shape] WARNING: {exc}")
 
 
 def _reap_stray_processes(tag: str) -> None:
@@ -2038,7 +2064,7 @@ class Flow:
             else:
                 self.events.mark_run_completed("all requirement nodes implemented and verified")
             _reap_stray_processes("postflight")
-            _postflight_structure_check(self.output_dir)
+            _postflight_structure_check(self.output_dir, strict=True)
             _free_web_port(self.web_port)
             self.write_preview_ready()
             return 0

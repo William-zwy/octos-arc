@@ -1,8 +1,27 @@
 #!/bin/sh
-# 把 arc/ 打成 ARC 平台要的提交包（main.py 必须在 zip 根目录）
-set -e
+# Build a commit-bound ARC platform Agent ZIP (main.py must be at ZIP root).
+set -eu
 cd "$(dirname "$0")"
-rm -f ../octos-arc-bundle.zip
-zip -qr ../octos-arc-bundle.zip main.py octos_stdio.py requirement_order.py acceptance.py guard.py llm_proxy.py codegen.py hooks requirements.txt arcbench_agent_runtime public-tests -x '*/__pycache__/*' '*.pyc'
-echo "打包完成：$(cd .. && pwd)/octos-arc-bundle.zip"
-shasum -a 256 ../octos-arc-bundle.zip
+
+commit=$(git rev-parse HEAD)
+short_commit=$(git rev-parse --short=12 HEAD)
+output=${1:-../octos-arc-bundle-${short_commit}.zip}
+case "$output" in
+  /*) ;;
+  *) output="$(pwd)/$output" ;;
+esac
+
+if [ -e "$output" ]; then
+  echo "error: refusing to overwrite existing artifact: $output" >&2
+  exit 2
+fi
+
+git archive --format=zip --output="$output" HEAD:arc -- \
+  main.py octos_stdio.py requirement_order.py acceptance.py guard.py \
+  llm_proxy.py codegen.py package_shape.py hooks requirements.txt \
+  arcbench_agent_runtime public-tests
+
+python3 package_shape.py agent --archive "$output" --output "${output%.zip}.shape.json" >/dev/null
+echo "commit=$commit"
+echo "artifact=$output"
+shasum -a 256 "$output"

@@ -29,10 +29,12 @@ python3 -m unittest discover -s arc/tests -t arc  # 编排器纯函数的单元�
 #    改完回到第 2、3 步，改前改后各跑一次，比数字
 
 # 5. 打包上传
-sh arc/pack.sh                               # 得到 octos-arc-bundle.zip
+sh arc/pack.sh                               # 得到 octos-arc-bundle-<commit>.zip 及形状清单
 # 到 arc-bench.com 对应比赛页 New submission 上传，模型填 deepseek-v4-flash，
 # Base URL 填 https://api.arc-bench.com/v1，然后选题、Run
 ```
+
+打包脚本只归档当前 `HEAD` 中已跟踪的 Agent 文件，不会把工作树里的临时文件带入 ZIP；若目标文件已存在则拒绝覆盖。生成后会执行 `arc_agent_bundle_v1` 根层级门禁并写出同名 `.shape.json`，门禁通过后才打印 SHA-256。
 
 ## 改了内核怎么让平台用上
 
