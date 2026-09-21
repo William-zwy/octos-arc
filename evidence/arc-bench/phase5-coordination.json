@@ -983,6 +983,63 @@
       "official_tests_modified_by_ledger": false,
       "remote_pushed_by_ledger": false,
       "next_gate": "Deliver the exact immutable ZIP and sidecars to the user. Before upload, re-hash the ZIP and record artifact/operator/task/config fields; perform a one-request same-environment auth preflight. Run BookStack first and apply the documented stop conditions before any Keep Run."
+    },
+    {
+      "key": "c48754c25fcf:P5-012:09E043AE8892",
+      "run_id": "c48754c25fcf",
+      "submission_id": "ed11d633b8a6",
+      "task_key": "smoke-evolution--dice",
+      "issue_id": "P5-012",
+      "source_handoff_id": "c48754c25fcf-09E043AE8892",
+      "phase4_thread_id": "01a0b492-841a-7230-800f-5814c2a537b5",
+      "manifest": "evidence/arc-bench/runs/c48754c25fcf/manifest.json",
+      "manifest_sha256": "09E043AE8892180BD543EA8C0787623E27A5D20C6F3703C964F8B06F3FA5835F",
+      "phase4_result": "evidence/arc-bench/runs/c48754c25fcf/phase4-result.json",
+      "phase4_result_status": "complete",
+      "status": "ledger_triaged_platform_exact_v41_identity_and_fail_fast_confirmed_auth_positive_path_unresolved",
+      "decision": "platform_credential_or_authorization_context_remediation_no_agent_change",
+      "scope_is_run_local": true,
+      "merge_with_p5_012_family": true,
+      "needs_local_repro": false,
+      "code_change_required": false,
+      "repackage_required": false,
+      "platform_entrypoint_started": true,
+      "tests_reached": false,
+      "business_result_usable": false,
+      "generation_identity": {
+        "original_filename": "octos-arc-agent-bb70542d7d32-680ba38f027f.zip",
+        "build_id": "arc-agent-v1-0851fff1cfb8feeb38544f8c",
+        "commit_sha": "bb70542d7d327b660fa672bfdbc193f3f51b40a5",
+        "payload_tree_sha256": "B286699D96E3463AC6C8B8C426600BEF01DB7A9A0B43191AE99DFCB32A99C885",
+        "package_contract": "arc_agent_bundle_v1",
+        "runtime_identity_observed": true,
+        "platform_native_uploaded_zip_sha_present": false,
+        "task_snapshot_id_present": false
+      },
+      "confirmed_failure_chain": [
+        "Runner workspace, image, pip and Agent dependency preflight completed.",
+        "The platform invoked /workspace/submission/main.py with the expected requirements and output arguments.",
+        "The exact V4.1 ARC_AGENT_IDENTITY was emitted before the provider probe.",
+        "The platform meter baseline login and the Agent API probe both returned HTTP 401.",
+        "The Agent classified the response as permanent authentication failure and exited 2 before Flow or generation.",
+        "run_tests, Evolution, acceptance, application startup and Playwright were not reached."
+      ],
+      "root_cause_boundary": {
+        "classification": "platform_injected_credential_or_authorization_context_rejected_by_api_authentication_layer",
+        "confidence": "high",
+        "exact_server_side_reason": "unknown",
+        "remaining_server_side_candidates": ["invalid_or_expired_or_revoked_credential", "scope_or_account_entitlement_missing", "credential_endpoint_or_provider_route_mismatch"],
+        "low_confidence_candidates": ["model_selection_mismatch", "endpoint_url_shape_mismatch"]
+      },
+      "excluded_causes": ["wrong_agent_zip_or_entrypoint", "dependency_installation", "business_application_code", "official_tests_or_playwright", "test_directory_or_bundled_fallback", "package_shape", "oom_timeout_port_or_generated_app_resource_failure"],
+      "platform_final": {"status": "FAILED", "score": 0.0, "passed": 0, "total": 0, "failure_stage": "start_agent", "generation_exit_code": 2},
+      "metering": {"requests": null, "platform_token_count": null, "provider_total_tokens": null, "cost": null, "run_duration_seconds": 0, "wall_clock_derived_seconds": 3.566043},
+      "implementation_dispatched": false,
+      "new_platform_run_created_by_ledger": false,
+      "upload_performed_by_ledger": false,
+      "official_tests_modified": false,
+      "remote_pushed_by_ledger": false,
+      "next_gate": "Audit the masked platform credential, endpoint/provider route, deepseek-v4-flash entitlement and whether meter and generation use the same auth context for submission ed11d633b8a6. After remediation, require a single-request same-environment 2xx preflight before rerunning the same immutable ZIP; do not change Agent code or count this 0/0 as a business result."
     }
   ]
 }
