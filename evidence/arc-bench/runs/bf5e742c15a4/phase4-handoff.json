@@ -44,6 +44,13 @@
   "send_attempts": 1,
   "empty_output_attempts": 2,
   "last_observed_thread_status": "idle",
-  "failure_reason": "phase4_empty_output_after_two_attempts; no ACK or result file was written",
+  "failure_reason": "phase4_empty_output_after_two_attempts_then_late_incomplete_result; result JSON identity fields are incomplete",
+  "late_artifacts_observed_at": "2026-09-21T11:05:32.7347543Z",
+  "late_ack_present": true,
+  "late_ack_sha256": "1837E8768D0A1C15DDAE856107AEA3B7C4D1762A0A83851B157B489E54C3B147",
+  "late_result_present": true,
+  "late_result_sha256": "547FA881F76B4B34C36ACDE5CEF63D3FCF134A2B5E401BE6FC0B804C692F733D",
+  "late_result_md_sha256": "E9C83FB624E788D5FE6570E1F2BDCF5B5E2E00875DE2C8056F287A706D836ED1",
+  "late_result_validation": "incomplete_identity_fields: phase4-result.json manifest_sha256 is null and JSON PHASE4_RESULT marker is absent; Markdown marker exists",
   "created_at": "2026-09-21T10:44:34.9723219Z"
 }
