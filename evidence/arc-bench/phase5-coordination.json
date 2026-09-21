@@ -628,6 +628,87 @@
       "platform_verified": false,
       "historical_first_missing_stage": "unknown",
       "next_gate": "User may upload this archive for a controlled generation/package-chain test; bind upload time, platform submission/build, task snapshot or official asset hash, final template ZIP, pipeline manifest, Run ID, and metrics before any platform-benefit claim."
+    },
+    {
+      "key": "cca008377368:P5-012:B849B84CE5A7",
+      "run_id": "cca008377368",
+      "submission_id": "0b90e43b07b7",
+      "task_key": "arc-bench-lite--bookstack",
+      "issue_id": "P5-012",
+      "source_handoff_id": "cca008377368-A8540D0184BB",
+      "phase4_thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+      "manifest": "evidence/arc-bench/runs/cca008377368/manifest.json",
+      "manifest_sha256": "A8540D0184BBCB16249C7D09BA41DA0318705159DF9F2AF00F903C9217ACABA5",
+      "phase4_handoff": "evidence/arc-bench/runs/cca008377368/phase4-handoff.json",
+      "phase4_handoff_sha256": "7BDBE0CE032CFF8F3221C1B89C6C309D4D2F59C111538663A98F5B290E750DD1",
+      "phase4_ack": "evidence/arc-bench/runs/cca008377368/phase4-ack.json",
+      "phase4_ack_sha256": "5BE3D30F845C6B5F37917D33506CE33E07F287DF5AB8D3EA9F83AB05F0963C9F",
+      "phase4_result": "evidence/arc-bench/runs/cca008377368/phase4-result.json",
+      "phase4_result_sha256": "B849B84CE5A73A5FCB403C92C1A25E4521CC97925556DF3E4BC9CBD3151640BE",
+      "phase4_result_md": "evidence/arc-bench/runs/cca008377368/phase4-result.md",
+      "phase4_result_md_sha256": "33A7C76FD61AE3FE563246DCD7D36E23A84DA3DBA870B200E4B762F70008ABE6",
+      "status": "ledger_triaged_platform_fail_fast_observed_auth_positive_path_unresolved",
+      "decision": "confirmed_run_local_401_fail_fast_exit_2_build_attribution_provisional",
+      "scope_is_run_local": true,
+      "merge_with_other_runs": false,
+      "related_issue_id": "P5-012",
+      "not_p5_013_primary": true,
+      "needs_repro": true,
+      "repro_scope": "Environment/authentication positive path only: approved redacted endpoint/account/entitlement/provider routing diagnostics, then generation-only with the exact package and build-to-ZIP plus pipeline-manifest capture.",
+      "confirmed_observations": [
+        "Environment preflight passed and the platform invoked /workspace/submission/main.py.",
+        "The generation probe returned HTTP 401 permanent authentication failure and main.py failed fast with exit code 2 before generation.",
+        "run_tests was not reached, tests[] is empty, and no application server or Playwright test ran.",
+        "The final template ZIP contains 23 template/requirements entries and no generated application tree."
+      ],
+      "source_attribution": {
+        "manifest_original_filename": "octos-arc-bundle-13173bb50e55.zip",
+        "candidate_commit": "13173bb50e556c78bcd9cfdcc25c5449eee37f65",
+        "candidate_zip_sha256": "FDFA6090FDCCB18553ABEF07C6B5429AAB9B0979FB69A9A5D0053730A159EE1A",
+        "evidence_level": "strong_candidate_provisional",
+        "boundary": "Filename and distinctive fail-fast behavior are consistent with the candidate, but the platform supplied no uploaded ZIP SHA, agent build, code SHA, or ZIP-to-build binding."
+      },
+      "underlying_auth_attribution": "unknown",
+      "business_tests_executed": false,
+      "business_result_usable": false,
+      "platform_final": {
+        "status": "FAILED",
+        "score": 0.0,
+        "passed": 0,
+        "total": 0,
+        "failure_reason": "generation command returned exit status 2 after permanent HTTP 401 authentication failure"
+      },
+      "archive_inventory": {
+        "template_zip_sha256": "834117533A70FFA8A9D4B16FAF610D0E96CC2DDA35FB9115A1B46B786FDF547E",
+        "entry_count": 23,
+        "frontend_entries": 0,
+        "backend_entries": 0,
+        "main_py_entries": 0,
+        "tests_entries": 0,
+        "pipeline_manifest_present": false
+      },
+      "metering": {
+        "requests": null,
+        "platform_token_count": null,
+        "provider_total_tokens": null,
+        "cost": null,
+        "run_duration_seconds": 0,
+        "wall_clock_derived_seconds": 7.331646
+      },
+      "v3_1_fail_fast_observation": {
+        "observed": true,
+        "exit_code": 2,
+        "platform_behavior_validation": "provisional",
+        "source_identity_validated": false,
+        "authenticated_positive_path_validated": false
+      },
+      "implementation_dispatched": false,
+      "code_change_required": false,
+      "new_platform_run_created_by_ledger": false,
+      "upload_performed_by_ledger": false,
+      "official_tests_modified": false,
+      "ledger_decision_recorded": true,
+      "next_gate": "Use approved redacted diagnostics to establish the authentication responsibility boundary, then run a known-valid generation-only positive path with the exact package and capture platform build/ZIP identity, output shape and pipeline manifest before any platform_verified, business, cost or A/B claim."
     }
   ]
 }

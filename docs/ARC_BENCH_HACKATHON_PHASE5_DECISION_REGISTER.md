@@ -1,6 +1,6 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.19；建立日期：2026-09-19；状态：V3 已冻结；用户已授权并完成 V3.1/V4 本地控制面切片，候选提交 `13173bb50e556c78bcd9cfdcc25c5449eee37f65` / ZIP `FDFA6090…` 已通过 Agent 根层级与提交 blob 字节绑定门禁，等待用户侧受控平台测试。历史 `P5-012/P5-013` 的平台归因与 workspace→staging→最终模板 ZIP 首断点仍未被旧 Run 证据闭合，新的 build/task snapshot→ZIP 也尚未绑定；两次 `0/0` 仍不计业务完成率，不构成 V3 A/B。平台收益和严格可比 A/B **仍未确认**。
+> 版本：v1.20；建立日期：2026-09-19；状态：V3 已冻结；用户已授权并完成 V3.1/V4 本地控制面切片，候选提交 `13173bb50e556c78bcd9cfdcc25c5449eee37f65` / ZIP `FDFA6090…` 已通过 Agent 根层级与提交 blob 字节绑定门禁。新 Run `cca008377368` 已在平台观察到 HTTP 401 后 fail-fast exit 2，但平台仍未独立绑定上传 ZIP、build/code 与 task snapshot，也未跑通认证正路径；该观察不构成业务验收、平台收益或严格可比 A/B，`P5-012` 仍未闭合，`P5-013` 的历史首断点也未由本 Run 重开。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
@@ -36,6 +36,8 @@
 
 新包形状门禁 intake：BookStack Lite [`d4acec5dbbdf`](../evidence/arc-bench/runs/d4acec5dbbdf/manifest.json) 的平台结果为 `FAILED`、score `0`、`0/0`，runner 在业务测试前因最终 ZIP 缺少 `frontend/` 与 `backend/` 拒绝模板；归档清单还显示 `main.py` 与 `tests/` 均不存在。该 Run 仅用于追查 workspace/staging 到最终 ZIP 的生成与打包链路，必须与其他 BookStack Run 分开，不进入业务完成率、失败机制归并或版本 A/B 表；详见 `P5-013` 与第 18 节。
 
+新 fail-fast 平台观察：BookStack Lite [`cca008377368`](../evidence/arc-bench/runs/cca008377368/manifest.json) 是 submission `0b90e43b07b7` 下的独立 Run。平台执行 `/workspace/submission/main.py` 后遇到 HTTP `401` 永久认证失败并以 exit `2` 在生成前终止，最终 `0/0`；这与 V3.1 fail-fast 行为相符，可作为 `P5-012` 的平台行为观察，但上传文件名只能提供候选来源线索，缺少平台 ZIP SHA/build/code 绑定，不能升级为已验证的构建归因。空模板是认证中止后的下游状态，不作为 `P5-013` 的独立根因；详见第 21 节。
+
 | Run 与原始证据索引 | 平台最终结果 / 内部验收 | 请求与计量 | 当前用途 |
 |---|---|---|---|
 | Keep Lite A0 [`0cef369cc925`](../evidence/arc-bench/runs/0cef369cc925/manifest.json) | 平台 `31/32`、FAILED，`REQ-2.5.4 Unarchive` 十秒超时；内部 round 0 `31/32`（失败 `REQ-2.8.2`）→ round 1 `32/32` | 1,004 次；输入 24,772,611、输出 660,754、缓存命中 22,496,000、推理 436,764、Provider total 25,433,365、平台 Token 58,278,570；13,576 秒；¥31.453807 | 功能可靠性疑点及成本基线；A0 为用户 provenance |
@@ -62,7 +64,7 @@
 | `P5-009` | BookStack 异步保存后过早选择 heading 定位器，而结果页只以链接展示新实体 | `confirmed`；两题 POST/DB/HTML/helper 链条在受控 150ms 延迟下各 3/3 复现；平台收益和 Agent 归因未知 | V3 本地候选已冻结、用户报告已人工上传；当前 `NO-GO` 业务 Run，等待 P5-012/P5-013 与身份门禁 | P0；门禁闭合后先跑 BookStack V3，并核验两题与 34 题回归 |
 | `P5-010` | Keep 初始数据契约遗漏必需的 `Work editable` 标签 | `confirmed`：平台失败、bundle `loadDB()`/`seedDefaults()` 链路、设计快照三方闭合；当前仅 Run-local，跨 Run 适用性未知 | `approval_required` + `deferred`；冻结 V3 不混入本项改动 | P0；待有效 V3 Keep 结果后，必要时作为独立 V4 通用切片 |
 | `P5-011` | Keep 静态 Reminders 导航与动态 Reminders 标签产生重复 accessible name | `confirmed`：平台 strict-mode 失败、评分前 DOM、最终包源码三方闭合；当前仅 Run-local，跨 Run 适用性未知 | `approval_required` + `deferred`；冻结 V3 不混入本项改动 | P0；待有效 V3 Keep 结果后，必要时作为独立 V4 通用切片 |
-| `P5-012` | 模型认证失败后 skeleton 连续无产出，平台在业务测试前拒绝缺少 frontend/backend 的模板 | 401、四次无写入和模板拒绝为 Run-local `confirmed`；认证责任归因 `unknown`；重试耗时为 `strong_candidate` | V3.1 本地控制面切片已验证：401/403 fail-fast、429/5xx/网络错误有界重试、无应用时非零；平台未验证 | P0 gate；受控平台测试仍须核验 endpoint/权限/meter 与新 build 身份 |
+| `P5-012` | 模型认证失败后生成链无产出，平台在业务测试前停止 | `ff12a7ff45f8` 的 401/无写入链和 `cca008377368` 的 401→exit 2 链均为各自 Run-local `confirmed`；认证责任归因仍 `unknown`；新包来源仅 `strong_candidate/provisional` | V3.1 本地控制面切片已验证；平台已观察到 fail-fast 行为，但认证正路径、build/ZIP 身份和业务生成仍未验证 | P0 gate；仅补认证正路径、endpoint/权限/meter 与新 build 身份，不派业务代码修改 |
 | `P5-013` | 最终包缺少 frontend/backend/main.py/tests，平台在业务测试前拒绝模板 | 最终 ZIP 形状与拒绝原因为 Run-local `confirmed`；旧 Run 上游首断点仍 `unknown` | V4 本地门禁已验证：workspace/staging/final ZIP 清单、首坏阶段、Agent ZIP 根层级；历史首断点与平台未验证 | P0 gate；新 Run 回收 pipeline 清单并绑定 build→ZIP/task snapshot |
 
 **当前跨 Run 结论：**多个 Lite Run 都有十秒超时且请求较多，但 Keep 的可访问名称、seed、DOM 重绘，与 BookStack 的缺路由、保存后展示/定位边界是不同机制。A0 BookStack 的 `P5-001` 缺接线，V1 BookStack 的 `P5-009` 名义路由/API 已存在，不能把两次 `32/34` 合并成一种故障；A0/V1/V2 标签只修正谱系组织，不自动证明阶段五收益。A0 Web BookStack 已 `34/34` 通过，说明漏路由不是所有 BookStack Run 的必然结果，却不能推翻 Lite 的具体漏接证据。禁止按“超时”这一表面标签做单一补丁。
@@ -374,3 +376,12 @@ Pop-Location
 - **验证记录：**`python -m unittest tests.test_main_helpers.TransientTests tests.test_main_helpers.EndpointProbeTests tests.test_main_helpers.SkeletonAuthenticationTests tests.test_main_helpers.EntrypointAuthenticationTests` 为 `9/9`、exit `0`；`python -B -m unittest tests.test_package_shape` 最终为 `8/8`、exit `0`；`python -B -m unittest discover -s tests` 为 `99` 项、`3 failures + 1 error`、exit `1`，失败仍是已知 Windows 基线：`PrivateInstallTests.test_should_keep_every_write_inside_the_private_root`、`ProtectedTreeTests.test_should_restore_changed_deleted_and_added_files`、`InlineSourcesTests.test_should_quote_small_files_and_omit_those_over_budget` 和 `WorktreeSnapshotTests.test_should_undo_test_run_mutations_but_keep_uncommitted_edits`，未新增失败；`git diff --check` 与 `bash -n arc/pack.sh` 均 exit `0`。
 - **交付包身份与门禁：**最终 HEAD `13173bb50e556c78bcd9cfdcc25c5449eee37f65`；文件 `octos-arc-bundle-13173bb50e55.zip`，大小 `339060` 字节，SHA-256 `FDFA6090FDCCB18553ABEF07C6B5429AAB9B0979FB69A9A5D0053730A159EE1A`。同名 `.shape.json` 记录 `arc_agent_bundle_v1` 为 `ok=true`、508 个条目、条目清单 SHA-256 `D24FF569A0105AC5E960D3ACB1448C8D9B5BF685F999F2D86DE1CD3C2EB7DF6C`，必需项缺失数与不安全路径数均为 0，清单内归档 SHA 与独立 `Get-FileHash` 一致。另以 ZIP 中 `main.py`、`package_shape.py`、`acceptance.py` 对比 `git cat-file blob HEAD:arc/<file>`，三项均原字节相等；打包命令 `arc/pack.sh` exit `0`。
 - **当前边界与下一步：**本轮没有平台上传、平台 Run、官方测试修改或远程推送。该 ZIP 可用于用户侧下一次**受控生成/包链路测试**，但“可上传候选”不等于平台已验证；回传时仍需绑定上传时间、submission/build、task snapshot 或官方资产哈希、最终模板 ZIP、pipeline 清单、Run ID 与完整指标。旧 `d4acec5dbbdf` 缺少 workspace/staging 证据，因此其历史首断点继续为 `unknown`。
+
+## 21. BookStack Lite `cca008377368`：`P5-012` 平台 fail-fast 观察（2026-09-21）
+
+- **独立身份与持久证据：**submission `0b90e43b07b7`；handoff `cca008377368-A8540D0184BB`；阶段 4 Thread `01a0b582-3586-7bc1-875e-d4670592d5ba`。manifest SHA-256 为 `A8540D0184BBCB16249C7D09BA41DA0318705159DF9F2AF00F903C9217ACABA5`；ACK 后 handoff 为 `7BDBE0CE032CFF8F3221C1B89C6C309D4D2F59C111538663A98F5B290E750DD1`；ACK 为 `5BE3D30F845C6B5F37917D33506CE33E07F287DF5AB8D3EA9F83AB05F0963C9F`；phase4-result JSON 为 `B849B84CE5A73A5FCB403C92C1A25E4521CC97925556DF3E4BC9CBD3151640BE`，Markdown 为 `33A7C76FD61AE3FE563246DCD7D36E23A84DA3DBA870B200E4B762F70008ABE6`。身份字段均一致；本 Run 不与 `d4acec5dbbdf`、`ff12a7ff45f8` 或其他 BookStack Run 合并。
+- **已确认链路：**环境预检通过后，平台执行 `python3 /workspace/submission/main.py … --output-dir /workspace/template`；生成探测记录 HTTP `401 permanent authentication failure; aborting before generation`，进程以 exit `2` 结束。`run_tests` 未到达、`tests[]` 为空、服务和 Playwright 未启动；平台 `FAILED / score 0 / 0/0` 不是业务结果。最终模板 ZIP SHA-256 `834117533A70FFA8A9D4B16FAF610D0E96CC2DDA35FB9115A1B46B786FDF547E`，23 个条目全部属于模板/依赖材料，没有生成应用树。
+- **V3.1 归因边界：**manifest 原始上传文件名为 `octos-arc-bundle-13173bb50e55.zip`，且 exit `2` 与永久认证 fail-fast 文案和候选实现高度一致，因此把“平台观察到候选行为”记为 `strong_candidate/provisional`。平台未提供上传 ZIP SHA、agent build、code SHA 或 ZIP→build 绑定，故不能宣称提交 `13173bb…` 已获平台源码级验证，也不能把该 Run 计为 V3.1 平台收益。
+- **与 `P5-013` 的边界：**本 Run 的空模板发生在认证失败先行且 main.py 明确中止之后，是已知上游阻断的下游产物状态；它没有独立证明 workspace→staging→最终 ZIP 的打包缺陷。V4 的 workspace/staging/final-ZIP 清单和首坏阶段逻辑未被执行，也没有 pipeline manifest，故不重开或关闭 `P5-013`。
+- **阶段 5 裁决：**登记为 `P5-012` 的独立复发/平台观察，`needs_repro=true`，但范围仅限环境/认证正路径：用获授权的脱敏 endpoint、账号/权限/provider 路由诊断确认 401 责任边界，再以已知有效认证运行同一精确包的 generation-only 流程并冻结 build/ZIP、输出树和 pipeline manifest。当前无需修改 Agent、业务代码、官方测试或打包器，也不在本台账创建或上传新 Run。
+- **指标边界：**平台 run 对象耗时为 `0s`，时间戳推导 wall-clock 为 `7.331646s`；请求、Token、费用均缺失。与 `ff12a7ff45f8` 的 `1,095s` 仅能作为“本次快速终止”的描述性观察，因 submission、配置、provider 状态和计时口径未绑定，不构成严格 A/B，也不支持 Token、成本或平台收益结论。

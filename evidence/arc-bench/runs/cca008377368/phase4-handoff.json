@@ -40,6 +40,8 @@
     "仅记录脱敏认证观察，不传播任何密钥值",
     "最终必须先写 phase4-ack.json，再写 phase4-result.json 和 phase4-result.md，并包含 PHASE4_RESULT: complete|incomplete"
   ],
-  "status": "pending_send",
+  "status": "acknowledged",
+  "send_attempts": 1,
+  "ack_received_at": "2026-09-21T10:30:30.2228284Z",
   "created_at": "2026-09-21T10:26:40.5244015Z"
 }

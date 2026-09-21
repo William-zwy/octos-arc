@@ -19,6 +19,7 @@ All notable changes to octos will be documented in this file.
 - Freeze V3 at `d2fe4dbc7601242896b61b3a790a912732bc5d57`, record the user-reported manual upload and prior A/B authorization, and set the current business/platform-benefit gate to no-go until P5-012/P5-013 and platform identity are closed.
 - Archive the authorized V3.1/V4 control-plane slices on branch `codex/arc-bench-v4-control-plane-gates` and record the byte-bound candidate `octos-arc-bundle-13173bb50e55.zip` with its passing root-shape manifest and SHA-256; no platform upload or Run was performed by this workspace.
 - Make the Phase 5 ledger task decision-only: it may consolidate evidence and maintain decision records, while every future direct code change must be handed to the dedicated `项目阶段5｜Agent 实现` task.
+- Register BookStack Lite Run `cca008377368` as an independent `P5-012` recurrence: the platform observed HTTP 401 fail-fast exit 2 before generation, while source/build identity and an authenticated positive path remain unverified; exclude its `0/0` result from business completion and do not merge the resulting empty template into `P5-013`.
 
 ### Features
 
