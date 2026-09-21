@@ -373,21 +373,31 @@
           "zip_sha256": "FC83EA353975F908C9669380146856077647CA5A80CA5A9CE3EB9E45FA6E8820",
           "zip_path": "D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松/.worktrees/phase5-route-contract/octos-arc-bundle.zip",
           "upload_provenance": "user_reported_manual_upload",
-          "run_id": null
+          "bookstack_run_id": "cca008377368",
+          "keep_run_id": "bf5e742c15a4",
+          "run_mapping_source": "explicit_user_statement_2026-09-21",
+          "run_mapping_confidence": "user_provenance",
+          "platform_identity_status": "conflicted_unbound",
+          "manifest_original_filename_for_both_runs": "octos-arc-bundle-13173bb50e55.zip",
+          "identity_conflict": "The user maps both Runs to frozen V3, while both platform manifests name the later 13173bb50e55 candidate archive; no platform ZIP SHA or build/code binding resolves the conflict."
         }
       ],
       "comparison_groups": {
         "bookstack": [
           "00c59e0762fb",
           "5669f7d1777c",
-          "4ef2cf139806"
+          "4ef2cf139806",
+          "cca008377368"
         ],
         "keep": [
           "0cef369cc925",
           "0aa6820e0b82",
-          "737b56972d5a"
+          "737b56972d5a",
+          "bf5e742c15a4"
         ],
-        "v3_run_pending": true
+        "v3_run_pending": false,
+        "v3_business_result_usable": false,
+        "v3_run_identity_bound_to_frozen_zip": false
       },
       "v3_required_return_fields": [
         "run_id",
@@ -412,7 +422,7 @@
       "old_main_thread_routed": false,
       "platform_verified": false,
       "ledger_decision_recorded": true,
-      "next_gate": "Wait for the V3 Run ID and required result fields, then bind each comparison to the platform build, task snapshot or official asset hash, uploaded ZIP, and metrics before any strict A/B or platform_verified claim."
+      "next_gate": "The V3 Run IDs are now user-mapped. Resolve the conflict between frozen V3 local identity and both manifests naming octos-arc-bundle-13173bb50e55.zip, then obtain an authenticated positive-path business Run with platform build, task snapshot or official asset hash, uploaded ZIP identity, and comparable metrics before any strict A/B or platform_verified claim."
     },
     {
       "key": "ff12a7ff45f8:P5-012:18EB3778B6C0",
@@ -665,8 +675,10 @@
         "manifest_original_filename": "octos-arc-bundle-13173bb50e55.zip",
         "candidate_commit": "13173bb50e556c78bcd9cfdcc25c5449eee37f65",
         "candidate_zip_sha256": "FDFA6090FDCCB18553ABEF07C6B5429AAB9B0979FB69A9A5D0053730A159EE1A",
-        "evidence_level": "strong_candidate_provisional",
-        "boundary": "Filename and distinctive fail-fast behavior are consistent with the candidate, but the platform supplied no uploaded ZIP SHA, agent build, code SHA, or ZIP-to-build binding."
+        "user_version_provenance": "frozen_v3",
+        "user_version_provenance_recorded_at": "2026-09-21",
+        "evidence_level": "conflicted_provisional",
+        "boundary": "The user explicitly maps this Run to frozen V3, while the manifest filename and distinctive fail-fast behavior are consistent with the later candidate. The platform supplied no uploaded ZIP SHA, agent build, code SHA, or ZIP-to-build binding, so neither code identity is platform-verified."
       },
       "underlying_auth_attribution": "unknown",
       "business_tests_executed": false,
@@ -698,7 +710,8 @@
       "v3_1_fail_fast_observation": {
         "observed": true,
         "exit_code": 2,
-        "platform_behavior_validation": "provisional",
+        "platform_behavior_validation": "observed_source_version_conflicted",
+        "user_version_provenance": "frozen_v3",
         "source_identity_validated": false,
         "authenticated_positive_path_validated": false
       },
@@ -730,6 +743,11 @@
       "phase4_result_md_sha256": "E9C83FB624E788D5FE6570E1F2BDCF5B5E2E00875DE2C8056F287A706D836ED1",
       "status": "quarantined_late_result_incomplete_unverified",
       "decision": "do_not_consume_phase4_diagnosis_or_dispatch",
+      "user_version_provenance": "frozen_v3",
+      "user_version_provenance_recorded_at": "2026-09-21",
+      "manifest_original_filename": "octos-arc-bundle-13173bb50e55.zip",
+      "platform_identity_status": "conflicted_unbound",
+      "platform_identity_conflict": "The user maps this Run to frozen V3, while the manifest names the later 13173bb50e55 candidate archive; no platform ZIP SHA or build/code binding resolves the conflict.",
       "phase4_dispatch_attempts": 2,
       "phase4_empty_turns": 2,
       "late_ack_present": true,
