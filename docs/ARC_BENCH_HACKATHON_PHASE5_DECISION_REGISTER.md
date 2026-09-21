@@ -1,10 +1,10 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.15；建立日期：2026-09-19；状态：`ff12a7ff45f8` 已登记为 `P5-012` 生成管线/认证门禁，`0/0` 不计业务完成率并进入限定范围的 `needs_repro`；Lite Agent 的 A0/V1/V2/V3 ZIP↔提交谱系已本地核对，Run 映射仍是用户 provenance，平台 build/task_snapshot→ZIP 绑定未独立确认；`P5-009` 已通过受控复现并收到本地实现候选，仍未通过平台 A/B 门禁；`1aac5ece078e` 是 ticket-booking `10/10` 成功基线。平台启动内部策略和可比 A/B **仍未确认**。
+> 版本：v1.18；建立日期：2026-09-19；状态：V3 已冻结；用户已授权并完成 V3.1/V4 本地控制面切片，候选提交 `c5546e5a05bc6d377b8f3b21f43f2ca70ef9629e` / ZIP `80026108…` 已通过 Agent 根层级门禁，等待用户侧受控平台测试。历史 `P5-012/P5-013` 的平台归因与 workspace→staging→最终模板 ZIP 首断点仍未被旧 Run 证据闭合，新的 build/task snapshot→ZIP 也尚未绑定；两次 `0/0` 仍不计业务完成率，不构成 V3 A/B。平台收益和严格可比 A/B **仍未确认**。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
-> 当前用户授权：已允许按首个 5E 建议做本地 Agent 修改；**未授权启动新平台 Run；暂不推送远程。**
+> 授权历史与当前边界：用户此前报告已人工上传冻结 V3；随后明确授权创建 V3.1/V4 修复切片，并要求交付下一次平台测试 ZIP。该授权覆盖本地实现、验证、打包和向用户交付文件，不授权本工作区代为上传或启动平台 Run；本轮未改官方测试、未推送远程、未上传、未创建平台 Run。
 
 > 会话分工：本文件是唯一跨 Run 决策记录；新会话职责、复现回交、指标门禁和条件转派见[阶段 5 多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)。2026-09-20 新建会话的精简入口见[上下文交接](./ARC_BENCH_HACKATHON_PHASE5_CONTEXT_HANDOFF.md)。
 
@@ -32,6 +32,8 @@
 
 新生成门禁 intake：Keep Lite [`ff12a7ff45f8`](../evidence/arc-bench/runs/ff12a7ff45f8/manifest.json) 的平台结果为 `FAILED`、score `0`、`0/0`，但应用服务与 Playwright 均未启动。该 Run 只证明认证失败观察、skeleton 无产出和模板前置拒绝，不能判断 Keep 业务功能，也不进入业务完成率或版本 A/B 表；详见 `P5-012` 与第 17 节。
 
+新包形状门禁 intake：BookStack Lite [`d4acec5dbbdf`](../evidence/arc-bench/runs/d4acec5dbbdf/manifest.json) 的平台结果为 `FAILED`、score `0`、`0/0`，runner 在业务测试前因最终 ZIP 缺少 `frontend/` 与 `backend/` 拒绝模板；归档清单还显示 `main.py` 与 `tests/` 均不存在。该 Run 仅用于追查 workspace/staging 到最终 ZIP 的生成与打包链路，必须与其他 BookStack Run 分开，不进入业务完成率、失败机制归并或版本 A/B 表；详见 `P5-013` 与第 18 节。
+
 | Run 与原始证据索引 | 平台最终结果 / 内部验收 | 请求与计量 | 当前用途 |
 |---|---|---|---|
 | Keep Lite A0 [`0cef369cc925`](../evidence/arc-bench/runs/0cef369cc925/manifest.json) | 平台 `31/32`、FAILED，`REQ-2.5.4 Unarchive` 十秒超时；内部 round 0 `31/32`（失败 `REQ-2.8.2`）→ round 1 `32/32` | 1,004 次；输入 24,772,611、输出 660,754、缓存命中 22,496,000、推理 436,764、Provider total 25,433,365、平台 Token 58,278,570；13,576 秒；¥31.453807 | 功能可靠性疑点及成本基线；A0 为用户 provenance |
@@ -55,10 +57,11 @@
 | `P5-006` | Undo 可访问名称被生成代码覆盖 | 原版失败、修正版及 32 题回归通过：产物级 `confirmed` | Agent 通用契约/失败提示本地已验证；平台未验证 | P0；与消息文本契约一起回归 |
 | `P5-007` | Keep 归档测试前置数据与生成应用 seed 不一致 | 原版与分步对照 `confirmed`；评分后 ZIP 的 `24/32` **不是**平台启动基线 | 默认 seed 和按钮修复在干净 seed 下通过；评分时目标仍为归档态，精确启动策略未知 | P0；不得用删库回归代替交付验收 |
 | `P5-008` | 重复加载标签与整表重绘打断编辑 | 干净 seed 的 50ms 对照原版 3/3 失败、去重版 3/3 通过；平台精确时序/根因 `unknown` | Agent 通用契约/失败提示本地已验证；平台未验证 | P0；保留全量回归和受控时序 |
-| `P5-009` | BookStack 异步保存后过早选择 heading 定位器，而结果页只以链接展示新实体 | `confirmed`；两题 POST/DB/HTML/helper 链条在受控 150ms 延迟下各 3/3 复现；平台收益和 Agent 归因未知 | `repro_verified`；等待实现授权，不直接修改 Agent | P0；先做单变量实现与 34/34 回归，再谈平台 A/B |
-| `P5-010` | Keep 初始数据契约遗漏必需的 `Work editable` 标签 | `confirmed`：平台失败、bundle `loadDB()`/`seedDefaults()` 链路、设计快照三方闭合；当前仅 Run-local，跨 Run 适用性未知 | `approval_required`；不直接修改 Agent，不做 Keep 名称特例 | P0；复用既有 seed 契约能力，先获用户授权 |
-| `P5-011` | Keep 静态 Reminders 导航与动态 Reminders 标签产生重复 accessible name | `confirmed`：平台 strict-mode 失败、评分前 DOM、最终包源码三方闭合；当前仅 Run-local，跨 Run 适用性未知 | `approval_required`；与 `P5-006` 相关但机制不同，不重复派发 | P0；复用既有 role/name 契约，先获用户授权 |
-| `P5-012` | 模型认证失败后 skeleton 连续无产出，平台在业务测试前拒绝缺少 frontend/backend 的模板 | 401、四次无写入和模板拒绝为 Run-local `confirmed`；认证责任归因 `unknown`；重试耗时为 `strong_candidate` | `needs_repro`；仅复现认证/生成链路，不实施 Keep 业务修复 | P0 blocker；先核验 endpoint/权限/meter，再测确定性成功与 401 |
+| `P5-009` | BookStack 异步保存后过早选择 heading 定位器，而结果页只以链接展示新实体 | `confirmed`；两题 POST/DB/HTML/helper 链条在受控 150ms 延迟下各 3/3 复现；平台收益和 Agent 归因未知 | V3 本地候选已冻结、用户报告已人工上传；当前 `NO-GO` 业务 Run，等待 P5-012/P5-013 与身份门禁 | P0；门禁闭合后先跑 BookStack V3，并核验两题与 34 题回归 |
+| `P5-010` | Keep 初始数据契约遗漏必需的 `Work editable` 标签 | `confirmed`：平台失败、bundle `loadDB()`/`seedDefaults()` 链路、设计快照三方闭合；当前仅 Run-local，跨 Run 适用性未知 | `approval_required` + `deferred`；冻结 V3 不混入本项改动 | P0；待有效 V3 Keep 结果后，必要时作为独立 V4 通用切片 |
+| `P5-011` | Keep 静态 Reminders 导航与动态 Reminders 标签产生重复 accessible name | `confirmed`：平台 strict-mode 失败、评分前 DOM、最终包源码三方闭合；当前仅 Run-local，跨 Run 适用性未知 | `approval_required` + `deferred`；冻结 V3 不混入本项改动 | P0；待有效 V3 Keep 结果后，必要时作为独立 V4 通用切片 |
+| `P5-012` | 模型认证失败后 skeleton 连续无产出，平台在业务测试前拒绝缺少 frontend/backend 的模板 | 401、四次无写入和模板拒绝为 Run-local `confirmed`；认证责任归因 `unknown`；重试耗时为 `strong_candidate` | V3.1 本地控制面切片已验证：401/403 fail-fast、429/5xx/网络错误有界重试、无应用时非零；平台未验证 | P0 gate；受控平台测试仍须核验 endpoint/权限/meter 与新 build 身份 |
+| `P5-013` | 最终包缺少 frontend/backend/main.py/tests，平台在业务测试前拒绝模板 | 最终 ZIP 形状与拒绝原因为 Run-local `confirmed`；旧 Run 上游首断点仍 `unknown` | V4 本地门禁已验证：workspace/staging/final ZIP 清单、首坏阶段、Agent ZIP 根层级；历史首断点与平台未验证 | P0 gate；新 Run 回收 pipeline 清单并绑定 build→ZIP/task snapshot |
 
 **当前跨 Run 结论：**多个 Lite Run 都有十秒超时且请求较多，但 Keep 的可访问名称、seed、DOM 重绘，与 BookStack 的缺路由、保存后展示/定位边界是不同机制。A0 BookStack 的 `P5-001` 缺接线，V1 BookStack 的 `P5-009` 名义路由/API 已存在，不能把两次 `32/34` 合并成一种故障；A0/V1/V2 标签只修正谱系组织，不自动证明阶段五收益。A0 Web BookStack 已 `34/34` 通过，说明漏路由不是所有 BookStack Run 的必然结果，却不能推翻 Lite 的具体漏接证据。禁止按“超时”这一表面标签做单一补丁。
 
@@ -285,12 +288,12 @@ Pop-Location
 - **平台直接事实：**`REQ-5.6.1` 在 Save Book 后等待 `Book Created 5.6.1` 超时；`REQ-6.1.1` 在 Save Page 后已导航至 `/books/8`，仍等待 `Page Created 6.1.1` 超时。两项最终错误都固定为 `getByRole('heading', {name: ...}).first()`。最终生成 ZIP 中有 `Shelf 5.6.1`、关联的 `Book Created 5.6.1`，以及 `bookId=8` 的 `Page Created 6.1.1`；Page 的更新时间为正式平台测试期间，证明该次保存至少写入了持久层。Book 无同等时间字段，不能确定是内部验收还是最终测试写入。
 - **新的共性候选 `P5-009`：**冻结官方 `helpers.ts` 的 `firstVisible()` 在逐个检查定位器的**当下**找不到可见目标时，固定返回列表首个 `heading`；后续 `expect(...).toBeVisible()` 只等该 heading，不会重新选择随后出现的 link。最终生成的 `injectShelfDetails()` 与 `injectBookPages()` 都把新实体名称放在 `<a>` 中，而非 heading；两个表单都在异步 `POST /api/...` 成功后才设置 `window.location.href`。这与两题在跳转完成前选中 heading、跳转后只有 link 的失败链相吻合，`REQ-6.1.1` 还有最终 URL 与评分时 DB 写入佐证。
 - **受控复现更新（2026-09-20）：**`REPRO-NOTES.md`（SHA-256 `9B98634EAC3E4D73ADB4DDD50154BFB9C35BF5E356331809A3CA200CB35F5583`）在两个独立副本、每轮全新 seed 下验证：无延迟时 `REQ-6.1.1` 与 `REQ-5.6.1` 分别通过；仅对对应 POST 增加 150ms 延迟时两题各 3/3 失败，失败 locator 均为目标名称的 `heading`，而 GET HTML 中目标实体均为 `a.shelf-link` 且 DB 已写入。官方 spec/helpers 未修改，因此 `P5-009` 从 `strong_candidate` 升级为 `confirmed`，状态为 `repro_verified`。150ms 只是触发受控竞态的变量，不冒充平台真实延迟。
-- **Evidence refresh 审计（2026-09-20）：**revision `5669f7d1777c-external-refresh-01`、handoff `5669f7d1777c-EC5A608BB104` 的新 manifest SHA-256 为 `EC5A608BB104C2A9B68249BF6B2B2094AEE107CD9DDA574F75892F6FF19B0BAD`，phase4-result SHA-256 为 `DD1EA3905B4A3BD40E544BAAE1D04A5FC5B41AF734379B3855CD285A57BACD6E`；刷新后的 summary/failure-details 未改变根因、证据缺口或阶段5建议。因此本次只作审计确认，保留 `repro_verified_approval_required_no_dispatch`，不新建问题、不重复复现、不派发实现。
+- **Evidence refresh 审计（2026-09-20）：**revision `5669f7d1777c-external-refresh-01`、handoff `5669f7d1777c-EC5A608BB104` 的新 manifest SHA-256 为 `EC5A608BB104C2A9B68249BF6B2B2094AEE107CD9DDA574F75892F6FF19B0BAD`，phase4-result SHA-256 为 `DD1EA3905B4A3BD40E544BAAE1D04A5FC5B41AF734379B3855CD285A57BACD6E`；刷新后的 summary/failure-details 未改变根因、证据缺口或阶段5建议。当时只作审计确认并保留 `repro_verified_approval_required_no_dispatch`；后续实现、上传 provenance 与当前 NO-GO 门禁见本节下一条和第 19 节，历史记录不删除。
 - **与既有问题的边界：**旧 Lite BookStack `P5-001` 是声明的路由未接入主分发；此 Run 两题的名义路由、表单、POST/API、后端列表注入都存在，不应继续套用“缺路由”补丁。与 Keep `P5-006` 同属可访问语义，但 Keep 是按钮 `aria-label` 被覆盖；本项是保存后的结果页面角色和异步定位时序，属于**相关但不同机制**。候选 Agent 的通用精确角色/名称契约可能有帮助，但还没有本 Run 的阶段五收益证据。
 - **纠偏阶段 4 建议：**[阶段 4 结果](../evidence/arc-bench/runs/5669f7d1777c/phase4-result.json) 提出把最终评测改为“不可变干净 DB”并把状态污染列为强候选。本阶段保留它作为待排除解释，**不把评分后 ZIP 的 DB 当成评分前快照，也不授权全局清库**；上一 Run 第 11 节已实证导出 DB 会含平台测试写入。前后构建不一致亦缺源码/dist 哈希，不能先按此修改 Agent。平台没有提供两题最终 DOM、响应体、请求 trace 或评分前 DB 哈希。
 - **最小验证顺序：**在隔离副本使用同一冻结官方 spec：①先运行原版两题，记录点击 Save 前后时间、URL、POST 状态、重定向、返回 HTML、`heading` 与 `link` 可见性，并分别保存每次前后的 DB 哈希；②若目标数据已写入且结果页只呈现 link，则单变量把书/页卡片标题改为语义合理的 heading（可在其中保留 link），原样复跑两题；③两题通过后跑同一份 34 题、比较干净 seed 与预存 DB 两种**明确标记**的起点，防回归。若原版响应根本未含目标记录，再查写入/读取/构建边界；不要先增加超时、全局清库或改官方 helper。以上均为建议，**本次未执行本地复现或新平台 Run**。
 - **实现决策门槛（本地阶段已满足）：**受控复现已确认生成应用结果角色/导航闭环问题；用户授权的最小、通用 Agent 切片已形成本地候选。建议复用现有 role/name 与异步稳定契约入口，不把 `h2`/`link` 产物修复硬编码进通用 Agent，也不修改官方 helper。上传 Agent ZIP SHA、平台 build、代码与 `task_snapshot_id` 的绑定仍须补齐，方可谈同条件平台 A/B；当前不声明平台收益。
-- **本地实现候选（2026-09-21）：**实现交接 `phase5-p5009-impl-20260921-d2fe4dbc` 提供候选树 `.worktrees/phase5-route-contract` 的提交 `d2fe4dbc7601242896b61b3a790a912732bc5d57`，改动 `arc/main.py`、`arc/acceptance.py`、`arc/tests/test_acceptance.py`、`arc/tests/test_main_helpers.py` 与 `CHANGELOG.md`。定向测试 `11/11`（exit 0）；全量 `85` 项为 `3 fail + 1 error`，交接报告称与既有 Windows 基线一致、未新增失败。该状态是**本地已验证候选**，不是 `platform_verified`；未跑平台、未上传、未推送，不能据此宣称平台收益。
+- **本地实现候选与后续上传 provenance（2026-09-21）：**实现交接 `phase5-p5009-impl-20260921-d2fe4dbc` 提供候选树 `.worktrees/phase5-route-contract` 的提交 `d2fe4dbc7601242896b61b3a790a912732bc5d57`，改动 `arc/main.py`、`arc/acceptance.py`、`arc/tests/test_acceptance.py`、`arc/tests/test_main_helpers.py` 与 `CHANGELOG.md`。定向测试 `11/11`（exit 0）；全量 `85` 项为 `3 fail + 1 error`，交接报告称与既有 Windows 基线一致、未新增失败。实现交接当时记录“未跑平台、未上传、未推送”；后续决策卡报告 ZIP `FC83EA353975F908C9669380146856077647CA5A80CA5A9CE3EB9E45FA6E8820` 已由用户人工上传。上传事实目前只是用户 provenance，缺平台 build、Run ID 与 task snapshot/官方资产哈希绑定，故仍不是 `platform_verified`，也不能宣称平台收益。
 
 ## 13. Lite Keep `737b56972d5a` confirmed evidence revision：Run-local 根因已确认，等待实现授权（2026-09-20）
 
@@ -298,7 +301,7 @@ Pop-Location
 - **平台与边界：**平台仍为 `30/32`、score `93.8`、`FAILED`；入口 `main.py`、测试目录 `/workspace/tests`、bundled fallback `0` 未变。新增证据闭合 runner → bundle DB/启动链路 → 生成源码/设计快照 → 评分前 DOM 的 Run-local 链条，因此两个失败机制从阶段 4 的候选升级为 `confirmed`。这不等于 Agent 构建、上传 ZIP、任务快照或平台 A/B 身份已确认。
 - **`P5-010`｜Work editable seed 契约：**`loadDB()` 清空 labels 后，`seedDefaults()` 只重种 `Work` 与 `Reminders`；设计快照要求 `Work editable`，平台首步定位该标签输入框超时，故“生成应用初始数据未满足需求契约”在本 Run 内确认。它与 `P5-007` 同属 seed/前置数据契约家族，但不是同一 fixture 或归档操作，不把 `Work editable` 写成 `P5-007` 的平台复现。建议复用已有通用 seed 契约提示/验收入口，不写死 Keep 标签名；状态为 `approval_required`，不派发实现。
 - **`P5-011`｜Reminders accessible-name 冲突：**评分前 DOM 同时存在 `#nav-reminders` 与 `data-label=Reminders` 按钮，二者 accessible name 均为 `Reminders`，直接解释 `REQ-2.7.6.3` strict-mode failure。它与 `P5-006` 同属可访问语义契约家族，但不是 Undo 名称被覆盖，而是两个控件名称不唯一；建议复用既有 role/name 诊断能力，不硬编码 Keep 导航名；状态为 `approval_required`，不派发实现。
-- **转派与复现决策：**本 revision 标记 `needs_repro=false`；不再为这两个 Run-local 根因自动创建隔离复现卡。由于仍缺 `task_snapshot_id`、Agent build/code SHA、上传 Agent ZIP SHA-256，当前不标 `platform_verified`，也不计算阶段 5 A/B 收益。只有用户明确授权两个最小实现切片后，才能进入 `implementation_authorized`；实现后仍须本地全套 `/workspace/tests` 回归，再按阶段 3→4→台账流程处理平台 Run。
+- **转派与复现决策：**本 revision 标记 `needs_repro=false`；不再为这两个 Run-local 根因自动创建隔离复现卡。由于仍缺 `task_snapshot_id`、Agent build/code SHA、上传 Agent ZIP 到平台构建的独立绑定，当前不标 `platform_verified`，也不计算阶段 5 A/B 收益。最新决策把 `P5-010/P5-011` 保持为 `confirmed + approval_required + deferred`：不混入冻结 V3；待 V3 获得有效 Keep 业务结果后，若仍精确复现，再作为两个隔离的通用 V4 小切片裁决，不硬编码 `Work`/`Reminders`。
 - **保留缺口：**外部补充证据的 notes 数量存在文字算术不一致，但不影响两个根因的闭合证据；平台总耗时仍不能拆分为 LLM、浏览器和测试阶段。身份缺口是平台 A/B 门禁，不否定本次 Run-local 根因确认。
 
 ## 14. Lite BookStack `4ef2cf139806`：条件接收，先做隔离复现（2026-09-20）
@@ -306,7 +309,7 @@ Pop-Location
 - **身份与边界：**manifest SHA-256 为 `F10B7A1DE23B83BF39B46F1CFD76140911C065F75E516CD74BA5685E7D68A5A0`；phase4-result SHA-256 为 `B0AA9FCEDC6719C9527432A2DB6AA6AA4383C978CC00EAB89AF38808527414E9`；result Markdown SHA-256 为 `619D344C89290588C94664EAB43756C9C3E58D4BD39062225DB5CA4B07BCEFE3`。handoff `4ef2cf139806-F10B7A1DE23B8`、Run/task/thread 字段一致，阶段4注册表为 `verified`。谱系短卡将此 Run 归入 V2 `dddc94312d4cd26babdbfb9d7df2a17f08f0a51d` / ZIP `984D818AE6736907925E9ECB3F95A09846F5F3F2203DED8F1960F7728C25BF38`；共享 submission 不足以完成平台绑定，故仍与 V1/A0 Run 分开保留。
 - **平台事实：**平台最终 `31/34`、score `91.2`、`FAILED`；入口为 `main.py`，测试目录为 `/workspace/tests`，bundled fallback 为 `0`。失败为 `REQ-2.2` 登录后昵称、`REQ-6.3.1` 阅读页、`REQ-9.1` Recently Updated 导航后三个 heading locator 超时。内部全套为 `31/34 → 32/34 → 31/34`，三个 targeted 节点三轮均失败；不能把局部修复轮或 31 个通过项解释为稳定机制确认。
 - **机制分叉：**`REQ-2.2` 的 authenticated nickname role/DOM 与 session readback 是独立候选；`REQ-6.3.1`/`REQ-9.1` 都涉及页面读回、recently-updated 链路和最终 DOM 暴露，但目前只有缺失 locator 与静态源码/DB 证据。它们与已 `repro_verified` 的 `P5-009` 保存后 link/heading 机制相关但未证实相同，不能合并；可变 DB/session 和 acceptance→package→platform 边界也可能是共同上游解释。
-- **台账决策：**条件接收为 `needs_repro`，暂不分配新的 P5 问题 ID；先在 pristine 副本分别复现三条失败链，保存 login cookie/GET `/`、页面链接/阅读页 GET、create/home/recently-updated 请求、响应体、DOM、trace 和前后 DB 哈希，并对比“干净状态”和“内部全套后状态”。复现结果返回台账后再按机制拆分 ID；不派发实现、不创建平台 Run。
+- **台账决策：**条件接收为 `conditional_needs_repro_deferred`，暂不分配新的 P5 问题 ID，也不实施三项机制。只有门禁闭合后的冻结 V3 再次出现相同题目/链路，才在 pristine 副本执行既定 request/DOM/DB 复现：保存 login cookie/GET `/`、页面链接/阅读页 GET、create/home/recently-updated 请求、响应体、DOM、trace 和前后 DB 哈希，并对比“干净状态”和“内部全套后状态”。复现结果返回台账后再按机制拆分 ID；不派发实现、不单独创建平台 Run。
 - **门禁与缺口：**仍缺 `task_snapshot_id`、agent build/code SHA、上传 ZIP 到平台构建的绑定，以及三条失败的最终 DOM/trace/HAR/响应体/请求级证据。即使隔离复现成立，也不能声明平台 A/B 收益；修复前必须保留 31 个通过场景，并记录 source/dist/database/package 哈希。
 
 ## 15. Ticket-booking `1aac5ece078e`：成功基线登记（2026-09-21）
@@ -331,6 +334,8 @@ Pop-Location
 
 **临时对照规则：**BookStack 只沿 `00c59e0762fb`（A0）→`5669f7d1777c`（V1）→`4ef2cf139806`（V2）→V3 新 Run 比较；Keep 只沿 `0cef369cc925`（A0）→`0aa6820e0b82`（V1）→`737b56972d5a`（V2）→V3 新 Run 比较。不同任务之间不计算 A/B；同任务也必须补齐 task snapshot 或官方资产哈希、平台 build/code/ZIP 绑定及同口径指标后，才能升级为严格可比 A/B 或 `platform_verified`。V3 Run 回传至少包含 run/submission/build、snapshot 或官方资产哈希、通过数、首轮通过数、失败样本、请求、Token、费用、耗时和修复轮次。本卡不触发 Agent 实现、平台 Run、上传或旧主会话路由。
 
+**发布基线与当前有效门禁：**Lite 发布功能基线继续使用 A0：BookStack `00c59e0762fb=32/34`、Keep `0cef369cc925=31/32`。V1 为 `32/34 + 29/32`，V2 为 `31/34 + 30/32`，均未在两任务上同时超过 A0；其 Token、费用或耗时变化不能覆盖功能回归。冻结 V3 必须同时与 A0 发布基线、V2 增量父版本及 V1 `P5-009` 机制样本比较；功能门槛未满足前，不比较效率指标，也不得用“失败集合换了一组”冒充修复。详见第 19 节。
+
 ## 17. Keep Lite `ff12a7ff45f8`：测试前认证/生成门禁（2026-09-21）
 
 - **身份与持久证据：**submission `535d25f72007`；handoff `ff12a7ff45f8-D42FCA49784D`；阶段 4 Thread `01a0b57a-7a65-77d0-a08a-e202167e4f70`。manifest SHA-256 为 `D42FCA49784DCFF82C502474AA17A676C8C7028E048AD4196645ABC6B2942F6E`；handoff 为 `23517093C1A91CE802EFB3B77E7F707852025092E67D81187E01C95C3A9D4C7F`；ACK 为 `692D02F41091040D48CE599FEF7CCF73F419A28703461D190DDE9C5A50490BEA`；phase4-result JSON 为 `18EB3778B6C0AF563DAC53594938CC494456DD1F2FD5129D78EE431C7DC6B36E`；Markdown 为 `9DD0566C66720366CF2017E228E5292D405C45B59088BD3639D2C35DE8A0AEBE`。ACK/结果身份字段一致，两份结果均标记 `PHASE4_RESULT: complete`。
@@ -338,3 +343,32 @@ Pop-Location
 - **责任边界：**已确认“发生认证失败并阻断生成”，未确认具体是密钥有效性、账号/模型权限、provider 路由、平台凭据绑定或临时状态。约 10 分钟的 21 次探测与后续四次 skeleton 重试支持“应评估有界重试/快速失败”的候选，但不能直接据此修改 Agent。日志无明文密钥命中；Token、请求数、provider totals 与费用均不可用，总耗时 `1,095s`。
 - **阶段 5 决策：**新建 `P5-012`，状态 `needs_repro`，范围仅限：①分离模型 endpoint 与 meter 认证；②用确定性成功 mock/fixture 验证现有入口能写出并验证 `frontend/`、`backend/`；③注入确定性 401 测量重试次数、耗时和安全 fail-fast 边界。认证与 skeleton 产出未确认前，不实施 Keep 业务修复、不创建新平台 Run、不上传、不修改官方测试。
 - **重开与交付门禁：**隔离复现须只记录状态码、错误类别和非秘密指标；若成功响应仍不能产出 skeleton，再定位 Agent 具体写入/验证路径。只有认证链路、skeleton 产出和有界重试均有证据后，才决定是否授权实现或新平台 Run。本 Run 永不用于推断 Keep 页面业务完成率。
+
+## 18. BookStack Lite `d4acec5dbbdf`：测试前包形状/生成门禁（2026-09-21）
+
+- **身份与持久证据：**submission `535d25f72007`；handoff `d4acec5dbbdf-686648028D9A`；阶段 4 Thread `01a0b582-3586-7bc1-875e-d4670592d5ba`。manifest SHA-256 为 `686648028D9A709FE16FAE29AAE4B4B188DCFF30230AAECB876A45DA7F9FAA05`；handoff 为 `844BC1BD79AAA671B735E7EFDF0A7264917DCDB1FEEF677A7812EA7A56E8333E`；ACK 为 `99D078EEDB7880B7B523C399225FDB51D6F1D7B5982DAE6CE7BFF74799D3A5A0`；phase4-result JSON 为 `7A8C8AF29377EB6168610D020E7517907602E916D80E03B46EE2B22AA1302C71`；Markdown 为 `E820C23F90286E9C918FC8D8147BC1403930E83D7AEF1F2CA4D48DF60D6300AA`。registry 已核验，ACK/结果身份字段一致，结果为 `complete`。
+- **已确认失败链：**最终 `template.zip` SHA-256 为 `8841987DE1FF6942FEEF151B83B9C73B64D16725E1EE11D71E73A552228FCD10`，共 25 个条目；`frontend/`、`backend/`、`main.py`、`tests/` 的命中数均为 0。runner 以 `web template is incomplete: expected frontend/ and backend/ directories` 在业务测试前停止，`run_tests` 未到达、`tests[]` 为空，因此 `FAILED / score 0 / 0/0` 不是 BookStack 业务测试结果。
+- **证据边界：**原始日志只有空的 `events=[]`、`stdout=[]`，页面数为 0；关于 `main.py`、`/workspace/tests`、bundled tests 或 API key 的摘要说法均未获原始记录支持，保持 `unverified`。当前只能确认最终包形状错误，不能确认遗漏发生于生成、workspace 写入、staging 复制、归档根层级还是上传绑定；不与任何既有 BookStack Run 或 `P5-009` 合并。
+- **阶段 5 决策：**新建独立 `P5-013`，状态 `needs_repro`，范围仅限只读/受控的包链路诊断：①对精确 ZIP 执行 `frontend/`、`backend/`、`main.py`、`tests/` 根层级门禁；②分别冻结 workspace、staging 与最终 ZIP 清单及 stdout/stderr，定位首次缺失点；③以已知良好包运行同一形状门禁；④补齐平台 build/产物与 ZIP SHA 的绑定。当前不实施 BookStack 业务修复、不修改官方测试、不上传，也不创建新平台 Run。
+- **计量与重开门禁：**平台总耗时 `1,096s`；请求数、Token、费用和修复轮次不可用。只有形状门禁能区分已知良好包与本包、且 workspace→staging→ZIP 的首个断点与 build→ZIP 身份均可审计后，才决定是否授权修复或新平台 Run。
+
+## 19. 冻结 V3 的授权历史、指标门槛与当前 NO-GO（2026-09-21）
+
+- **决策来源与时序：**handoff `phase5-v3-conditional-go-20260921-v1` 先记录“认证门禁通过后按 BookStack→Keep 顺序做同包同配置 A/B”；随后指标决策回交把生效门禁收紧为：P5-012 与 P5-013 的确定性复现、workspace→staging→ZIP 首个断点、平台 build→ZIP 和 task snapshot/官方资产哈希未闭合前，`no-go for business/platform benefit claim`，不再启动业务平台 Run。前者作为授权历史保留，后者是当前有效决策。
+- **冻结产物与上传状态：**V3 固定为提交 `d2fe4dbc7601242896b61b3a790a912732bc5d57`、ZIP SHA-256 `FC83EA353975F908C9669380146856077647CA5A80CA5A9CE3EB9E45FA6E8820`；本地实现与 ZIP↔提交身份已核验，用户报告已人工上传。当前不再叠加代码；“已上传”不等于已独立绑定到平台 build，也没有有效 V3 业务 Run ID，因此仅标 `user_reported_manual_upload / provisional`。
+- **前置事件边界：**`ff12a7ff45f8` 与 `d4acec5dbbdf` 共享 submission `535d25f72007` 和相近时间窗口，可作为同一提交下的相关运维事件审计；两条证据链仍分别保留为 P5-012（401→skeleton 无产出）与 P5-013（最终产物形状缺失），不互相替代，不计业务完成率，不构成 V3 A/B，也不能独立证明运行了 V3 构建。
+- **门禁闭合后的唯一运行顺序：**只重跑冻结 V3；先 BookStack，确认生成链正常且取得新 Run ID，再以同一 ZIP 和同配置跑 Lite Keep，也必须取得独立新 Run ID。两次 Run 都须回传 run/submission/build（如有）、上传文件名与时间、task snapshot 或官方资产哈希、完整配置、总通过数、首轮通过数、失败样本、请求数、输入/输出/缓存/推理 Token、Provider total、平台 Token、费用、耗时与修复轮次。缺 ZIP→build/task snapshot 独立绑定时只能记 `provisional/descriptive`。
+- **功能裁决：**最终 `GO` 只接受 BookStack `34/34` 且 Keep `32/32`。若 BookStack 至少 `32/34`、Keep 至少 `31/32`，`P5-009` 的 `REQ-5.6.1`/`REQ-6.1.1` 已通过且没有任何新失败机制，只记“无回归候选”，阶段 5 仍未完成；任一任务低于各自 A0 基线即 `reject/reopen`。失败集合替换不得计为修复。Keep 只作为跨任务回归门禁；P5-010/P5-011 本轮继续 DEFER。
+- **效率裁决：**严格比较同时保留 A0 发布基线、V2 `dddc9431…` 增量父版本和 V1 `5669f7d1777c` 的 P5-009 机制样本。只有功能门槛满足且失败集合不劣时，才依次比较请求、输入/输出/缓存/推理 Token、Provider total、平台 Token、费用、耗时和修复轮次；效率改善不能抵消功能回归。
+- **本卡不授权：**不授权新的 Agent 或官方测试修改，不授权再次上传，不授权现在启动平台 Run，也不向旧主会话路由。下一动作仅是闭合 P5-012/P5-013 与平台身份门禁；达到门禁后再按上述冻结顺序重新裁决是否放行。
+
+## 20. V3.1/V4 控制面切片与下一平台测试包（2026-09-21）
+
+- **授权与问题绑定：**用户在第 19 节决策之后明确授权创建 V3.1/V4 修复切片，并要求交付下一次平台测试压缩包；本切片只处理 `P5-012` 永久鉴权/有界重试和 `P5-013` 包形状可审计性，不混入 `P5-009/P5-010/P5-011` 业务提示或官方测试改动。相关历史 handoff 为 `ff12a7ff45f8-D42FCA49784D` 与 `d4acec5dbbdf-686648028D9A`。
+- **仓库与基线：**远程 `git@github.com:William-zwy/octos-p.git`；工作树 `D:\DataMove\codex\worktrees\9015\AI智能体软件工厂黑客松\.worktrees\phase5-route-contract`；分支 `codex/arc-bench-v4-control-plane-gates`，无上游；冻结父提交 `d2fe4dbc7601242896b61b3a790a912732bc5d57`。本轮未拉取合并、未推送远程。
+- **V3.1 原子提交：**`7423bf2c1602598007feb71953b49dc11ef42adf`（`fix(arc): fail fast on permanent provider auth`），改动 `CHANGELOG.md`、`arc/main.py`、`arc/tests/test_main_helpers.py`。行为边界：401/403 或明确鉴权标记首次终止；429、5xx 和网络瞬态仅做可配置的有限次数重试；生成前永久失败返回 2，其他不可恢复探测失败返回 3；skeleton 首次永久鉴权拒绝即停，无可运行应用的致命失败不再返回 0。
+- **V4 原子提交：**`21d7a3dd2d530ac0a78caf6ea28bcc1663399385`（`feat(arc): gate generated app package shape`），新增 `arc/package_shape.py`、正反夹具与 `arc/tests/test_package_shape.py`，修改 `arc/main.py`、`arc/pack.sh`、`arc/README.md` 和 `CHANGELOG.md`。生成应用合同只要求 ZIP/目录根层级 `frontend/`、`backend/`；`main.py/tests` 为观察字段，不误列为生成应用必需项。postflight 冻结 workspace 以及可选 staging/final ZIP 的清单、条目哈希和首个失败阶段；Agent 上传 ZIP 使用独立 `arc_agent_bundle_v1` 合同。
+- **打包实跑修复提交链：**`7a5f68c7c3b530a1eb0789412beb500d9ae9be0a`（Python launcher fallback）、`9ec8e91fe4374ec3a737772a10dc1bf696cd85e3`（仓库根归档）、`23580b6d3bda953c0469cd773424cc2b1e3ef2bb`（Git Bash 路径转换）、`4d822362ea4d59f33e0a2337d98377df864c76b0`（非登录 Git Bash 工具路径）、`6b56c6d57d45845dba5a526f86f981739f8fcd6f`（可用 Python 探测）、`c5546e5a05bc6d377b8f3b21f43f2ca70ef9629e`（Python 自包含 SHA-256）。这些提交只收敛 `arc/pack.sh` 与同一 `CHANGELOG.md` 记录，没有改变业务生成提示、官方 spec 或 V4 门禁合同。
+- **验证记录：**`python -m unittest tests.test_main_helpers.TransientTests tests.test_main_helpers.EndpointProbeTests tests.test_main_helpers.SkeletonAuthenticationTests tests.test_main_helpers.EntrypointAuthenticationTests` 为 `9/9`、exit `0`；`python -B -m unittest tests.test_package_shape` 最终为 `8/8`、exit `0`；`python -B -m unittest discover -s tests` 为 `99` 项、`3 failures + 1 error`、exit `1`，失败仍是已知 Windows 基线：`PrivateInstallTests.test_should_keep_every_write_inside_the_private_root`、`ProtectedTreeTests.test_should_restore_changed_deleted_and_added_files`、`InlineSourcesTests.test_should_quote_small_files_and_omit_those_over_budget` 和 `WorktreeSnapshotTests.test_should_undo_test_run_mutations_but_keep_uncommitted_edits`，未新增失败；`git diff --check` 与 `bash -n arc/pack.sh` 均 exit `0`。
+- **交付包身份与门禁：**最终 HEAD `c5546e5a05bc6d377b8f3b21f43f2ca70ef9629e`；文件 `octos-arc-bundle-c5546e5a05bc.zip`，大小 `341609` 字节，SHA-256 `80026108E24A10F73E4842B6C024D9FF4810D8860351E57F2D805F07D924D682`。同名 `.shape.json` 记录 `arc_agent_bundle_v1` 为 `ok=true`、508 个条目、条目清单 SHA-256 `D24FF569A0105AC5E960D3ACB1448C8D9B5BF685F999F2D86DE1CD3C2EB7DF6C`，必需项缺失数与不安全路径数均为 0，清单内归档 SHA 与独立 `Get-FileHash` 一致。打包命令 `arc/pack.sh` exit `0`。
+- **当前边界与下一步：**本轮没有平台上传、平台 Run、官方测试修改或远程推送。该 ZIP 可用于用户侧下一次**受控生成/包链路测试**，但“可上传候选”不等于平台已验证；回传时仍需绑定上传时间、submission/build、task snapshot 或官方资产哈希、最终模板 ZIP、pipeline 清单、Run ID 与完整指标。旧 `d4acec5dbbdf` 缺少 workspace/staging 证据，因此其历史首断点继续为 `unknown`。

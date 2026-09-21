@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "purpose": "Phase 5 role mapping and idempotent handoff index; decisions live only in the Markdown register",
-  "updated_at": "2026-09-20",
+  "updated_at": "2026-09-21",
   "source_checkout": "D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松",
   "user_limits": {
     "remote_push_authorized": false,
@@ -455,6 +455,161 @@
       "official_tests_modified": false,
       "ledger_decision_recorded": true,
       "next_gate": "First isolate model endpoint, entitlement/account/provider routing and meter authentication; then verify deterministic successful skeleton output and measure deterministic 401 retry bounds. Do not implement Keep business fixes or create a platform Run before those gates close."
+    },
+    {
+      "key": "d4acec5dbbdf:P5-013:7A8C8AF29377",
+      "run_id": "d4acec5dbbdf",
+      "submission_id": "535d25f72007",
+      "task_key": "arc-bench-lite--bookstack",
+      "issue_id": "P5-013",
+      "source_handoff_id": "d4acec5dbbdf-686648028D9A",
+      "phase4_thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+      "manifest": "evidence/arc-bench/runs/d4acec5dbbdf/manifest.json",
+      "manifest_sha256": "686648028D9A709FE16FAE29AAE4B4B188DCFF30230AAECB876A45DA7F9FAA05",
+      "phase4_handoff": "evidence/arc-bench/runs/d4acec5dbbdf/phase4-handoff.json",
+      "phase4_handoff_sha256": "844BC1BD79AAA671B735E7EFDF0A7264917DCDB1FEEF677A7812EA7A56E8333E",
+      "phase4_ack": "evidence/arc-bench/runs/d4acec5dbbdf/phase4-ack.json",
+      "phase4_ack_sha256": "99D078EEDB7880B7B523C399225FDB51D6F1D7B5982DAE6CE7BFF74799D3A5A0",
+      "phase4_result": "evidence/arc-bench/runs/d4acec5dbbdf/phase4-result.json",
+      "phase4_result_sha256": "7A8C8AF29377EB6168610D020E7517907602E916D80E03B46EE2B22AA1302C71",
+      "phase4_result_md": "evidence/arc-bench/runs/d4acec5dbbdf/phase4-result.md",
+      "phase4_result_md_sha256": "E820C23F90286E9C918FC8D8147BC1403930E83D7AEF1F2CA4D48DF60D6300AA",
+      "status": "ledger_triaged_needs_repro_package_shape_gate",
+      "decision": "confirmed_pretest_package_shape_blocker_upstream_generation_cause_unknown",
+      "scope_is_run_local": true,
+      "merge_with_other_runs": false,
+      "needs_repro": true,
+      "repro_scope": "Read-only package-shape gate plus workspace/staging/final-ZIP manifests, stdout/stderr capture, known-good package comparison, and platform build-to-ZIP identity binding only.",
+      "confirmed_observations": [
+        "The final template ZIP contains 25 entries and no frontend/, backend/, main.py, or tests/ entries at the expected archive level.",
+        "The runner rejected the web template before run_tests; tests[] is empty.",
+        "Raw events and stdout are empty and no pages were captured."
+      ],
+      "upstream_generation_or_packaging_cause": "unknown",
+      "raw_log_evidence": {
+        "events": 0,
+        "stdout": 0,
+        "pages": 0,
+        "runtime_summary_claims": "unverified"
+      },
+      "business_tests_executed": false,
+      "business_result_usable": false,
+      "platform_final": {
+        "status": "FAILED",
+        "score": 0.0,
+        "passed": 0,
+        "total": 0,
+        "failure_reason": "web template is incomplete: expected frontend/ and backend/ directories"
+      },
+      "archive_inventory": {
+        "template_zip_sha256": "8841987DE1FF6942FEEF151B83B9C73B64D16725E1EE11D71E73A552228FCD10",
+        "entry_count": 25,
+        "frontend_entries": 0,
+        "backend_entries": 0,
+        "main_py_entries": 0,
+        "tests_entries": 0
+      },
+      "metering": {
+        "requests": null,
+        "platform_token_count": null,
+        "provider_total_tokens": null,
+        "cost": null,
+        "repair_rounds": null,
+        "run_duration_seconds": 1096
+      },
+      "dispatch_id": null,
+      "ack_id": null,
+      "implementation_dispatched": false,
+      "new_platform_run_created": false,
+      "upload_performed": false,
+      "official_tests_modified": false,
+      "ledger_decision_recorded": true,
+      "next_gate": "Run the same root-level shape gate on this ZIP and a known-good package, freeze workspace/staging/final-ZIP manifests plus stdout/stderr, locate the first missing stage, and bind platform build identity to the ZIP before authorizing a fix or new platform Run."
+    },
+    {
+      "key": "phase5:v4-control-plane:c5546e5a05bc",
+      "issue_ids": ["P5-012", "P5-013"],
+      "authorization": "User explicitly authorized V3.1/V4 repair slices and requested delivery of the next platform-test archive.",
+      "status": "local_verified_candidate_packaged_not_uploaded",
+      "remote": "git@github.com:William-zwy/octos-p.git",
+      "branch": "codex/arc-bench-v4-control-plane-gates",
+      "worktree": "D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松/.worktrees/phase5-route-contract",
+      "baseline_sha": "d2fe4dbc7601242896b61b3a790a912732bc5d57",
+      "commits": [
+        {
+          "sha": "7423bf2c1602598007feb71953b49dc11ef42adf",
+          "message": "fix(arc): fail fast on permanent provider auth",
+          "scope": "V3.1 permanent-auth fail-fast, bounded transient retry, skeleton stop, and nonzero fatal pre-generation exits"
+        },
+        {
+          "sha": "21d7a3dd2d530ac0a78caf6ea28bcc1663399385",
+          "message": "feat(arc): gate generated app package shape",
+          "scope": "V4 workspace/staging/final-ZIP app shape manifests, first-bad-stage detection, Agent ZIP contract, fixtures, and tests"
+        },
+        {
+          "sha": "7a5f68c7c3b530a1eb0789412beb500d9ae9be0a",
+          "message": "fix(arc): support local Python packer fallback",
+          "scope": "packer portability"
+        },
+        {
+          "sha": "9ec8e91fe4374ec3a737772a10dc1bf696cd85e3",
+          "message": "fix(arc): archive bundles from repository root",
+          "scope": "linked-worktree archive root"
+        },
+        {
+          "sha": "23580b6d3bda953c0469cd773424cc2b1e3ef2bb",
+          "message": "fix(arc): normalize validator paths in Git Bash",
+          "scope": "MSYS-to-Windows validator paths"
+        },
+        {
+          "sha": "4d822362ea4d59f33e0a2337d98377df864c76b0",
+          "message": "fix(arc): initialize Git Bash tool paths",
+          "scope": "non-login Git Bash tool discovery"
+        },
+        {
+          "sha": "6b56c6d57d45845dba5a526f86f981739f8fcd6f",
+          "message": "fix(arc): probe usable Python packer runtime",
+          "scope": "executable Python interpreter probe"
+        },
+        {
+          "sha": "c5546e5a05bc6d377b8f3b21f43f2ca70ef9629e",
+          "message": "fix(arc): hash bundles without shasum",
+          "scope": "self-contained archive SHA-256 and final candidate HEAD"
+        }
+      ],
+      "validation": {
+        "auth_targeted": {"tests": 9, "passed": 9, "exit_code": 0},
+        "shape_targeted": {"tests": 8, "passed": 8, "exit_code": 0},
+        "full_suite": {
+          "tests": 99,
+          "failures": 3,
+          "errors": 1,
+          "exit_code": 1,
+          "classification": "unchanged known Windows baseline; no new failures"
+        },
+        "diff_check_exit_code": 0,
+        "pack_script_syntax_exit_code": 0,
+        "pack_exit_code": 0
+      },
+      "artifact": {
+        "filename": "octos-arc-bundle-c5546e5a05bc.zip",
+        "size_bytes": 341609,
+        "sha256": "80026108E24A10F73E4842B6C024D9FF4810D8860351E57F2D805F07D924D682",
+        "shape_manifest": "octos-arc-bundle-c5546e5a05bc.shape.json",
+        "shape_contract": "arc_agent_bundle_v1",
+        "shape_ok": true,
+        "entry_count": 508,
+        "entries_sha256": "D24FF569A0105AC5E960D3ACB1448C8D9B5BF685F999F2D86DE1CD3C2EB7DF6C",
+        "missing_required_entries": 0,
+        "unsafe_entries": 0
+      },
+      "official_tests_modified": false,
+      "remote_pushed": false,
+      "uploaded": false,
+      "platform_run_created": false,
+      "platform_verified": false,
+      "historical_first_missing_stage": "unknown",
+      "next_gate": "User may upload this archive for a controlled generation/package-chain test; bind upload time, platform submission/build, task snapshot or official asset hash, final template ZIP, pipeline manifest, Run ID, and metrics before any platform-benefit claim."
     }
   ]
 }

@@ -1,6 +1,6 @@
 # AI 智能体软件工厂黑客松项目记忆
 
-> 记录时间：2026-09-17；最近核验：2026-09-20
+> 记录时间：2026-09-17；最近核验：2026-09-21
 >
 > 本文是当前项目的持续交接记录。它把外部交接文档、当前 `octos-arc` 仓库状态和已验证的 ARC-Bench 结果合并在一起，便于后续 Agent 或队员继续工作。
 >
@@ -15,6 +15,14 @@
 > 阶段 5 四个独立会话已核实稳定 Thread ID，并分别完成只读职责交接 ACK；`737b56972d5a` 的首轮只读转派演练亦已 ACK，提出 `needs_evidence`，但尚无正式台账决议或下游转派。具体映射见[协同索引](../evidence/arc-bench/phase5-coordination.json)。自动巡检仍关闭。唯一工作流与启动卡分别见[多会话工作流](./ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)和[精简交接](./ARC_BENCH_HACKATHON_PHASE5_CONTEXT_HANDOFF.md)。会话自动记忆不是权威交接源。
 >
 > 当前执行状态（2026-09-20）：阶段 2.5 已完成并通过；阶段 3、阶段 4、阶段 5 滚动执行，尚未宣告完成；本地候选已验证，平台 A/B 未完成。
+
+## 0. 代码改动强制留档规则（用户长期指令，2026-09-21）
+
+**后续所有代码相关改动都必须留档。** 每个代码切片必须至少记录：问题、授权或 handoff ID，基线与父提交完整 SHA，分支和工作树，改动文件与行为边界，提交信息与完整提交 SHA，验证命令及关键退出码，已知失败与风险，以及涉及打包时的文件名、条目门禁和 SHA-256。记录应与代码提交处于同一逻辑交付，并同步更新 `CHANGELOG.md`；阶段 5 改动还须回写[决策台账](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)和[协同索引](../evidence/arc-bench/phase5-coordination.json)。没有上述记录的代码改动不得宣称完成、已验证或可进入平台运行。
+
+### 0.1 最近一次代码交付
+
+2026-09-21 已按上述规则归档 V3.1/V4 控制面切片：候选分支 `codex/arc-bench-v4-control-plane-gates`，基线 `d2fe4dbc7601242896b61b3a790a912732bc5d57`，最终 HEAD `c5546e5a05bc6d377b8f3b21f43f2ca70ef9629e`。下一次受控平台测试包为 `octos-arc-bundle-c5546e5a05bc.zip`，SHA-256 `80026108E24A10F73E4842B6C024D9FF4810D8860351E57F2D805F07D924D682`；Agent 根层级门禁通过。完整提交链、测试、已知 Windows 基线失败与平台边界见[阶段 5 决策台账第 20 节](./ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)。本轮未推送、未上传、未启动平台 Run。
 
 ## 1. 项目身份与范围
 
