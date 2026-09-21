@@ -16,12 +16,21 @@ if [ -e "$output" ]; then
   exit 2
 fi
 
+if command -v python3 >/dev/null 2>&1; then
+  python_cmd=python3
+elif command -v python >/dev/null 2>&1; then
+  python_cmd=python
+else
+  echo "error: python3 or python is required for the package-shape gate" >&2
+  exit 3
+fi
+
 git archive --format=zip --output="$output" HEAD:arc -- \
   main.py octos_stdio.py requirement_order.py acceptance.py guard.py \
   llm_proxy.py codegen.py package_shape.py hooks requirements.txt \
   arcbench_agent_runtime public-tests
 
-python3 package_shape.py agent --archive "$output" --output "${output%.zip}.shape.json" >/dev/null
+"$python_cmd" package_shape.py agent --archive "$output" --output "${output%.zip}.shape.json" >/dev/null
 echo "commit=$commit"
 echo "artifact=$output"
 shasum -a 256 "$output"
