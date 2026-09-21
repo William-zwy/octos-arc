@@ -89,6 +89,54 @@ from requirement_order import ancestors_of, node_fingerprint, topo_order  # noqa
 
 BUNDLE_DIR = Path(__file__).resolve().parent
 
+AUTH_FAILURE_MARKERS = (
+    "invalid_api_key",
+    "authentication failed",
+    "unauthorized",
+    "forbidden",
+)
+TRANSIENT_PROVIDER_MARKERS = (
+    "temporarily unavailable",
+    "rate limit",
+    "timeout",
+    "timed out",
+    "connection reset",
+    "connection refused",
+    "name resolution",
+    "urlopen error",
+    "overloaded",
+    "failed to send",
+    "streaming request",
+)
+
+
+class PermanentAuthenticationError(RuntimeError):
+    """The provider rejected credentials or entitlement; retrying cannot repair it."""
+
+
+def _error_status(error: object) -> int | None:
+    value = getattr(error, "code", None)
+    try:
+        return int(value) if value is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _permanent_auth_failure(error: object, status: int | None = None) -> bool:
+    status = _error_status(error) if status is None else status
+    text = str(error).lower()
+    return status in (401, 403) or any(marker in text for marker in AUTH_FAILURE_MARKERS)
+
+
+def _transient_provider_failure(error: object, status: int | None = None) -> bool:
+    status = _error_status(error) if status is None else status
+    if _permanent_auth_failure(error, status):
+        return False
+    if status is not None:
+        return status == 429 or 500 <= status < 600
+    text = str(error).lower()
+    return any(marker in text for marker in TRANSIENT_PROVIDER_MARKERS)
+
 
 def log(msg: str) -> None:
     """Progress lines go to BOTH stdout and stderr (the platform truncates
@@ -697,10 +745,11 @@ class OctosDriver:
         lowered = text.lower()
         if "octos turn timed out" in lowered or "octos timed out after" in lowered:
             return False  # our own wall-clock cap, not a provider hiccup: never replay the turn
-        return any(k in lowered for k in (
-            "temporarily unavailable", "503", "502", "429", "rate limit", "timeout", "timed out",
-            "connection reset", "overloaded", "failed to send", "streaming request",
-            "403", "authentication failed", "401", "unauthorized"))
+        status_match = re.search(
+            r"(?:http|status(?: code)?)[^0-9]{0,3}([1-5]\d\d)\b", lowered
+        )
+        status = int(status_match.group(1)) if status_match else None
+        return _transient_provider_failure(lowered, status)
 
     def _run_with_retries(self, fn, attempts: int = 3) -> tuple[bool, str]:
         ok, text = fn()
@@ -1826,6 +1875,8 @@ class Flow:
             if self.time_up():
                 raise RuntimeError("time budget exhausted before the skeleton existed")
             ok, text = self.turn(prompt, self.node_timeout, f"skeleton attempt {attempt}")
+            if not ok and _permanent_auth_failure(text):
+                raise PermanentAuthenticationError("provider rejected authentication during skeleton generation")
             if ok and not self.has_app():
                 log("[flow] skeleton turn wrote no frontend/backend; nudging")
                 for nudge in range(1, 3):
@@ -2010,7 +2061,9 @@ class Flow:
             _postflight_structure_check(self.output_dir)
             _free_web_port(self.web_port)
             self.events.mark_run_failed(str(exc)[:1000])
-            return 0
+            # A fatal failure before a runnable app exists must not look like a
+            # successful Agent process to the outer packaging runner.
+            return 1 if not self.has_app() else 0
 
     def mark_folders(self) -> None:
         """The platform counts FOLDER nodes as requirements too ("45 requirements
@@ -2048,31 +2101,40 @@ class Flow:
 
 # ---------------------------------------------------------------- main
 
-def probe_endpoint() -> None:
-    """Raw chat.completions probe; waits out proxy outages (up to 10 min)."""
+def probe_endpoint(*, urlopen=None, sleep_fn=time.sleep, attempts: int | None = None,
+                   retry_seconds: float | None = None) -> None:
+    """Probe chat.completions with bounded transient retries and auth fail-fast."""
     key = os.environ.get("OPENAI_API_KEY", "")
     base = os.environ.get("OPENAI_BASE_URL")
     if not (key and base):
         return
     import urllib.request as _ur
+    if urlopen is None:
+        urlopen = _ur.urlopen
+    attempts = max(1, attempts if attempts is not None else int(os.environ.get("OCTOS_PROBE_ATTEMPTS", "3")))
+    retry_seconds = max(0.0, retry_seconds if retry_seconds is not None else
+                        float(os.environ.get("OCTOS_PROBE_RETRY_SECONDS", "30")))
     body = json.dumps({"model": os.environ.get("MODEL", "deepseek-chat"),
                        "messages": [{"role": "user", "content": "Reply with exactly: OK"}], "max_tokens": 4}).encode()
-    deadline = time.time() + 600
-    attempt = 0
-    while True:
-        attempt += 1
+    for attempt in range(1, attempts + 1):
         req = _ur.Request(base.rstrip("/") + "/chat/completions", data=body, method="POST",
                           headers={"Content-Type": "application/json", "Authorization": "Bearer " + key})
         try:
-            with _ur.urlopen(req, timeout=60) as resp:
+            with urlopen(req, timeout=60) as resp:
                 log(f"[probe] raw chat/completions -> HTTP {resp.status}: {resp.read()[:120]!r}")
                 return
         except Exception as exc:  # noqa: BLE001
-            log(f"[probe] attempt {attempt} -> {exc}")
-            if time.time() >= deadline:
-                log("[probe] endpoint still failing after 10min; proceeding anyway")
-                return
-            time.sleep(30)
+            status = _error_status(exc)
+            if _permanent_auth_failure(exc, status):
+                label = f"HTTP {status}" if status is not None else "authentication rejected"
+                raise PermanentAuthenticationError(label) from exc
+            if not _transient_provider_failure(exc, status):
+                raise RuntimeError("endpoint probe failed with a non-retryable provider error") from exc
+            if attempt >= attempts:
+                raise RuntimeError(f"endpoint probe failed after {attempts} transient attempt(s)") from exc
+            label = f"HTTP {status}" if status is not None else type(exc).__name__
+            log(f"[probe] transient {label}; retry {attempt + 1}/{attempts} after {retry_seconds:g}s")
+            sleep_fn(retry_seconds)
 
 
 def main() -> int:
@@ -2091,7 +2153,14 @@ def main() -> int:
     print(f"[env] ARCBENCH_TEMPLATE_DIR={os.environ.get('ARCBENCH_TEMPLATE_DIR', '<unset>')}", flush=True)
     print(f"[env] ARCBENCH_TASK_DIR={os.environ.get('ARCBENCH_TASK_DIR', '<unset>')}", flush=True)
     print(f"[env] argv requirement_path={args.requirement_path}", flush=True)
-    probe_endpoint()
+    try:
+        probe_endpoint()
+    except PermanentAuthenticationError as exc:
+        log(f"[probe] permanent authentication failure; aborting before generation ({exc})")
+        return 2
+    except RuntimeError as exc:
+        log(f"[probe] endpoint preflight failed; aborting before generation ({exc})")
+        return 3
 
     req_src = Path(args.requirement_path).resolve()
     if args.output_dir:

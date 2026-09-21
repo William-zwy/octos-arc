@@ -1,6 +1,11 @@
+import os
+import sys
+import tempfile
 import unittest
+from unittest.mock import patch
 
-from main import OctosDriver, describe_node, folder_descendants, inline_sources, inline_spec_text, unchanged_node_ids
+from main import (OctosDriver, PermanentAuthenticationError, describe_node, folder_descendants,
+                  inline_sources, inline_spec_text, unchanged_node_ids)
 import main as m
 
 
@@ -43,7 +48,96 @@ class TransientTests(unittest.TestCase):
 
     def test_should_retry_provider_errors(self):
         self.assertTrue(OctosDriver._transient("HTTP 503 Service Temporarily Unavailable"))
+        self.assertTrue(OctosDriver._transient("HTTP 429 rate limit"))
         self.assertTrue(OctosDriver._transient("failed to send streaming request"))
+
+    def test_should_not_retry_permanent_authentication_errors(self):
+        for message in ("HTTP 401 invalid_api_key", "HTTP 403 Forbidden",
+                        "authentication failed", "Unauthorized"):
+            with self.subTest(message=message):
+                self.assertFalse(OctosDriver._transient(message))
+
+
+class EndpointProbeTests(unittest.TestCase):
+    class EndpointError(Exception):
+        def __init__(self, code, message):
+            super().__init__(message)
+            self.code = code
+
+    class Response:
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        @staticmethod
+        def read():
+            return b"OK"
+
+    def run_probe(self, outcomes, attempts=3):
+        calls = []
+        sleeps = []
+
+        def urlopen(_request, timeout):
+            calls.append(timeout)
+            outcome = outcomes.pop(0)
+            if isinstance(outcome, Exception):
+                raise outcome
+            return outcome
+
+        with patch.dict(os.environ, {"OPENAI_API_KEY": "secret", "OPENAI_BASE_URL": "https://provider.invalid"}):
+            m.probe_endpoint(urlopen=urlopen, sleep_fn=sleeps.append, attempts=attempts, retry_seconds=0)
+        return calls, sleeps
+
+    def test_should_fail_fast_for_401_and_403(self):
+        for status in (401, 403):
+            with self.subTest(status=status):
+                outcomes = [self.EndpointError(status, "invalid_api_key")]
+                with self.assertRaises(PermanentAuthenticationError):
+                    self.run_probe(outcomes)
+                self.assertEqual(outcomes, [])
+
+    def test_should_retry_429_then_succeed(self):
+        calls, sleeps = self.run_probe([self.EndpointError(429, "rate limit"), self.Response()])
+        self.assertEqual((len(calls), sleeps), (2, [0]))
+
+    def test_should_stop_after_bounded_503_retries(self):
+        outcomes = [self.EndpointError(503, "unavailable") for _ in range(3)]
+        with self.assertRaisesRegex(RuntimeError, "after 3 transient attempt"):
+            self.run_probe(outcomes)
+        self.assertEqual(outcomes, [])
+
+    def test_should_retry_network_timeout_then_succeed(self):
+        calls, sleeps = self.run_probe([TimeoutError("connection timed out"), self.Response()])
+        self.assertEqual((len(calls), sleeps), (2, [0]))
+
+
+class SkeletonAuthenticationTests(unittest.TestCase):
+    def test_should_stop_after_first_permanent_authentication_failure(self):
+        import argparse
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            flow = m.Flow(argparse.Namespace(web_port=3000), Path(tmp), Path(tmp))
+            calls = []
+
+            def fail_auth(*_args, **_kwargs):
+                calls.append(True)
+                return False, "HTTP 401 invalid_api_key"
+
+            flow.turn = fail_auth
+            with self.assertRaises(PermanentAuthenticationError):
+                flow.skeleton({})
+            self.assertEqual(len(calls), 1)
+
+
+class EntrypointAuthenticationTests(unittest.TestCase):
+    def test_should_return_nonzero_before_generation_on_permanent_auth_failure(self):
+        with patch.object(m, "probe_endpoint", side_effect=PermanentAuthenticationError("HTTP 401")), \
+                patch.object(sys, "argv", ["main.py"]):
+            self.assertEqual(m.main(), 2)
 
 
 class FolderDescendantTests(unittest.TestCase):
