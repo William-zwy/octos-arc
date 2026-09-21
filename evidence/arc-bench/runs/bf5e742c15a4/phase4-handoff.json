@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "handoff_id": "bf5e742c15a4-11DE0A63D4FE",
+  "run_id": "bf5e742c15a4",
+  "submission_id": "0b90e43b07b7",
+  "task_key": "arc-bench-lite--keep",
+  "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
+  "thread_title": "05 项目阶段4 + arc-bench-lite--keep",
+  "scope": "read_only_phase4_diagnosis",
+  "manifest_path": "evidence/arc-bench/runs/bf5e742c15a4/manifest.json",
+  "manifest_sha256": "11DE0A63D4FE445FDA8A1016E5271EFD631631BD9C96D81028E3500DA37C554E",
+  "ack_path": "evidence/arc-bench/runs/bf5e742c15a4/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/bf5e742c15a4/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/bf5e742c15a4/phase4-result.md",
+  "evidence_revision": "bf5e742c15a4-initial-intake",
+  "platform_snapshot": {
+    "status": "FAILED",
+    "score": 0.0,
+    "passed": 0,
+    "total": 0,
+    "failure_reason": "Command '['python3', '/workspace/submission/main.py', '/tmp/arcbench/requirements-source', '--output-dir', '/workspace/template']' returned non-zero exit status 2.",
+    "business_tests_executed": false,
+    "run_duration_seconds": 0,
+    "wall_clock_derived_seconds": 6.52943
+  },
+  "generation_snapshot": {
+    "exit_code": 2,
+    "failure_observation": "permanent authentication failure; aborting before generation (HTTP 401)",
+    "template_entries": 23,
+    "frontend_entries": 0,
+    "backend_entries": 0,
+    "main_py_entries": 0,
+    "tests_entries": 0,
+    "raw_logs_nonempty": true
+  },
+  "constraints": [
+    "只读分析；不得创建新 Run、重跑、上传或修改代码、官方测试、需求和运行配置",
+    "只分析 bf5e742c15a4；忽略其他 Run 的业务根因和历史假设",
+    "将 0/0 视为生成阶段阻断，不作为 Keep 业务完成率",
+    "仅记录脱敏认证观察，不传播任何密钥值",
+    "最终必须先写 phase4-ack.json，再写 phase4-result.json 和 phase4-result.md，并包含 PHASE4_RESULT: complete|incomplete"
+  ],
+  "status": "handoff_unverified",
+  "send_attempts": 1,
+  "empty_output_attempts": 2,
+  "last_observed_thread_status": "idle",
+  "failure_reason": "phase4_empty_output_after_two_attempts; no ACK or result file was written",
+  "created_at": "2026-09-21T10:44:34.9723219Z"
+}
