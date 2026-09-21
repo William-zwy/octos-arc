@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 4 read-only diagnosis",
+  "status": "complete",
+  "PHASE4_RESULT": "complete",
+  "handoff_id": "d4acec5dbbdf-686648028D9A",
+  "run_id": "d4acec5dbbdf",
+  "submission_id": "535d25f72007",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "manifest_sha256": "686648028D9A709FE16FAE29AAE4B4B188DCFF30230AAECB876A45DA7F9FAA05",
+  "completed_at": "2026-09-21T06:40:21.6170049Z",
+  "scope": {
+    "only_this_run": true,
+    "same_submission_as_prior_runs": true,
+    "same_submission_does_not_prove_same_build": true,
+    "code_lineage": "same_submission_unverified_build",
+    "keep_separate_from": ["ff12a7ff45f8"],
+    "other_runs_analyzed": false,
+    "new_thread_created": false,
+    "new_run_created": false,
+    "rerun_performed": false,
+    "upload_performed": false,
+    "code_or_official_tests_modified": false
+  },
+  "identity_verification": {
+    "handoff_id_match": true,
+    "run_id_match": true,
+    "submission_id_match": true,
+    "task_key_match": true,
+    "thread_id_match": true,
+    "manifest_sha256_match": true,
+    "manifest_sha256": "686648028D9A709FE16FAE29AAE4B4B188DCFF30230AAECB876A45DA7F9FAA05",
+    "evidence_revision": "d4acec5dbbdf-initial-intake"
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 0.0,
+    "passed": 0,
+    "total": 0,
+    "feature_implementation_rate": 0.0,
+    "failure_reason": "web template is incomplete: expected frontend/ and backend/ directories",
+    "run_duration_seconds": 1096,
+    "business_tests_executed": false,
+    "failed_tests": []
+  },
+  "confirmed_facts": [
+    {
+      "fact": "Environment preflight completed, then the generation/start step failed on template completeness.",
+      "evidence_level": "high",
+      "source": "run.json steps.deploy_agent and steps.start_agent"
+    },
+    {
+      "fact": "The platform rejected the generated template because frontend/ and backend/ directories were expected but absent.",
+      "evidence_level": "high",
+      "source": "run.json failure_reason and start_agent description/logs"
+    },
+    {
+      "fact": "The captured template ZIP contains 25 entries, all under template/requirements or related metadata; frontend, backend, main.py and tests entry counts are zero.",
+      "evidence_level": "high",
+      "source": "manifest generation inventory and template ZIP"
+    },
+    {
+      "fact": "The evaluation step was pending/not reached, tests[] is empty, and failure-details reports no failed test.",
+      "evidence_level": "high",
+      "source": "run.json, manifest generation section and failure-details.md"
+    },
+    {
+      "fact": "The raw logs JSON is valid but contains events=[], stdout=[] and pages=0, so it cannot independently verify entrypoint, tests directory, bundled fallback or key scanning.",
+      "evidence_level": "high",
+      "source": "arcbench-run-d4acec5dbbdf-logs.json"
+    },
+    {
+      "fact": "The run object contains node_states marked test-failed, but those states are not execution evidence because business tests were not reached.",
+      "evidence_level": "high",
+      "source": "run.json tests=[], run_tests pending, and manifest conflict resolution"
+    }
+  ],
+  "failure_chains": [
+    {
+      "chain": [
+        "Uploaded/generation agent completed its generation phase",
+        "Template completeness validation inspected the produced template",
+        "frontend/ and backend/ were missing",
+        "start_agent failed with the completeness error",
+        "run_tests remained pending",
+        "platform finalized FAILED with score 0 and 0/0"
+      ],
+      "classification": "generation_preflight_blocker",
+      "confidence": "high"
+    }
+  ],
+  "root_cause_candidates": [
+    {
+      "candidate": "The generated/uploaded package was structurally incomplete and did not contain the required application directories.",
+      "evidence_level": "confirmed_run_local_blocker",
+      "confidence": "high",
+      "evidence": [
+        "run.json explicitly reports expected frontend/ and backend/ directories missing",
+        "ZIP inventory reports zero frontend/backend/main.py/tests entries"
+      ],
+      "boundary": "This identifies the blocking artifact condition, not the upstream reason those directories were omitted."
+    },
+    {
+      "candidate": "A generation-to-template packaging or upload assembly step omitted the application tree.",
+      "evidence_level": "plausible_mechanism",
+      "confidence": "medium",
+      "evidence": [
+        "generation agent is reported finished",
+        "the resulting archive contains requirements assets but no runnable application tree"
+      ],
+      "boundary": "No non-empty generation stdout/stderr or build manifest is available to distinguish generator omission from packaging/upload omission."
+    },
+    {
+      "candidate": "BookStack business implementation, Playwright selectors, authentication, server behavior or visual model caused the failure.",
+      "evidence_level": "not_established",
+      "confidence": "none",
+      "evidence": [
+        "No application server started",
+        "No business test executed",
+        "No browser pages or test error context captured"
+      ]
+    }
+  ],
+  "excluded_causes": [
+    {
+      "cause": "A specific business requirement failure such as login, page navigation or draft deletion",
+      "reason": "No business test reached execution; tests[] and failure-details are empty."
+    },
+    {
+      "cause": "Official test/helper regression",
+      "reason": "The run stopped before official tests were invoked; there is no test-level evidence."
+    },
+    {
+      "cause": "Bundled-test fallback, API-key leakage, token cost or model-quality issue",
+      "reason": "Raw logs are empty, so these are unverified rather than passed; the failure occurred earlier at template validation."
+    },
+    {
+      "cause": "A platform business-test outage",
+      "reason": "The observed failure is a deterministic run-local template completeness rejection; no business-test request was reached."
+    }
+  ],
+  "evidence_gaps": [
+    "Non-empty generation stdout/stderr and the generator-to-template copy/upload manifest",
+    "Platform-provided agent_build_id, code SHA and ZIP-to-build binding",
+    "Generated frontend/backend source tree and main.py/tests files",
+    "Task snapshot ID and complete runtime configuration",
+    "Playwright report, trace, HAR, browser pages and response/error bodies",
+    "Raw logs capable of verifying main.py, /workspace/tests, bundled fallback and secret scan"
+  ],
+  "minimal_read_only_reproduction": [
+    {
+      "priority": "P0",
+      "action": "List the exact submitted ZIP entries and assert required paths frontend/, backend/, main.py and tests/ are present at the expected archive level.",
+      "expected_observation": "The current ZIP fails all four presence checks; no application runtime should be started."
+    },
+    {
+      "priority": "P0",
+      "action": "Inspect the generator/upload staging manifest or workspace listing, if available, and compare it with the final ZIP inventory.",
+      "expected_observation": "This distinguishes generator omission from packaging/upload omission without changing the artifact."
+    },
+    {
+      "priority": "P0",
+      "action": "Run a local archive-shape gate against a known-good package and this ZIP, checking ordinary-file existence for main.py, tests and both application directories.",
+      "expected_observation": "The current artifact is rejected before any browser or business test is invoked."
+    }
+  ],
+  "stage5_recommendation": {
+    "handoff": true,
+    "acceptance": "Stage5 may consume this result only as a packaging/generation blocker diagnosis; it is not evidence of business-test quality or a code-level BookStack defect.",
+    "priority": [
+      "P0: add a pre-upload archive-shape gate requiring frontend/, backend/, main.py and tests/ at the exact expected paths.",
+      "P0: preserve the generated workspace and emit a non-empty generation/package manifest plus stdout/stderr before upload.",
+      "P0: verify ZIP contents and hashes locally, then perform one minimal local start smoke check only after the shape gate passes.",
+      "P1: rerun the official task only after the package contains the required application tree and the build-to-upload binding is recorded.",
+      "Do not modify official tests or infer business failures from node_states=test-failed."
+    ],
+    "change_boundary": [
+      "Agent output/package assembly and archive validation",
+      "Generation or upload staging manifest/logging",
+      "Build artifact identity and reproducibility checks"
+    ],
+    "do_not_do": [
+      "No business-feature rewrite based on this Run",
+      "No selector or timeout changes based on this Run",
+      "No full platform rerun before the archive-shape gate passes",
+      "Do not merge this Run with ff12a7ff45f8 or other BookStack Run conclusions"
+    ]
+  },
+  "impact_estimate": {
+    "completion_rate": "0/0 is a pre-test generation failure, not a measured business completion rate",
+    "token_and_cost": "Unavailable in both authoritative run object and raw logs",
+    "runtime": "1096 seconds total; business-test duration is not applicable",
+    "optimization_priority": "Package completeness and traceability dominate all token/runtime/feature optimization until the agent produces a runnable artifact"
+  },
+  "source_precedence": [
+    "run.json for final status, score, IDs, lifecycle and generation steps",
+    "logs.json for runtime and provider evidence; empty for this Run",
+    "failure-details.md for test-level failure extraction; none present",
+    "summary.md for human-readable normalization; conflicting log claims remain unverified",
+    "template.zip for package inventory and reproducibility"
+  ],
+  "conflicts": [
+    {
+      "field": "platform_validation",
+      "raw_value": "logs.json has events=[], stdout=[], pages=0",
+      "summary_value": "summary.md labels five log checks as passed",
+      "resolution": "Retain the summary statements as unverified claims and keep raw-log validation fields null."
+    },
+    {
+      "field": "business_test_state",
+      "raw_value": "run.json has tests=[], run_tests pending and failure-details has no failed test",
+      "summary_value": "summary reports 0/0 and no acceptance record",
+      "resolution": "Classify as generation/preflight failure; do not treat node_states=test-failed as executed business-test failures."
+    },
+    {
+      "field": "run_identity_fields",
+      "raw_value": "run.json uses id and requirement_id",
+      "summary_value": "normalized task/run identifiers",
+      "resolution": "Use d4acec5dbbdf and arc-bench-lite--bookstack as the canonical identifiers."
+    }
+  ],
+  "source_files": [
+    {
+      "name": "manifest.json",
+      "path": "evidence/arc-bench/runs/d4acec5dbbdf/manifest.json",
+      "sha256": "686648028D9A709FE16FAE29AAE4B4B188DCFF30230AAECB876A45DA7F9FAA05"
+    },
+    {
+      "name": "arcbench-run-d4acec5dbbdf.json",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-d4acec5dbbdf.json",
+      "sha256": "68FDFF69E5CA2E5795BBA365EC66F8D062CCCEB631744E90342DA01FD9F68750"
+    },
+    {
+      "name": "arcbench-run-d4acec5dbbdf-logs.json",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-d4acec5dbbdf-logs.json",
+      "sha256": "512CE262B0417380368DE6E36260BAA592140055228D9E956471E09B3018DE2E"
+    },
+    {
+      "name": "arcbench-d4acec5dbbdf-failure-details.md",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-d4acec5dbbdf-failure-details.md",
+      "sha256": "3C258AAEFEFAAB41862AB7EAD30EA0CEDF74B6DF61D01BCE9F884883C75B927B"
+    },
+    {
+      "name": "arcbench-run-d4acec5dbbdf-summary.md",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-d4acec5dbbdf-summary.md",
+      "sha256": "02918590E668D728357EA48FDE90E9733B286C2C1C234800CD2E70C9C010830A"
+    },
+    {
+      "name": "d4acec5dbbdf-template.zip",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/d4acec5dbbdf-template.zip",
+      "sha256": "8841987DE1FF6942FEEF151B83B9C73B64D16725E1EE11D71E73A552228FCD10"
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_scan": "not_verifiable_empty_raw_logs",
+    "summary_claims_no_plaintext_key": true
+  }
+}

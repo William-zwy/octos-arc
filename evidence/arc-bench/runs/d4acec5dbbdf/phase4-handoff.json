@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "handoff_id": "d4acec5dbbdf-686648028D9A",
+  "run_id": "d4acec5dbbdf",
+  "submission_id": "535d25f72007",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "thread_title": "06 项目阶段4 + arc-bench-lite--bookstack",
+  "scope": "read_only_phase4_diagnosis",
+  "manifest_path": "evidence/arc-bench/runs/d4acec5dbbdf/manifest.json",
+  "manifest_sha256": "686648028D9A709FE16FAE29AAE4B4B188DCFF30230AAECB876A45DA7F9FAA05",
+  "ack_path": "evidence/arc-bench/runs/d4acec5dbbdf/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/d4acec5dbbdf/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/d4acec5dbbdf/phase4-result.md",
+  "evidence_revision": "d4acec5dbbdf-initial-intake",
+  "platform_snapshot": {
+    "status": "FAILED",
+    "score": 0.0,
+    "passed": 0,
+    "total": 0,
+    "failure_reason": "web template is incomplete: expected frontend/ and backend/ directories",
+    "business_tests_executed": false,
+    "run_duration_seconds": 1096
+  },
+  "raw_evidence_caveat": "logs.json is a valid 48-byte JSON object with empty events/stdout/pages; summary.md claims log checks passed but those claims are not independently verifiable from raw logs.",
+  "constraints": [
+    "只读分析；不得创建新 Run、重跑、上传或修改代码、官方测试、需求和运行配置",
+    "只分析 d4acec5dbbdf；忽略其他 Run 的业务根因和历史假设",
+    "将 0/0 视为生成/前置阻断，不作为 BookStack 业务完成率",
+    "仅记录脱敏认证或日志观察，不传播任何密钥值",
+    "最终必须先写 phase4-ack.json，再写 phase4-result.json 和 phase4-result.md，并包含 PHASE4_RESULT: complete|incomplete"
+  ],
+  "status": "handoff_unverified",
+  "send_attempts": 2,
+  "last_send_error": "Automatic approval review failed: stream disconnected before completion; action was not executed.",
+  "created_at": "2026-09-21T06:29:53.2039770Z"
+}

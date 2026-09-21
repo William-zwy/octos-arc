@@ -1,0 +1,218 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "source_folder": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite",
+  "code_lineage": {
+    "classification": "same_submission_unverified_build",
+    "submission_id": "535d25f72007",
+    "source_display_name": "luyun18029839909@163.com",
+    "same_submission_as_prior_run": "ff12a7ff45f8",
+    "platform_build_binding": "missing",
+    "not_frozen_A0": "unverified",
+    "not_stage5_output": "unverified",
+    "note": "Keep this Run separate from ff12a7ff45f8 and prior BookStack Runs. A shared submission_id does not prove identical code or build contents."
+  },
+  "run": {
+    "run_id": "d4acec5dbbdf",
+    "submission_id": "535d25f72007",
+    "display_name": "luyun18029839909@163.com",
+    "original_filename": "octos-arc-bundle.zip",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--bookstack",
+    "task_snapshot_id": null,
+    "model_name": "deepseek-v4-flash",
+    "runtime": "python",
+    "agent_source": "upload",
+    "created_at": "2026-09-20T16:53:14.749930",
+    "started_at": "2026-09-20T16:53:17.071770",
+    "finished_at": "2026-09-20T17:11:36.932301",
+    "status": "FAILED",
+    "score": 0.0,
+    "passed_count": 0,
+    "failed_count": 0,
+    "feature_implemented_count": 0,
+    "feature_total_count": 0,
+    "feature_implementation_rate": 0.0,
+    "failure_reason": "web template is incomplete: expected frontend/ and backend/ directories",
+    "run_duration_seconds": 1096
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": null,
+    "reasoning": null,
+    "time_budget_seconds": null,
+    "agent_acceptance_workers": null,
+    "test_workers": null,
+    "entrypoint_verified": null,
+    "tests_dir_verified": null,
+    "bundled_tests_fallback_hits": null,
+    "api_key_plaintext_hits": null,
+    "summary_claims_unverified": [
+      "main.py executed",
+      "/workspace/tests used",
+      "bundled fallback hits 0",
+      "no plaintext API key"
+    ]
+  },
+  "generation": {
+    "run_steps": {
+      "deploy_agent": "completed; environment preflight passed",
+      "start_agent": "failed; generation agent finished but template completeness check failed",
+      "run_tests": "pending; not reached"
+    },
+    "template_archive_entries": 25,
+    "template_frontend_entries": 0,
+    "template_backend_entries": 0,
+    "template_main_py_entries": 0,
+    "template_tests_entries": 0,
+    "application_server_started": false,
+    "playwright_executed": false,
+    "failure_classification": "generation_preflight_blocker",
+    "failure_details": "No failure test executed; runner rejected the incomplete template before business testing."
+  },
+  "internal_acceptance": {
+    "source": "logs.json",
+    "available": false,
+    "rounds": [],
+    "note": "The raw logs JSON contains no events, stdout entries or pages. The run object records node_states as test-failed, but tests is empty and run_tests is pending; these are not treated as executed business-test failures."
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 0.0,
+    "passed": 0,
+    "total": 0,
+    "failure_reason": "web template is incomplete: expected frontend/ and backend/ directories",
+    "failed_tests": [],
+    "business_tests_executed": false
+  },
+  "metering": {
+    "requests": null,
+    "prompt_tokens": null,
+    "completion_tokens": null,
+    "reasoning_tokens": null,
+    "prompt_cache_hit_tokens": null,
+    "provider_total_tokens": null,
+    "platform_token_count": null,
+    "cost": null,
+    "currency": null,
+    "run_duration_seconds": 1096
+  },
+  "platform_validation": {
+    "entrypoint": null,
+    "tests_dir": null,
+    "bundled_fallback_hits": null,
+    "api_key_plaintext_hits": null,
+    "log_result_finalized": "run object reports FAILED score=0",
+    "raw_logs_available": false
+  },
+  "source_precedence": [
+    "run.json for final platform status, score, IDs, lifecycle and generation steps",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal rounds and provider usage; this file is empty for this Run",
+    "failure-details.md for failure-test extraction; it reports no executed failure test",
+    "summary.md for human-readable normalization, with conflicts retained",
+    "template.zip for package identity and reproducibility"
+  ],
+  "conflicts": [
+    {
+      "field": "platform_validation",
+      "raw_value": "logs.json has events=[], stdout=[], pages=[] and cannot verify main.py, /workspace/tests, bundled fallback or key scan",
+      "summary_value": "summary.md marks all five log checks as passed",
+      "resolution": "Retain the summary assertions as unverified claims; use null for raw-log validation fields."
+    },
+    {
+      "field": "business_test_state",
+      "raw_value": "run.json has tests=[] and run_tests=pending; failure-details reports no failed test",
+      "summary_value": "summary describes no acceptance records and 0/0",
+      "resolution": "Classify as generation/preflight failure before business tests; do not treat node_states=test-failed as executed test failures."
+    },
+    {
+      "field": "run_identity_fields",
+      "raw_value": "run.json uses id=d4acec5dbbdf and competition_id/requirement_id",
+      "summary_value": "same run/task identifiers in normalized table",
+      "resolution": "Use d4acec5dbbdf as run_id and arc-bench-lite--bookstack as task key."
+    }
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "agent_build_id",
+    "code_sha",
+    "platform-provided ZIP-to-build binding",
+    "non-empty raw logs and generation stdout/stderr",
+    "visual model, reasoning level, time budget, worker counts and provider totals",
+    "snapshots.json, Playwright report, trace/HAR and error-context body",
+    "generated frontend/backend source tree"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-d4acec5dbbdf-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 501,
+      "sha256": "3C258AAEFEFAAB41862AB7EAD30EA0CEDF74B6DF61D01BCE9F884883C75B927B",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-d4acec5dbbdf-failure-details.md",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-d4acec5dbbdf-summary.md",
+      "role": "human_readable_run_summary",
+      "bytes": 2557,
+      "sha256": "02918590E668D728357EA48FDE90E9733B286C2C1C234800CD2E70C9C010830A",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-d4acec5dbbdf-summary.md",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-d4acec5dbbdf.json",
+      "role": "raw_run_object",
+      "bytes": 4505,
+      "sha256": "68FDFF69E5CA2E5795BBA365EC66F8D062CCCEB631744E90342DA01FD9F68750",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-d4acec5dbbdf.json",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-d4acec5dbbdf-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 48,
+      "sha256": "512CE262B0417380368DE6E36260BAA592140055228D9E956471E09B3018DE2E",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-d4acec5dbbdf-logs.json",
+      "stored_in_repository": false
+    },
+    {
+      "name": "d4acec5dbbdf-template.zip",
+      "role": "template_or_generated_package_snapshot",
+      "bytes": 9768036,
+      "sha256": "8841987DE1FF6942FEEF151B83B9C73B64D16725E1EE11D71E73A552228FCD10",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/d4acec5dbbdf-template.zip",
+      "stored_in_repository": false,
+      "archive_inventory": {
+        "entries": 25,
+        "frontend_entries": 0,
+        "backend_entries": 0,
+        "main_py_entries": 0,
+        "tests_entries": 0
+      }
+    }
+  ],
+  "duplicate_aliases": [
+    {
+      "source_path": "C:/Users/dayuruozhi/Downloads/d4acec5dbbdf-template.zip",
+      "sha256": "8841987DE1FF6942FEEF151B83B9C73B64D16725E1EE11D71E73A552228FCD10",
+      "same_as": "d4acec5dbbdf-template.zip"
+    },
+    {
+      "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-d4acec5dbbdf-logs.json",
+      "sha256": "512CE262B0417380368DE6E36260BAA592140055228D9E956471E09B3018DE2E",
+      "same_as": "arcbench-run-d4acec5dbbdf-logs.json"
+    },
+    {
+      "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-d4acec5dbbdf.json",
+      "sha256": "68FDFF69E5CA2E5795BBA365EC66F8D062CCCEB631744E90342DA01FD9F68750",
+      "same_as": "arcbench-run-d4acec5dbbdf.json"
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_raw_logs": "not_verifiable_empty_logs",
+    "summary_claims_no_plaintext_key": true
+  }
+}
