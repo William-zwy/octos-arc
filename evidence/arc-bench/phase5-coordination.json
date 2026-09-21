@@ -298,6 +298,109 @@
       ],
       "ledger_decision_recorded": true,
       "next_gate": "Preserve this Run as a successful ticket-booking baseline; use a new Run ID for comparisons and require build/task-snapshot/ZIP binding before claiming platform A/B comparability."
+    },
+    {
+      "key": "phase5:lite-lineage:20260921:v1",
+      "issue_id": "P5-005",
+      "source_handoff_id": "phase5-lite-lineage-ledger-20260921-v1",
+      "supplemental_handoff_id": "phase5-lite-lineage-ledger-manifest-20260921-v1",
+      "metrics_review_ack_id": "phase5-lite-lineage-metrics-20260921-v1",
+      "status": "ledger_registered_lineage_provenance_platform_binding_pending",
+      "decision": "use_provisional_version_groups_no_platform_ab_claim",
+      "local_zip_commit_match_reported": true,
+      "local_hashes_reverified_by_ledger": true,
+      "historical_manifest_configuration_reverified_by_ledger": true,
+      "run_mapping_source": "user_provided_provenance",
+      "platform_build_binding_verified": false,
+      "task_snapshot_binding_verified": false,
+      "comparison_class": "descriptive_same_manifest_configuration_sequence",
+      "strict_ab_comparable": false,
+      "historical_manifest_configuration": {
+        "model": "deepseek-v4-flash",
+        "visual_model": "deepseek-v4-flash-vision-exp",
+        "reasoning": "low",
+        "agent_acceptance_workers": 2,
+        "test_workers": 1,
+        "entrypoint": "main.py",
+        "tests_dir": "/workspace/tests",
+        "bundled_fallback_hits": 0,
+        "bookstack_time_budget_seconds": 51000,
+        "keep_time_budget_seconds": 48000,
+        "task_snapshot_ids_all_null": true
+      },
+      "versions": [
+        {
+          "label": "A0",
+          "commit": "ea503546aad31b2e3b887235e3b35cc0a8b9cfe8",
+          "zip_sha256": "812AF3D15DE93CE2955C6F2A0DE7C6351D205B81E9FDF33F36FCD41387162EF0",
+          "zip_path": "evidence/arc-bench/builds/teammate-baseline-20260917-ea503546/octos-arc-bundle.zip",
+          "bookstack_run_id": "00c59e0762fb",
+          "keep_run_id": "0cef369cc925"
+        },
+        {
+          "label": "V1",
+          "name": "arc_first",
+          "commit": "c53c333d5205fb98bf168c1f4fc670c0eec7432f",
+          "zip_sha256": "483BB260AB8DAC167059D21E0947DFFEA5495C16EA25510C01BA7DF5A4B2DB21",
+          "zip_path": "D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松/.worktrees/phase5-route-contract/arc/arc_first.zip",
+          "bookstack_run_id": "5669f7d1777c",
+          "keep_run_id": "0aa6820e0b82"
+        },
+        {
+          "label": "V2",
+          "name": "arc_2rd",
+          "commit": "dddc94312d4cd26babdbfb9d7df2a17f08f0a51d",
+          "zip_sha256": "984D818AE6736907925E9ECB3F95A09846F5F3F2203DED8F1960F7728C25BF38",
+          "zip_path": "D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松/.worktrees/phase5-route-contract/arc/arc_2rd.zip",
+          "bookstack_run_id": "4ef2cf139806",
+          "keep_run_id": "737b56972d5a"
+        },
+        {
+          "label": "V3",
+          "commit": "d2fe4dbc7601242896b61b3a790a912732bc5d57",
+          "zip_sha256": "FC83EA353975F908C9669380146856077647CA5A80CA5A9CE3EB9E45FA6E8820",
+          "zip_path": "D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松/.worktrees/phase5-route-contract/octos-arc-bundle.zip",
+          "upload_provenance": "user_reported_manual_upload",
+          "run_id": null
+        }
+      ],
+      "comparison_groups": {
+        "bookstack": [
+          "00c59e0762fb",
+          "5669f7d1777c",
+          "4ef2cf139806"
+        ],
+        "keep": [
+          "0cef369cc925",
+          "0aa6820e0b82",
+          "737b56972d5a"
+        ],
+        "v3_run_pending": true
+      },
+      "v3_required_return_fields": [
+        "run_id",
+        "submission_id",
+        "agent_build_id_or_platform_build_identity",
+        "task_snapshot_id_or_official_asset_hash",
+        "passed_count",
+        "first_round_passed_count",
+        "failed_samples",
+        "request_count",
+        "token_counts",
+        "cost",
+        "duration",
+        "repair_rounds"
+      ],
+      "needs_repro": false,
+      "dispatch_id": null,
+      "ack_id": null,
+      "implementation_dispatched": false,
+      "platform_run_created": false,
+      "upload_performed_by_ledger": false,
+      "old_main_thread_routed": false,
+      "platform_verified": false,
+      "ledger_decision_recorded": true,
+      "next_gate": "Wait for the V3 Run ID and required result fields, then bind each comparison to the platform build, task snapshot or official asset hash, uploaded ZIP, and metrics before any strict A/B or platform_verified claim."
     }
   ]
 }
