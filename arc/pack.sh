@@ -48,6 +48,9 @@ if command -v cygpath >/dev/null 2>&1; then
 fi
 "$python_cmd" "$shape_script" agent --archive "$shape_archive" \
   --output "$shape_output" >/dev/null
+archive_sha256=$("$python_cmd" -c \
+  'import hashlib, sys; print(hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest())' \
+  "$shape_archive")
 echo "commit=$commit"
 echo "artifact=$output"
-shasum -a 256 "$output"
+echo "sha256=$archive_sha256"
