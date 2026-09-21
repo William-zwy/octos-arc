@@ -1,7 +1,13 @@
 #!/bin/sh
 # Build a commit-bound ARC platform Agent ZIP (main.py must be at ZIP root).
 set -eu
-script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PATH="/usr/bin:/bin:/mingw64/bin:$PATH"
+export PATH
+case "$0" in
+  */*) script_parent=${0%/*} ;;
+  *) script_parent=. ;;
+esac
+script_dir=$(CDPATH= cd -- "$script_parent" && pwd)
 repo_root=$(git -C "$script_dir" rev-parse --show-toplevel)
 cd "$script_dir"
 
