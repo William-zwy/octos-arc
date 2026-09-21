@@ -1,6 +1,6 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.22；建立日期：2026-09-19；状态：V3 已冻结；用户明确确认 BookStack `cca008377368` 与 Keep `bf5e742c15a4` 是冻结 V3 返回的 Run ID。该版本归属作为用户 provenance 登记；两份 manifest 同时把原始上传文件名记为 `octos-arc-bundle-13173bb50e55.zip`，与台账中冻结 V3 的 `d2fe4dbc…` / `FC83EA…` 本地身份存在未闭合冲突，平台又缺少 ZIP→build/code 与 task snapshot 绑定，因此不能升级为源码级身份、业务验收、平台收益或严格 A/B。`cca008377368` 仍只确认 `P5-012` 的 401→exit 2 运行事实；`bf5e742c15a4` 仍因阶段 4 结果身份不完整而隔离。
+> 版本：v1.23；建立日期：2026-09-19；状态：V3 已冻结；用户明确确认 BookStack `cca008377368` 与 Keep `bf5e742c15a4` 是冻结 V3 返回的 Run ID。该版本归属作为用户 provenance 登记；两份 manifest 同时把原始上传文件名记为 `octos-arc-bundle-13173bb50e55.zip`，与台账中冻结 V3 的 `d2fe4dbc…` / `FC83EA…` 本地身份存在未闭合冲突，平台又缺少 ZIP→build/code 与 task snapshot 绑定，因此不能升级为源码级身份、业务验收、平台收益或严格 A/B。`cca008377368` 仍只确认 `P5-012` 的 401→exit 2 运行事实；`bf5e742c15a4` 仍因阶段 4 结果身份不完整而隔离。用户现已授权把 `P5-005` 的最小 build provenance 补强作为 V4.1 控制面切片转交 Agent 实现会话；本会话仍不直接修改代码。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
@@ -59,7 +59,7 @@
 | `P5-002` | 状态写入与随即导航/读取可能竞态 | `strong_candidate`：Keep 一处；缺最终网络/DOM 时序 | 待证据，不修改 | P1；需 Keep trace 或等效复现 |
 | `P5-003` | A0 超时摘要可能把缺路由误导成等待/性能问题 | A0 措辞 `confirmed`；对修复结果的因果影响 `unknown` | 已在 `P5-001` 同一切片本地修改；平台效果未验证 | P0，随 `P5-001` 一起 A/B |
 | `P5-004` | 五个 Run 的请求、Token、耗时均可计量，但瓶颈来源未定位 | 指标 `confirmed`；根因 `unknown`；新 Keep 有请求级 meter 但缺阶段归因 | 暂缓 5C/5D 调参 | P2；功能率稳定且完成请求级归因后重开 |
-| `P5-005` | A/B 的上传 Agent 构建、任务快照绑定不完整 | 五个 manifest 缺字段 `confirmed`；新 Keep 有用户指认的 ZIP 及本地源码比对，但无平台独立绑定 | 验证前门禁，不等于 Agent 功能修复 | P0；新候选复跑前处理 |
+| `P5-005` | A/B 的上传 Agent 构建、任务快照绑定不完整 | 多个 manifest 缺字段 `confirmed`；`cca008377368`/`bf5e742c15a4` 的用户版本归属与 manifest 文件名冲突，且无平台独立 ZIP→build/code 绑定 | V4.1 最小 build provenance 切片已授权并转派；仍不等于业务功能修复或平台身份已闭合 | P0；候选复跑前完成实现、本地受控验证与逐 Run 外部绑定 |
 | `P5-006` | Undo 可访问名称被生成代码覆盖 | 原版失败、修正版及 32 题回归通过：产物级 `confirmed` | Agent 通用契约/失败提示本地已验证；平台未验证 | P0；与消息文本契约一起回归 |
 | `P5-007` | Keep 归档测试前置数据与生成应用 seed 不一致 | 原版与分步对照 `confirmed`；评分后 ZIP 的 `24/32` **不是**平台启动基线 | 默认 seed 和按钮修复在干净 seed 下通过；评分时目标仍为归档态，精确启动策略未知 | P0；不得用删库回归代替交付验收 |
 | `P5-008` | 重复加载标签与整表重绘打断编辑 | 干净 seed 的 50ms 对照原版 3/3 失败、去重版 3/3 通过；平台精确时序/根因 `unknown` | Agent 通用契约/失败提示本地已验证；平台未验证 | P0；保留全量回归和受控时序 |
@@ -108,6 +108,7 @@
 - **已确认事实：**本台账最初审查的四份 manifest 的 `task_snapshot_id` 均为 `null`；后纳入的 `5669f7d1777c` 和待决策的 `737b56972d5a` 也缺此字段。各 Run 缺少平台独立记录的上传 Agent ZIP SHA 和代码 SHA 绑定。Web BookStack 的 A0 身份有用户明确确认。新 Keep 的展示名仍为 A0，**不能据此断定上传了旧代码**：用户指认上传 `D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松/.worktrees/phase5-route-contract/arc/arc_first.zip`，本地 SHA-256 `483BB260AB8DAC167059D21E0947DFFEA5495C16EA25510C01BA7DF5A4B2DB21`，ZIP 内 `main.py`/`acceptance.py` 哈希与候选提交 `c53c333d5205fb98bf168c1f4fc670c0eec7432f` 源码一致。这证明本地 ZIP 的内容，不等于平台独立证明该 ZIP 被接收；生成应用 `template.zip` 的 SHA 不能充当上传 Agent ZIP 的 SHA。
 - **当前决策：**此项是候选平台复跑前的证据门禁，不默认引发 Agent 主流程改造。先用现有上传、运行和官方快照材料补充/核验 build ID、代码 SHA、上传 ZIP SHA、任务快照或官方任务资产哈希及配置哈希；平台无法给出时记录不可比限制，不填猜测值。
 - **重开条件：**现有记录无法完成绑定，且确认需在 `arc/metrics.py` 或运行清单中加入最小元数据输出时，再立项 5A 的窄切片。不要因此提前重构完整 TaskContext。
+- **V4.1 转派更新（2026-09-21）：**`cca008377368`/`bf5e742c15a4` 已满足上述重开条件：仅靠上传文件名和用户 provenance 无法区分冻结 V3 与 `13173bb…` 候选，且 401 可在业务生成前终止。用户授权 handoff `phase5-p5005-build-provenance-v41-20260921-v1`，由 Agent 实现会话从 V4 候选 `13173bb50e556c78bcd9cfdcc25c5449eee37f65` 开始，实现不可变 build manifest、网络前身份输出、失败路径身份落盘及 content-addressed 发布 sidecar；冻结 V3 不改。本切片只提高后续 Run 的可归因性，不能反向消解既有两个 Run 的身份冲突，也不能替代平台 submission/build、上传时间和 task snapshot/官方资产哈希的外部记录。
 
 ### `P5-006`｜Undo 的可访问名称与官方精确定位冲突
 
@@ -388,3 +389,14 @@ Pop-Location
 - **与 `P5-013` 的边界：**本 Run 的空模板发生在认证失败先行且 main.py 明确中止之后，是已知上游阻断的下游产物状态；它没有独立证明 workspace→staging→最终 ZIP 的打包缺陷。V4 的 workspace/staging/final-ZIP 清单和首坏阶段逻辑未被执行，也没有 pipeline manifest，故不重开或关闭 `P5-013`。
 - **阶段 5 裁决：**登记为 `P5-012` 的独立复发/平台观察，`needs_repro=true`，但范围仅限环境/认证正路径：用获授权的脱敏 endpoint、账号/权限/provider 路由诊断确认 401 责任边界，再以已知有效认证运行同一精确包的 generation-only 流程并冻结 build/ZIP、输出树和 pipeline manifest。当前无需修改 Agent、业务代码、官方测试或打包器，也不在本台账创建或上传新 Run。
 - **指标边界：**平台 run 对象耗时为 `0s`，时间戳推导 wall-clock 为 `7.331646s`；请求、Token、费用均缺失。与 `ff12a7ff45f8` 的 `1,095s` 仅能作为“本次快速终止”的描述性观察，因 submission、配置、provider 状态和计时口径未绑定，不构成严格 A/B，也不支持 Token、成本或平台收益结论。
+
+## 22. V4.1 build provenance 修复、测试与打包交接（2026-09-21）
+
+- **裁决与基线：**新增 handoff `phase5-p5005-build-provenance-v41-20260921-v1`，主问题为 `P5-005`，并覆盖 `P5-012` 的认证失败可诊断性；代码基线固定为 V4 候选 `13173bb50e556c78bcd9cfdcc25c5449eee37f65`。不修改冻结 V3 `d2fe4dbc7601242896b61b3a790a912732bc5d57`，不把既有两个冲突 Run 追认为任一源码构建。实现由“项目阶段5｜Agent 实现”Thread `01a0bd66-75bd-7801-97fc-b3d1e136c112` 承担，本会话只收敛决策与回收证据。
+- **避免重复实现：**V3.1 已有 401/403 单次永久失败、429/5xx/网络错误有界重试及 fatal pre-generation 非零退出；V4 已有 workspace/staging/final ZIP 形状清单、首坏阶段定位、根层级 Agent 包契约及 Git blob 字节一致性。V4.1 不新增第二套认证策略、重试器、打包流水线或业务验收循环，只在既有入口补不可变身份并复用现有 manifest/shape 机制。
+- **最小修改建议：**发布 ZIP 根目录加入机器可读 `agent-build.json`，至少记录 schema、完整 commit SHA、稳定的 payload/tree SHA-256、package contract 与由这些稳定字段派生的 build ID；不得在 ZIP 内嵌最终 ZIP SHA 造成自引用，也不得放入构建时间等破坏稳定身份的易变字段。打包完成后生成外部 release/provenance JSON、`.sha256` 与既有 `.shape.json`，把 build ID、最终 ZIP SHA、shape manifest SHA 和文件名绑定起来。最终包建议按 `octos-arc-agent-<commit12>-<zipsha12>.zip` 命名；文件名只是人类可见索引，验收仍以完整 SHA 为准。
+- **运行时建议：**参数解析和输出目录初始化后、任何 provider/network probe 之前，输出单行、可解析且脱敏的 `ARC_AGENT_IDENTITY {...}`，并把同一身份复制到输出目录 `.arc/agent-build.json` 及既有 pipeline manifest。即使首个请求返回 401/403 并 exit `2`，身份文件也必须留存。可记录模型/配置指纹、credential source 名称与是否存在、脱敏 endpoint host/path 指纹、HTTP 状态和安全的 request ID；禁止记录 key、authorization header、请求/响应正文或由 key 长度猜测“密钥无效”。
+- **实现测试建议：**①同一 commit/payload 产生同一 build ID，任一受管 payload 字节变化会改变 identity；②ZIP 根层级存在 `main.py` 与 `agent-build.json`，嵌入 identity、release sidecar、`.sha256`、`.shape.json` 四者相互一致，且无 wrapper、嵌套旧 ZIP、绝对/穿越路径、缓存、临时文件或秘密；③mock 401/403 时 identity 日志早于网络失败日志，仅一次 probe、exit `2`、无业务生成/骨架调用，失败输出仍含 identity；④mock 429/5xx/网络错误只做既有有界重试，成功后继续；⑤已知有效的 mock 正路径生成 `frontend/` 与 `backend/`，通过 package-shape gate，pipeline manifest 记录 build 与各阶段；⑥运行全部 `arc/tests`，新增失败为零，既有 Windows 基线失败须逐项对照而非笼统忽略。
+- **受控复现建议：**复现会话只对实现线程交付的**精确 ZIP**做离线 401、403 与已知有效正路径；每轮记录完整 ZIP SHA/build ID、stdout/stderr、exit code、请求次数、耗时、输出树、`.arc/agent-build.json` 和 pipeline manifest。不得改官方 spec/helpers，不使用或打印真实密钥，不启动平台 Run；若精确产物尚未交付，则保持 `waiting_for_implementation_artifact`。
+- **A/B 验收建议：**指标会话把“可比较”的最低条件定义为精确 build ID + 上传 ZIP SHA + submission/build/Run 绑定 + 同一 task snapshot 或官方资产哈希 + 相同模型、推理、预算、workers 与测试来源。`0/0` 继续排除在业务完成率之外；401 fail-fast 只单列请求数与终止时延，缺 Token/费用时不得宣称成本收益。业务 GO 仍要求认证后真实生成与 BookStack `34/34`、Keep `32/32`；A0 的 `32/34`、`31/32` 至多作为 no-regression 参照，不能替代最终 GO。
+- **实现回交门槛：**实现会话必须回传完整提交 SHA、分支/基线、改动文件、逐条验证命令与退出码、已知基线失败对照、最终 ZIP 的绝对路径/字节数/完整 SHA-256、build ID、release/shape sidecar 路径及未改官方测试声明。未拿到这些字段，不进入平台上传建议；本次授权不包含本会话上传 ZIP、创建平台 Run、推送远程或修改官方测试。

@@ -770,6 +770,97 @@
       "ledger_intake_status_recorded": true,
       "ledger_decision_recorded": false,
       "next_gate": "Reconcile the existing Keep Phase 4 thread and produce a new identity-complete result revision bound to manifest SHA-256 11DE0A63D4FE445FDA8A1016E5271EFD631631BD9C96D81028E3500DA37C554E. Do not fork a duplicate thread or create any issue, reproduction, implementation dispatch, upload, or platform Run before revalidation."
+    },
+    {
+      "key": "phase5:p5-005:build-provenance-v4.1:20260921:v1",
+      "handoff_id": "phase5-p5005-build-provenance-v41-20260921-v1",
+      "issue_ids": ["P5-005", "P5-012"],
+      "primary_issue_id": "P5-005",
+      "authorization": {
+        "source": "explicit_user_instruction",
+        "authorized_at": "2026-09-21",
+        "scope": "Have the dedicated Agent implementation task implement the current modification, test and packaging recommendations; this ledger task remains decision-only."
+      },
+      "status": "authorized_ready_to_dispatch",
+      "implementation_owner_thread_id": "01a0bd66-75bd-7801-97fc-b3d1e136c112",
+      "reproduction_thread_id": "01a0bd66-60c2-7441-9a85-332c0af24886",
+      "metrics_thread_id": "01a0bd66-8b2a-7fb3-9a25-269204f6dbf1",
+      "baseline": {
+        "label": "V4 candidate",
+        "commit": "13173bb50e556c78bcd9cfdcc25c5449eee37f65",
+        "zip_filename": "octos-arc-bundle-13173bb50e55.zip",
+        "zip_sha256": "FDFA6090FDCCB18553ABEF07C6B5429AAB9B0979FB69A9A5D0053730A159EE1A",
+        "shape_contract": "arc_agent_bundle_v1"
+      },
+      "frozen_v3": {
+        "commit": "d2fe4dbc7601242896b61b3a790a912732bc5d57",
+        "zip_sha256": "FC83EA353975F908C9669380146856077647CA5A80CA5A9CE3EB9E45FA6E8820",
+        "must_remain_unchanged": true
+      },
+      "evidence_boundary": {
+        "problem": "Existing Runs cannot independently bind uploaded Agent bytes to code/build identity; two user-attributed frozen V3 Runs name the later candidate archive, and one aborts before business generation.",
+        "does_not_resolve_historical_runs_retroactively": true,
+        "business_code_change_supported": false,
+        "official_test_change_supported": false
+      },
+      "implementation_scope": [
+        "Embed a deterministic root agent-build.json containing schema, full commit SHA, stable payload/tree SHA-256, package contract and derived build ID.",
+        "Emit one redacted machine-readable ARC_AGENT_IDENTITY record before any provider/network request and copy it to .arc/agent-build.json plus the existing pipeline manifest.",
+        "Generate release/provenance JSON, .sha256 and shape sidecars that bind build ID to the final ZIP SHA-256 without creating an in-archive self-reference.",
+        "Use a content-addressed release filename such as octos-arc-agent-<commit12>-<zipsha12>.zip while retaining full hashes as authority.",
+        "Reuse the existing V3.1 authentication policy and V4 package-shape pipeline rather than creating parallel control paths."
+      ],
+      "exclusions": [
+        "No business prompt, generated application, official test, spec or helper changes.",
+        "No provider fallback after permanent 401/403 and no weakening of exit code 2.",
+        "No secret, authorization header, request body or response body in identity logs or artifacts.",
+        "No retroactive source attribution for cca008377368 or bf5e742c15a4.",
+        "No platform upload, platform Run or remote push by the ledger task."
+      ],
+      "acceptance_criteria": [
+        "Same managed payload yields the same build ID; changing any managed payload byte changes the identity.",
+        "Embedded manifest, release sidecar, full ZIP SHA-256 and shape manifest agree and the archive retains the root package contract with no unsafe or nested archive entries.",
+        "Mock 401/403 performs exactly one probe, emits identity before the failure, exits 2, performs no business generation and preserves identity in the failed output.",
+        "Existing bounded 429/5xx/network retry behavior and a known-good positive generation path both pass.",
+        "Positive-path output contains frontend and backend, passes package-shape validation and records build identity through all pipeline stages.",
+        "Targeted and full arc/tests results include commands and exit codes; no new failure may be hidden as an existing Windows baseline issue."
+      ],
+      "implementation_return_fields": [
+        "commit_sha",
+        "branch_and_baseline",
+        "changed_files",
+        "validation_commands_and_exit_codes",
+        "known_baseline_failure_comparison",
+        "artifact_absolute_path",
+        "artifact_size_bytes",
+        "artifact_sha256",
+        "build_id",
+        "release_manifest_path",
+        "shape_manifest_path",
+        "official_tests_modified"
+      ],
+      "reproduction_plan": {
+        "status": "waiting_for_implementation_artifact",
+        "cases": ["offline_mock_401", "offline_mock_403", "offline_known_good_positive"],
+        "capture": ["exact_zip_sha256", "build_id", "stdout_stderr", "exit_code", "request_count", "elapsed_time", "output_tree", "output_identity", "pipeline_manifest"],
+        "platform_run_authorized": false,
+        "real_secret_logging_allowed": false
+      },
+      "metrics_acceptance": {
+        "strict_ab_identity": ["build_id", "uploaded_zip_sha256", "submission_build_run_binding", "task_snapshot_or_official_asset_hash", "same_model_reasoning_budget_workers_and_test_source"],
+        "exclude_zero_of_zero_from_business_metrics": true,
+        "auth_fail_fast_metrics": ["request_count", "termination_latency"],
+        "cost_claim_without_tokens_or_cost_allowed": false,
+        "business_go": {"bookstack": "34/34", "keep": "32/32"}
+      },
+      "implementation_dispatched": false,
+      "reproduction_dispatched": false,
+      "metrics_review_dispatched": false,
+      "new_platform_run_created_by_ledger": false,
+      "upload_performed_by_ledger": false,
+      "official_tests_modified_by_ledger": false,
+      "remote_pushed_by_ledger": false,
+      "next_gate": "Persist this handoff, dispatch it to the three role tasks, then require implementation ACK and exact artifact return before controlled reproduction or any platform upload recommendation."
     }
   ]
 }

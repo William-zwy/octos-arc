@@ -22,6 +22,7 @@ All notable changes to octos will be documented in this file.
 - Register BookStack Lite Run `cca008377368` as an independent `P5-012` recurrence: the platform observed HTTP 401 fail-fast exit 2 before generation, while source/build identity and an authenticated positive path remain unverified; exclude its `0/0` result from business completion and do not merge the resulting empty template into `P5-013`.
 - Quarantine Keep Lite Run `bf5e742c15a4` at Phase 5 intake after two empty Phase 4 turns and a late result with incomplete structured identity; do not consume its diagnosis, create an issue, or dispatch implementation until the existing Phase 4 thread is reconciled.
 - Record the user's explicit provenance that BookStack `cca008377368` and Keep `bf5e742c15a4` are the frozen V3 Run IDs; retain the unresolved conflict with both manifests naming `octos-arc-bundle-13173bb50e55.zip`, and do not upgrade either Run to platform-bound identity or business A/B evidence.
+- Authorize and hand off the V4.1 `P5-005` build-provenance slice from candidate `13173bb50e556c78bcd9cfdcc25c5449eee37f65`: embed a stable Agent build identity, emit and persist it before provider access, bind it to content-addressed package sidecars, and require offline auth/positive-path and strict A/B identity checks without changing business prompts or official tests.
 
 ### Features
 
