@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "handoff_id": "c48754c25fcf-09E043AE8892",
+  "run_id": "c48754c25fcf",
+  "task_key": "smoke-evolution--dice",
+  "thread_id": "01a0b492-841a-7230-800f-5814c2a537b5",
+  "manifest_sha256": "09e043ae8892180bd543ea8c0787623e27a5d20c6f3703c964f8b06f3fa5835f",
+  "status": "received",
+  "received_at": "2026-09-21T15:11:06.1647295Z"
+}

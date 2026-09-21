@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "PHASE4_RESULT": "complete",
+  "status": "complete",
+  "handoff_id": "c48754c25fcf-09E043AE8892",
+  "run_id": "c48754c25fcf",
+  "submission_id": "ed11d633b8a6",
+  "task_key": "smoke-evolution--dice",
+  "thread_id": "01a0b492-841a-7230-800f-5814c2a537b5",
+  "manifest_sha256": "09e043ae8892180bd543ea8c0787623e27a5d20c6f3703c964f8b06f3fa5835f",
+  "completed_at": "2026-09-21T15:13:40.3712297Z",
+  "scope": "read_only_single_run_diagnosis",
+  "confirmed_facts": {
+    "competition_id": "smoke-evolution",
+    "requirement_id": "smoke-evolution--dice",
+    "catalog": "competition",
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "platform_status": "FAILED",
+    "score": 0,
+    "passed_count": 0,
+    "failed_count": 0,
+    "test_total": 0,
+    "feature_implementation_rate": 0,
+    "failure_stage": "start_agent",
+    "generation_command": "python3 /workspace/submission/main.py /tmp/arcbench/requirements-source --output-dir /workspace/template",
+    "generation_exit_code": 2,
+    "generation_identity": {
+      "build_id": "arc-agent-v1-0851fff1cfb8feeb38544f8c",
+      "commit_sha": "bb70542d7d327b660fa672bfdbc193f3f51b40a5",
+      "payload_tree_sha256": "B286699D96E3463AC6C8B8C426600BEF01DB7A9A0B43191AE99DFCB32A99C885"
+    },
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "tests_reached": false,
+    "metering": {
+      "platform_token_count": null,
+      "provider_total_tokens": null,
+      "cost": null,
+      "reason": "Meter baseline login returned HTTP 401; generation stopped before provider usage was recorded."
+    },
+    "timing": {
+      "run_duration_seconds": 0,
+      "started_at": "2026-09-21T14:52:04.296721",
+      "finished_at": "2026-09-21T14:52:07.862764",
+      "wall_clock_seconds_approx": 3.566043
+    }
+  },
+  "failure_chain": [
+    "Runner assembled the workspace and completed environment preflight.",
+    "Agent dependencies installed successfully.",
+    "The platform invoked the uploaded main.py with the expected requirement and output arguments.",
+    "The agent emitted masked environment information and reached its API probe.",
+    "The probe received HTTP 401 and classified it as a permanent authentication failure.",
+    "main.py exited with code 2 before generation, Evolution planning, code generation, acceptance, or Playwright.",
+    "The platform marked start_agent failed; run_tests remained not reached and the container was removed."
+  ],
+  "root_cause_candidates": [
+    {
+      "candidate": "The platform-injected credential was rejected by the API authentication layer, or the platform auth context was unauthorized at this time.",
+      "evidence_level": "high",
+      "evidence": [
+        "Raw generation log reports HTTP 401 from the agent API probe.",
+        "The agent environment reports OPENAI_API_KEY=set, but that only proves presence, not validity.",
+        "The same run records meter baseline login failure with HTTP 401."
+      ],
+      "limits": "The secret value and server-side authentication reason are unavailable and must not be recovered into logs."
+    },
+    {
+      "candidate": "The agent's direct pre-generation probe is the fail-fast enforcement point, so an auth error prevents all business generation.",
+      "evidence_level": "high",
+      "evidence": [
+        "The run log shows the probe immediately before exit code 2.",
+        "Static code places probe_endpoint() before requirement loading and Flow.run()."
+      ],
+      "limits": "This explains the failure path, not why the platform credential was rejected."
+    },
+    {
+      "candidate": "A model or endpoint configuration mismatch caused the upstream rejection.",
+      "evidence_level": "low",
+      "evidence": [
+        "The model and base URL are present in the runner environment."
+      ],
+      "limits": "The observed status is 401, and the run does not expose the request body or server response body; there is insufficient evidence to attribute the rejection to model selection or URL shape."
+    }
+  ],
+  "excluded_causes": [
+    {
+      "cause": "Business application code failure",
+      "reason": "No application generation completed and no application test ran."
+    },
+    {
+      "cause": "Playwright or official test failure",
+      "reason": "run.tests is empty, run_tests is pending/not reached, and there is no test execution log."
+    },
+    {
+      "cause": "Wrong entrypoint",
+      "reason": "The platform invoked /workspace/submission/main.py successfully."
+    },
+    {
+      "cause": "Wrong test directory or bundled-test fallback",
+      "reason": "The runner spec selected /workspace/tests and the manifest records zero bundled fallback hits; tests were not reached, so no test-source execution claim is made."
+    },
+    {
+      "cause": "Dependency installation or Docker bootstrap failure",
+      "reason": "Docker ping, runner image availability, pip installation, and agent dependency installation all completed before the agent launch."
+    },
+    {
+      "cause": "OOM, timeout, port, or generated-app resource failure",
+      "reason": "The process exited about 3.6 seconds after start during the auth probe, before application startup or resource-heavy phases."
+    }
+  ],
+  "evidence_gaps": [
+    "The actual API key value, key identity, expiry, scope, and server-side 401 reason are unavailable and must remain undisclosed.",
+    "No provider request, token, cost, or LLM duration was recorded; null is not equivalent to zero usage.",
+    "No task_snapshot_id was present in the run object.",
+    "No Playwright report or business failure details exist because generation did not reach tests.",
+    "The platform screenshot corroborates the command and exit state but adds no independent business-test evidence.",
+    "The run object does not provide platform-native agent_build_id/code_sha fields; the generation identity is only present in the captured log and normalized manifest."
+  ],
+  "minimal_read_only_reproduction": [
+    "Compare the captured run JSON, logs JSON, and manifest SHA-256; do not create a new platform run.",
+    "Inspect the submission/platform authentication audit for the same timestamp and submission ID, using only masked key metadata or validity status.",
+    "Check whether the platform meter login and generation API used the same authorized account context; do not copy or print any credential.",
+    "Statically verify that the uploaded main.py invokes the raw probe before requirement loading and that HTTP 401 maps to exit code 2.",
+    "Do not infer any business pass/fail result until a later run reaches generation and /workspace/tests."
+  ],
+  "stage5_routing": {
+    "decision": "Route to Stage 5 as a platform/authentication gate, not as a business-code optimization candidate.",
+    "needs_stage5": true,
+    "code_change_now": false,
+    "allowed_future_boundary": [
+      "Fix platform/submission credential authorization outside the Agent code if the auth audit confirms an invalid or expired credential.",
+      "If a code change is later justified, only improve authentication failure classification, masked diagnostics, and bounded preflight behavior.",
+      "Do not bypass HTTP 401, silently continue with an unauthenticated client, or change official tests, requirements, assets, or business-generation logic based on this Run."
+    ],
+    "go_no_go": "Do not use this Run to tune completion, Token, or application correctness. Require a later valid run that reaches generation and /workspace/tests before functional optimization."
+  },
+  "impact_estimate": {
+    "completion_rate": "This Run contributes score 0 with 0/0 tests because of a pre-test authentication blocker. It does not estimate business completion capability.",
+    "token": "Not measured; provider and platform token/cost fields are null. Do not treat null as zero or compare this Run as a low-token success.",
+    "time": "The platform reports run_duration_seconds=0; captured start-to-finish wall time is approximately 3.566 seconds. The failure is fast but blocks the entire task.",
+    "overall": "If the authentication context is repaired, expected score, Token, and business runtime remain unknown from this Run."
+  },
+  "evidence": {
+    "manifest": "evidence/arc-bench/runs/c48754c25fcf/manifest.json",
+    "handoff": "evidence/arc-bench/runs/c48754c25fcf/phase4-handoff.json",
+    "ack": "evidence/arc-bench/runs/c48754c25fcf/phase4-ack.json",
+    "raw_run_filename": "arcbench-run-c48754c25fcf.json",
+    "raw_logs_filename": "arcbench-run-c48754c25fcf-logs.json",
+    "raw_artifacts_storage": "external download directory; hashes and source paths are recorded in manifest.json"
+  }
+}

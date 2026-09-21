@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "purpose": "Persistent phase 3 to phase 4 handoff and readback",
+  "handoff_id": "c48754c25fcf-09E043AE8892",
+  "run_id": "c48754c25fcf",
+  "submission_id": "ed11d633b8a6",
+  "task_key": "smoke-evolution--dice",
+  "thread_id": "01a0b492-841a-7230-800f-5814c2a537b5",
+  "thread_title": "04 项目阶段4 + smoke-evolution--dice",
+  "scope": "read_only_phase4_diagnosis",
+  "manifest_path": "evidence/arc-bench/runs/c48754c25fcf/manifest.json",
+  "manifest_sha256": "09e043ae8892180bd543ea8c0787623e27a5d20c6f3703c964f8b06f3fa5835f",
+  "ack_path": "evidence/arc-bench/runs/c48754c25fcf/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/c48754c25fcf/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/c48754c25fcf/phase4-result.md",
+  "created_at": "2026-09-21T15:10:00+08:00",
+  "status": "sent_for_readback",
+  "constraints": [
+    "Do not create a new run",
+    "Do not rerun tests or upload",
+    "Do not modify agent code, official tests, requirements, or assets",
+    "Analyze only this run; ignore previous run conclusions except as explicitly labeled history",
+    "Write phase4-ack.json before diagnosis and phase4-result.json plus phase4-result.md after diagnosis"
+  ]
+}
