@@ -1,10 +1,12 @@
 #!/bin/sh
 # Build a commit-bound ARC platform Agent ZIP (main.py must be at ZIP root).
 set -eu
-cd "$(dirname "$0")"
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+repo_root=$(git -C "$script_dir" rev-parse --show-toplevel)
+cd "$script_dir"
 
-commit=$(git rev-parse HEAD)
-short_commit=$(git rev-parse --short=12 HEAD)
+commit=$(git -C "$repo_root" rev-parse HEAD)
+short_commit=$(git -C "$repo_root" rev-parse --short=12 HEAD)
 output=${1:-../octos-arc-bundle-${short_commit}.zip}
 case "$output" in
   /*) ;;
@@ -25,12 +27,13 @@ else
   exit 3
 fi
 
-git archive --format=zip --output="$output" HEAD:arc -- \
+git -C "$repo_root" archive --format=zip --output="$output" HEAD:arc -- \
   main.py octos_stdio.py requirement_order.py acceptance.py guard.py \
   llm_proxy.py codegen.py package_shape.py hooks requirements.txt \
   arcbench_agent_runtime public-tests
 
-"$python_cmd" package_shape.py agent --archive "$output" --output "${output%.zip}.shape.json" >/dev/null
+"$python_cmd" "$script_dir/package_shape.py" agent --archive "$output" \
+  --output "${output%.zip}.shape.json" >/dev/null
 echo "commit=$commit"
 echo "artifact=$output"
 shasum -a 256 "$output"
