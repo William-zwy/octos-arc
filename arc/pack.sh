@@ -24,9 +24,9 @@ if [ -e "$output" ]; then
   exit 2
 fi
 
-if command -v python3 >/dev/null 2>&1; then
+if command -v python3 >/dev/null 2>&1 && python3 -c 'import sys' >/dev/null 2>&1; then
   python_cmd=python3
-elif command -v python >/dev/null 2>&1; then
+elif command -v python >/dev/null 2>&1 && python -c 'import sys' >/dev/null 2>&1; then
   python_cmd=python
 else
   echo "error: python3 or python is required for the package-shape gate" >&2
