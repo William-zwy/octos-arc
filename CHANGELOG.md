@@ -9,7 +9,7 @@ All notable changes to octos will be documented in this file.
 
 ### Changed
 
-- ARC-Bench postflight now freezes root-level workspace/staging/final-ZIP inventories, fails successful runs whose generated app lacks `frontend/` or `backend/`, and validates commit-bound Agent ZIPs before platform upload; the packer supports both `python3` and `python` launchers and anchors `git archive` at the repository root for linked worktrees.
+- ARC-Bench postflight now freezes root-level workspace/staging/final-ZIP inventories, fails successful runs whose generated app lacks `frontend/` or `backend/`, and validates commit-bound Agent ZIPs before platform upload; the packer supports both `python3` and `python`, linked worktrees, and MSYS-to-Windows validator paths.
 - ARC-Bench provider preflight now fails fast on permanent 401/403 authentication errors, retries only bounded transient failures, stops skeleton generation after terminal auth rejection, and returns a non-zero status when no runnable app exists.
 - ARC-Bench adapter prompts and failure diagnostics now preserve the generic save-success/navigation/result-role contract for asynchronously created entities, with bounded hints for result locators selected before navigation.
 - ARC-Bench adapter prompts now distinguish action-feedback text from control accessible names, check first-action seed state against packaged stores, and preserve active edits across async reads; failed Playwright runs receive bounded, evidence-triggered interaction hints in the existing repair digest.

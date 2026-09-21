@@ -32,8 +32,16 @@ git -C "$repo_root" archive --format=zip --output="$output" HEAD:arc -- \
   llm_proxy.py codegen.py package_shape.py hooks requirements.txt \
   arcbench_agent_runtime public-tests
 
-"$python_cmd" "$script_dir/package_shape.py" agent --archive "$output" \
-  --output "${output%.zip}.shape.json" >/dev/null
+shape_script="$script_dir/package_shape.py"
+shape_archive="$output"
+shape_output="${output%.zip}.shape.json"
+if command -v cygpath >/dev/null 2>&1; then
+  shape_script=$(cygpath -w "$shape_script")
+  shape_archive=$(cygpath -w "$shape_archive")
+  shape_output=$(cygpath -w "$shape_output")
+fi
+"$python_cmd" "$shape_script" agent --archive "$shape_archive" \
+  --output "$shape_output" >/dev/null
 echo "commit=$commit"
 echo "artifact=$output"
 shasum -a 256 "$output"
