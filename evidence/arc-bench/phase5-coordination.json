@@ -1025,11 +1025,33 @@
         "run_tests, Evolution, acceptance, application startup and Playwright were not reached."
       ],
       "root_cause_boundary": {
-        "classification": "platform_injected_credential_or_authorization_context_rejected_by_api_authentication_layer",
+        "classification": "platform_effective_secret_injection_whitelist_or_gateway_auth_state_drift",
         "confidence": "high",
         "exact_server_side_reason": "unknown",
-        "remaining_server_side_candidates": ["invalid_or_expired_or_revoked_credential", "scope_or_account_entitlement_missing", "credential_endpoint_or_provider_route_mismatch"],
-        "low_confidence_candidates": ["model_selection_mismatch", "endpoint_url_shape_mismatch"]
+        "remaining_server_side_candidates": ["container_received_different_or_stale_secret_reference_or_value", "whitelist_mapping_or_account_entitlement_changed", "gateway_did_not_receive_or_accept_authorization_header", "credential_endpoint_or_provider_route_mismatch"],
+        "low_confidence_candidates": ["model_selection_mismatch", "endpoint_url_shape_mismatch", "v4_1_probe_auth_format_regression"]
+      },
+      "same_api_clarification": {
+        "source": "explicit_user_statement",
+        "statement": "The API injected by the platform has remained the same and is otherwise working.",
+        "successful_comparison_run_id": "61f91039fbfb",
+        "successful_comparison_log_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-smoke-evolution/arcbench-run-61f91039fbfb-logs.json",
+        "successful_comparison_log_bytes": 85302,
+        "successful_comparison_log_sha256": "60AF08863DC7A4EC261A14AB49B32C15852213CF02FD81981E4EBC5AEE1D2FDB",
+        "successful_comparison_facts": [
+          "The same OPENAI_BASE_URL https://api.arc-bench.com/v1 and model deepseek-v4-flash were used.",
+          "The meter baseline resolved a whitelist access-key.",
+          "The raw chat/completions probe received HTTP 200 after one transient read timeout."
+        ],
+        "probe_request_static_comparison": {
+          "commits": ["d2fe4dbc7601242896b61b3a790a912732bc5d57", "13173bb50e556c78bcd9cfdcc25c5449eee37f65", "bb70542d7d327b660fa672bfdbc193f3f51b40a5"],
+          "same_path": "/chat/completions",
+          "same_auth_header_shape": "Authorization: Bearer <OPENAI_API_KEY>",
+          "v4_1_auth_shape_regression_supported": false
+        },
+        "meter_and_generation_services_are_distinct": true,
+        "effective_key_equality_proven_by_set_log": false,
+        "revised_next_check": "Compare the platform secret reference/version and whitelist mapping with the successful Run, and inspect gateway-side receipt/rejection of the Authorization header without exposing the key."
       },
       "excluded_causes": ["wrong_agent_zip_or_entrypoint", "dependency_installation", "business_application_code", "official_tests_or_playwright", "test_directory_or_bundled_fallback", "package_shape", "oom_timeout_port_or_generated_app_resource_failure"],
       "platform_final": {"status": "FAILED", "score": 0.0, "passed": 0, "total": 0, "failure_stage": "start_agent", "generation_exit_code": 2},
