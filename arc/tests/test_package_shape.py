@@ -83,14 +83,18 @@ class AppPipelineShapeTests(unittest.TestCase):
 
 
 class AgentBundleShapeTests(unittest.TestCase):
+    @staticmethod
+    def write_required(archive) -> None:
+        for name in AGENT_REQUIRED_FILES:
+            archive.writestr(name, "fixture")
+        for name in AGENT_REQUIRED_DIRS:
+            archive.writestr(f"{name}/fixture.txt", "fixture")
+
     def test_agent_archive_requires_runtime_files_at_root(self):
         with tempfile.TemporaryDirectory() as tmp:
             archive_path = Path(tmp) / "agent.zip"
             with zipfile.ZipFile(archive_path, "w") as archive:
-                for name in AGENT_REQUIRED_FILES:
-                    archive.writestr(name, "fixture")
-                for name in AGENT_REQUIRED_DIRS:
-                    archive.writestr(f"{name}/fixture.txt", "fixture")
+                self.write_required(archive)
 
             result = inventory(archive_path, "agent_zip", "agent")
 
@@ -108,12 +112,40 @@ class AgentBundleShapeTests(unittest.TestCase):
             self.assertFalse(result["ok"])
             self.assertIn("main.py", result["missing"])
 
+    def test_agent_archive_rejects_nested_archives_caches_and_secret_values(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            archive_path = Path(tmp) / "unsafe-agent.zip"
+            with zipfile.ZipFile(archive_path, "w") as archive:
+                self.write_required(archive)
+                archive.writestr("old-agent.zip", "nested")
+                archive.writestr("__pycache__/main.pyc", "cache")
+                archive.writestr("notes.txt", "sk-abcdefghijklmnopqrstuvwxyz012345")
+
+            result = inventory(archive_path, "agent_zip", "agent")
+
+            self.assertFalse(result["ok"])
+            self.assertEqual(result["forbidden_entries"], ["__pycache__/main.pyc", "old-agent.zip"])
+            self.assertEqual(result["secret_value_hits"], ["notes.txt"])
+
+    def test_agent_archive_rejects_duplicate_normalised_entries(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            archive_path = Path(tmp) / "duplicate-agent.zip"
+            with zipfile.ZipFile(archive_path, "w") as archive:
+                self.write_required(archive)
+                archive.writestr("./main.py", "duplicate")
+
+            result = inventory(archive_path, "agent_zip", "agent")
+
+            self.assertFalse(result["ok"])
+            self.assertEqual(result["duplicate_entries"], ["main.py"])
+
 
 class PostflightShapeTests(unittest.TestCase):
     def test_postflight_freezes_workspace_manifest(self):
         with tempfile.TemporaryDirectory() as tmp:
             workspace = Path(tmp) / "workspace"
             shutil.copytree(FIXTURES / "known-good", workspace)
+            agent_main._initialise_build_identity(workspace)
 
             with patch.object(agent_main, "log"):
                 agent_main._postflight_structure_check(workspace, strict=True)
@@ -124,6 +156,7 @@ class PostflightShapeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             workspace = Path(tmp) / "workspace"
             shutil.copytree(FIXTURES / "missing-backend", workspace)
+            agent_main._initialise_build_identity(workspace)
 
             with patch.object(agent_main, "log"), self.assertRaisesRegex(RuntimeError, "backend/"):
                 agent_main._postflight_structure_check(workspace, strict=True)

@@ -2,6 +2,7 @@
 /target/
 /dist/
 /scripts/octos-bundle-*.tar.gz
+/arc/releases/
 **/*.rs.bk
 /book/public/
 /book-zh/public/

@@ -1,7 +1,11 @@
+import io
+import json
 import os
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stdout
+from pathlib import Path
 from unittest.mock import patch
 
 from main import (OctosDriver, PermanentAuthenticationError, describe_node, folder_descendants,
@@ -134,10 +138,79 @@ class SkeletonAuthenticationTests(unittest.TestCase):
 
 
 class EntrypointAuthenticationTests(unittest.TestCase):
-    def test_should_return_nonzero_before_generation_on_permanent_auth_failure(self):
-        with patch.object(m, "probe_endpoint", side_effect=PermanentAuthenticationError("HTTP 401")), \
-                patch.object(sys, "argv", ["main.py"]):
-            self.assertEqual(m.main(), 2)
+    def test_should_persist_identity_and_return_two_before_generation_for_401_and_403(self):
+        identity = m.make_identity("1" * 40, "2" * 64, 7)
+        for status in (401, 403):
+            with self.subTest(status=status), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                requirements = root / "requirements"
+                requirements.mkdir()
+                output = root / "output"
+                stdout = io.StringIO()
+                with patch.object(m, "_bundle_build_identity", return_value=identity), \
+                        patch.object(m, "probe_endpoint",
+                                     side_effect=PermanentAuthenticationError(f"HTTP {status}")) as probe, \
+                        patch.object(m, "Flow") as flow, \
+                        patch.object(sys, "argv", ["main.py", str(requirements),
+                                                   "--output-dir", str(output)]), \
+                        patch.dict(os.environ, {
+                            "OPENAI_API_KEY": "top-secret-value",
+                            "OPENAI_BASE_URL": "https://provider.invalid/v1",
+                        }, clear=True), redirect_stdout(stdout):
+                    self.assertEqual(m.main(), 2)
+
+                probe.assert_called_once_with()
+                flow.assert_not_called()
+                text = stdout.getvalue()
+                self.assertLess(text.index("ARC_AGENT_IDENTITY "), text.index("[probe]"))
+                self.assertNotIn("top-secret-value", text)
+                self.assertNotIn("len=", text)
+                self.assertEqual(
+                    json.loads((output / ".arc" / "agent-build.json").read_text()), identity,
+                )
+                pipeline = json.loads(
+                    (output / ".arc" / "package-shape" / "pipeline.json").read_text()
+                )
+                self.assertEqual(pipeline["agent_build"], identity)
+                self.assertEqual(pipeline["status"], "initialized_before_provider_probe")
+
+    def test_known_good_mock_path_preserves_identity_through_shape_gate(self):
+        identity = m.make_identity("3" * 40, "4" * 64, 9)
+
+        class KnownGoodFlow:
+            def __init__(self, _args, output_dir, _requirements):
+                self.output_dir = output_dir
+
+            def run(self):
+                (self.output_dir / "frontend").mkdir()
+                (self.output_dir / "backend").mkdir()
+                (self.output_dir / "frontend" / "package.json").write_text("{}")
+                (self.output_dir / "backend" / "package.json").write_text("{}")
+                m._postflight_structure_check(self.output_dir, strict=True)
+                return 0
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            requirements = root / "requirements"
+            requirements.mkdir()
+            output = root / "output"
+            with patch.object(m, "_bundle_build_identity", return_value=identity), \
+                    patch.object(m, "probe_endpoint") as probe, \
+                    patch.object(m, "Flow", KnownGoodFlow), \
+                    patch.object(sys, "argv", ["main.py", str(requirements),
+                                               "--output-dir", str(output)]), \
+                    patch.dict(os.environ, {}, clear=True), \
+                    patch.object(m, "log"):
+                self.assertEqual(m.main(), 0)
+
+            probe.assert_called_once_with()
+            self.assertTrue((output / "frontend").is_dir())
+            self.assertTrue((output / "backend").is_dir())
+            pipeline = json.loads(
+                (output / ".arc" / "package-shape" / "pipeline.json").read_text()
+            )
+            self.assertTrue(pipeline["ok"])
+            self.assertEqual(pipeline["agent_build"], identity)
 
 
 class FolderDescendantTests(unittest.TestCase):

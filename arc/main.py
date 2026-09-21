@@ -84,6 +84,8 @@ from acceptance import (  # noqa: E402
     nodes_for_failures, playwright_candidates, playwright_version_hint, route_contract_gaps, restore_tree,
     restore_worktree, snapshot_worktree, tree_digest,
 )
+from build_identity import (BuildIdentityError, IDENTITY_FILENAME,  # noqa: E402
+                            load_identity, make_identity, write_json)
 from codegen import FORMAT_INSTRUCTIONS, dedupe_nav_links, parse_file_blocks, write_files  # noqa: E402
 from guard import TurnMonitor  # noqa: E402
 from llm_proxy import LlmProxy  # noqa: E402
@@ -151,6 +153,41 @@ def log(msg: str) -> None:
 
 # ---------------------------------------------------------------- postflight
 
+def _bundle_build_identity() -> dict:
+    """Load the packaged identity, with an explicit local-source sentinel."""
+    identity_path = BUNDLE_DIR / IDENTITY_FILENAME
+    if identity_path.is_file():
+        return load_identity(identity_path)
+    identity = make_identity("0" * 40, "0" * 64, 0)
+    identity["identity_status"] = "unpackaged_source"
+    return identity
+
+
+def _initialise_build_identity(output_dir: Path, identity: dict | None = None) -> dict:
+    """Persist and announce identity before any provider/network request."""
+    identity = identity or _bundle_build_identity()
+    identity_path = output_dir / ".arc" / IDENTITY_FILENAME
+    write_json(identity, identity_path)
+    report_path = output_dir / ".arc" / "package-shape" / "pipeline.json"
+    write_report({
+        "schema_version": 1,
+        "contract": "web_app_root_v1",
+        "status": "initialized_before_provider_probe",
+        "agent_build": identity,
+        "first_missing_stage": None,
+        "ok": None,
+        "stages": [],
+    }, report_path)
+    print("ARC_AGENT_IDENTITY " + json.dumps(
+        identity, ensure_ascii=False, sort_keys=True, separators=(",", ":")), flush=True)
+    return identity
+
+
+def _attach_build_identity(report: dict, output_dir: Path) -> None:
+    identity_path = output_dir / ".arc" / IDENTITY_FILENAME
+    report["agent_build"] = load_identity(identity_path)
+
+
 def _postflight_structure_check(output_dir: Path, *, strict: bool = False) -> None:
     """Lift one nested app, then freeze and enforce the available shape stages."""
     tree_lines = []
@@ -186,6 +223,12 @@ def _postflight_structure_check(output_dir: Path, *, strict: bool = False) -> No
         Path(staging_value) if staging_value else None,
         Path(archive_value) if archive_value else None,
     )
+    try:
+        _attach_build_identity(report, output_dir)
+    except BuildIdentityError as exc:
+        log(f"[package-shape] build identity unavailable: {exc}")
+        if strict:
+            raise
     report_path = output_dir / ".arc" / "package-shape" / "pipeline.json"
     try:
         write_report(report, report_path)
@@ -2147,7 +2190,7 @@ def probe_endpoint(*, urlopen=None, sleep_fn=time.sleep, attempts: int | None = 
                           headers={"Content-Type": "application/json", "Authorization": "Bearer " + key})
         try:
             with urlopen(req, timeout=60) as resp:
-                log(f"[probe] raw chat/completions -> HTTP {resp.status}: {resp.read()[:120]!r}")
+                log(f"[probe] raw chat/completions -> HTTP {resp.status}")
                 return
         except Exception as exc:  # noqa: BLE001
             status = _error_status(exc)
@@ -2172,10 +2215,20 @@ def main() -> int:
                         default=int(os.environ.get("ARCBENCH_WEB_PORT", os.environ.get("ARC_WEB_PORT", "3000"))))
     args = parser.parse_args()
 
+    req_src = Path(args.requirement_path).resolve()
+    if args.output_dir:
+        output_dir = Path(args.output_dir).resolve()
+    elif os.environ.get("ARCBENCH_TEMPLATE_DIR"):
+        output_dir = Path(os.environ["ARCBENCH_TEMPLATE_DIR"]).resolve()
+    else:
+        output_dir = Path.cwd() / "workspace" / f"run-{time.strftime('%Y%m%d-%H%M%S')}"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    _initialise_build_identity(output_dir)
+
     key = os.environ.get("OPENAI_API_KEY", "")
     print(f"[env] OPENAI_BASE_URL={os.environ.get('OPENAI_BASE_URL', '<unset>')}", flush=True)
     print(f"[env] MODEL={os.environ.get('MODEL', '<unset>')}", flush=True)
-    print(f"[env] OPENAI_API_KEY={'set(len=%d)' % len(key) if key else '<unset>'}", flush=True)
+    print(f"[env] OPENAI_API_KEY={'set' if key else '<unset>'}", flush=True)
     print(f"[env] ARCBENCH_TEMPLATE_DIR={os.environ.get('ARCBENCH_TEMPLATE_DIR', '<unset>')}", flush=True)
     print(f"[env] ARCBENCH_TASK_DIR={os.environ.get('ARCBENCH_TASK_DIR', '<unset>')}", flush=True)
     print(f"[env] argv requirement_path={args.requirement_path}", flush=True)
@@ -2187,15 +2240,6 @@ def main() -> int:
     except RuntimeError as exc:
         log(f"[probe] endpoint preflight failed; aborting before generation ({exc})")
         return 3
-
-    req_src = Path(args.requirement_path).resolve()
-    if args.output_dir:
-        output_dir = Path(args.output_dir).resolve()
-    elif os.environ.get("ARCBENCH_TEMPLATE_DIR"):
-        output_dir = Path(os.environ["ARCBENCH_TEMPLATE_DIR"]).resolve()
-    else:
-        output_dir = Path.cwd() / "workspace" / f"run-{time.strftime('%Y%m%d-%H%M%S')}"
-    output_dir.mkdir(parents=True, exist_ok=True)
 
     on_platform = bool(os.environ.get("ARCBENCH_TEMPLATE_DIR"))
     if on_platform:

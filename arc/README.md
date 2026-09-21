@@ -29,12 +29,12 @@ python3 -m unittest discover -s arc/tests -t arc  # 编排器纯函数的单元�
 #    改完回到第 2、3 步，改前改后各跑一次，比数字
 
 # 5. 打包上传
-sh arc/pack.sh                               # 得到 octos-arc-bundle-<commit>.zip 及形状清单
+sh arc/pack.sh                               # 得到 octos-arc-agent-<commit12>-<zipsha12>.zip 及 provenance sidecars
 # 到 arc-bench.com 对应比赛页 New submission 上传，模型填 deepseek-v4-flash，
 # Base URL 填 https://api.arc-bench.com/v1，然后选题、Run
 ```
 
-打包脚本只归档当前 `HEAD` 中已跟踪的 Agent 文件，不会把工作树里的临时文件带入 ZIP；若目标文件已存在则拒绝覆盖。生成后会执行 `arc_agent_bundle_v1` 根层级门禁并写出同名 `.shape.json`，门禁通过后才打印 SHA-256。
+打包脚本只归档当前 `HEAD` 中已跟踪的 Agent 文件，不会把工作树里的临时文件带入 ZIP；若目标文件已存在则拒绝覆盖。默认产物写入被 Git 忽略的 `arc/releases/`。ZIP 根目录的 `agent-build.json` 以完整 commit、实际 payload tree SHA-256 和 `arc_agent_bundle_v1` 契约派生稳定 build ID，不包含最终 ZIP SHA，因而没有自引用。生成后会执行根层级与安全门禁，并写出 `.shape.json`、`.release.json` 和 `.zip.sha256`；release sidecar 将 build ID 与最终完整 ZIP SHA-256 绑定。
 
 ## 改了内核怎么让平台用上
 
@@ -47,6 +47,7 @@ sh arc/pack.sh                               # 得到 octos-arc-bundle-<commit>.
 | 文件 | 作用 |
 |---|---|
 | `main.py` | 平台入口与编排器：骨架轮 → 按依赖序逐节点「设计 → 实现 → 本地跑该节点的验收 spec → 修复 ≤5 轮 → 通过即 commit」→ 启动演练 |
+| `build_identity.py` | 生成/校验确定性 Agent build ID，并把最终 ZIP、shape 与 release sidecars 绑定 |
 | `requirement_order.py` | 需求树拓扑排序、祖先查找、节点指纹（evolution 差异） |
 | `acceptance.py` | 本地 Playwright 验收：spec↔节点映射、起服务、跑 spec、四字段失败摘要 |
 | `guard.py` | 守护规则：未验证就宣称完成、连续同一错误、改保护路径 |

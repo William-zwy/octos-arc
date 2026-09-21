@@ -9,6 +9,7 @@ All notable changes to octos will be documented in this file.
 
 ### Changed
 
+- ARC-Bench Agent releases now embed deterministic commit/payload build identity, emit that identity before provider probes, persist it through failed and successful pipeline manifests, and ship content-addressed ZIP, checksum, shape, and release-provenance artifacts without recording credentials or provider bodies.
 - ARC-Bench postflight now freezes root-level workspace/staging/final-ZIP inventories, fails successful runs whose generated app lacks `frontend/` or `backend/`, and validates commit-bound Agent ZIPs before platform upload; the self-contained packer probes usable Python interpreters, preserves Git blob bytes across Windows `autocrlf`, computes SHA-256 without `shasum`, and supports linked worktrees plus non-login Git Bash/MSYS path conversion.
 - ARC-Bench provider preflight now fails fast on permanent 401/403 authentication errors, retries only bounded transient failures, stops skeleton generation after terminal auth rejection, and returns a non-zero status when no runnable app exists.
 - ARC-Bench adapter prompts and failure diagnostics now preserve the generic save-success/navigation/result-role contract for asynchronously created entities, with bounded hints for result locators selected before navigation.
