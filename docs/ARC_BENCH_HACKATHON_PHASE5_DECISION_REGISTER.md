@@ -1,6 +1,6 @@
 # ARC-Bench 阶段 5 跨 Run 问题与优化决策台账
 
-> 版本：v1.23；建立日期：2026-09-19；状态：V3 已冻结；用户明确确认 BookStack `cca008377368` 与 Keep `bf5e742c15a4` 是冻结 V3 返回的 Run ID。该版本归属作为用户 provenance 登记；两份 manifest 同时把原始上传文件名记为 `octos-arc-bundle-13173bb50e55.zip`，与台账中冻结 V3 的 `d2fe4dbc…` / `FC83EA…` 本地身份存在未闭合冲突，平台又缺少 ZIP→build/code 与 task snapshot 绑定，因此不能升级为源码级身份、业务验收、平台收益或严格 A/B。`cca008377368` 仍只确认 `P5-012` 的 401→exit 2 运行事实；`bf5e742c15a4` 仍因阶段 4 结果身份不完整而隔离。用户现已授权把 `P5-005` 的最小 build provenance 补强作为 V4.1 控制面切片转交 Agent 实现会话；本会话仍不直接修改代码。
+> 版本：v1.24；建立日期：2026-09-19；状态：V3 已冻结；用户明确确认 BookStack `cca008377368` 与 Keep `bf5e742c15a4` 是冻结 V3 返回的 Run ID。该版本归属作为用户 provenance 登记；两份 manifest 同时把原始上传文件名记为 `octos-arc-bundle-13173bb50e55.zip`，与台账中冻结 V3 的 `d2fe4dbc…` / `FC83EA…` 本地身份存在未闭合冲突，平台又缺少 ZIP→build/code 与 task snapshot 绑定，因此不能升级为源码级身份、业务验收、平台收益或严格 A/B。`cca008377368` 仍只确认 `P5-012` 的 401→exit 2 运行事实；`bf5e742c15a4` 仍因阶段 4 结果身份不完整而隔离。`P5-005` 的 V4.1 build provenance 切片已由 Agent 实现会话本地实现、提交并打包，精确产物已转交离线受控复现；在三项复现和平台外部绑定完成前，上传建议仍为 `NO-GO`。
 >
 > 范围：阶段 3 归一化证据、阶段 4 单 Run 诊断进入阶段 5 后的跨 Run 归并、方案选择、实现盘点与 A/B 决策。本文件不是原始日志、阶段 3 manifest 或阶段 4 分析的替代品。
 >
@@ -59,7 +59,7 @@
 | `P5-002` | 状态写入与随即导航/读取可能竞态 | `strong_candidate`：Keep 一处；缺最终网络/DOM 时序 | 待证据，不修改 | P1；需 Keep trace 或等效复现 |
 | `P5-003` | A0 超时摘要可能把缺路由误导成等待/性能问题 | A0 措辞 `confirmed`；对修复结果的因果影响 `unknown` | 已在 `P5-001` 同一切片本地修改；平台效果未验证 | P0，随 `P5-001` 一起 A/B |
 | `P5-004` | 五个 Run 的请求、Token、耗时均可计量，但瓶颈来源未定位 | 指标 `confirmed`；根因 `unknown`；新 Keep 有请求级 meter 但缺阶段归因 | 暂缓 5C/5D 调参 | P2；功能率稳定且完成请求级归因后重开 |
-| `P5-005` | A/B 的上传 Agent 构建、任务快照绑定不完整 | 多个 manifest 缺字段 `confirmed`；`cca008377368`/`bf5e742c15a4` 的用户版本归属与 manifest 文件名冲突，且无平台独立 ZIP→build/code 绑定 | V4.1 最小 build provenance 切片已授权并转派；仍不等于业务功能修复或平台身份已闭合 | P0；候选复跑前完成实现、本地受控验证与逐 Run 外部绑定 |
+| `P5-005` | A/B 的上传 Agent 构建、任务快照绑定不完整 | 多个 manifest 缺字段 `confirmed`；`cca008377368`/`bf5e742c15a4` 的用户版本归属与 manifest 文件名冲突，且无平台独立 ZIP→build/code 绑定 | V4.1 build provenance 已本地实现并通过包身份/shape 核验；三项离线复现进行中，平台外部绑定仍未闭合 | P0；复现通过后才可形成上传建议，平台 Run 仍须逐项绑定 |
 | `P5-006` | Undo 可访问名称被生成代码覆盖 | 原版失败、修正版及 32 题回归通过：产物级 `confirmed` | Agent 通用契约/失败提示本地已验证；平台未验证 | P0；与消息文本契约一起回归 |
 | `P5-007` | Keep 归档测试前置数据与生成应用 seed 不一致 | 原版与分步对照 `confirmed`；评分后 ZIP 的 `24/32` **不是**平台启动基线 | 默认 seed 和按钮修复在干净 seed 下通过；评分时目标仍为归档态，精确启动策略未知 | P0；不得用删库回归代替交付验收 |
 | `P5-008` | 重复加载标签与整表重绘打断编辑 | 干净 seed 的 50ms 对照原版 3/3 失败、去重版 3/3 通过；平台精确时序/根因 `unknown` | Agent 通用契约/失败提示本地已验证；平台未验证 | P0；保留全量回归和受控时序 |
@@ -400,3 +400,5 @@ Pop-Location
 - **受控复现建议：**复现会话只对实现线程交付的**精确 ZIP**做离线 401、403 与已知有效正路径；每轮记录完整 ZIP SHA/build ID、stdout/stderr、exit code、请求次数、耗时、输出树、`.arc/agent-build.json` 和 pipeline manifest。不得改官方 spec/helpers，不使用或打印真实密钥，不启动平台 Run；若精确产物尚未交付，则保持 `waiting_for_implementation_artifact`。
 - **A/B 验收建议：**指标会话把“可比较”的最低条件定义为精确 build ID + 上传 ZIP SHA + submission/build/Run 绑定 + 同一 task snapshot 或官方资产哈希 + 相同模型、推理、预算、workers 与测试来源。`0/0` 继续排除在业务完成率之外；401 fail-fast 只单列请求数与终止时延，缺 Token/费用时不得宣称成本收益。业务 GO 仍要求认证后真实生成与 BookStack `34/34`、Keep `32/32`；A0 的 `32/34`、`31/32` 至多作为 no-regression 参照，不能替代最终 GO。
 - **实现回交门槛：**实现会话必须回传完整提交 SHA、分支/基线、改动文件、逐条验证命令与退出码、已知基线失败对照、最终 ZIP 的绝对路径/字节数/完整 SHA-256、build ID、release/shape sidecar 路径及未改官方测试声明。未拿到这些字段，不进入平台上传建议；本次授权不包含本会话上传 ZIP、创建平台 Run、推送远程或修改官方测试。
+- **实现回交与独立核验（2026-09-21）：**实现线程在隔离分支 `codex/arc-bench-v41-build-provenance` 从精确父提交 `13173bb50e556c78bcd9cfdcc25c5449eee37f65` 形成提交 `bb70542d7d327b660fa672bfdbc193f3f51b40a5`（`feat(arc): bind releases to build identity`），工作树干净、无 upstream、未 push。改动 10 个文件：`.gitignore`、`CHANGELOG.md`、`arc/README.md`、`arc/build_identity.py`、`arc/main.py`、`arc/pack.sh`、`arc/package_shape.py` 及三份对应测试；本台账用 Git 路径差异复核 `arc/public-tests`、spec/helpers 为零差异。定向 20/20、shell 语法、模块导入、打包、identity inspect、shape gate 与 diff/status 检查均 exit `0`；全量从 100 项增至 106 项，仍为同一组 Windows 基线 `3 fail + 1 error`、新增失败为零。首个从仓库根运行导致 7 个收集错误和首个 PATH 缺 `sh` 的命令均已在正确 cwd/绝对 Git sh 下纠正，不把误用命令计为产品回归。
+- **精确产物：**`octos-arc-agent-bb70542d7d32-680ba38f027f.zip`，343,822 字节，SHA-256 `680BA38F027F5CF5E60641362D041B791E952771171D3C7F4CAF85794F186783`；build ID `arc-agent-v1-0851fff1cfb8feeb38544f8c`，payload tree SHA-256 `B286699D96E3463AC6C8B8C426600BEF01DB7A9A0B43191AE99DFCB32A99C885`。release JSON SHA-256 `24C211FA113A4D18FF0F3AE6949503C4CFC6390670E96508FB1A6711E3B1538F`，shape JSON SHA-256 `FB5E9EA59FCE23FBF563865F232C9D008893B03932379A5DF3D54341D7CBD76C`；checksum sidecar 内容与 ZIP 完整 SHA 一致。本台账独立运行 identity inspect/agent shape 均 exit `0`：510 entries、required root 全部存在、unsafe/duplicate/forbidden/secret 命中均为 0。该结果只升级为 `local_verified_artifact_ready`，不构成平台身份或业务验收；精确包已派给复现线程执行 401、403 和 known-good 离线正路径。

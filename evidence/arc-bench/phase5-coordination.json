@@ -781,7 +781,7 @@
         "authorized_at": "2026-09-21",
         "scope": "Have the dedicated Agent implementation task implement the current modification, test and packaging recommendations; this ledger task remains decision-only."
       },
-      "status": "implementation_in_progress_reproduction_waiting_metrics_approved",
+      "status": "implementation_local_verified_reproduction_in_progress_metrics_approved",
       "implementation_owner_thread_id": "01a0bd66-75bd-7801-97fc-b3d1e136c112",
       "reproduction_thread_id": "01a0bd66-60c2-7441-9a85-332c0af24886",
       "metrics_thread_id": "01a0bd66-8b2a-7fb3-9a25-269204f6dbf1",
@@ -840,7 +840,7 @@
         "official_tests_modified"
       ],
       "reproduction_plan": {
-        "status": "waiting_for_implementation_artifact",
+        "status": "exact_artifact_received_in_progress",
         "cases": ["offline_mock_401", "offline_mock_403", "offline_known_good_positive"],
         "capture": ["exact_zip_sha256", "build_id", "stdout_stderr", "exit_code", "request_count", "elapsed_time", "output_tree", "output_identity", "pipeline_manifest"],
         "platform_run_authorized": false,
@@ -864,20 +864,83 @@
         "accepted": true,
         "baseline_commit": "13173bb50e556c78bcd9cfdcc25c5449eee37f65",
         "single_code_writer": true,
-        "status": "in_progress"
+        "status": "complete_local_verified_artifact_ready"
       },
       "reproduction_ack": {
         "thread_id": "01a0bd66-60c2-7441-9a85-332c0af24886",
         "handoff_id": "phase5-p5005-build-provenance-v41-20260921-v1",
         "accepted": true,
-        "status": "waiting_for_implementation_artifact",
-        "missing_fields": ["artifact_path", "artifact_filename", "artifact_sha256", "build_id"]
+        "status": "exact_artifact_received_in_progress",
+        "missing_fields": []
       },
       "metrics_review_ack": {
         "thread_id": "01a0bd66-8b2a-7fb3-9a25-269204f6dbf1",
         "handoff_id": "phase5-p5005-build-provenance-v41-20260921-v1",
         "accepted": true,
         "status": "approved_and_frozen"
+      },
+      "implementation_result": {
+        "worktree": "D:/DataMove/codex/worktrees/bfb3/AI智能体软件工厂黑客松",
+        "branch": "codex/arc-bench-v41-build-provenance",
+        "baseline_commit": "13173bb50e556c78bcd9cfdcc25c5449eee37f65",
+        "commit": "bb70542d7d327b660fa672bfdbc193f3f51b40a5",
+        "commit_message": "feat(arc): bind releases to build identity",
+        "changed_files": [
+          ".gitignore",
+          "CHANGELOG.md",
+          "arc/README.md",
+          "arc/build_identity.py",
+          "arc/main.py",
+          "arc/pack.sh",
+          "arc/package_shape.py",
+          "arc/tests/test_build_identity.py",
+          "arc/tests/test_main_helpers.py",
+          "arc/tests/test_package_shape.py"
+        ],
+        "validation": {
+          "targeted": {"tests": 20, "passed": 20, "exit_code": 0},
+          "baseline_full": {"tests": 100, "failures": 3, "errors": 1, "exit_code": 1},
+          "candidate_full": {"tests": 106, "failures": 3, "errors": 1, "exit_code": 1, "new_failures": 0},
+          "known_windows_baseline_match": true,
+          "pack_script_syntax_exit_code": 0,
+          "module_import_exit_code": 0,
+          "pack_exit_code": 0,
+          "identity_inspect_exit_code": 0,
+          "shape_check_exit_code": 0,
+          "git_diff_check_exit_code": 0,
+          "worktree_clean": true
+        },
+        "artifact": {
+          "path": "D:/DataMove/codex/worktrees/bfb3/AI智能体软件工厂黑客松/arc/releases/octos-arc-agent-bb70542d7d32-680ba38f027f.zip",
+          "filename": "octos-arc-agent-bb70542d7d32-680ba38f027f.zip",
+          "size_bytes": 343822,
+          "sha256": "680BA38F027F5CF5E60641362D041B791E952771171D3C7F4CAF85794F186783",
+          "build_id": "arc-agent-v1-0851fff1cfb8feeb38544f8c",
+          "payload_tree_sha256": "B286699D96E3463AC6C8B8C426600BEF01DB7A9A0B43191AE99DFCB32A99C885",
+          "release_manifest_path": "D:/DataMove/codex/worktrees/bfb3/AI智能体软件工厂黑客松/arc/releases/octos-arc-agent-bb70542d7d32-680ba38f027f.release.json",
+          "release_manifest_sha256": "24C211FA113A4D18FF0F3AE6949503C4CFC6390670E96508FB1A6711E3B1538F",
+          "shape_manifest_path": "D:/DataMove/codex/worktrees/bfb3/AI智能体软件工厂黑客松/arc/releases/octos-arc-agent-bb70542d7d32-680ba38f027f.shape.json",
+          "shape_manifest_sha256": "FB5E9EA59FCE23FBF563865F232C9D008893B03932379A5DF3D54341D7CBD76C",
+          "shape_entry_count": 510,
+          "shape_ok": true,
+          "unsafe_entries": 0,
+          "duplicate_entries": 0,
+          "forbidden_entries": 0,
+          "secret_value_hits": 0
+        },
+        "ledger_read_only_verification": {
+          "parent_matches_baseline": true,
+          "commit_matches_embedded_identity": true,
+          "zip_sha256_matches_release_and_checksum": true,
+          "shape_sha256_matches_release": true,
+          "official_tests_spec_helpers_diff_exit_code": 0,
+          "identity_inspect_exit_code": 0,
+          "shape_check_exit_code": 0
+        },
+        "official_tests_modified": false,
+        "remote_pushed": false,
+        "uploaded": false,
+        "platform_run_created": false
       },
       "implementation_dispatched": true,
       "reproduction_dispatched": true,
@@ -886,7 +949,7 @@
       "upload_performed_by_ledger": false,
       "official_tests_modified_by_ledger": false,
       "remote_pushed_by_ledger": false,
-      "next_gate": "Wait for the implementation thread to return the complete implementation_return_fields and exact artifact identity. Then bind that artifact into the reproduction card; platform upload remains NO-GO until all three offline cases pass and the ledger verifies the returned commit, package and sidecars."
+      "next_gate": "Wait for the reproduction thread to return exact-package mock 401, mock 403 and known-good positive results. Platform upload remains NO-GO until the ledger validates all three cases; historical Runs remain unbound."
     }
   ]
 }
