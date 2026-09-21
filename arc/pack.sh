@@ -33,7 +33,7 @@ else
   exit 3
 fi
 
-git -C "$repo_root" archive --format=zip --output="$output" HEAD:arc -- \
+git -c core.autocrlf=false -C "$repo_root" archive --format=zip --output="$output" HEAD:arc -- \
   main.py octos_stdio.py requirement_order.py acceptance.py guard.py \
   llm_proxy.py codegen.py package_shape.py hooks requirements.txt \
   arcbench_agent_runtime public-tests
