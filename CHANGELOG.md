@@ -25,6 +25,7 @@ All notable changes to octos will be documented in this file.
 - Authorize, implement and locally verify the V4.1 `P5-005` build-provenance slice from candidate `13173bb50e556c78bcd9cfdcc25c5449eee37f65`; record implementation `bb70542d7d327b660fa672bfdbc193f3f51b40a5`, build identity `arc-agent-v1-0851fff1cfb8feeb38544f8c`, ZIP SHA-256 `680BA38F027F5CF5E60641362D041B791E952771171D3C7F4CAF85794F186783`, passing 401/403/known-good control-plane reproduction and exact-artifact conditional platform-test readiness without changing business prompts or official tests.
 - Register smoke-evolution Dice Run `c48754c25fcf` as a `P5-012` platform-authentication recurrence: the exact V4.1 identity reached `main.py`, while both meter baseline and Agent probe returned HTTP 401 and the expected fail-fast exit 2; route remediation to the platform credential/authorization context, not Agent code or repackaging.
 - Refine the `c48754c25fcf` diagnosis after the user confirmed the API is unchanged: compare successful Run `61f91039fbfb` and three probe implementations, rule out a V4.1 Authorization/path regression, distinguish meter and generation services, and prioritize platform secret-reference, whitelist or gateway-auth state drift.
+- Receive BookStack Lite `1b0eaf914e94` at Phase 5 as `P5-014`: V4.1 generated and ran all 34 tests with only `REQ-2.2` failing at login nickname readback; require exact-template controlled reproduction before any Agent code change or business/A-B claim.
 
 ### Features
 

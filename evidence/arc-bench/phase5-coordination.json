@@ -1062,6 +1062,57 @@
       "official_tests_modified": false,
       "remote_pushed_by_ledger": false,
       "next_gate": "Audit the masked platform credential, endpoint/provider route, deepseek-v4-flash entitlement and whether meter and generation use the same auth context for submission ed11d633b8a6. After remediation, require a single-request same-environment 2xx preflight before rerunning the same immutable ZIP; do not change Agent code or count this 0/0 as a business result."
+    },
+    {
+      "key": "1b0eaf914e94:P5-014:0F274A22C861",
+      "run_id": "1b0eaf914e94",
+      "submission_id": "0cb0a4198304",
+      "task_key": "arc-bench-lite--bookstack",
+      "issue_id": "P5-014",
+      "evidence_digest": "0F274A22C861EC57F5AA43A4787F9261F75AD6DC22DF97175D7550EF5DC57C87",
+      "source_handoff_id": "1b0eaf914e94-73C71551ABB5",
+      "phase4_thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+      "manifest": "evidence/arc-bench/runs/1b0eaf914e94/manifest.json",
+      "manifest_sha256": "73C71551ABB524B5123D8D0DBCFDAAC9DDF4B4E7A103BA463A732F4DCE143437",
+      "phase4_result": "evidence/arc-bench/runs/1b0eaf914e94/phase4-result.json",
+      "phase4_result_sha256": "0F274A22C861EC57F5AA43A4787F9261F75AD6DC22DF97175D7550EF5DC57C87",
+      "phase4_status": "complete_verified",
+      "status": "ledger_received_needs_controlled_reproduction_no_code_dispatch",
+      "decision": "new_run_local_login_identity_readback_candidate",
+      "scope_is_run_local": true,
+      "related_prior_run_id": "4ef2cf139806",
+      "same_mechanism_as_prior_run_confirmed": false,
+      "merge_with_p5_009": false,
+      "needs_repro": true,
+      "reproduction_thread_id": "01a0bd66-60c2-7441-9a85-332c0af24886",
+      "reproduction_dispatched": false,
+      "implementation_dispatched": false,
+      "code_change_authorized": false,
+      "new_platform_run_created_by_ledger": false,
+      "upload_performed_by_ledger": false,
+      "official_tests_modified": false,
+      "platform_final": {
+        "status": "FAILED",
+        "score": 97.1,
+        "passed": 33,
+        "total": 34,
+        "failed_test": "REQ-2.2 Log In Successfully",
+        "reported_locator": "getByRole('heading', { name: /BookStack\\s+User/i }).first()",
+        "failure_duration_ms": 10016
+      },
+      "generation_identity": {
+        "build_id": "arc-agent-v1-0851fff1cfb8feeb38544f8c",
+        "commit_sha": "bb70542d7d327b660fa672bfdbc193f3f51b40a5",
+        "payload_tree_sha256": "B286699D96E3463AC6C8B8C426600BEF01DB7A9A0B43191AE99DFCB32A99C885",
+        "platform_uploaded_zip_sha_verified": false,
+        "task_snapshot_id_present": false
+      },
+      "generated_template_zip_sha256": "0674B53FB916577D28D62EFCDEB4055183D5386EE5BA8432A715573EFB18F382",
+      "evidence_boundary": "Final post-login locator timeout is confirmed; missing nickname, hidden text, semantic mismatch, session failure and rendering timing remain unresolved without final DOM, accessibility, response, cookie and exact runtime helper evidence.",
+      "repro_scope": "Isolated exact-template REQ-2.2 only: capture login response and Set-Cookie, subsequent Cookie and URL, final HTML/DOM/accessibility, heading versus text visibility, runtime helper revision if available, and built dist behavior. Do not change official tests or Agent code.",
+      "business_go": false,
+      "strict_ab_comparable": false,
+      "next_gate": "Receive controlled reproduction evidence before deciding a minimal semantic/readback change. If nickname text is absent, investigate session, response or build instead. Preserve the 33 passing final tests and do not use internal repair rounds as final failures."
     }
   ]
 }
