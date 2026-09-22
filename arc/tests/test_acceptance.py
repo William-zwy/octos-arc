@@ -1,10 +1,15 @@
+import json
 import subprocess
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from acceptance import (
     failure_summaries,
+    document_from_trace,
     interaction_failure_hints,
     RunSummary,
     isolated_install_env,
@@ -20,6 +25,7 @@ from acceptance import (
     tree_digest,
     spec_node_id,
     summarize_report,
+    AcceptanceRunner,
 )
 
 
@@ -135,6 +141,140 @@ class ReportTests(unittest.TestCase):
         self.assertIn("Post-save result", hint_text)
         self.assertIn("before navigation", hint_text)
         self.assertIn("exact tested role/name", hint_text)
+
+
+class DocumentTraceTests(unittest.TestCase):
+    @staticmethod
+    def trace(path, final_url, network, version="1.63.0"):
+        trace = [
+            {"type": "context-options", "playwrightVersion": version},
+            {"type": "frame-snapshot", "snapshot": {"isMainFrame": True, "pageId": "p", "frameId": "f",
+                                                    "frameUrl": final_url}},
+        ]
+        with zipfile.ZipFile(path, "w") as archive:
+            archive.writestr("trace.trace", "\n".join(json.dumps(x) for x in trace))
+            archive.writestr("trace.network", "\n".join(json.dumps(x) for x in network))
+
+    @staticmethod
+    def event(url, status, kind="document", method="GET", stamp=1, mime="text/html"):
+        return {"type": "resource-snapshot", "snapshot": {
+            "pageref": "p", "_frameref": "f", "_resourceType": kind, "_monotonicTime": stamp,
+            "request": {"method": method, "url": url, "headers": [{"value": "cookie-secret"}],
+                        "postData": {"text": "body-secret"}},
+            "response": {"status": status, "content": {"mimeType": mime, "text": "response-secret"}},
+        }}
+
+    def test_should_put_verified_main_document_before_locator_and_redact_secrets(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            url = "http://localhost:3100/books/b8/pages/%7B%7BPAGE_ACTION%7D%7D?token=query-secret#fragment-secret"
+            self.trace(root / "trace.zip", url, [self.event(url, 404, method="POST", mime="application/json")])
+            self.assertEqual(document_from_trace(root / "trace.zip").path,
+                             "/<segment>/<segment>/<segment>/<unexpanded-placeholder>")
+            raw = report(("Save Page", "timedOut", "waiting for getByRole('heading')", [], 10000))
+            raw["suites"][0]["specs"][0]["tests"][0]["results"][0]["attachments"] = [
+                {"name": "trace", "path": "trace.zip", "contentType": "application/zip"}]
+            digest = failure_summaries(summarize_report(raw, trace_root=root))
+            self.assertLess(digest.index("Document:"), digest.index("Observation:"))
+            self.assertIn("POST /<segment>/<segment>/<segment>/<unexpanded-placeholder> -> 404 application/json", digest)
+            self.assertIn("Transport-first check", digest)
+            for secret in ("query-secret", "fragment-secret", "cookie-secret", "body-secret", "response-secret"):
+                self.assertNotIn(secret, digest)
+
+    def test_should_redact_pure_letter_usernames_and_path_slugs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            url = "http://localhost/users/alice/projects/private?key=query-secret"
+            path = Path(tmp) / "trace.zip"
+            self.trace(path, url, [self.event(url, 404, mime="application/json")])
+            document = document_from_trace(path)
+            self.assertEqual(document.path, "/<segment>/<segment>/<segment>/<segment>")
+            for secret in ("alice", "private", "query-secret", "users"):
+                self.assertNotIn(secret, document.path)
+
+    def test_should_ignore_later_subresource_404_and_final_redirect_200(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "trace.zip"
+            final_url = "http://localhost/books/b8"
+            self.trace(path, final_url, [
+                self.event("http://localhost/books/b8/pages", 302, method="POST", stamp=1),
+                self.event(final_url, 200, stamp=2),
+                self.event("http://localhost/favicon.ico", 404, kind="image", stamp=3),
+            ])
+            document = document_from_trace(path)
+            self.assertEqual((document.status, document.content_type), (200, "text/html"))
+            self.assertFalse(document.suspicious)
+
+    def test_should_abstain_when_trace_missing_untrusted_or_not_reproduced(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = root / "trace.zip"
+            self.assertIsNone(document_from_trace(path))
+            url = "http://localhost/doc"
+            self.trace(path, url, [self.event(url, 404)], version="1.99.0")
+            self.assertIsNone(document_from_trace(path))
+            self.trace(path, "http://localhost/other", [self.event(url, 404)])
+            self.assertIsNone(document_from_trace(path))
+            raw = report(("green", "passed", None, [], 100))
+            raw["suites"][0]["specs"][0]["tests"][0]["results"][0]["attachments"] = [
+                {"name": "trace", "path": "trace.zip"}]
+            self.assertIsNone(summarize_report(raw, trace_root=root).results[0].document)
+            raw = report(("failed", "timedOut", "waiting for getByRole('button')", [], 10000))
+            self.assertNotIn("Document:", failure_summaries(summarize_report(raw, trace_root=root)))
+
+    def test_should_abstain_when_multiple_pages_have_document_responses(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "trace.zip"
+            first = "http://localhost/one"
+            second = "http://localhost/two"
+            frames = [
+                {"type": "context-options", "playwrightVersion": "1.63.0"},
+                {"type": "frame-snapshot", "snapshot": {"isMainFrame": True, "pageId": "p", "frameId": "f", "frameUrl": first}},
+                {"type": "frame-snapshot", "snapshot": {"isMainFrame": True, "pageId": "q", "frameId": "g", "frameUrl": second}},
+            ]
+            other = self.event(second, 404, stamp=2)
+            other["snapshot"].update({"pageref": "q", "_frameref": "g"})
+            with zipfile.ZipFile(path, "w") as archive:
+                archive.writestr("trace.trace", "\n".join(json.dumps(x) for x in frames))
+                archive.writestr("trace.network", "\n".join(json.dumps(x) for x in [self.event(first, 200), other]))
+            self.assertIsNone(document_from_trace(path))
+
+    def test_should_enable_trace_only_when_requested(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            tests = root / "tests"
+            tests.mkdir()
+            (tests / "REQ-1.spec.ts").write_text("// frozen", encoding="utf-8")
+            runner = AcceptanceRunner(root, tests, root / "work", lambda _message: None)
+            plain = runner._prepare().read_text()
+            traced = runner._prepare(trace_failures=True).read_text()
+            self.assertNotIn("retain-on-failure", plain)
+            self.assertIn("retain-on-failure", traced)
+            self.assertIn("snapshots: { dom: true", traced)
+            self.assertEqual((runner.work_dir / "tests/REQ-1.spec.ts").read_text(), "// frozen")
+
+    def test_should_extract_from_same_run_attachment_then_discard_raw_trace(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            tests = root / "tests"
+            tests.mkdir()
+            (tests / "REQ-1.spec.ts").write_text("// frozen", encoding="utf-8")
+            runner = AcceptanceRunner(root, tests, root / "work", lambda _message: None)
+            url = "http://localhost/doc"
+            raw = report(("failed", "timedOut", "waiting for getByRole('heading')", [], 10000))
+            raw["suites"][0]["specs"][0]["tests"][0]["results"][0]["attachments"] = [
+                {"name": "trace", "path": "test-results/case/trace.zip"}]
+
+            def fake_run(*_args, **_kwargs):
+                trace_dir = runner.work_dir / "test-results/case"
+                trace_dir.mkdir(parents=True)
+                self.trace(trace_dir / "trace.zip", url, [self.event(url, 404, mime="application/json")])
+                (runner.work_dir / "report.json").write_text(json.dumps(raw), encoding="utf-8")
+                return SimpleNamespace(returncode=1, stdout="", stderr="")
+
+            with patch("acceptance.subprocess.run", side_effect=fake_run):
+                summary = runner.run(["REQ-1.spec.ts"], "http://localhost", trace_failures=True)
+            self.assertEqual(summary.results[0].document.status, 404)
+            self.assertFalse((runner.work_dir / "test-results").exists())
 
 
 class RouteContractTests(unittest.TestCase):

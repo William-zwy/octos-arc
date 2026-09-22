@@ -45,6 +45,7 @@ Environment (all optional):
     OCTOS_ARC_DROP_SHELL      "0" leaves bash/shell available in minimal-verification turns (default: removed)
     OCTOS_ARC_IMPLEMENT_REQUESTS / OCTOS_ARC_REPAIR_REQUESTS  hard per-turn request caps enforced at the proxy (20 for small tasks / 10; 0 = off)
     OCTOS_ARC_REWRITE_ON_ZERO "0" disables the single full-rewrite turn when round 0 passes nothing
+    OCTOS_ARC_DOCUMENT_TRACE "0" disables failure-only document trace evidence in final full-suite repair (default on)
     OCTOS_ARC_INLINE_SOURCE_CHARS  budget for quoting the app's sources into repair/rewrite prompts (40000; 0 = off)
     OCTOS_ARC_MAX_TOKENS      minimum max_tokens the proxy enforces on chat requests (32768; kernel arc.11 sends 4096)
     OCTOS_ARC_CODEGEN         "0" disables one-request codegen turns for one-node tasks (default on)
@@ -1486,7 +1487,8 @@ class Flow:
         return AppServer(self.output_dir, self.smoke_port, log, grader_like=grader_like,
                          extra_ports=[p for p in spec_base_ports(self.tests_dir) if p != self.web_port])
 
-    def run_specs(self, specs: list[str], workers: int | None = None, grader_like: bool = False) -> RunSummary:
+    def run_specs(self, specs: list[str], workers: int | None = None, grader_like: bool = False,
+                  trace_failures: bool = False) -> RunSummary:
         """Build, start, run the specs, then undo whatever the test run mutated
         (a persisted counter at -1 would otherwise be committed as the seed).
         `grader_like` starts the backend with only PORT set, as the platform does."""
@@ -1499,7 +1501,8 @@ class Flow:
                 err = server.start()
             if err is not None:
                 return RunSummary(error=err)
-            return self.runner.run(specs, f"http://127.0.0.1:{self.smoke_port}", workers=workers)
+            return self.runner.run(specs, f"http://127.0.0.1:{self.smoke_port}", workers=workers,
+                                   trace_failures=trace_failures)
         finally:
             server.stop()
             restore_worktree(git_run)
@@ -1889,7 +1892,8 @@ class Flow:
         workers = workers_for_memory(getattr(self, "mem_limit", None), int(os.environ.get("OCTOS_ARC_FINAL_WORKERS", "4")))
         previous_failing: set[str] | None = None
         for attempt in range(rounds + 1):
-            summary = self.run_specs(all_specs, workers=workers, grader_like=True)
+            summary = self.run_specs(all_specs, workers=workers, grader_like=True,
+                                     trace_failures=os.environ.get("OCTOS_ARC_DOCUMENT_TRACE", "1") != "0")
             if summary.error and summary.killed:
                 # Cloud 29c840566f36: the runner was OOM-killed under a 512 MiB
                 # cgroup; two repair rounds were wasted on a non-failure.

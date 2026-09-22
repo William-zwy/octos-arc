@@ -1,5 +1,12 @@
 # arc/ 适配层改动记录（工作流 A，分支 `wf-adapter`）
 
+## P5-015 — 最终全套验收的主文档响应证据（本地候选；平台未评测）
+
+- 基线：`7f3c0b0c0175701eb8ef6f19776885c521da5e9f`。本次只改 `arc/acceptance.py`、`arc/main.py` 及对应单元测试；未改平台规范、测试 helper、原始模板、业务提示或模型路由。
+- 仅最终原始全套 Playwright 验收默认开启 `retain-on-failure` trace；节点验收不变，可用 `OCTOS_ARC_DOCUMENT_TRACE=0` 关闭。解析仅接受已核对的 Playwright 1.63.0 trace 格式、同一主 frame 最终 URL 的 document 响应和单页面证据；否则弃权。修复摘要在 locator 观察前放方法、全段脱敏路径、状态码、MIME，不传 trace 原文；原始 trace 在摘要生成后清除。
+- 技术 A/A：原始 BookStack 模板的 A、C 链 trace 关/开均重现相同的 POST 404；C 链两组均在 `return-home` 失败，最终 URL 相同，耗时 17,793/13,711 ms，Node 峰值 RSS 127,758,336/128,106,496 B。B 链独立复核亦为关/开均 POST `/books/b9/pages/drafts` → 404。公开测试及重建链仅为隐藏 34 测试的代理，不声称平台分数改善。
+- 验证：针对性 `python -m unittest`（报告/trace/路由/交互/最终全套提示）21 项通过；真实 Playwright 1.63.0 失败 trace 附件映射与摘要顺序通过。Windows 下完整两文件单测运行 57 项有 3 fail、1 error，均是既存路径分隔符/临时 `.git` 清理问题，不作为本候选通过证明。打包前还须执行最终回归和形状/身份校验；本记录不授权上传、云端运行或推送远程。
+
 度量口径：本机 `.arc/octos-events.jsonl` 的 `turn/completed`（tokens_in / tokens_out 之和，不含缓存命中）与 `token_cost_update`（每个 session 的累计 `session_cost`，多 session 求和）；耗时取 `.arc/runner-events.jsonl` 的 running → completed；通过数由 `arc/grade-local.py` 用平台公开 Playwright 测试打分（`arc/metrics.py <输出目录>` 可一次打印整行）。所有运行都是本机、同一二进制（`octos 2.0.3-rc.11 (82e3bef3)`，`target/release/octos`，SHA-256 `b0b670ba…cd8c5`）、同一模型（`deepseek-v4-flash` 经 `api.arc-bench.com`）。「未评测」表示没有云端运行。
 
 ## 结论表（改前 → 改后，均为本机最终配置一次运行；云端未评测）

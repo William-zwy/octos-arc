@@ -366,6 +366,49 @@ class InteractionPromptTests(unittest.TestCase):
         self.assertNotIn("BookStack", session_prompt + m.CODEGEN_SIZE_FULL)
 
 
+class FullSuiteDocumentPromptTests(unittest.TestCase):
+    def test_should_trace_the_original_full_suite_and_prioritize_document_evidence(self):
+        import argparse
+        from acceptance import DocumentResponse, RunSummary, TestOutcome
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            tests = root / "tests"
+            tests.mkdir()
+            for name in ("REQ-1.spec.ts", "REQ-2.spec.ts"):
+                (tests / name).write_text("// frozen", encoding="utf-8")
+            flow = m.Flow(argparse.Namespace(web_port=3000), root, root)
+            flow.tests_dir = tests
+            flow.runner = object()
+            flow.spec_map = {"REQ-1": ["REQ-1.spec.ts"], "REQ-2": ["REQ-2.spec.ts"], None: []}
+            failed = TestOutcome(title="Save", ok=False, status="timedOut", duration_ms=10000,
+                                 file="REQ-1.spec.ts", message="waiting for getByRole('heading')",
+                                 document=DocumentResponse("POST", "/<segment>/<segment>/<segment>/<segment>", 404,
+                                                           "application/json"))
+            calls, prompts = [], []
+            def run_specs(specs, **kwargs):
+                calls.append((specs, kwargs))
+                if len(calls) == 1:
+                    return RunSummary(passed=1, total=2, results=[failed, TestOutcome(
+                        title="Green", ok=True, status="passed", duration_ms=100, file="REQ-2.spec.ts")])
+                return RunSummary(passed=2, total=2, results=[TestOutcome(
+                    title="Save", ok=True, status="passed", duration_ms=100, file="REQ-1.spec.ts"),
+                    TestOutcome(title="Green", ok=True, status="passed", duration_ms=100,
+                                file="REQ-2.spec.ts")])
+            flow.run_specs = run_specs
+            flow.record_tests = lambda *_args: None
+            flow.turn = lambda prompt, *_args: prompts.append(prompt)
+            flow.commit = lambda *_args: True
+            flow.sources_text = lambda: ""
+            flow.corrections_text = lambda: ""
+            flow.remaining = lambda: 1000
+            with patch.dict(os.environ, {"OCTOS_FINAL_REPAIR_ROUNDS": "1"}):
+                flow.final_acceptance()
+            self.assertEqual(len(calls), 2)
+            self.assertTrue(all(call[1]["trace_failures"] for call in calls))
+            self.assertTrue(all(call[1]["grader_like"] for call in calls))
+            self.assertLess(prompts[0].index("Document:"), prompts[0].index("Observation:"))
+            self.assertIn("Transport-first check", prompts[0])
+
 class CodegenPromptTests(unittest.TestCase):
     def test_should_format_without_placeholder_errors_and_keep_build_command(self):
         import main as m

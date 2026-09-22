@@ -19,9 +19,11 @@ import socket
 import subprocess
 import tempfile
 import time
+import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
+from urllib.parse import unquote, urldefrag, urlsplit
 
 _ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 _SPEC_ID = re.compile(r"^(REQ-\d+(?:\.\d+)*)(?=[.\-_ ]|$)")
@@ -99,6 +101,133 @@ class TestOutcome:
     location: str = ""      # where the error was raised (may be a helper file)
     message: str = ""
     steps: list[str] = field(default_factory=list)
+    document: DocumentResponse | None = None
+
+
+@dataclass(frozen=True)
+class DocumentResponse:
+    method: str
+    path: str
+    status: int
+    content_type: str
+
+    @property
+    def suspicious(self) -> bool:
+        return self.status >= 400 or (self.content_type != "unknown" and
+                                      self.content_type not in {"text/html", "application/xhtml+xml"})
+
+
+_TRACE_VERSION = "1.63.0"  # verified against the pinned local Playwright trace format
+_TRACE_ZIP_LIMIT = 50_000_000
+_TRACE_MEMBER_LIMIT = 25_000_000
+_TRACE_LINE_LIMIT = 2_000_000
+_SAFE_METHODS = {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
+_SAFE_MIME = re.compile(r"^[A-Za-z0-9.+_-]+/[A-Za-z0-9.+_-]+$")
+_PLACEHOLDER = re.compile(r"^\{\{[A-Za-z_][A-Za-z0-9_.-]{0,63}\}\}$")
+
+
+def _redacted_path(url: str) -> str | None:
+    """Retain only path shape and an unexpanded-template signal, never names."""
+    try:
+        parsed = urlsplit(url)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            return None
+        segments = []
+        for raw in parsed.path.split("/")[1:9]:
+            value = unquote(raw)
+            if _PLACEHOLDER.fullmatch(value):
+                segments.append("<unexpanded-placeholder>")
+            elif value:
+                segments.append("<segment>")
+            else:
+                segments.append("")
+        return ("/" + "/".join(segments))[:180]
+    except (ValueError, UnicodeError):
+        return None
+
+
+def _trace_events(archive: zipfile.ZipFile, name: str):
+    entry = archive.getinfo(name)
+    if entry.file_size > _TRACE_MEMBER_LIMIT:
+        raise ValueError("oversized trace member")
+    with archive.open(entry) as stream:
+        for line in stream:
+            if len(line) > _TRACE_LINE_LIMIT:
+                raise ValueError("oversized trace event")
+            yield json.loads(line)
+
+
+def document_from_trace(trace_path: Path) -> DocumentResponse | None:
+    """Use only a verified final main-frame document response; otherwise abstain.
+
+    Playwright's trace ZIP records far more than this tuple (including page and
+    network data). It must never be copied into the model prompt or logs.
+    """
+    try:
+        if trace_path.stat().st_size > _TRACE_ZIP_LIMIT:
+            return None
+        with zipfile.ZipFile(trace_path) as archive:
+            names = {entry.filename for entry in archive.infolist()}
+            candidates = []
+            for trace_name in sorted(name for name in names if name.endswith(".trace")):
+                network_name = trace_name[:-6] + ".network"
+                if network_name not in names:
+                    continue
+                frames: dict[tuple[str, str], str] = {}
+                version = None
+                for event in _trace_events(archive, trace_name):
+                    if event.get("type") == "context-options":
+                        version = event.get("playwrightVersion")
+                    snapshot = event.get("snapshot") or {}
+                    if event.get("type") == "frame-snapshot" and snapshot.get("isMainFrame") is True:
+                        frames[(snapshot.get("pageId"), snapshot.get("frameId"))] = snapshot.get("frameUrl")
+                if version != _TRACE_VERSION:
+                    continue
+                for event in _trace_events(archive, network_name):
+                    snap = event.get("snapshot") or {}
+                    if event.get("type") != "resource-snapshot" or snap.get("_resourceType") != "document":
+                        continue
+                    frame_url = frames.get((snap.get("pageref"), snap.get("_frameref")))
+                    request, response = snap.get("request") or {}, snap.get("response") or {}
+                    url, method, status = request.get("url"), request.get("method"), response.get("status")
+                    if (not isinstance(frame_url, str) or not isinstance(url, str) or
+                            urldefrag(frame_url).url != urldefrag(url).url or
+                            method not in _SAFE_METHODS or type(status) is not int or not 100 <= status <= 599):
+                        continue
+                    path = _redacted_path(url)
+                    if path is None:
+                        continue
+                    mime = str((response.get("content") or {}).get("mimeType") or "").split(";", 1)[0].lower()
+                    if not _SAFE_MIME.fullmatch(mime):
+                        mime = "unknown"
+                    stamp = snap.get("_monotonicTime")
+                    if not isinstance(stamp, (float, int)):
+                        continue
+                    candidates.append((stamp, trace_name, snap.get("pageref"),
+                                       DocumentResponse(method, path, status, mime)))
+            # A failed test can open multiple pages. Without the assertion's
+            # page identity, choosing the latest of several pages is a guess.
+            if len({(entry[1], entry[2]) for entry in candidates}) != 1:
+                return None
+            return max(candidates, key=lambda item: item[0])[3]
+    except (OSError, ValueError, KeyError, json.JSONDecodeError, zipfile.BadZipFile, TypeError):
+        return None
+
+
+def _failed_trace(result: dict, trace_root: Path) -> DocumentResponse | None:
+    root = trace_root.resolve()
+    for attachment in result.get("attachments") or []:
+        if attachment.get("name") != "trace" or not isinstance(attachment.get("path"), str):
+            continue
+        raw = Path(attachment["path"])
+        path = (raw if raw.is_absolute() else root / raw).resolve()
+        try:
+            path.relative_to(root)
+        except ValueError:
+            continue
+        if path.suffix == ".zip" and path.is_file():
+            return document_from_trace(path)
+    return None
 
 
 @dataclass
@@ -119,7 +248,7 @@ class RunSummary:
         return self.total > 0 and self.passed == self.total
 
 
-def summarize_report(report: dict) -> RunSummary:
+def summarize_report(report: dict, trace_root: Path | None = None) -> RunSummary:
     """Collapse a Playwright JSON report into per-test outcomes."""
     summary = RunSummary()
 
@@ -137,6 +266,7 @@ def summarize_report(report: dict) -> RunSummary:
                 loc_file = Path(loc.get("file") or "").name
                 # keep-local-4: failures raised inside support/e2e.ts were
                 # attributed to the helper, so no node owned them.
+                document = _failed_trace(last, trace_root) if trace_root is not None and not ok else None
                 summary.results.append(TestOutcome(
                     title=spec.get("title", "?"), ok=ok, status=last.get("status", "unknown"),
                     duration_ms=int(sum(r.get("duration", 0) for r in results)),
@@ -144,7 +274,7 @@ def summarize_report(report: dict) -> RunSummary:
                     line=loc.get("line"),
                     location=f"{loc_file}:{loc.get('line')}" if loc_file and loc.get("line") else loc_file,
                     message=_ANSI.sub("", str(err.get("message") or "")),
-                    steps=steps))
+                    steps=steps, document=document))
             walk(suite.get("suites", []), file)
 
     walk(report.get("suites", []))
@@ -202,7 +332,14 @@ def failure_summaries(summary: RunSummary, max_steps: int = 8, max_observation: 
             where = f"{r.location} (called from {r.file})"
         steps_src = r.steps or _call_log_steps(r.message)
         steps = " -> ".join(steps_src[-max_steps:]) if steps_src else "(no step trace)"
-        blocks.append(f"- Feature: {r.title}\n  Failed at: {where}\n  Observation: {observation}\n  Steps: {steps}")
+        document = ""
+        if r.document:
+            d = r.document
+            document = f"\n  Document: {d.method} {d.path} -> {d.status} {d.content_type}"
+            if d.suspicious and ("getbyrole(" in r.message.lower() or "locator" in r.message.lower()):
+                document += ("\n  Transport-first check: inspect the effective navigation/submit action, "
+                             "template substitution, route precedence and handler before changing role/name hints.")
+        blocks.append(f"- Feature: {r.title}\n  Failed at: {where}{document}\n  Observation: {observation}\n  Steps: {steps}")
     return "\n".join(blocks)
 
 
@@ -723,7 +860,7 @@ class AcceptanceRunner:
         self.timeout_ms = timeout_ms
         self.workers = workers
 
-    def _prepare(self, workers: int | None = None) -> Path:
+    def _prepare(self, workers: int | None = None, trace_failures: bool = False) -> Path:
         # Specs `import '@playwright/test'`; Node resolves that upward from the
         # spec file, so the copied tree must sit under the Playwright install
         # (NODE_PATH is set as well for the case where it cannot).
@@ -731,6 +868,9 @@ class AcceptanceRunner:
             shutil.rmtree(self.work_dir)
         shutil.copytree(self.tests_dir, self.work_dir / "tests",
                         ignore=shutil.ignore_patterns("node_modules", "test-results", "playwright-report"))
+        trace_option = ("trace: { mode: 'retain-on-failure', screenshots: false, "
+                        "snapshots: { dom: true, aria: false, screen: false }, "
+                        "sources: false, attachments: false }, " if trace_failures else "")
         (self.work_dir / "playwright.config.ts").write_text(
             "import { defineConfig } from '@playwright/test';\n"
             f"export default defineConfig({{ testDir: './tests', timeout: {self.timeout_ms}, retries: 0, "
@@ -740,14 +880,20 @@ class AcceptanceRunner:
             # purpose: a hanging click then fails with the locator named in the
             # call log instead of an anonymous "Test timeout exceeded".
             f"expect: {{ timeout: {min(4000, self.timeout_ms // 2)} }}, "
-            f"use: {{ headless: true, baseURL: process.env.E2E_BASE_URL, actionTimeout: {min(4000, self.timeout_ms // 2)}, "
+            f"use: {{ headless: true, {trace_option}baseURL: process.env.E2E_BASE_URL, actionTimeout: {min(4000, self.timeout_ms // 2)}, "
             f"navigationTimeout: {min(6000, self.timeout_ms * 3 // 5)} }} }});\n")
         return self.work_dir / "playwright.config.ts"
 
     def run(self, spec_rel_paths: list[str], base_url: str, wall_timeout: int = 900,
-            workers: int | None = None) -> RunSummary:
-        config = self._prepare(workers)
+            workers: int | None = None, trace_failures: bool = False) -> RunSummary:
+        config = self._prepare(workers, trace_failures=trace_failures)
         report_path = self.work_dir / "report.json"
+        def discard_traces() -> None:
+            if trace_failures:
+                # This is a runner-owned subdirectory created under _prepare's
+                # private work_dir, never a caller-provided deletion target.
+                shutil.rmtree(self.work_dir / "test-results", ignore_errors=True)
+
         cmd = [str(self.root / "node_modules" / ".bin" / "playwright"), "test", "-c", str(config)]
         cmd += [str(self.work_dir / "tests" / p) for p in spec_rel_paths]
         env = dict(os.environ, E2E_BASE_URL=base_url, CI="1",
@@ -758,19 +904,27 @@ class AcceptanceRunner:
             r = subprocess.run(cmd, cwd=self.work_dir, env=env, capture_output=True, text=True, timeout=wall_timeout)
             tail = ((r.stdout or "") + (r.stderr or ""))[-2000:]
         except subprocess.TimeoutExpired:
+            discard_traces()
             return RunSummary(error=f"playwright run exceeded {wall_timeout}s")
         except OSError as exc:
+            discard_traces()
             return RunSummary(error=f"playwright could not start: {exc}")
         if not report_path.exists():
+            discard_traces()
             killed = r.returncode < 0 or "Killed" in tail
             return RunSummary(error=(f"playwright was killed (rc={r.returncode}); likely out of memory — "
                                      f"not an application failure" if killed else
                                      f"playwright produced no report (rc={r.returncode}): {_ANSI.sub('', tail)[-600:]}"),
                               killed=killed)
         try:
-            summary = summarize_report(json.loads(report_path.read_text()))
+            summary = summarize_report(json.loads(report_path.read_text()),
+                                       trace_root=self.work_dir if trace_failures else None)
         except (OSError, json.JSONDecodeError) as exc:
             return RunSummary(error=f"unreadable playwright report: {exc}")
+        finally:
+            # Trace ZIPs can contain DOM, response bodies and credentials.
+            # Only the bounded, redacted tuple in TestOutcome may survive.
+            discard_traces()
         summary.stdout_tail = _ANSI.sub("", tail)
         if summary.total == 0:
             # Cloud run a6ccc437539f: the model had edited /workspace/tests, the
