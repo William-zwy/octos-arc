@@ -1,0 +1,315 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 4 read-only diagnosis",
+  "status": "complete",
+  "PHASE4_RESULT": "complete",
+  "handoff_id": "1b0eaf914e94-73C71551ABB5",
+  "run_id": "1b0eaf914e94",
+  "submission_id": "0cb0a4198304",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "manifest_sha256": "73C71551ABB524B5123D8D0DBCFDAAC9DDF4B4E7A103BA463A732F4DCE143437",
+  "completed_at": "2026-09-22T02:58:30.3609129Z",
+  "scope": {
+    "only_this_run": true,
+    "same_submission_as_prior_runs": false,
+    "same_submission_does_not_prove_same_build": true,
+    "code_lineage": "new_submission_with_generation_identity",
+    "keep_separate_from": ["cca008377368", "d4acec5dbbdf", "ff12a7ff45f8"],
+    "other_runs_analyzed": false,
+    "new_thread_created": false,
+    "new_run_created": false,
+    "rerun_performed": false,
+    "upload_performed": false,
+    "code_or_official_tests_modified": false
+  },
+  "identity_verification": {
+    "handoff_id_match": true,
+    "run_id_match": true,
+    "submission_id_match": true,
+    "task_key_match": true,
+    "thread_id_match": true,
+    "manifest_sha256_match": true,
+    "manifest_sha256": "73C71551ABB524B5123D8D0DBCFDAAC9DDF4B4E7A103BA463A732F4DCE143437",
+    "generation_build_id": "arc-agent-v1-0851fff1cfb8feeb38544f8c",
+    "generation_commit_sha": "bb70542d7d327b660fa672bfdbc193f3f51b40a5",
+    "payload_tree_sha256": "B286699D96E3463AC6C8B8C426600BEF01DB7A9A0B43191AE99DFCB32A99C885",
+    "evidence_revision": "1b0eaf914e94-initial-intake"
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 97.1,
+    "passed": 33,
+    "total": 34,
+    "feature_implementation_rate": 0.971,
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "failure_stage": "final_playwright_execution",
+    "failure_class": "single_functional_test_timeout",
+    "run_duration_seconds": 8548,
+    "final_test_workers": 1,
+    "failed_tests": [
+      {
+        "name": "REQ-2.2: Log In Successfully",
+        "file": "REQ-2.2.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10016,
+        "timeout_ms": 10000,
+        "locator": "getByRole('heading', { name: /BookStack\\s+User/i }).first()",
+        "error": "element(s) not found",
+        "location": "/workspace/tests/helpers.ts:134 and /workspace/tests/REQ-2.2.spec.ts:9"
+      }
+    ],
+    "tests_reached": true
+  },
+  "confirmed_facts": [
+    {
+      "fact": "The final platform execution reached all 34 Playwright tests and passed 33; the only final failure was REQ-2.2.",
+      "evidence_level": "confirmed",
+      "source": "run.json, playwright-report.json and logs.json"
+    },
+    {
+      "fact": "REQ-2.2 timed out after 10016ms while waiting for the BookStack User text through the reported heading locator.",
+      "evidence_level": "confirmed",
+      "source": "playwright-report.json and failure-details.md"
+    },
+    {
+      "fact": "The final report says the element was not found; it does not provide final DOM, screenshot, response body, cookie header or trace evidence.",
+      "evidence_level": "confirmed",
+      "source": "playwright-report.json and available artifact inventory"
+    },
+    {
+      "fact": "The internal acceptance histories are different from the final platform result: round 0 failed REQ-2.2, round 1 failed REQ-4.3.1, and round 2 failed REQ-2.2 plus REQ-8.2.",
+      "evidence_level": "confirmed",
+      "source": "logs.json normalized internal acceptance records"
+    },
+    {
+      "fact": "The final platform run.json/tests list only REQ-2.2 as failed; this is authoritative over internal repair-round node lists.",
+      "evidence_level": "confirmed",
+      "source": "manifest source precedence and run.json"
+    },
+    {
+      "fact": "The generated package contains a complete frontend/backend application tree and a database user whose nickname is BookStack User; static backend code has a login handler, session cookie path and authenticated navigation injection.",
+      "evidence_level": "confirmed_static_evidence",
+      "source": "template ZIP inventory, backend/src/server.js and backend/data/db.json"
+    },
+    {
+      "fact": "The run used main.py, /workspace/tests and one final Playwright worker; bundled fallback hits were zero and raw logs had no sk- plaintext.",
+      "evidence_level": "confirmed",
+      "source": "logs.json and manifest platform_validation"
+    },
+    {
+      "fact": "Provider usage recorded 1215 requests and 31,206,622 provider-total tokens; platform metering recorded 42,725,779 tokens and 22.194327 CNY.",
+      "evidence_level": "confirmed_with_accounting_scopes",
+      "source": "logs.json and run.json"
+    }
+  ],
+  "failure_chains": [
+    {
+      "chain": [
+        "Generation produced a runnable package",
+        "Final Playwright suite started with 34 tests and one worker",
+        "REQ-2.2 login flow reached the post-login visibility assertion",
+        "The reported BookStack User locator did not resolve to a visible element within 10 seconds",
+        "REQ-2.2 timed out",
+        "33/34 passed and the platform finalized FAILED with score 97.1"
+      ],
+      "classification": "post_login_identity_readback_or_dom_visibility_failure",
+      "confidence": "confirmed_for_observed_boundary"
+    }
+  ],
+  "root_cause_candidates": [
+    {
+      "candidate": "The authenticated homepage did not expose the expected nickname in a DOM form recognized as visible by the final test at assertion time.",
+      "evidence_level": "strong_candidate",
+      "confidence": "high",
+      "evidence": [
+        "The final failure is specifically a missing visible BookStack User locator",
+        "The same final suite passed the other 33 flows, including authenticated operations",
+        "Static package renders the nickname as a span.nav-user rather than a heading; the final helper revision used at runtime is not fully captured"
+      ],
+      "boundary": "This identifies the likely failing boundary, not whether the text was absent, hidden, semantically mismatched, or rendered after the assertion."
+    },
+    {
+      "candidate": "A semantic/selector compatibility mismatch exists between the generated authenticated navigation and the public helper's effective locator fallback.",
+      "evidence_level": "strong_candidate",
+      "confidence": "medium",
+      "evidence": [
+        "The reported locator is getByRole('heading', ...)",
+        "The package's static authenticated marker is span.nav-user",
+        "The runtime error does not show the actual helper source revision or final DOM"
+      ],
+      "boundary": "The repository snapshot helper contains fallback locators, so this cannot be called confirmed without the exact runtime helper and DOM."
+    },
+    {
+      "candidate": "The login API or session cookie failed, causing the homepage to remain anonymous.",
+      "evidence_level": "unknown_to_weak",
+      "confidence": "low",
+      "evidence": [
+        "REQ-2.2 is reached after the login helper",
+        "Many other authenticated flows passed in the same final suite",
+        "No final /api/login response, Set-Cookie header or GET / response was captured"
+      ],
+      "boundary": "Cannot be excluded absolutely from the available artifact, but it is less consistent with 33/34 final passes than a nickname readback/visibility issue."
+    },
+    {
+      "candidate": "A transient navigation or rendering race affected only the nickname assertion.",
+      "evidence_level": "unknown",
+      "confidence": "low_to_medium",
+      "evidence": [
+        "The failure is a timeout rather than an immediate HTTP error",
+        "No trace or DOM timeline is available"
+      ],
+      "boundary": "The 10-second wait and static server-rendered navigation provide no proof of a race."
+    }
+  ],
+  "excluded_causes": [
+    {
+      "cause": "The final platform failed because REQ-4.3.1 or REQ-8.2 failed",
+      "reason": "Those appeared only in internal rounds; both passed in the final platform suite."
+    },
+    {
+      "cause": "A broad application failure or missing package tree",
+      "reason": "The package contains frontend/backend and the final suite passed 33/34 tests."
+    },
+    {
+      "cause": "Official tests were not reached or bundled tests were used",
+      "reason": "The final Playwright suite ran 34 tests using /workspace/tests with bundled fallback hits equal to zero."
+    },
+    {
+      "cause": "API key plaintext leakage",
+      "reason": "Raw logs contain no sk- plaintext and only masked presence status."
+    },
+    {
+      "cause": "A confirmed server-side authentication defect",
+      "reason": "The final evidence does not include the login response or cookie state, and most authenticated flows passed."
+    }
+  ],
+  "evidence_gaps": [
+    "Final DOM or accessibility snapshot immediately after login and at timeout",
+    "GET /api/login response status/body, Set-Cookie header and subsequent GET / request/cookie evidence",
+    "Exact public helper source revision used by the platform; the local official snapshot is not enough to prove runtime fallback behavior",
+    "Playwright trace, screenshot, HAR and browser console/network errors",
+    "The generated frontend/dist contents as executed, not only source ZIP contents",
+    "A separate LLM wall-clock duration field",
+    "A platform snapshot ID is missing"
+  ],
+  "minimal_read_only_reproduction": [
+    {
+      "priority": "P0",
+      "action": "Start the exact template package locally and execute only the REQ-2.2 flow with response, cookie, final URL, DOM text and accessibility snapshot capture.",
+      "expected_observation": "Determine whether /api/login succeeds, whether the session cookie is retained, and whether BookStack User is present as text, heading, or hidden content."
+    },
+    {
+      "priority": "P0",
+      "action": "Compare the runtime helper's effective locator fallback with the generated authenticated navigation element and test getByRole('heading') versus getByText('BookStack User') without changing the official helper.",
+      "expected_observation": "If getByText succeeds while the heading locator fails, the defect is semantic/selector compatibility; if both fail, inspect session or rendering response."
+    },
+    {
+      "priority": "P1",
+      "action": "Perform a static read-only contract check that the authenticated server response contains the fixture nickname after a valid cookie and that the built dist file preserves the injection marker.",
+      "expected_observation": "Separate source/build mismatch from runtime session or DOM-visibility behavior."
+    }
+  ],
+  "stage5_recommendation": {
+    "handoff": true,
+    "acceptance": "Stage5 should receive this as a narrow REQ-2.2 post-login identity readback diagnosis. Do not treat it as proof that the login API or server authentication is broken.",
+    "priority": [
+      "P0: reproduce REQ-2.2 with final DOM, accessibility, response and cookie capture before changing code.",
+      "P0: verify the exact runtime helper revision and its effective locator fallback against the generated nav element.",
+      "P1: if confirmed, make the smallest compatibility change to authenticated nickname rendering/semantics or stable visible readback; preserve the existing session path.",
+      "P1: add a local targeted gate for login response, session cookie, final homepage nickname and the authenticated dashboard headings.",
+      "P1: only after targeted convergence, spend on a full platform rerun; avoid broad repair loops that destabilize already passing requirements.",
+      "Do not modify official tests or use internal repair-round failures as the final failure list."
+    ],
+    "change_boundary": [
+      "frontend/src/index.html authenticated navigation marker",
+      "backend/src/server.js authenticated navigation injection",
+      "frontend/src/styles.css only if visibility evidence confirms a CSS issue",
+      "local targeted validation and build/readback checks"
+    ],
+    "do_not_do": [
+      "No broad frontend/backend rewrite",
+      "No authentication rewrite before capturing response and cookie evidence",
+      "No global Playwright timeout increase as the first fix",
+      "No changes based solely on internal round 1 or round 2 failure nodes",
+      "Do not merge this Run's diagnosis with other BookStack Run conclusions"
+    ]
+  },
+  "impact_estimate": {
+    "completion_rate": "Fixing the single final failure would move 33/34 (97.1%) to 34/34 (100%), an absolute gain of 2.9 percentage points.",
+    "token": "The Run used 1215 requests and 31,206,622 provider-total tokens; platform metering reports 42,725,779 tokens. A narrow local fix should avoid repeating broad repair loops, but exact savings are not measurable from this Run.",
+    "cost": "Platform metering cost was 22.194327 CNY; avoid full reruns until targeted evidence converges.",
+    "time": "Total run duration was 8548s (~2.37h); final Playwright execution took about 31.6s and the failed assertion consumed 10016ms. The likely fix is small, but full-run generation time dominates.",
+    "risk": "Changing shared authentication/session logic risks regressing the 33 passing tests; prefer a narrow nickname readback/semantic change after reproduction."
+  },
+  "source_precedence": [
+    "run.json for final platform status, score, final tests, IDs and metrics",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal rounds and provider usage",
+    "playwright-report.json for final locator, timeout and stack evidence",
+    "failure-details.md for normalized failure and log excerpt",
+    "snapshots.json for the archived Playwright report",
+    "template.zip for static package and generated application evidence",
+    "summary.md for navigation only; it cannot override structured final fields"
+  ],
+  "conflicts": [
+    {
+      "field": "internal_acceptance_vs_final_platform",
+      "internal_value": "round 0 REQ-2.2; round 1 REQ-4.3.1; round 2 REQ-2.2 and REQ-8.2",
+      "final_value": "only REQ-2.2 failed",
+      "resolution": "Use final run.json/tests and Playwright report as authoritative; retain internal history only as repair instability context."
+    },
+    {
+      "field": "token_accounting",
+      "provider_value": 31206622,
+      "platform_value": 42725779,
+      "resolution": "Retain both scopes; do not add or compare them as if they were one metric."
+    }
+  ],
+  "source_files": [
+    {
+      "name": "manifest.json",
+      "path": "evidence/arc-bench/runs/1b0eaf914e94/manifest.json",
+      "sha256": "73C71551ABB524B5123D8D0DBCFDAAC9DDF4B4E7A103BA463A732F4DCE143437"
+    },
+    {
+      "name": "arcbench-run-1b0eaf914e94.json",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-1b0eaf914e94.json",
+      "sha256": "7acd13bf1c7fec2ab39c9948344d51fdc655de5f04df875dfa1660184931a46d"
+    },
+    {
+      "name": "arcbench-run-1b0eaf914e94-logs.json",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-1b0eaf914e94-logs.json",
+      "sha256": "3e52e756d9416601e038d31c69ec3b14a515a79126b37565d7a7fc3c7a08beda"
+    },
+    {
+      "name": "arcbench-1b0eaf914e94-pw-report.json",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-1b0eaf914e94-pw-report.json",
+      "sha256": "b1db6558b40024ccc38a610961836ad95e0aca5e205339664a332d8d5ea1c4b3"
+    },
+    {
+      "name": "arcbench-1b0eaf914e94-failure-details.md",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-1b0eaf914e94-failure-details.md",
+      "sha256": "56a75f28556445d0ae40c90e39ba7458320c3101eb9b15bc88b73f44732fc6b4"
+    },
+    {
+      "name": "arcbench-run-1b0eaf914e94-summary.md",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-1b0eaf914e94-summary.md",
+      "sha256": "fddac79550c387103a2639ad6251fb26d20fa12394ec0e0789a5cfb7ba9896d3"
+    },
+    {
+      "name": "arcbench-1b0eaf914e94-snapshots.json",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-1b0eaf914e94-snapshots.json",
+      "sha256": "df86e68921f8a561285da8748d8c46606311301343e80366a16baa700c5e7092"
+    },
+    {
+      "name": "1b0eaf914e94-template.zip",
+      "path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/1b0eaf914e94-template.zip",
+      "sha256": "0674b53fb916577d28d62efcdeb4055183d5386ee5ba8432a715573efb18f382"
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0,
+    "masked_key_status_only": true
+  }
+}

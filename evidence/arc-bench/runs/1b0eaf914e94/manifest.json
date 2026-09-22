@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_raw_attachments_external",
+  "run": {
+    "run_id": "1b0eaf914e94",
+    "submission_id": "0cb0a4198304",
+    "display_name": "luyun18029839909@163.com",
+    "original_filename": "octos-arc-agent-lite.zip",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--bookstack",
+    "task_snapshot_id": null,
+    "runtime": "python",
+    "agent_source": "upload",
+    "created_at": "2026-09-21T16:25:45.434326",
+    "started_at": "2026-09-21T16:25:46.994906",
+    "finished_at": "2026-09-21T18:49:01.114528",
+    "status": "FAILED",
+    "score": 97.1,
+    "passed_count": 33,
+    "failed_count": 1,
+    "feature_implementation_rate": 0.971,
+    "run_duration_seconds": 8548,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "generation_identity": {
+    "build_id": "arc-agent-v1-0851fff1cfb8feeb38544f8c",
+    "commit_sha": "bb70542d7d327b660fa672bfdbc193f3f51b40a5",
+    "managed_file_count": 494,
+    "package_contract": "arc_agent_bundle_v1",
+    "payload_tree_sha256": "B286699D96E3463AC6C8B8C426600BEF01DB7A9A0B43191AE99DFCB32A99C885",
+    "schema_version": 1
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 51000,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "api_key_log_status": "OPENAI_API_KEY=set"
+  },
+  "internal_acceptance": {
+    "full_suite_round_0": {
+      "passed": 33,
+      "total": 34,
+      "failing_nodes": ["REQ-2.2"]
+    },
+    "full_suite_round_1": {
+      "passed": 33,
+      "total": 34,
+      "failing_nodes": ["REQ-4.3.1"]
+    },
+    "full_suite_round_2": {
+      "passed": 32,
+      "total": 34,
+      "failing_nodes": ["REQ-2.2", "REQ-8.2"]
+    },
+    "repair_rounds_observed": 2,
+    "note": "Internal acceptance nodes changed across rounds; final platform test result remains authoritative."
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 97.1,
+    "passed": 33,
+    "total": 34,
+    "failed_tests": [
+      {
+        "name": "REQ-2.2: Log In Successfully",
+        "file": "REQ-2.2.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10016,
+        "error": "Test timeout of 10000ms exceeded",
+        "locator": "getByRole('heading', { name: /BookStack\\s+User/i }).first()",
+        "location": "/workspace/tests/helpers.ts:134 and /workspace/tests/REQ-2.2.spec.ts:9"
+      }
+    ],
+    "failure_stage": "final_playwright_execution",
+    "failure_class": "single_functional_test_timeout",
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "tests_reached": true
+  },
+  "metering": {
+    "requests": 1215,
+    "prompt_tokens": 30606952,
+    "completion_tokens": 599670,
+    "reasoning_tokens": 334168,
+    "prompt_cache_hit_tokens": 28098816,
+    "provider_total_tokens": 31206622,
+    "platform_token_count": 42725779,
+    "cost": 22.194327,
+    "currency": "CNY",
+    "run_duration_seconds": 8548
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "generation_command": "python3 /workspace/submission/main.py /tmp/arcbench/requirements-source --output-dir /workspace/template",
+    "test_command": "npx playwright test --workers=1",
+    "test_count": 34,
+    "log_result_finalized": "FAILED score=97.1"
+  },
+  "source_precedence": [
+    "run.json for final platform status, score, tests, metrics and identifiers",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal acceptance rounds and provider usage",
+    "playwright-report.json for final locator, timeout and stack evidence",
+    "failure-details.md for normalized failure navigation and log excerpts",
+    "snapshots.json for generated test/report evidence and design/codegen state",
+    "template.zip for package identity, generated application and image assets",
+    "summary.md for navigation only; it cannot override raw structured fields"
+  ],
+  "conflicts": [
+    "Internal acceptance round failures changed from REQ-2.2 to REQ-4.3.1 and then REQ-2.2 plus REQ-8.2, while the final platform run failed only REQ-2.2; final run.json/tests are authoritative.",
+    "Platform token_count 42725779 and logs provider_total_tokens 31206622 use different accounting scopes and are both retained."
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "platform-provided agent_build_id/code_sha fields; generation identity is available in logs instead",
+    "raw executor error-context.md file; platform source path returned 404, while structured error is present in Playwright report",
+    "separate LLM wall-clock duration field"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-1b0eaf914e94-failure-details.md",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-1b0eaf914e94-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 17563,
+      "sha256": "56a75f28556445d0ae40c90e39ba7458320c3101eb9b15bc88b73f44732fc6b4",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-1b0eaf914e94-summary.md",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-1b0eaf914e94-summary.md",
+      "role": "human_normalized_summary",
+      "bytes": 3752,
+      "sha256": "fddac79550c387103a2639ad6251fb26d20fa12394ec0e0789a5cfb7ba9896d3",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-1b0eaf914e94.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-1b0eaf914e94.json",
+      "role": "raw_run_object",
+      "bytes": 13824,
+      "sha256": "7acd13bf1c7fec2ab39c9948344d51fdc655de5f04df875dfa1660184931a46d",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-1b0eaf914e94(1).json",
+          "bytes": 13824,
+          "sha256": "7acd13bf1c7fec2ab39c9948344d51fdc655de5f04df875dfa1660184931a46d"
+        },
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-1b0eaf914e94.json",
+          "bytes": 13824,
+          "sha256": "7acd13bf1c7fec2ab39c9948344d51fdc655de5f04df875dfa1660184931a46d"
+        }
+      ]
+    },
+    {
+      "name": "arcbench-run-1b0eaf914e94-logs.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-1b0eaf914e94-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 203358,
+      "sha256": "3e52e756d9416601e038d31c69ec3b14a515a79126b37565d7a7fc3c7a08beda",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-1b0eaf914e94-logs(1).json",
+          "bytes": 203358,
+          "sha256": "3e52e756d9416601e038d31c69ec3b14a515a79126b37565d7a7fc3c7a08beda"
+        },
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-1b0eaf914e94-logs.json",
+          "bytes": 203358,
+          "sha256": "3e52e756d9416601e038d31c69ec3b14a515a79126b37565d7a7fc3c7a08beda"
+        }
+      ]
+    },
+    {
+      "name": "arcbench-1b0eaf914e94-pw-report.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-1b0eaf914e94-pw-report.json",
+      "role": "raw_playwright_report",
+      "bytes": 47203,
+      "sha256": "b1db6558b40024ccc38a610961836ad95e0aca5e205339664a332d8d5ea1c4b3",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-1b0eaf914e94-pw-report.json",
+          "bytes": 47203,
+          "sha256": "b1db6558b40024ccc38a610961836ad95e0aca5e205339664a332d8d5ea1c4b3"
+        }
+      ]
+    },
+    {
+      "name": "arcbench-1b0eaf914e94-snapshots.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-1b0eaf914e94-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 47250,
+      "sha256": "df86e68921f8a561285da8748d8c46606311301343e80366a16baa700c5e7092",
+      "stored_in_repository": false
+    },
+    {
+      "name": "1b0eaf914e94-template.zip",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/1b0eaf914e94-template.zip",
+      "role": "template_or_generated_package_snapshot",
+      "bytes": 9792778,
+      "sha256": "0674b53fb916577d28d62efcdeb4055183d5386ee5ba8432a715573efb18f382",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/1b0eaf914e94-template.zip",
+          "bytes": 9792778,
+          "sha256": "0674b53fb916577d28d62efcdeb4055183d5386ee5ba8432a715573efb18f382"
+        }
+      ]
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0,
+    "masked_key_status_only": true
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "purpose": "Persistent phase 3 to phase 4 handoff and readback",
+  "handoff_id": "1b0eaf914e94-73C71551ABB5",
+  "run_id": "1b0eaf914e94",
+  "submission_id": "0cb0a4198304",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "thread_title": "06 项目阶段4 + arc-bench-lite--bookstack",
+  "scope": "read_only_phase4_diagnosis",
+  "manifest_path": "evidence/arc-bench/runs/1b0eaf914e94/manifest.json",
+  "manifest_sha256": "73c71551abb524b5123d8d0dbcfdaac9ddf4b4e7a103ba463a732f4dce143437",
+  "ack_path": "evidence/arc-bench/runs/1b0eaf914e94/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/1b0eaf914e94/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/1b0eaf914e94/phase4-result.md",
+  "created_at": "2026-09-22T00:20:00+08:00",
+  "status": "sent_for_readback",
+  "constraints": [
+    "Do not create a new run",
+    "Do not rerun tests or upload",
+    "Do not modify agent code, official tests, requirements, or assets",
+    "Analyze only this run; ignore previous run conclusions except as explicitly labeled history",
+    "Write phase4-ack.json before diagnosis and phase4-result.json plus phase4-result.md after diagnosis"
+  ]
+}
