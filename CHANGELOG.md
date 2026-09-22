@@ -26,6 +26,7 @@ All notable changes to octos will be documented in this file.
 - Register smoke-evolution Dice Run `c48754c25fcf` as a `P5-012` platform-authentication recurrence: the exact V4.1 identity reached `main.py`, while both meter baseline and Agent probe returned HTTP 401 and the expected fail-fast exit 2; route remediation to the platform credential/authorization context, not Agent code or repackaging.
 - Refine the `c48754c25fcf` diagnosis after the user confirmed the API is unchanged: compare successful Run `61f91039fbfb` and three probe implementations, rule out a V4.1 Authorization/path regression, distinguish meter and generation services, and prioritize platform secret-reference, whitelist or gateway-auth state drift.
 - Receive BookStack Lite `1b0eaf914e94` at Phase 5 as `P5-014`: V4.1 generated and ran all 34 tests with only `REQ-2.2` failing at login nickname readback; require exact-template controlled reproduction before any Agent code change or business/A-B claim.
+- Record `P5-014` exact-template isolated reproduction: frozen `REQ-2.2` fails locally despite successful login/session and visible nickname text, which is not a heading; retain platform-helper and A/B identity gaps and require separate authorization before Agent changes.
 
 ### Features
 
