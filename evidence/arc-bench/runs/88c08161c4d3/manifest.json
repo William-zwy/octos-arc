@@ -1,0 +1,268 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_needs_reconciliation",
+  "routing": {
+    "phase4_auto_dispatch": "blocked",
+    "reason": "The registered arc-bench-lite--keep phase 4 thread is quarantined due to a prior incomplete/unverified result; SOP forbids reuse or compensating fork until reconciliation.",
+    "registered_thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
+    "registered_thread_title": "05 项目阶段4 + arc-bench-lite--keep",
+    "registered_thread_status": "quarantined",
+    "last_verified_run_id": "737b56972d5a",
+    "last_unverified_run_id": "bf5e742c15a4",
+    "next_action": "Reconcile the existing Keep phase 4 thread and verify its readback channel before any new Keep handoff."
+  },
+  "run": {
+    "run_id": "88c08161c4d3",
+    "submission_id": "0cb0a4198304",
+    "display_name": "luyun18029839909@163.com",
+    "original_filename": "octos-arc-agent-lite.zip",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--keep",
+    "task_snapshot_id": null,
+    "runtime": "python",
+    "agent_source": "upload",
+    "created_at": "2026-09-21T17:48:29.603386",
+    "started_at": "2026-09-21T17:48:31.296918",
+    "finished_at": "2026-09-21T20:08:41.749092",
+    "status": "FAILED",
+    "score": 93.8,
+    "passed_count": 30,
+    "failed_count": 2,
+    "feature_implementation_rate": 0.938,
+    "run_duration_seconds": 8370,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "generation_identity": {
+    "build_id": "arc-agent-v1-0851fff1cfb8feeb38544f8c",
+    "commit_sha": "bb70542d7d327b660fa672bfdbc193f3f51b40a5",
+    "managed_file_count": 494,
+    "package_contract": "arc_agent_bundle_v1",
+    "payload_tree_sha256": "B286699D96E3463AC6C8B8C426600BEF01DB7A9A0B43191AE99DFCB32A99C885",
+    "schema_version": 1
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 48000,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "api_key_log_status": "OPENAI_API_KEY=set"
+  },
+  "internal_acceptance": {
+    "full_suite_round_0": {
+      "passed": 30,
+      "total": 32,
+      "failing_nodes": ["REQ-2.4", "REQ-2.7.6.3"]
+    },
+    "full_suite_round_1": {
+      "passed": 30,
+      "total": 32,
+      "failing_nodes": ["REQ-2.4", "REQ-2.7.6.3"]
+    },
+    "node_specific_observations": {
+      "REQ-2.4": ["round 0: 1/1"],
+      "REQ-2.7.6.3": ["round 0: 0/1", "round 1: 1/1"]
+    },
+    "repair_rounds_observed": 1,
+    "note": "Final platform run.json/tests is authoritative; internal round 1 passing for REQ-2.7.6.3 did not persist to the final run."
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 93.8,
+    "passed": 30,
+    "total": 32,
+    "failed_tests": [
+      {
+        "name": "REQ-2.4: Update Note",
+        "file": "REQ-2.4.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10020,
+        "timeout_ms": 10000,
+        "error": "locator.fill: Test timeout of 10000ms exceeded",
+        "locator": "getByRole('dialog', { name: /^Note editor$/i }).getByRole('textbox', { name: /^Note content$/i })",
+        "location": "/workspace/tests/REQ-2.4.spec.ts:12"
+      },
+      {
+        "name": "REQ-2.7.6.3: View Reminders",
+        "file": "REQ-2.7.6.3.spec.ts",
+        "status": "failed",
+        "duration_ms": 315,
+        "error": "locator.click strict mode violation: /^Reminders$/i resolved to 2 elements",
+        "locator": "getByRole('complementary').getByRole('button', { name: /^Reminders$/i })",
+        "matched_elements": [
+          "button.nav-item[data-view=reminders] aria-label=Reminders",
+          "button.nav-item.label-filter aria-label=Reminders"
+        ],
+        "location": "/workspace/tests/helpers.ts:294 and /workspace/tests/REQ-2.7.6.3.spec.ts:10"
+      }
+    ],
+    "failure_stage": "final_playwright_execution",
+    "failure_class": "two_functional_test_failures_with_timeout_and_strict_locator_collision",
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "tests_reached": true
+  },
+  "runtime_observations": {
+    "server_errors_observed": [
+      {
+        "error": "ERR_HTTP_HEADERS_SENT",
+        "message": "Cannot write headers after they are sent to the client",
+        "locations": [
+          "/workspace/template/backend/server.js:49",
+          "/workspace/template/backend/server.js:117",
+          "/workspace/template/backend/server.js:250",
+          "/workspace/template/backend/server.js:259"
+        ],
+        "classification": "observed_log_fact_not_root_cause"
+      }
+    ]
+  },
+  "metering": {
+    "requests": 1005,
+    "prompt_tokens": 25363290,
+    "completion_tokens": 601795,
+    "reasoning_tokens": 364360,
+    "prompt_cache_hit_tokens": 23142144,
+    "provider_total_tokens": 25965085,
+    "platform_token_count": 40784030,
+    "cost": 21.356714,
+    "currency": "CNY",
+    "run_duration_seconds": 8370
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "generation_command": "python3 /workspace/submission/main.py /tmp/arcbench/requirements-source --output-dir /workspace/template",
+    "test_command": "npx playwright test --workers=1",
+    "test_count": 32,
+    "log_result_finalized": "FAILED score=93.8"
+  },
+  "source_precedence": [
+    "run.json for final platform status, score, tests, metrics and identifiers",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal acceptance rounds, provider usage and runtime errors",
+    "playwright-report.json for final locators, timeout and strict-mode evidence",
+    "failure-details.md for normalized failure and log excerpts",
+    "snapshots.json for generated report evidence and design/codegen state",
+    "template.zip for package identity, generated application and reference assets",
+    "summary.md for navigation only; it cannot override raw structured fields"
+  ],
+  "conflicts": [
+    "The two external files 88c08161c4d3-template.zip and 88c08161c4d3-template(1).zip have the same size but different SHA-256 values; the canonical folder package and root no-suffix package match each other, while the (1) variant is retained as an unresolved duplicate candidate and is not merged.",
+    "Internal acceptance round 1 reported REQ-2.7.6.3 passing, but the final platform run failed it; final run.json/tests and Playwright report are authoritative.",
+    "Platform token_count 40784030 and logs provider_total_tokens 25965085 use different accounting scopes and are both retained."
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "platform-provided agent_build_id/code_sha fields; generation identity is available in logs instead",
+    "raw executor error-context.md files; platform source paths returned 404",
+    "separate LLM wall-clock duration field",
+    "identity/provenance for the differing template(1).zip candidate"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-88c08161c4d3-failure-details.md",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-88c08161c4d3-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 142155,
+      "sha256": "646b1ceb31e776ab490b16c9e7c239c4b9a33786592a89e05ae47b5dc0625519",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-88c08161c4d3-summary.md",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-88c08161c4d3-summary.md",
+      "role": "human_normalized_summary",
+      "bytes": 3762,
+      "sha256": "7ee70c6347dc03cc83abba3e59f6d4e20589a6763b694057d63770d3592d42cc",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-88c08161c4d3.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-88c08161c4d3.json",
+      "role": "raw_run_object",
+      "bytes": 14023,
+      "sha256": "a55b515cd80c4c79a68b094eba730778ddc1500a1c87539a3caa3aca4de2c26d",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-88c08161c4d3.json",
+          "bytes": 14023,
+          "sha256": "a55b515cd80c4c79a68b094eba730778ddc1500a1c87539a3caa3aca4de2c26d"
+        }
+      ]
+    },
+    {
+      "name": "arcbench-run-88c08161c4d3-logs.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-88c08161c4d3-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 327680,
+      "sha256": "788d7e275480cf6cf9c952f0f792fe9b7f1f78a9ad5414a51147c8ce9b496df8",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-88c08161c4d3-logs(1).json",
+          "bytes": 327680,
+          "sha256": "788d7e275480cf6cf9c952f0f792fe9b7f1f78a9ad5414a51147c8ce9b496df8"
+        }
+      ]
+    },
+    {
+      "name": "arcbench-88c08161c4d3-pw-report.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-88c08161c4d3-pw-report.json",
+      "role": "raw_playwright_report",
+      "bytes": 48605,
+      "sha256": "bfb4f663edf889c956c5afb1219b06f4ecf2a81655bb39285dc2a69bc29abe8a",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-88c08161c4d3-pw-report.json",
+          "bytes": 48605,
+          "sha256": "bfb4f663edf889c956c5afb1219b06f4ecf2a81655bb39285dc2a69bc29abe8a"
+        }
+      ]
+    },
+    {
+      "name": "arcbench-88c08161c4d3-snapshots.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-88c08161c4d3-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 48652,
+      "sha256": "5d4df47802a1bed7e552c411748b53e9dcc52c45afbf00590e1ac3928670da3a",
+      "stored_in_repository": false
+    },
+    {
+      "name": "88c08161c4d3-template.zip",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/88c08161c4d3-template.zip",
+      "role": "canonical_template_or_generated_package_snapshot",
+      "bytes": 1834206,
+      "sha256": "10583c94a5a75f297aed27b9f041d54a59c7e1c22ad85c633768445cb268557c",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/88c08161c4d3-template.zip",
+          "bytes": 1834206,
+          "sha256": "10583c94a5a75f297aed27b9f041d54a59c7e1c22ad85c633768445cb268557c"
+        }
+      ]
+    },
+    {
+      "name": "88c08161c4d3-template(1).zip",
+      "source_path": "C:/Users/dayuruozhi/Downloads/88c08161c4d3-template(1).zip",
+      "role": "ambiguous_duplicate_candidate_not_merged",
+      "bytes": 1834206,
+      "sha256": "a74777cf9e7641be093d8f7a882389da5ff2feb5bcb5b8b0027d7b884a350bac",
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0,
+    "masked_key_status_only": true
+  }
+}
