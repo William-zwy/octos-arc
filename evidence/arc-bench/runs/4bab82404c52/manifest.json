@@ -1,0 +1,288 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "status": "normalized_intake_complete_sent_to_phase4",
+  "routing": {
+    "phase4_auto_dispatch": "allowed",
+    "registered_thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+    "registered_thread_title": "06 项目阶段4 + arc-bench-lite--bookstack",
+    "registered_thread_status": "verified",
+    "handoff_id": "4bab82404c52-9F2C4A1B7D88",
+    "handoff_path": "evidence/arc-bench/runs/4bab82404c52/phase4-handoff.json",
+    "next_stage": "phase4_read_only_diagnosis",
+    "boundary": "Stage 3 records normalized facts and routes; root-cause judgment remains in Stage 4."
+  },
+  "run": {
+    "run_id": "4bab82404c52",
+    "submission_id": "7e0bd4dc8e9d",
+    "display_name": "luyun18029839909@163.com",
+    "original_filename": "octos-arc-agent-7f3c0b0c0175-95a414940f5b.zip",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--bookstack",
+    "task_snapshot_id": null,
+    "runtime": "python",
+    "agent_source": "upload",
+    "created_at": "2026-09-22T06:11:41.478502",
+    "started_at": "2026-09-22T06:11:42.801297",
+    "finished_at": "2026-09-22T08:56:23.609016",
+    "status": "FAILED",
+    "score": 91.2,
+    "passed_count": 31,
+    "failed_count": 3,
+    "feature_implementation_rate": 0.912,
+    "run_duration_seconds": 9817,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "generation_identity": {
+    "build_id": "arc-agent-v1-3dcd295fd6e1435e09ccc9b7",
+    "commit_sha": "7f3c0b0c0175701eb8ef6f19776885c521da5e9f",
+    "managed_file_count": 494,
+    "package_contract": "arc_agent_bundle_v1",
+    "payload_tree_sha256": "760278BF0707784260EECBEE64C143B553794157A1E3CD45754DA1113029FF15",
+    "schema_version": 1
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 51000,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "api_key_log_status": "OPENAI_API_KEY=set"
+  },
+  "internal_acceptance": {
+    "full_suite_round_0": {
+      "passed": 31,
+      "total": 34,
+      "failing_nodes": ["REQ-6.1.1", "REQ-6.1.2", "REQ-9.1"]
+    },
+    "full_suite_round_1": {
+      "passed": 31,
+      "total": 34,
+      "failing_nodes": ["REQ-6.1.1", "REQ-6.1.2", "REQ-9.1"]
+    },
+    "node_specific_observations": {
+      "REQ-6.1.1": "round 0 passed in isolation",
+      "REQ-6.1.2": "round 0 passed in isolation",
+      "REQ-9.1": "rounds 0, 1 and 2 failed; repair turns hit request budgets"
+    },
+    "repair_rounds_observed": 2,
+    "note": "Internal acceptance and final platform execution are retained separately; final platform tests are authoritative."
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 91.2,
+    "passed": 31,
+    "total": 34,
+    "failure_stage": "final_playwright_execution",
+    "failure_class": "three_functional_test_timeouts",
+    "failed_tests": [
+      {
+        "name": "REQ-6.1.1: Save Page",
+        "file": "REQ-6.1.1.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10009,
+        "error": "Test timeout of 10000ms exceeded",
+        "locator": "getByRole('heading', { name: /Page\\s+Created\\s+6\\.1\\.1/i }).first()",
+        "location": "/workspace/tests/helpers.ts:134 and /workspace/tests/REQ-6.1.1.spec.ts:11",
+        "error_context_path": "/workspace/tests/test-results/REQ-6.1.1-REQ-6-1-1-Save-Page/error-context.md"
+      },
+      {
+        "name": "REQ-6.1.2: Save Draft",
+        "file": "REQ-6.1.2.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10015,
+        "error": "Test timeout of 10000ms exceeded",
+        "locator": "getByRole('button', { name: /^BookStack$/i }).first()",
+        "location": "/workspace/tests/helpers.ts:304 and /workspace/tests/REQ-6.1.2.spec.ts:12",
+        "error_context_path": "/workspace/tests/test-results/REQ-6.1.2-REQ-6-1-2-Save-Draft/error-context.md"
+      },
+      {
+        "name": "REQ-9.1: Quick Navigation from Recently Updated",
+        "file": "REQ-9.1.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10010,
+        "error": "Test timeout of 10000ms exceeded",
+        "locator": "getByRole('button', { name: /^BookStack$/i }).first()",
+        "location": "/workspace/tests/helpers.ts:304 and /workspace/tests/REQ-9.1.spec.ts:11",
+        "error_context_path": "/workspace/tests/test-results/REQ-9.1-REQ-9-1-Quick-Navigation-from-Recently-Updated/error-context.md"
+      }
+    ]
+  },
+  "observed_source_facts": {
+    "submission_package_filename_matches_run_original_filename": true,
+    "submission_package_sha256_platform_verified": false,
+    "template_observations": [
+      "page-create.html renders the logo as a button with id=logo and aria-label=BookStack",
+      "app.js attaches a click handler to #logo that navigates to /",
+      "createPage adds the new page to db.pages and book.page_ids, persists the DB, then redirects to /books/:bookId",
+      "createDraft persists the draft and redirects to /",
+      "renderBookDetails renders book.page_ids entries as links named by page.name",
+      "renderIndex renders Recently Updated Pages as links to page reading routes"
+    ],
+    "source_package": {
+      "path": "D:/DataMove/codex/worktrees/bfb3/AI智能体软件工厂黑客松/arc/releases/octos-arc-agent-7f3c0b0c0175-95a414940f5b.zip",
+      "bytes": 344045,
+      "sha256": "95A414940F5BC69DF4A9ED7EC497A3BBFFDB14697714F8F123A1AEAA03A17D99"
+    }
+  },
+  "metering": {
+    "requests": 1275,
+    "prompt_tokens": 36884956,
+    "completion_tokens": 740171,
+    "reasoning_tokens": 445542,
+    "prompt_cache_hit_tokens": 34126080,
+    "provider_total_tokens": 37625127,
+    "platform_token_count": 37625229,
+    "cost": 18.351171,
+    "currency": "CNY",
+    "run_duration_seconds": 9817
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "generation_command": "python3 /workspace/submission/main.py /tmp/arcbench/requirements-source --output-dir /workspace/template",
+    "test_command": "npx playwright test --workers=1",
+    "test_count": 34,
+    "log_result_finalized": "FAILED score=91.2"
+  },
+  "source_precedence": [
+    "run.json for final platform status, score, tests, metrics and identifiers",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal acceptance rounds and provider usage",
+    "playwright-report.json for final locator, timeout and stack evidence",
+    "failure-details.md for normalized failure navigation and log excerpts",
+    "snapshots.json for generated test/report evidence and design/codegen state",
+    "template.zip for generated application and asset snapshot",
+    "summary.md for navigation only; it cannot override raw structured fields"
+  ],
+  "conflicts": [
+    "The canonical run JSON in the BookStack-lite folder, the root no-suffix JSON, and root (1) JSON are byte-identical; root (2) has the same run identity and final metrics but a different size/hash and is not merged.",
+    "The canonical BookStack-lite logs and root logs (1) are byte-identical; the root no-suffix logs are shorter and have a different hash, so the folder logs are canonical.",
+    "The normalized summary states an internal full-suite round 0 of 32/34, but raw logs record full-suite rounds 0 and 1 as 31/34; raw logs and final Playwright report prevail.",
+    "The uploaded agent release ZIP and the platform-generated template ZIP are different artifacts; the run filename matches the release filename, but the platform does not expose a package SHA linking them.",
+    "Platform token_count and provider total_tokens use different accounting scopes and are both retained."
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "platform-provided package SHA field",
+    "raw executor error-context.md files; referenced platform paths were not delivered as local files",
+    "separate LLM wall-clock duration field",
+    "final request/response trace for REQ-6.1.1"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-4bab82404c52-failure-details.md",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-4bab82404c52-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 24119,
+      "sha256": "1E433D9547F3B7125590A15F19B6389F325A2F226622B6C0B0F21B0C3AE9C3A2",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-4bab82404c52-summary.md",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-4bab82404c52-summary.md",
+      "role": "human_normalized_summary",
+      "bytes": 5363,
+      "sha256": "8B881F06896441B86C0CA4279D6A93D9C6859DA738770A383A8C0184FAEB96C0",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-4bab82404c52.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-4bab82404c52.json",
+      "role": "raw_run_object",
+      "bytes": 13939,
+      "sha256": "4508999C97B858093ECF8C0F31D406FECACB3A62A3BE48A49778BE3C411519B3",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-4bab82404c52.json",
+          "bytes": 13939,
+          "sha256": "4508999C97B858093ECF8C0F31D406FECACB3A62A3BE48A49778BE3C411519B3"
+        },
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-4bab82404c52(1).json",
+          "bytes": 13939,
+          "sha256": "4508999C97B858093ECF8C0F31D406FECACB3A62A3BE48A49778BE3C411519B3"
+        },
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-4bab82404c52(2).json",
+          "bytes": 10424,
+          "sha256": "6C8D8A00E1892386E3F19B9CDC881EC6458A4DBBFC37FD5F258D3A752CC2D1B3",
+          "classification": "same_identity_different_candidate_not_merged"
+        }
+      ]
+    },
+    {
+      "name": "arcbench-run-4bab82404c52-logs.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-4bab82404c52-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 613780,
+      "sha256": "7999AF4C00EB33AD7573531FC5BD09FC439CEFC22DCD3B2A0E51BC4557BD7C34",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-4bab82404c52-logs(1).json",
+          "bytes": 613780,
+          "sha256": "7999AF4C00EB33AD7573531FC5BD09FC439CEFC22DCD3B2A0E51BC4557BD7C34"
+        },
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-4bab82404c52-logs.json",
+          "bytes": 215788,
+          "sha256": "729D21ACA75A8CE34F0B36CDE24F3B2ECD89D987648109E80BCA2317C7AB7A27",
+          "classification": "shorter_candidate_not_merged"
+        }
+      ]
+    },
+    {
+      "name": "arcbench-4bab82404c52-pw-report.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-4bab82404c52-pw-report.json",
+      "role": "raw_playwright_report",
+      "bytes": 50197,
+      "sha256": "96B0A5C31D9F215C7020275555342036EB17CBFCC293EC81AB784A3D390BD201",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-4bab82404c52-snapshots.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-4bab82404c52-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 50244,
+      "sha256": "A27E2A156E9B7758200C25AB273BC79A436A78FE53B7222989EEE848D55FBAB8",
+      "stored_in_repository": false
+    },
+    {
+      "name": "4bab82404c52-template.zip",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/4bab82404c52-template.zip",
+      "role": "platform_generated_template_snapshot",
+      "bytes": 9804940,
+      "sha256": "BDD2B28FC80B8C884F105646EE255D0045D67E5524C2A7A04A96C9267C4BF940",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/4bab82404c52-template.zip",
+          "bytes": 9804940,
+          "sha256": "BDD2B28FC80B8C884F105646EE255D0045D67E5524C2A7A04A96C9267C4BF940"
+        }
+      ]
+    },
+    {
+      "name": "octos-arc-agent-7f3c0b0c0175-95a414940f5b.zip",
+      "source_path": "D:/DataMove/codex/worktrees/bfb3/AI智能体软件工厂黑客松/arc/releases/octos-arc-agent-7f3c0b0c0175-95a414940f5b.zip",
+      "role": "agent_release_source_reference",
+      "bytes": 344045,
+      "sha256": "95A414940F5BC69DF4A9ED7EC497A3BBFFDB14697714F8F123A1AEAA03A17D99",
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0,
+    "masked_key_status_only": true
+  }
+}

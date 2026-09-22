@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "purpose": "Persistent phase 3 to phase 4 handoff and readback",
+  "handoff_id": "4bab82404c52-9F2C4A1B7D88",
+  "run_id": "4bab82404c52",
+  "submission_id": "7e0bd4dc8e9d",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "thread_title": "06 项目阶段4 + arc-bench-lite--bookstack",
+  "scope": "read_only_phase4_diagnosis",
+  "manifest_path": "evidence/arc-bench/runs/4bab82404c52/manifest.json",
+  "manifest_sha256": "67C3A1BC3B312DABB0A1E858C6077F826BBC541770B632159A236CC3544DD1A1",
+  "ack_path": "evidence/arc-bench/runs/4bab82404c52/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/4bab82404c52/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/4bab82404c52/phase4-result.md",
+  "created_at": "2026-09-22T18:00:00+08:00",
+  "status": "sent_for_readback",
+  "constraints": [
+    "Do not create a new platform run",
+    "Do not rerun tests or upload",
+    "Do not modify agent code, official tests, requirements, or assets",
+    "Analyze only run 4bab82404c52; ignore previous run conclusions except as explicitly labeled history",
+    "Write phase4-ack.json before diagnosis and phase4-result.json plus phase4-result.md after diagnosis",
+    "The canonical evidence is the BookStack-lite folder set recorded in manifest.json; differing duplicate candidates are not merged",
+    "The final platform result and raw Playwright report are authoritative over normalized summary discrepancies",
+    "The phase4 result must contain top-level run_id, task_key, handoff_id, thread_id, manifest_sha256 and PHASE4_RESULT"
+  ]
+}
