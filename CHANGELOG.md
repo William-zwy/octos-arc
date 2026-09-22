@@ -27,6 +27,7 @@ All notable changes to octos will be documented in this file.
 - Refine the `c48754c25fcf` diagnosis after the user confirmed the API is unchanged: compare successful Run `61f91039fbfb` and three probe implementations, rule out a V4.1 Authorization/path regression, distinguish meter and generation services, and prioritize platform secret-reference, whitelist or gateway-auth state drift.
 - Receive BookStack Lite `1b0eaf914e94` at Phase 5 as `P5-014`: V4.1 generated and ran all 34 tests with only `REQ-2.2` failing at login nickname readback; require exact-template controlled reproduction before any Agent code change or business/A-B claim.
 - Record `P5-014` exact-template isolated reproduction: frozen `REQ-2.2` fails locally despite successful login/session and visible nickname text, which is not a heading; retain platform-helper and A/B identity gaps and require separate authorization before Agent changes.
+- Record the user-authorized `P5-014` local Agent candidate `7f3c0b0c0175701eb8ef6f19776885c521da5e9f` and ZIP SHA-256 `95A414940F5BC69DF4A9ED7EC497A3BBFFDB14697714F8F123A1AEAA03A17D99`; distinguish six old-template semantic-control passes from unproven new-Agent generation, retain the Windows full-suite failures, and keep Keep Run `88c08161c4d3` upstream until Phase 4 identity reconciliation.
 
 ### Features
 

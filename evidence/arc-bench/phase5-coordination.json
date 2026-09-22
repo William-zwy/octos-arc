@@ -1159,7 +1159,54 @@
         "db_unchanged_in_each_round": true,
         "first_cookie_observation_superseded_by_all_headers_round": true
       },
-      "next_gate": "Await explicit user authorization for a minimal generalizable login identity role/navigation-stability Agent slice; preserve 33 passing final tests. Do not modify the official helper, globally increase timeout, claim platform mechanism byte identity, or claim A/B gain."
+      "next_gate": "Historical gate superseded by the user-authorized local Agent candidate revision below."
+    },
+    {
+      "key": "1b0eaf914e94:P5-014:95A414940F5B",
+      "run_id": "1b0eaf914e94",
+      "submission_id": "0cb0a4198304",
+      "task_key": "arc-bench-lite--bookstack",
+      "issue_id": "P5-014",
+      "supersedes": "1b0eaf914e94:P5-014:E8B01648EF20",
+      "evidence_digest": "95A414940F5BC69DF4A9ED7EC497A3BBFFDB14697714F8F123A1AEAA03A17D99",
+      "status": "local_agent_artifact_verified_functional_effect_unproven",
+      "decision": "candidate_for_new_agent_unmocked_generation_and_frozen_34_test_gate",
+      "code_change_authorized": true,
+      "implementation_dispatched": true,
+      "implementation_thread_id": "01a0bd66-75bd-7801-97fc-b3d1e136c112",
+      "reproduction_thread_id": "01a0bd66-60c2-7441-9a85-332c0af24886",
+      "metrics_handoff_id": "phase5:p5-014:metrics-local-candidate-20260922:v1",
+      "agent_commit_sha": "7f3c0b0c0175701eb8ef6f19776885c521da5e9f",
+      "agent_zip_path": "D:/DataMove/codex/worktrees/bfb3/AI智能体软件工厂黑客松/arc/releases/octos-arc-agent-7f3c0b0c0175-95a414940f5b.zip",
+      "agent_zip_sha256": "95A414940F5BC69DF4A9ED7EC497A3BBFFDB14697714F8F123A1AEAA03A17D99",
+      "agent_build_id": "arc-agent-v1-3dcd295fd6e1435e09ccc9b7",
+      "agent_payload_tree_sha256": "760278BF0707784260EECBEE64C143B553794157A1E3CD45754DA1113029FF15",
+      "local_manual_candidate": {
+        "original_generated_template_sha256": "0674B53FB916577D28D62EFCDEB4055183D5386EE5BA8432A715573EFB18F382",
+        "frozen_req_2_2_normal_passed": 3,
+        "frozen_req_2_2_normal_total": 3,
+        "frozen_req_2_2_delayed_passed": 3,
+        "frozen_req_2_2_delayed_total": 3,
+        "frozen_req_2_1_and_req_3_1_targeted_passed": true,
+        "generated_by_new_agent": false,
+        "full_34_suite_run": false
+      },
+      "agent_tests": {
+        "targeted_exit_code": 0,
+        "full_suite_exit_code": 1,
+        "baseline_tests": 100,
+        "candidate_tests": 107,
+        "baseline_and_candidate_same_failures": "3 failures and 1 error on Windows; no newly failing tests",
+        "full_suite_green": false
+      },
+      "new_agent_unmocked_generation_completed": false,
+      "new_platform_run_created_by_ledger": false,
+      "upload_performed_by_ledger": false,
+      "official_tests_modified": false,
+      "remote_pushed_by_ledger": false,
+      "business_go": false,
+      "strict_ab_comparable": false,
+      "next_gate": "Obtain separate budget approval before costly unmocked new-Agent BookStack generation. Bind Agent identity to generated app ZIP and final DOM, then run frozen REQ-2.2 and all 34 tests on that new app while preserving the old 33. Platform upload or Run requires separate explicit authorization and same-platform 2xx auth preflight."
     }
   ]
 }
