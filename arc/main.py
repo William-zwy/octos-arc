@@ -887,7 +887,10 @@ CODEGEN_SIZE_SMALL = "index.html <= 20 lines, server.js <= 20 lines."
 CODEGEN_SIZE_FULL = ("As short as the tests allow; one page file per route. Mechanisms (follow exactly): "
                      "(1) every page contains the literal `<!--NAV-->` and no other navigation links; the server replaces it "
                      "with `<a href=\"/login\">登录</a> <a href=\"/register\">Register</a>` when signed out or "
-                     "`<span>USERNAME</span> <a href=\"/logout\">退出登录</a>` when signed in (read from the cookie) before sending. "
+                     "a generic account label plus one `<a href=\"/logout\">` using the spec's exact sign-out text when signed in "
+                     "(read from the cookie) before sending. If the spec checks the display name immediately after login, "
+                     "render that name exactly once as a semantic welcome heading in authenticated main content, not as a "
+                     "navbar-only span or a heading in navigation; follow an explicitly required different role/location. "
                      "(2) Session cookie exactly `session=TOKEN; Path=/; HttpOnly; SameSite=Lax`; sign-out clears it and redirects to /. "
                      "(3) Validation: the values produced by the test helpers (see the support file) are valid input and MUST be "
                      "accepted (names with spaces, any document number, phone, email the helper uses); reject only the cases the "
@@ -900,7 +903,7 @@ UI_CONTRACT_DATA = """\
 """
 
 UI_CONTRACT_SESSION = """\
-- Sessions: after register/login navigate to `/`, show the exact username in one element and a "Sign out" link; the session survives reload. Failed login/registration shows one generic error, keeps the anonymous header, creates nothing.
+- Sessions: after register/login navigate to `/`, show the exact tested account display name in one visible element and a "Sign out" link; the session survives reload. When the spec checks that name immediately after login, make its sole visible occurrence a semantic welcome heading in authenticated main content on the destination, so a heading-first locator chosen before async navigation can resolve there. Keep the navigation account label generic, not a heading or a duplicate display name, unless the spec explicitly requires a different role/location. Failed login/registration shows one generic error, keeps the anonymous header, creates nothing.
 """
 
 UI_CONTRACT = UI_CONTRACT_CORE + UI_CONTRACT_DATA + UI_CONTRACT_SESSION  # full set (multi-node tasks)

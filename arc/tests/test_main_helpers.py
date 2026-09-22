@@ -350,6 +350,21 @@ class InteractionPromptTests(unittest.TestCase):
         self.assertIn("start from the packaged file without deleting it", m.FINAL_CHECK_PROMPT)
         self.assertIn("successful write is observed before navigation", m.FINAL_CHECK_PROMPT)
 
+    def test_post_login_identity_contract_is_conditional_and_not_navbar_only(self):
+        from types import SimpleNamespace
+
+        session_prompt = m.Flow.ui_contract(SimpleNamespace(needs_data=False, needs_session=True))
+        non_session_prompt = m.Flow.ui_contract(SimpleNamespace(needs_data=False, needs_session=False))
+        self.assertIn("immediately after login", session_prompt)
+        self.assertIn("semantic welcome heading in authenticated main content", session_prompt)
+        self.assertIn("one visible element", session_prompt)
+        self.assertNotIn("semantic welcome heading", non_session_prompt)
+        self.assertIn("immediately after login", m.CODEGEN_SIZE_FULL)
+        self.assertIn("semantic welcome heading in authenticated main content", m.CODEGEN_SIZE_FULL)
+        self.assertIn("follow an explicitly required different role/location", m.CODEGEN_SIZE_FULL)
+        self.assertNotIn("<span>USERNAME</span>", m.CODEGEN_SIZE_FULL)
+        self.assertNotIn("BookStack", session_prompt + m.CODEGEN_SIZE_FULL)
+
 
 class CodegenPromptTests(unittest.TestCase):
     def test_should_format_without_placeholder_errors_and_keep_build_command(self):
