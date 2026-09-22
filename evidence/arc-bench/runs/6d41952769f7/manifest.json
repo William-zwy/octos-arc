@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "intake_label": "P5-015",
+  "status": "normalized_intake_complete_sent_to_phase4",
+  "routing": {
+    "phase4_auto_dispatch": "allowed",
+    "registered_thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+    "registered_thread_title": "06 项目阶段4 + arc-bench-lite--bookstack",
+    "registered_thread_status": "verified",
+    "handoff_id": "6d41952769f7-4C8A91E2B6D0",
+    "handoff_path": "evidence/arc-bench/runs/6d41952769f7/phase4-handoff.json",
+    "next_stage": "phase4_read_only_diagnosis",
+    "boundary": "Stage 3 records normalized facts and routes; root-cause judgment remains in Stage 4."
+  },
+  "run": {
+    "run_id": "6d41952769f7",
+    "submission_id": "14111688f13e",
+    "display_name": "luyun18029839909@163.com",
+    "original_filename": "octos-arc-agent-adfe39832dd3-c6b7f0f68f00.zip",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--bookstack",
+    "task_snapshot_id": null,
+    "runtime": "python",
+    "agent_source": "upload",
+    "created_at": "2026-09-22T16:10:04.183701",
+    "started_at": "2026-09-22T16:10:05.227640",
+    "finished_at": "2026-09-22T21:24:58.712332",
+    "status": "FAILED",
+    "score": 88.2,
+    "passed_count": 30,
+    "failed_count": 4,
+    "feature_implementation_rate": 0.882,
+    "run_duration_seconds": 18827,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "generation_identity": {
+    "build_id": null,
+    "commit_sha": null,
+    "payload_tree_sha256": null,
+    "package_contract": null,
+    "note": "The platform run object and delivered evidence do not expose a platform build ID, code SHA, payload tree SHA, or upload-package SHA. The original filename is retained without inferring a source package."
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": "deepseek-v4-flash-vision-exp",
+    "reasoning": "low",
+    "time_budget_seconds": 51000,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "entrypoint_verified": "main.py",
+    "tests_dir_verified": "/workspace/tests",
+    "bundled_tests_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "api_key_log_status": "OPENAI_API_KEY=set"
+  },
+  "internal_acceptance": {
+    "full_suite_round_0": {
+      "passed": 0,
+      "total": 34,
+      "failing_nodes": "all 34 nodes in the final full-suite event"
+    },
+    "full_suite_round_1": {
+      "passed": 0,
+      "total": 34,
+      "failing_nodes": "all 34 nodes in the final full-suite event"
+    },
+    "node_specific_observations": {
+      "REQ-6.1.1": "isolated round 0 recorded 1/1 before final full-suite execution",
+      "REQ-6.2.1": "isolated repair rounds changed from 0/1 to 1/1",
+      "REQ-7.2": "isolated round 0 recorded 1/1 before final full-suite execution",
+      "REQ-8.1": "isolated round 0 recorded 1/1 before final full-suite execution"
+    },
+    "repair_rounds_observed": 2,
+    "note": "Raw logs and the final platform report are authoritative. The human summary says round 0 was 24/34, which conflicts with the raw final full-suite events and is retained as an unresolved reporting conflict."
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 88.2,
+    "passed": 30,
+    "total": 34,
+    "failure_stage": "final_playwright_execution",
+    "failure_class": "three timeouts and one navigation runtime error",
+    "failed_tests": [
+      {
+        "name": "REQ-6.1.1: Save Page",
+        "file": "REQ-6.1.1.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10013,
+        "error": "Test timeout of 10000ms exceeded",
+        "observed_locator": "getByRole('heading', { name: /Page\\s+Created\\s+6\\.1\\.1/i }).first()"
+      },
+      {
+        "name": "REQ-6.2.1: Create Chapter",
+        "file": "REQ-6.2.1.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10011,
+        "error": "Test timeout of 10000ms exceeded",
+        "observed_locator": "getByRole('heading', { name: /Chapter\\s+Created\\s+6\\.2\\.1/i }).first()"
+      },
+      {
+        "name": "REQ-7.2: Quick Navigation from Recently Viewed",
+        "file": "REQ-7.2.spec.ts",
+        "status": "failed",
+        "duration_ms": 1322,
+        "error": "page.goto: net::ERR_ABORTED at http://127.0.0.1:3000/",
+        "location": "helpers.ts:159; openHome()"
+      },
+      {
+        "name": "REQ-8.1: Favorite Items",
+        "file": "REQ-8.1.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10015,
+        "error": "Test timeout of 10000ms exceeded",
+        "observed_locator": "getByRole('heading', { name: /^Unfavorite$/i }).first()"
+      }
+    ],
+    "authoritative_sources": [
+      "arcbench-run-6d41952769f7.json",
+      "arcbench-6d41952769f7-pw-report.json",
+      "arcbench-run-6d41952769f7-logs.json"
+    ]
+  },
+  "metering": {
+    "requests": 2402,
+    "prompt_tokens": 87730017,
+    "completion_tokens": 1524528,
+    "reasoning_tokens": 1007246,
+    "prompt_cache_hit_tokens": 82738432,
+    "provider_total_tokens": 89254545,
+    "platform_token_count": 89254641,
+    "cost": 36.969671,
+    "currency": "CNY",
+    "run_duration_seconds": 18827
+  },
+  "platform_validation": {
+    "entrypoint": "main.py",
+    "tests_dir": "/workspace/tests",
+    "bundled_fallback_hits": 0,
+    "api_key_plaintext_hits": 0,
+    "test_command": "npx playwright test --workers=1",
+    "test_count": 34,
+    "log_result_finalized": "FAILED score=88.2"
+  },
+  "source_precedence": [
+    "run.json for final platform status, score, tests, metrics and identifiers",
+    "logs.json for lifecycle, entrypoint, tests_dir, internal acceptance rounds and provider usage",
+    "playwright-report.json for final locator, timeout and stack evidence",
+    "failure-details.md for normalized failure navigation and log excerpts",
+    "snapshots.json for generated test/report evidence and design/codegen state",
+    "template.zip for generated application and asset snapshot",
+    "summary.md for navigation only; it cannot override raw structured fields"
+  ],
+  "conflicts": [
+    "The human summary reports internal full-suite round 0 as 24/34, while raw logs record final full-suite rounds 0 and 1 as 0/34; both are retained and Stage 4 must not silently reconcile them.",
+    "The delivered platform-generated template ZIP is not the uploaded Agent release ZIP; no platform field binds the two by SHA.",
+    "Platform token_count and provider total_tokens use different accounting scopes and are both retained."
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "platform-provided build ID",
+    "platform-provided code SHA",
+    "platform-provided upload-package SHA",
+    "uploaded Agent release ZIP corresponding to original_filename",
+    "raw executor error-context.md files referenced by failure details",
+    "separate LLM wall-clock duration field"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-run-6d41952769f7.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-6d41952769f7.json",
+      "role": "raw_run_object",
+      "bytes": 14581,
+      "sha256": "569DE395D712C674AC3F8F3E803043942ACAC15538D5A8D4F20E11999430645E",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-6d41952769f7.json",
+          "bytes": 14581,
+          "sha256": "569DE395D712C674AC3F8F3E803043942ACAC15538D5A8D4F20E11999430645E"
+        }
+      ]
+    },
+    {
+      "name": "arcbench-run-6d41952769f7-logs.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-6d41952769f7-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 361292,
+      "sha256": "1CC1DAB74750A0B119EB2B11BD9E24FF8C6962A0F3AC621D5B43F5E8951340F3",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-6d41952769f7-logs.json",
+          "bytes": 361292,
+          "sha256": "1CC1DAB74750A0B119EB2B11BD9E24FF8C6962A0F3AC621D5B43F5E8951340F3"
+        }
+      ]
+    },
+    {
+      "name": "arcbench-run-6d41952769f7-summary.md",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-run-6d41952769f7-summary.md",
+      "role": "human_normalized_summary",
+      "bytes": 3848,
+      "sha256": "E769669088E95A6E93D0DF84F663B0BCFFCA045B4B4B46AAAC599CFB2F2629F8",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-6d41952769f7-failure-details.md",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-6d41952769f7-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 30660,
+      "sha256": "6D5755C7B4A88D531D6EAE998294AFBA57B8A3B7EF04FA02084D6DBFBEF5CBA4",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-6d41952769f7-snapshots.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-6d41952769f7-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 53905,
+      "sha256": "805020486F3A86806B2FD8D1D51067F87D9D1BF44AC3F29FC0878F53F4E02434",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-6d41952769f7-pw-report.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/arcbench-6d41952769f7-pw-report.json",
+      "role": "raw_playwright_report",
+      "bytes": 53858,
+      "sha256": "673164315B25FF23DADBE7C19E830B004D7762A5D1C05F36EC2822A29CCD5AD7",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-6d41952769f7-pw-report.json",
+          "bytes": 53858,
+          "sha256": "673164315B25FF23DADBE7C19E830B004D7762A5D1C05F36EC2822A29CCD5AD7"
+        }
+      ]
+    },
+    {
+      "name": "6d41952769f7-template.zip",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-BookStack-lite/6d41952769f7-template.zip",
+      "role": "platform_generated_template_snapshot",
+      "bytes": 9796794,
+      "sha256": "0E4F40A07AC8B5F8FB0E772194878AD80458E37DB748166D74875E87A31F3168",
+      "stored_in_repository": false,
+      "duplicate_aliases": [
+        {
+          "source_path": "C:/Users/dayuruozhi/Downloads/6d41952769f7-template.zip",
+          "bytes": 9796794,
+          "sha256": "0E4F40A07AC8B5F8FB0E772194878AD80458E37DB748166D74875E87A31F3168"
+        }
+      ]
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0,
+    "masked_key_status_only": true
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "purpose": "Persistent phase 3 to phase 4 handoff and readback",
+  "handoff_id": "6d41952769f7-4C8A91E2B6D0",
+  "run_id": "6d41952769f7",
+  "submission_id": "14111688f13e",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "thread_title": "06 项目阶段4 + arc-bench-lite--bookstack",
+  "scope": "read_only_phase4_diagnosis",
+  "manifest_path": "evidence/arc-bench/runs/6d41952769f7/manifest.json",
+  "manifest_sha256": "EDF238B1AA31ECE8A746931980DF5DDB0B66312A0AAF5B1DC7C5EC23D9AF694E",
+  "ack_path": "evidence/arc-bench/runs/6d41952769f7/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/6d41952769f7/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/6d41952769f7/phase4-result.md",
+  "created_at": "2026-09-23T07:36:16+08:00",
+  "status": "sent_for_readback",
+  "run_card": {
+    "platform_final": "FAILED, score 88.2, 30/34",
+    "failed_tests": [
+      "REQ-6.1.1 Save Page: timedOut, Page Created heading not found",
+      "REQ-6.2.1 Create Chapter: timedOut, Chapter Created heading not found",
+      "REQ-7.2 Quick Navigation from Recently Viewed: page.goto('/') net::ERR_ABORTED",
+      "REQ-8.1 Favorite Items: timedOut, Unfavorite heading not found"
+    ],
+    "metering": "2402 requests; platform token_count 89254641; provider total_tokens 89254545; 36.969671 CNY; 18827s",
+    "platform_validation": "main.py; /workspace/tests; bundled fallback 0; API key plaintext hits 0; test workers 1",
+    "internal_acceptance_boundary": "Raw final full-suite events say round 0 and round 1 were 0/34, while the normalized summary says round 0 was 24/34; preserve the conflict and do not use internal acceptance to override the final platform report."
+  },
+  "constraints": [
+    "Do not create a new platform run",
+    "Do not rerun tests or upload",
+    "Do not modify agent code, official tests, requirements, or assets",
+    "Analyze only run 6d41952769f7; ignore previous run conclusions except as explicitly labeled history",
+    "Write phase4-ack.json before diagnosis and phase4-result.json plus phase4-result.md after diagnosis",
+    "The canonical evidence is the BookStack-lite folder set recorded in manifest.json; matching root copies are duplicate aliases",
+    "The platform-generated template ZIP is not treated as the uploaded Agent release package",
+    "The phase4 result must contain top-level run_id, task_key, handoff_id, thread_id, manifest_sha256 and PHASE4_RESULT"
+  ]
+}
