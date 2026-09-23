@@ -43,7 +43,8 @@ environment.update(
     OCTOS_TIME_BUDGET=os.environ.get("OCTOS_TIME_BUDGET", "3600"),
     OCTOS_SMOKE_PORT=str(arguments.smoke_port or arguments.port + 1),
 )
-environment["PATH"] = os.environ.get("NODE_BIN", "/opt/homebrew/opt/node@24/bin") + ":" + environment.get("PATH", "")
+_node = os.environ.get("NODE_BIN") or (str(Path(shutil.which("node")).parent) if shutil.which("node") else "")
+environment["PATH"] = (_node + os.pathsep if _node else "") + environment.get("PATH", "")
 print(f"运行时：{binary}", flush=True)
 print(f"需求：{task / 'requirements.yaml'}", flush=True)
 print(f"模型：{config['model']}；密钥：已读取（不显示）", flush=True)

@@ -27,6 +27,16 @@ _ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 _SPEC_ID = re.compile(r"^(REQ-\d+(?:\.\d+)*)(?=[.\-_ ]|$)")
 
 
+def _npm() -> str:
+    """Windows: npm ships as npm.cmd; bare "npm" in subprocess fails with WinError 2."""
+    if os.name == "nt":
+        for cand in ("npm.cmd", "npm"):
+            hit = shutil.which(cand)
+            if hit:
+                return hit
+    return "npm"
+
+
 def spec_node_id(rel_path: str) -> str | None:
     """`REQ-1.2-user-login.spec.ts` -> `REQ-1.2`; non-spec files -> None."""
     name = Path(rel_path).name
@@ -242,7 +252,7 @@ def playwright_candidates(bundle_dir: Path, tests_dir: Path | None, output_dir: 
     cands.extend([output_dir, Path("/workspace"), Path("/workspace/tests"), Path("/app"), Path("/runner"),
                   Path("/opt/playwright"), Path("/ms-playwright"), Path.home()])
     try:  # global npm root: /usr/local/lib/node_modules -> parent holds node_modules/
-        root = subprocess.run(["npm", "root", "-g"], capture_output=True, text=True, timeout=20).stdout.strip()
+        root = subprocess.run([_npm(), "root", "-g"], capture_output=True, text=True, timeout=20).stdout.strip()
         if root:
             cands.append(Path(root).parent)
     except (OSError, subprocess.TimeoutExpired):
@@ -315,7 +325,7 @@ def ensure_playwright(install_root: Path, log: Callable[[str], None], timeout: i
     (install_root / "package.json").write_text(json.dumps({"name": "octos-arc-acceptance", "private": True}))
     t0 = time.time()
     steps = [
-        ["npm", "install", "--no-audit", "--no-fund", "--no-package-lock", f"@playwright/test@{version}"],
+        [_npm(), "install", "--no-audit", "--no-fund", "--no-package-lock", f"@playwright/test@{version}"],
         [str(install_root / "node_modules" / ".bin" / "playwright"), "install", "chromium"],
     ]
     for cmd in steps:
@@ -513,7 +523,7 @@ class AppServer:
             except Exception:  # noqa: BLE001
                 pass
             if deps and not (part / "node_modules").is_dir():
-                rc, out = self._run(["npm", "install", "--no-audit", "--no-fund"], part, 600)
+                rc, out = self._run([_npm(), "install", "--no-audit", "--no-fund"], part, 600)
                 if rc != 0:
                     return f"{part.name} `npm install` failed:\n{out}"
         # Cloud c17bc1b44d26: a one-line copy build failed because dist/ did not
@@ -523,7 +533,7 @@ class AppServer:
             (frontend / "dist").mkdir(parents=True, exist_ok=True)
         except OSError:
             pass
-        rc, out = self._run(["npm", "run", "build"], frontend, 600)
+        rc, out = self._run([_npm(), "run", "build"], frontend, 600)
         if rc != 0:
             return f"frontend `npm run build` failed:\n{out}"
         return None
@@ -539,7 +549,7 @@ class AppServer:
             env["ARC_EXTRA_PORTS"] = "0"
         try:
             fh = open(self.log_file, "w")
-            self.proc = subprocess.Popen(["npm", "start"], cwd=self.project / "backend", env=env,
+            self.proc = subprocess.Popen([_npm(), "start"], cwd=self.project / "backend", env=env,
                                          stdin=subprocess.DEVNULL, stdout=fh, stderr=subprocess.STDOUT,
                                          start_new_session=True)
         except OSError as exc:
@@ -589,10 +599,17 @@ class AppServer:
 
     def stop(self) -> None:
         if self.proc is not None:
-            try:
-                os.killpg(os.getpgid(self.proc.pid), signal.SIGKILL)
-            except (ProcessLookupError, PermissionError, OSError):
-                pass
+            if os.name == "nt":
+                try:
+                    subprocess.run(["taskkill", "/PID", str(self.proc.pid), "/T", "/F"],
+                                   capture_output=True, timeout=15)
+                except (OSError, subprocess.TimeoutExpired):
+                    pass
+            else:
+                try:
+                    os.killpg(os.getpgid(self.proc.pid), signal.SIGKILL)
+                except (ProcessLookupError, PermissionError, OSError):
+                    pass
             self.proc = None
         free_port(self.port)
         if self.grader_like:
@@ -643,8 +660,11 @@ class AcceptanceRunner:
             workers: int | None = None) -> RunSummary:
         config = self._prepare(workers)
         report_path = self.work_dir / "report.json"
-        cmd = [str(self.root / "node_modules" / ".bin" / "playwright"), "test", "-c", str(config)]
-        cmd += [str(self.work_dir / "tests" / p) for p in spec_rel_paths]
+        _pw = "playwright.cmd" if os.name == "nt" else "playwright"
+        cmd = [str(self.root / "node_modules" / ".bin" / _pw), "test", "-c", str(config)]
+        # Windows: absolute paths (with backslashes) are treated as regexes and
+        # collect 0 tests; pass relative POSIX paths from the work dir instead.
+        cmd += [("tests/" + p).replace("\\", "/") for p in spec_rel_paths]
         env = dict(os.environ, E2E_BASE_URL=base_url, CI="1",
                    NODE_PATH=str(self.root / "node_modules"), **self.env_extra)
         env.pop("FORCE_COLOR", None)

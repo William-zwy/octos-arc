@@ -172,7 +172,7 @@ def _reap_stray_processes(tag: str) -> None:
         if any(k in low for k in ("chrom", "headless_shell", "playwright",
                                   "octos serve", "node ", "npm ", "/node")):
             victims.append(pid)
-    for sig in (signal.SIGTERM, signal.SIGKILL):
+    for sig in tuple(getattr(signal, s) for s in ("SIGTERM", "SIGKILL") if hasattr(signal, s)):
         for pid in victims:
             try:
                 os.kill(pid, sig)
@@ -225,7 +225,7 @@ def _port_watchdog(web_port: int, output_dir: Path, stop: threading.Event) -> No
             if cwd.startswith(root):
                 log(f"[watchdog] port {web_port} bound by our process {pid} (cwd={cwd}); killing")
                 try:
-                    os.kill(int(pid), signal.SIGKILL)
+                    os.kill(int(pid), getattr(signal, "SIGKILL", signal.SIGTERM))
                 except (ProcessLookupError, PermissionError, ValueError):
                     pass
             else:
