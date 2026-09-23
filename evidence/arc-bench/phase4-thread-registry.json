@@ -96,10 +96,10 @@
       "result_path": "evidence/arc-bench/runs/6d41952769f7/phase4-result.json",
       "result_md_path": "evidence/arc-bench/runs/6d41952769f7/phase4-result.md",
       "result_status": "complete",
-      "evidence_revision": "6d41952769f7-initial-intake",
+      "evidence_revision": "6d41952769f7-phase4-correction-01",
       "verification_method": "filesystem",
-      "verified_at": "2026-09-22T23:45:27.7549822Z",
-      "reason": "Stage 4 completed the read-only diagnosis for P5-015 Run 6d41952769f7. Final platform result is 30/34, score 88.2, with REQ-6.1.1, REQ-6.2.1, REQ-7.2, and REQ-8.1 authoritative failures. ACK/result identity and evidence hashes validate; Stage 5 may consume this Run-local semantic-contract and navigation diagnosis conditionally."
+      "verified_at": "2026-09-23T00:30:27.6406118Z",
+      "reason": "Stage 4 correction completed for P5-015 Run 6d41952769f7. Final platform result remains 30/34, score 88.2, with REQ-6.1.1, REQ-6.2.1, REQ-7.2, and REQ-8.1 authoritative failures. Canonical logs now verify runtime-self-reported ARC_AGENT_IDENTITY and confirm internal full-suite 0/34 was caused by invalid trace.snapshots configuration, not 34 application failures. ACK/result identity and evidence hashes remain valid; Stage 5 may consume the corrected diagnosis conditionally."
     },
     "arc-bench-web--keep": {
       "thread_id": "01a0b7e7-1cff-7380-ac81-ef35dbe70633",

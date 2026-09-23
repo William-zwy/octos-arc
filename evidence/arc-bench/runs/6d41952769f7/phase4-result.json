@@ -6,6 +6,7 @@
   "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
   "manifest_sha256": "EDF238B1AA31ECE8A746931980DF5DDB0B66312A0AAF5B1DC7C5EC23D9AF694E",
   "PHASE4_RESULT": "complete",
+  "evidence_revision": "6d41952769f7-phase4-correction-01",
   "scope": {
     "only_run": "6d41952769f7",
     "intake_label": "P5-015",
@@ -30,7 +31,20 @@
     "external_artifact_hashes_verified": "7/7",
     "handoff_and_manifest_identity_match": true,
     "previous_run_not_merged": true,
-    "uploaded_release_zip_available": false
+    "uploaded_release_zip_available": false,
+    "runtime_self_reported_generation_identity": {
+      "status": "verified_from_canonical_logs",
+      "build_id": "arc-agent-v1-9d7c83b9ce8e3c381db3a3a9",
+      "commit_sha": "adfe39832dd3d3098efd0a585cd2857f3ca7bc29",
+      "managed_file_count": 494,
+      "package_contract": "arc_agent_bundle_v1",
+      "payload_tree_sha256": "09723C6BAF032F94A50DDA670523899A3BBC06908EB8FD8A59B53B49183C3DAA",
+      "schema_version": 1,
+      "source": "canonical logs ARC_AGENT_IDENTITY",
+      "platform_upload_receipt_verified": false,
+      "task_snapshot_id": null,
+      "upload_package_sha256": null
+    }
   },
   "platform_final": {
     "status": "FAILED",
@@ -95,6 +109,20 @@
       }
     ]
   },
+  "internal_acceptance": {
+    "full_suite_round_0": {
+      "reported": "0/34",
+      "status": "harness_invalid_configuration",
+      "direct_cause": "P5-015 generated Playwright trace configuration set trace.snapshots to an object; Playwright 1.63.0 requires a boolean."
+    },
+    "full_suite_round_1": {
+      "reported": "0/34",
+      "status": "same_harness_failure",
+      "direct_cause": "The trace configuration remained invalid, so the full suite still could not execute."
+    },
+    "repair_observation": "The repair output explicitly requested snapshots:false, stated that the request budget was exhausted, and stated that no application fix was implemented in that turn.",
+    "interpretation": "The internal 0/34 is not evidence that all 34 application requirements failed. It is a harness/configuration failure. The final platform 30/34 comes from the platform's independent Playwright execution and remains authoritative for application completion."
+  },
   "confirmed_facts": [
     "最终平台结果为 FAILED，score 88.2，通过 30/34；最终权威失败节点是 REQ-6.1.1、REQ-6.2.1、REQ-7.2、REQ-8.1。",
     "REQ-6.1.1 和 REQ-6.2.1 是 heading 可见性断言超时；REQ-8.1 是 Unfavorite heading 可见性断言超时；REQ-7.2 是 page.goto('/') 的 net::ERR_ABORTED。",
@@ -102,6 +130,11 @@
     "本 Run 的最终套件共 34 个测试，30 个通过，最终 Playwright 日志报告为 51.3 秒。",
     "日志核验通过：入口为 main.py，测试目录为 /workspace/tests，bundled fallback 命中为 0，API key 仅出现掩码状态。",
     "平台计量为 token_count 89,254,641；provider total_tokens 89,254,545；请求数 2,402；费用 36.969671 CNY；运行时长 18,827 秒。",
+    "canonical logs 启动阶段输出 ARC_AGENT_IDENTITY：build_id 为 arc-agent-v1-9d7c83b9ce8e3c381db3a3a9，commit_sha 为 adfe39832dd3d3098efd0a585cd2857f3ca7bc29，managed_file_count 为 494，payload_tree_sha256 为 09723C6BAF032F94A50DDA670523899A3BBC06908EB8FD8A59B53B49183C3DAA。",
+    "该 ARC_AGENT_IDENTITY 是运行时自报告身份，不能替代平台 upload-package SHA、task_snapshot_id 或严格上传收据闭环。",
+    "内部 full-suite 的 0/34 直接由 P5-015 生成的无效 trace.snapshots 配置造成：Playwright 1.63.0 要求 snapshots 为 boolean；repair 明确建议 snapshots:false，但预算耗尽且未实施应用修复。",
+    "因此内部 0/34 不是应用 34 项全部失败的证据；最终应用完成率仍以平台独立 Playwright 的 30/34 为准。",
+    "REQ-6.1.2 与 REQ-9.1 在最终平台套件中通过，但当前证据不能把这两个历史失败的通过归因于 P5-015 的最终 repair。",
     "静态模板的 bookDetailsHtml 只把书名渲染为 h1，章节名和页面名分别渲染为列表中的链接；createPage/createChapter 成功后返回 JSON 并由前端导航到 /books/:id。",
     "静态模板的 favoriteButtonHtml 将 Favorite/Unfavorite 渲染为 button 文本，app.js 在同一个 button 上切换文本和 aria-pressed。",
     "静态 server.js 具有根路径渲染和 request/client error 防护，但交付证据没有 REQ-7.2 失败时的最终响应、连接生命周期或服务端日志。"
@@ -194,14 +227,15 @@
     },
     {
       "id": "C4",
-      "level": "candidate",
-      "scope": "isolated acceptance versus final suite",
-      "hypothesis": "最终全套执行与单节点 acceptance 的运行状态、数据库重置、执行构建产物或测试顺序不同，导致单节点通过不能稳定复现为全套通过。",
+      "level": "confirmed_harness_root_cause",
+      "scope": "internal acceptance full-suite only",
+      "hypothesis": "P5-015 生成的 Playwright trace 配置把 trace.snapshots 写成对象；Playwright 1.63.0 要求该字段为 boolean，导致内部 full-suite 在执行应用断言前即失败。",
       "evidence_for": [
-        "REQ-6.1.1、REQ-7.2、REQ-8.1 的 isolated round 0 在 manifest 中记录为通过；REQ-6.2.1 的 isolated repair round 后记录为通过，但最终全套仍失败。",
-        "raw logs 的最终 full-suite round 0 和 round 1 都记录为 0/34，显示 acceptance 全套阶段还存在独立的运行边界问题。"
+        "canonical logs 的 full-suite repair 输出明确指出 trace.snapshots 类型错误，并要求改为 snapshots:false。",
+        "同一 repair 输出明确记录预算耗尽，未实施 application fix；随后 raw logs 的 full-suite round 1 仍为 0/34。"
       ],
-      "evidence_limit": "无法从交付证据证明 isolated 与 final 是否使用完全相同的文件快照、数据库和启动生命周期。"
+      "consequence": "内部 0/34 只能标记为 harness/configuration failure，不能解释为应用 34 项全部失败，也不能覆盖最终平台独立测试的 30/34。",
+      "evidence_limit": "平台没有交付修复后的内部 trace 配置或 trace 运行记录；该缺口不影响对 0/34 直接原因的判断。"
     }
   ],
   "excluded_causes": [
@@ -210,6 +244,8 @@
     "不是入口未执行：日志记录 main.py 启动 generation agent。",
     "不是上一 Run 的 logo 失败可以直接迁移：本 Run 的 REQ-6.1.2 和 REQ-9.1 最终通过。",
     "不能把人工 summary 的 24/34 当成 raw final full-suite 结果；summary 与 raw logs 冲突，且二者都不能覆盖最终 Playwright 的 30/34。",
+    "raw logs 的 internal full-suite 0/34 已确认是 trace.snapshots 类型配置错误，不再将其作为应用 34 项全部失败或应用回归的证据。",
+    "不能把 REQ-6.1.2 和 REQ-9.1 在最终平台中的通过归因于 P5-015 最终 repair；当前证据只证明最终状态，不证明修复因果。",
     "不能据平台 template.zip 反推出上传 Agent release 的 build/code/package identity；本 Run 没有对应 release ZIP 和平台 SHA 绑定。",
     "不能仅凭 page.goto ERR_ABORTED 断言服务器已经崩溃，因为后续最终测试仍有通过项；也不能据此排除瞬时连接或顺序状态问题。"
   ],
@@ -218,7 +254,8 @@
     "Page/Chapter 创建请求的 URL、HTTP status、JSON body、Location header、重定向链，以及写入后 book details 的响应 HTML。",
     "Favorite toggle 请求的 status、response body、前端 console 和切换后最终 DOM。",
     "REQ-7.2 page.goto('/') 失败时的 request/response/redirect/socket/page lifecycle trace 与服务端 stderr。",
-    "isolated acceptance 与 final full-suite 使用的精确文件快照、数据库重置时点和启动/停止边界。",
+    "isolated acceptance 与最终平台执行之间的精确文件快照、数据库重置时点和启动/停止边界；该缺口只用于解释单节点/最终套件差异，不再用于解释 internal 0/34。",
+    "P5-015 internal full-suite trace 配置在修复后的最终文件内容和 trace 运行记录。",
     "官方测试 helper 的完整源码和四个节点的 error-context.md 文件本体。",
     "与 original_filename 对应的 Agent release ZIP、平台 build ID、代码 SHA、payload SHA 和 upload-package SHA。"
   ],
@@ -230,7 +267,7 @@
       "在同一 disposable 副本中只复现 Create Chapter：记录 POST /api/books/:id/chapters 和 /books/:id 最终 DOM，确认新章节名称及 heading 语义。",
       "只复现 Favorite Items：记录 /api/favorites/toggle 的响应和切换后的可访问性树，比较按钮 role、文本、aria-pressed 与测试的 heading locator。",
       "只复现 REQ-7.2 的开场导航：在 openHome 前记录上一页面 URL、未完成请求、server PID/socket 事件和 GET / 的 status/响应；区分连接中止、服务端关闭与前端主动导航。",
-      "把 isolated 与 final 的启动目录、数据库文件、生成后文件 SHA 和测试顺序做只读快照对比。"
+      "把 isolated 与 final 的启动目录、数据库文件、生成后文件 SHA 和测试顺序做只读快照对比；同时单独核对 trace.snapshots 的类型，但不把 internal 0/34 当应用失败重跑。"
     ],
     "success_signal": "前三条流程的最终可观察语义与官方 locator 对齐，且 REQ-7.2 的 GET / 在相同顺序下稳定返回并完成 load。"
   },
@@ -238,11 +275,13 @@
     "handoff": true,
     "recommendation": "有条件交给阶段5；先处理三个可由静态证据强指向的 UI/语义契约，再单独定位 REQ-7.2 的导航错误。",
     "priority": [
-      "P0：以最终官方 locator 为契约，补齐三个失败节点的运行时 DOM、网络和构建证据。",
+      "P0：把 internal full-suite 0/34 标记为已确认的 harness 配置错误，不将其作为应用失败数；以最终平台 30/34 和官方 locator 为应用修复契约。",
+      "P0：补齐四个最终平台失败节点的运行时 DOM、网络和构建证据。",
+      "P0：记录 runtime-self-reported ARC_AGENT_IDENTITY，但不要把它当作 upload-package SHA 或严格上传收据。",
       "P1：对 Save Page/Create Chapter 只修改创建成功后的可观察反馈或 book-details 呈现，使目标名称满足 heading/text 语义，同时保留现有链接和路由。",
       "P1：对 Favorite Items 只调整状态元素的可访问语义/呈现与交互保持一致，不先重写 favorites 数据路径。",
       "P1：单独排查 REQ-7.2 的 GET / 连接生命周期和顺序状态；不先增加 timeout，也不把它与前三项强行合并。",
-      "P2：本地回归四个失败节点及其相邻通过节点，再决定是否申请一次平台验证。"
+      "P2：本地回归四个失败节点及其相邻通过节点；REQ-6.1.2/REQ-9.1 的通过不作为 P5-015 最终 repair 的因果证明，再决定是否申请一次平台验证。"
     ],
     "modification_boundary": [
       "允许范围：生成模板的 book details/creation feedback/favorite accessibility、相关前端跳转 glue、必要的最小 server response/readback。",
@@ -273,7 +312,8 @@
     "最终通过/失败、分数和最终测试状态：canonical run JSON + canonical logs JSON + final Playwright report。",
     "运行身份与证据完整性：phase4-handoff.json、manifest.json 及 manifest 声明的 SHA-256。",
     "源码行为：6d41952769f7-template.zip 的静态 template/backend/server.js 与 template/frontend/src/app.js；仅用于候选根因，不替代运行时证据。",
-    "summary.md：用于导航和交叉核对；其 24/34 acceptance 数字不能覆盖 raw logs 的 0/34，也不能覆盖最终 Playwright 30/34。"
+    "summary.md：用于导航和交叉核对；其 24/34 acceptance 数字不能覆盖 raw logs 的 0/34，也不能覆盖最终 Playwright 30/34。",
+    "internal harness diagnosis：canonical logs 中的 trace.snapshots 类型错误及 repair 输出优先于对 0/34 的猜测性应用归因。"
   ],
   "conflicts": [
     {
@@ -285,6 +325,16 @@
       "item": "internal acceptance full-suite round 1",
       "conflict": "raw logs 的 final full-suite round 1 仍为 0/34，且停止修复；summary 未提供同等权威的覆盖记录。",
       "resolution": "采用 raw logs 作为内部 acceptance 记录，不让内部结果覆盖最终平台报告。"
+    },
+    {
+      "item": "internal full-suite failure mechanism",
+      "conflict": "此前只能从 0/34 推测 isolated 与 final 的执行边界差异；canonical logs 新证据明确指出 trace.snapshots 类型错误。",
+      "resolution": "将 C4 更正为 confirmed_harness_root_cause；0/34 不再作为应用 34 项全部失败的证据。"
+    },
+    {
+      "item": "runtime generation identity",
+      "conflict": "manifest 的 generation_identity 原先为空；canonical logs 启动阶段自报 ARC_AGENT_IDENTITY。",
+      "resolution": "将 runtime-self-reported build/commit/payload identity 标记为 verified from canonical logs，同时保留平台 upload-package SHA、task_snapshot_id 缺失。"
     },
     {
       "item": "submitted source identity",
