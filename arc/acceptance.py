@@ -379,11 +379,35 @@ def interaction_failure_hints(summary: RunSummary, max_hints: int = 3) -> list[s
             continue
         message = result.message.lower()
         candidates = []
-        if "getbyrole(" in message and "name:" in message:
+        heading_wait = ("getbyrole(" in message and "heading" in message and "name:" in message and
+                        any(token in message for token in ("visible", "waiting", "tobevisible", "timeout")))
+        exact_state_name = re.search(r"name\s*:\s*/\^([^/$]{1,64})\$/[a-z]*", message)
+        compact_state = bool(exact_state_name and not re.search(r"\s", exact_state_name.group(1)))
+        html_ok = (result.document is not None and 200 <= result.document.status < 300 and
+                   result.document.content_type in {"text/html", "application/xhtml+xml"})
+        if "page.goto" in message and "net::err_aborted" in message:
+            candidates.append(
+                "Overlapping navigation signature: inspect whether an earlier async fetch completion assigns "
+                "window.location while the helper starts page.goto. Prefer one owned navigation boundary—such "
+                "as a native form with a 303 response or one explicitly awaited client navigation—and remove "
+                "the competing redirect; do not mask the race with a longer timeout.")
+        elif heading_wait and compact_state:
+            candidates.append(
+                "Post-click state signature: publish the new state immediately on the observable control and/or "
+                "a visible heading, then confirm it with the fetch result and roll back on failure. A helper may "
+                "choose its first visible heading candidate once, so a heading added only after a slow request "
+                "can leave that locator locked on a missing candidate.")
+        elif heading_wait and html_ok:
+            candidates.append(
+                "Successful HTML + missing named heading: check whether the tested name is rendered only as a "
+                "link, button, or plain text. Preserve that interactive link/control, and also expose the "
+                "completed state or newly created entity name as a visible semantic heading. Account for helpers "
+                "that choose the first visible candidate once and for navigation/render races.")
+        elif "getbyrole(" in message and "name:" in message:
             candidates.append("Role/name locator: check the rendered accessible name and visibility; "
                               "aria-label can override visible text.")
-        if ("heading" in message and "getbyrole(" in message and
-                any(token in message for token in ("visible", "waiting", "tobevisible"))):
+        if (heading_wait and not compact_state and not html_ok and
+                not ("page.goto" in message and "net::err_aborted" in message)):
             candidates.append("Post-save result: verify the write completes before navigation and the "
                               "destination exposes the entity with the exact tested role/name; do not "
                               "rely on a pre-navigation match.")

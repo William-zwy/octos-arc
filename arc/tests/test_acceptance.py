@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 from acceptance import (
     failure_summaries,
+    DocumentResponse,
     document_from_trace,
     interaction_failure_hints,
     RunSummary,
@@ -143,6 +144,48 @@ class ReportTests(unittest.TestCase):
         self.assertIn("Post-save result", hint_text)
         self.assertIn("before navigation", hint_text)
         self.assertIn("exact tested role/name", hint_text)
+
+    def test_should_route_exact_final_failure_signatures_without_cross_talk(self):
+        entity = TestOutcome(
+            title="Save entity", ok=False, status="timedOut", duration_ms=10013,
+            message="waiting for getByRole('heading', { name: /Page\\s+Created\\s+6\\.1\\.1/i }).first() to be visible",
+            steps=["locator.click", "expect.toBeVisible"],
+            document=DocumentResponse("GET", "/<segment>/<segment>", 200, "text/html"),
+        )
+        state = TestOutcome(
+            title="Toggle state", ok=False, status="timedOut", duration_ms=10015,
+            message="waiting for getByRole('heading', { name: /^Unfavorite$/i }).first() to be visible",
+            steps=["locator.click", "expect.toBeVisible"],
+            document=DocumentResponse("GET", "/<segment>/<segment>", 200, "text/html"),
+        )
+        navigation = TestOutcome(
+            title="Quick navigation", ok=False, status="failed", duration_ms=1322,
+            message="Error: page.goto: net::ERR_ABORTED at http://127.0.0.1:3000/",
+            steps=["page.goto"],
+        )
+        entity_hint = " ".join(interaction_failure_hints(RunSummary(results=[entity])))
+        state_hint = " ".join(interaction_failure_hints(RunSummary(results=[state])))
+        navigation_hint = " ".join(interaction_failure_hints(RunSummary(results=[navigation])))
+        self.assertIn("rendered only as a link, button, or plain text", entity_hint)
+        self.assertIn("first visible candidate once", entity_hint)
+        self.assertNotIn("roll back", entity_hint)
+        self.assertNotIn("native form", entity_hint)
+        self.assertIn("publish the new state immediately", state_hint)
+        self.assertIn("roll back on failure", state_hint)
+        self.assertNotIn("rendered only as a link", state_hint)
+        self.assertNotIn("native form", state_hint)
+        self.assertIn("async fetch completion assigns window.location", navigation_hint)
+        self.assertIn("native form with a 303", navigation_hint)
+        self.assertIn("do not mask the race with a longer timeout", navigation_hint)
+        self.assertNotIn("visible heading", navigation_hint)
+
+    def test_should_not_add_final_signature_hints_to_ordinary_failures(self):
+        ordinary = TestOutcome(
+            title="Validation", ok=False, status="failed", duration_ms=100,
+            message="expect(received).toEqual(expected)", steps=["expect.toEqual"],
+            document=DocumentResponse("GET", "/<segment>", 200, "text/html"),
+        )
+        self.assertEqual(interaction_failure_hints(RunSummary(results=[ordinary])), [])
 
 
 class DocumentTraceTests(unittest.TestCase):

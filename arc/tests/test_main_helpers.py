@@ -404,9 +404,9 @@ class FullSuiteDocumentPromptTests(unittest.TestCase):
             flow.runner = object()
             flow.spec_map = {"REQ-1": ["REQ-1.spec.ts"], "REQ-2": ["REQ-2.spec.ts"], None: []}
             failed = TestOutcome(title="Save", ok=False, status="timedOut", duration_ms=10000,
-                                 file="REQ-1.spec.ts", message="waiting for getByRole('heading')",
-                                 document=DocumentResponse("POST", "/<segment>/<segment>/<segment>/<segment>", 404,
-                                                           "application/json"))
+                                 file="REQ-1.spec.ts", message=("waiting for getByRole('heading', "
+                                 "{ name: /Created\\s+Entity/i }).first() to be visible"),
+                                 document=DocumentResponse("GET", "/<segment>/<segment>", 200, "text/html"))
             calls, prompts = [], []
             def run_specs(specs, **kwargs):
                 calls.append((specs, kwargs))
@@ -430,7 +430,8 @@ class FullSuiteDocumentPromptTests(unittest.TestCase):
             self.assertTrue(all(call[1]["trace_failures"] for call in calls))
             self.assertTrue(all(call[1]["grader_like"] for call in calls))
             self.assertLess(prompts[0].index("Document:"), prompts[0].index("Observation:"))
-            self.assertIn("Transport-first check", prompts[0])
+            self.assertIn("rendered only as a link, button, or plain text", prompts[0])
+            self.assertIn("first visible candidate once", prompts[0])
 
 class CodegenPromptTests(unittest.TestCase):
     def test_should_format_without_placeholder_errors_and_keep_build_command(self):

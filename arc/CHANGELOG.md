@@ -1,5 +1,12 @@
 # arc/ 适配层改动记录（工作流 A，分支 `wf-adapter`）
 
+## P5-017 — final full-suite 的签名化修复建议（本地验证；未打包）
+
+- 基线：`4ac832f40207961f700919a16cccc00231eca4c7`。本切片仅扩展失败证据到修复提示的映射及测试；不改生成模板、官方测试、语义基线、模型路由或 timeout。
+- 仅在精确签名满足时追加建议：最终主文档为 2xx HTML 且 named heading 等待失败时，检查目标名是否只作为 link/button/text 呈现，保留交互元素并另提供完成状态或新实体名的可见 heading，同时检查 helper 一次性 first-visible 选择和异步竞态；锚定的单词 heading 状态失败时，建议先同步/乐观发布可观察控件或 heading、请求失败再回滚；`page.goto` + `net::ERR_ABORTED` 时，检查较早 fetch 完成后的 `window.location` 与后续 goto 重叠，建议单一可等待导航边界（如 native form + 303），明确禁止用增加 timeout 掩盖。
+- Run `6d41952769f7` 只读证据核对：权威失败摘要是两个创建后 named-heading 超时、一个锚定状态 heading 超时和一个 `page.goto('/') net::ERR_ABORTED`；对应 template ZIP 的 `bookDetailsHtml` 只把书名作为 h1、页面/章节名作为链接，favorite handler 在 fetch 成功后才切换同一 button 文本，创建流程在 fetch 后赋值 `window.location`。因此三类建议分别指向 page/chapter link-vs-heading、favorite async state 与 login/首页导航竞态，但仍标注为假设，不修改该模板。
+- 测试使用 6d 的真实错误片段构造三类 `RunSummary`，验证建议精准出现且互不串线，并验证普通断言失败不新增这些提示；final full-suite prompt 集成测试确认签名建议实际进入 repair evidence。P5-016 的真实 Playwright 1.63.0 门禁继续通过（34 tests 可加载，404 Document tuple 正确且 trace 删除），完整定向回归 25/25、Python 编译和差异检查均退出 0。Windows 完整两文件单测现为 62 项、仍仅既有 3 fail、1 error。本切片不打包、上传、运行平台或推送。
+
 ## P5-016 — Playwright trace 配置门禁与 harness 故障隔离（本地验证；未打包）
 
 - 基线：`794d4b6e4c1f691167121f25919d85ed7fae5939`。Run `6d41952769f7` 暴露 P5-015 把 Playwright 1.63.0 的 `trace.snapshots` 错写成对象，内部 full-suite 两轮均 0/34；该结果是 harness 配置故障，不是应用回归。

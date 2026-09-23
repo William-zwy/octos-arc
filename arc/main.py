@@ -1916,6 +1916,10 @@ class Flow:
             else:
                 grouped = nodes_for_failures(summary.results, self.spec_map)
                 failures = failure_summaries(RunSummary(results=[r for rs in grouped.values() for r in rs]))
+                hints = interaction_failure_hints(summary)
+                if hints:
+                    failures += ("\n  Interaction audit (signature-triggered hypotheses, not verdicts): "
+                                 + " ".join(hints))
             log(f"[acceptance] full suite round {attempt}: {summary.passed}/{summary.total}; failing nodes "
                 f"{sorted(k for k in grouped if k) or ('all' if None in grouped and not summary.results else [])}")
             for node_id, specs in self.spec_map.items():
