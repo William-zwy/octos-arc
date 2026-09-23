@@ -1,0 +1,21 @@
+{
+  "name": "arc-run-log-collector",
+  "version": "1.0.0",
+  "tools": [
+    {
+      "name": "log_collect",
+      "description": "Collect all logs (generated code + error-cause analysis) after an ARC-Bench run into skill-output/, separated by local/cloud source",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "run_dir": {"type": "string", "description": "Absolute path to the run workspace (contains .arc/, frontend/, backend/)"},
+          "source": {"type": "string", "enum": ["local", "cloud"], "description": "local = this machine's arc/arc-output runs; cloud = platform evidence/arc-bench runs"},
+          "run_name": {"type": "string", "description": "Output folder name (default: run_dir's directory name)"},
+          "run_log": {"type": "string", "description": "Absolute path to the captured stdout log of the run (for error-cause analysis)"},
+          "output_base": {"type": "string", "description": "Root for collected bundles (default: $ARC_SKILL_OUTPUT or skill-output/ beside arc-output/)"}
+        },
+        "required": ["run_dir", "source"]
+      }
+    }
+  ]
+}
