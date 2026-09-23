@@ -1894,6 +1894,10 @@ class Flow:
         for attempt in range(rounds + 1):
             summary = self.run_specs(all_specs, workers=workers, grader_like=True,
                                      trace_failures=os.environ.get("OCTOS_ARC_DOCUMENT_TRACE", "1") != "0")
+            if summary.error and summary.error_kind == "harness":
+                log(f"[acceptance] full suite harness failure: {summary.error[:300]}; "
+                    "skipping application repair and keeping per-node verdicts")
+                return
             if summary.error and summary.killed:
                 # Cloud 29c840566f36: the runner was OOM-killed under a 512 MiB
                 # cgroup; two repair rounds were wasted on a non-failure.

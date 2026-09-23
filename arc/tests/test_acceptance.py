@@ -12,6 +12,7 @@ from acceptance import (
     document_from_trace,
     interaction_failure_hints,
     RunSummary,
+    TestOutcome,
     isolated_install_env,
     map_specs_to_nodes,
     playwright_version_hint,
@@ -26,6 +27,7 @@ from acceptance import (
     spec_node_id,
     summarize_report,
     AcceptanceRunner,
+    playwright_harness_error,
 )
 
 
@@ -249,7 +251,8 @@ class DocumentTraceTests(unittest.TestCase):
             traced = runner._prepare(trace_failures=True).read_text()
             self.assertNotIn("retain-on-failure", plain)
             self.assertIn("retain-on-failure", traced)
-            self.assertIn("snapshots: { dom: true", traced)
+            self.assertIn("snapshots: true", traced)
+            self.assertNotIn("snapshots: {", traced)
             self.assertEqual((runner.work_dir / "tests/REQ-1.spec.ts").read_text(), "// frozen")
 
     def test_should_extract_from_same_run_attachment_then_discard_raw_trace(self):
@@ -275,6 +278,23 @@ class DocumentTraceTests(unittest.TestCase):
                 summary = runner.run(["REQ-1.spec.ts"], "http://localhost", trace_failures=True)
             self.assertEqual(summary.results[0].document.status, 404)
             self.assertFalse((runner.work_dir / "test-results").exists())
+
+    def test_should_classify_only_runner_wide_playwright_config_errors(self):
+        broken = RunSummary(total=2, results=[
+            TestOutcome(title="A", ok=False, status="failed", duration_ms=0,
+                        message="config.use.trace.snapshots must be a boolean"),
+            TestOutcome(title="B", ok=False, status="failed", duration_ms=0,
+                        message="config.use.trace.snapshots must be a boolean"),
+        ])
+        self.assertIn("snapshots", playwright_harness_error(broken))
+        mixed = RunSummary(total=2, results=[broken.results[0], TestOutcome(
+            title="B", ok=False, status="failed", duration_ms=0,
+            message="expected heading to be visible")])
+        self.assertIsNone(playwright_harness_error(mixed))
+        app = RunSummary(total=1, results=[TestOutcome(
+            title="A", ok=False, status="failed", duration_ms=0,
+            message="playwright.config text rendered in the page")])
+        self.assertIsNone(playwright_harness_error(app))
 
 
 class RouteContractTests(unittest.TestCase):

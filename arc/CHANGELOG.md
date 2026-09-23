@@ -1,5 +1,13 @@
 # arc/ 适配层改动记录（工作流 A，分支 `wf-adapter`）
 
+## P5-016 — Playwright trace 配置门禁与 harness 故障隔离（本地验证；未打包）
+
+- 基线：`794d4b6e4c1f691167121f25919d85ed7fae5939`。Run `6d41952769f7` 暴露 P5-015 把 Playwright 1.63.0 的 `trace.snapshots` 错写成对象，内部 full-suite 两轮均 0/34；该结果是 harness 配置故障，不是应用回归。
+- 修复：最终全套仍使用 `retain-on-failure`，并改为 1.63.0 合法的 `screenshots:false`、`snapshots:true`、`sources:false`、`attachments:false`。`snapshots:true` 是主 frame/document 可信绑定所需的最小合法布尔配置；解析仍只保留脱敏 tuple，原始 trace 随即删除。Windows runner 同时使用 `.cmd` 入口和正斜杠相对 spec 参数，避免本地真实门禁误报 0 tests。
+- 隔离：Playwright 顶层配置/加载错误，或至少两个已收集测试全部以同一配置错误失败时，标记为 `harness`；最终全套立即停止且保留逐节点 verdict，不向应用修复会话发送该错误。普通或混合应用失败不升级为 harness。
+- 真实门禁：临时安装的 `@playwright/test@1.63.0` 对生成配置执行 `--list`，正常列出 34 tests；受控 HTTP 404 导航失败产出 `GET /<segment>/<segment> 404 application/json`，未泄露路径值或 query，且 runner 返回前原始 trace 已删除。门禁脚本为 `arc/tests/playwright_config_gate.py`，必须显式传入同版本 Playwright root；本切片不改官方测试、语义提示、模型路由或 timeout，也不打包、上传、运行平台或推送。
+- 回归：P5-016 定向单测 23/23、Python 编译与 `git diff --check` 均退出 0。Windows 完整两文件单测现为 60 项、3 fail、1 error，失败集合与 P5-015 基线相同（3 项 Unix 路径期望、1 项临时 `.git` 清理权限错误），不作为本候选全套通过证明。
+
 ## P5-015 — 最终全套验收的主文档响应证据（本地候选；平台未评测）
 
 - 基线：`7f3c0b0c0175701eb8ef6f19776885c521da5e9f`。本次只改 `arc/acceptance.py`、`arc/main.py` 及对应单元测试；未改平台规范、测试 helper、原始模板、业务提示或模型路由。

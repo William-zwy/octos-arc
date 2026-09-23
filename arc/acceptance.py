@@ -237,6 +237,7 @@ class RunSummary:
     results: list[TestOutcome] = field(default_factory=list)
     stdout_tail: str = ""
     error: str | None = None  # infrastructure error (no report)
+    error_kind: str | None = None  # "harness" is never actionable by application repair
     killed: bool = False      # the test runner itself was killed (OOM); not a verdict
     load_errors: list[str] = field(default_factory=list)  # Playwright top-level errors
 
@@ -246,6 +247,33 @@ class RunSummary:
     @property
     def all_passed(self) -> bool:
         return self.total > 0 and self.passed == self.total
+
+
+_HARNESS_CONFIG_MARKERS = (
+    "configuration file",
+    "config.use.trace",
+    "playwright.config",
+    "defineconfig",
+)
+
+
+def playwright_harness_error(summary: RunSummary, output: str = "") -> str | None:
+    """Return a bounded config/load error only when evidence is runner-wide.
+
+    A single application test failure must never be promoted to infrastructure.
+    Top-level load errors are runner-wide. Per-test messages qualify only when
+    every collected test failed with the same Playwright configuration marker.
+    """
+    load_text = "\n".join(summary.load_errors).strip()
+    combined = (load_text + "\n" + output).lower()
+    if load_text and any(marker in combined for marker in _HARNESS_CONFIG_MARKERS):
+        return load_text[:700]
+    failed = [r for r in summary.results if not r.ok]
+    messages = {" ".join(r.message.lower().split())[:700] for r in failed if r.message.strip()}
+    if (summary.total >= 2 and len(failed) == summary.total and len(messages) == 1 and
+            any(marker in next(iter(messages), "") for marker in _HARNESS_CONFIG_MARKERS)):
+        return next(iter(messages))[:700]
+    return None
 
 
 def summarize_report(report: dict, trace_root: Path | None = None) -> RunSummary:
@@ -869,7 +897,7 @@ class AcceptanceRunner:
         shutil.copytree(self.tests_dir, self.work_dir / "tests",
                         ignore=shutil.ignore_patterns("node_modules", "test-results", "playwright-report"))
         trace_option = ("trace: { mode: 'retain-on-failure', screenshots: false, "
-                        "snapshots: { dom: true, aria: false, screen: false }, "
+                        "snapshots: true, "
                         "sources: false, attachments: false }, " if trace_failures else "")
         (self.work_dir / "playwright.config.ts").write_text(
             "import { defineConfig } from '@playwright/test';\n"
@@ -894,8 +922,13 @@ class AcceptanceRunner:
                 # private work_dir, never a caller-provided deletion target.
                 shutil.rmtree(self.work_dir / "test-results", ignore_errors=True)
 
-        cmd = [str(self.root / "node_modules" / ".bin" / "playwright"), "test", "-c", str(config)]
-        cmd += [str(self.work_dir / "tests" / p) for p in spec_rel_paths]
+        executable = self.root / "node_modules" / ".bin" / "playwright"
+        if os.name == "nt":
+            executable = executable.with_suffix(".cmd")
+        cmd = [str(executable), "test", "-c", str(config)]
+        # Playwright treats positional arguments as regexes; workspace-absolute
+        # Windows paths contain backslashes that can turn a real spec into 0 tests.
+        cmd += [(Path("tests") / p).as_posix() for p in spec_rel_paths]
         env = dict(os.environ, E2E_BASE_URL=base_url, CI="1",
                    NODE_PATH=str(self.root / "node_modules"), **self.env_extra)
         env.pop("FORCE_COLOR", None)
@@ -926,13 +959,19 @@ class AcceptanceRunner:
             # Only the bounded, redacted tuple in TestOutcome may survive.
             discard_traces()
         summary.stdout_tail = _ANSI.sub("", tail)
+        harness_error = playwright_harness_error(summary, summary.stdout_tail)
+        if harness_error:
+            return RunSummary(error=f"Playwright harness configuration/load error: {harness_error}",
+                              error_kind="harness", load_errors=summary.load_errors,
+                              stdout_tail=summary.stdout_tail)
         if summary.total == 0:
             # Cloud run a6ccc437539f: the model had edited /workspace/tests, the
             # copied spec no longer loaded, and "0/0" looked like a verdict.
             detail = "; ".join(summary.load_errors) or summary.stdout_tail[-600:] or f"rc={r.returncode}"
             self.log(f"[acceptance] 0 tests collected from {', '.join(spec_rel_paths)}: {detail[:300]}")
             return RunSummary(error=f"Playwright collected 0 tests from {', '.join(spec_rel_paths)} "
-                                    f"(spec files unreadable or broken): {detail}", load_errors=summary.load_errors)
+                                    f"(spec files unreadable or broken): {detail}",
+                              error_kind="harness", load_errors=summary.load_errors)
         self.log(f"[acceptance] {summary.passed}/{summary.total} passed in {time.time()-t0:.0f}s "
                  f"({', '.join(spec_rel_paths)})")
         return summary

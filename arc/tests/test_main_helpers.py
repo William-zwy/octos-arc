@@ -367,6 +367,29 @@ class InteractionPromptTests(unittest.TestCase):
 
 
 class FullSuiteDocumentPromptTests(unittest.TestCase):
+    def test_should_not_send_harness_failure_to_application_repair(self):
+        import argparse
+        from acceptance import RunSummary
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            tests = root / "tests"
+            tests.mkdir()
+            for name in ("REQ-1.spec.ts", "REQ-2.spec.ts"):
+                (tests / name).write_text("// frozen", encoding="utf-8")
+            flow = m.Flow(argparse.Namespace(web_port=3000), root, root)
+            flow.tests_dir = tests
+            flow.runner = object()
+            flow.spec_map = {"REQ-1": ["REQ-1.spec.ts"], "REQ-2": ["REQ-2.spec.ts"], None: []}
+            flow.test_verdict = {"REQ-1": True, "REQ-2": True}
+            flow.run_specs = lambda *_args, **_kwargs: RunSummary(
+                error="Playwright harness configuration/load error: snapshots must be a boolean",
+                error_kind="harness")
+            turns = []
+            flow.turn = lambda *_args: turns.append(_args)
+            flow.final_acceptance()
+            self.assertEqual(turns, [])
+            self.assertEqual(flow.test_verdict, {"REQ-1": True, "REQ-2": True})
+
     def test_should_trace_the_original_full_suite_and_prioritize_document_evidence(self):
         import argparse
         from acceptance import DocumentResponse, RunSummary, TestOutcome
