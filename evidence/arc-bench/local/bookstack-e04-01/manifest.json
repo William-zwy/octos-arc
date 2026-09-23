@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 4 local execution evidence manifest",
+  "run_name": "bookstack-e04-01",
+  "issue_id": "P5-017",
+  "source": "local",
+  "platform_run_id": null,
+  "platform_run_merged": false,
+  "source_root": "D:/DataMove/arcbench-local/p5-014-e04/skill-output/local/bookstack-e04-01",
+  "workspace_root": "D:/DataMove/arcbench-local/p5-014-e04/runs/bookstack-e04-01",
+  "task_key": "arc-bench-lite--bookstack",
+  "agent_identity": {
+    "build_id": "arc-agent-v1-16b029ef0dfee566a03d3c39",
+    "commit_sha": "e04db1e40084cfa7b50dce64305f9bc9c59acccb",
+    "payload_tree_sha256": "92FBC2E2B22A1C32D39C3B44E13E2E3B29BFA5489A7E8AF670F1C24BEACC3BE0",
+    "managed_file_count": 494,
+    "package_contract": "arc_agent_bundle_v1"
+  },
+  "evidence_files": [
+    {
+      "path": "analysis/summary.md",
+      "sha256": "DE3DBC23311C5612D2CF4B932E0BCE1E88F4AF5A56F1A8B529803D2F2BDF386B"
+    },
+    {
+      "path": "analysis/error-analysis.json",
+      "sha256": "6B7ABFEC26C14C30F2B4F873BCCBC117C92C0DAE5AA80A40387E55919E002B59"
+    },
+    {
+      "path": "analysis/generated-code.json",
+      "sha256": "AF8023595D2332AE2F8DC0158D7932A116F4DE859551D52FECFEA8E084913DFE"
+    },
+    {
+      "path": "logs/run.log",
+      "sha256": "59B9ADB368D1CECA50D88292338D91E9FC06B405716F111CE5E15F78D9DF8A0E"
+    },
+    {
+      "path": "logs/runner-events.jsonl",
+      "sha256": "735C6D604CAB9CB98760806B205552FA9BD0AF895A1C9C034D9F8E8049D2A41D"
+    },
+    {
+      "path": "logs/llm-usage.jsonl",
+      "sha256": "7DA95C7B4F2C354957D2C5A1865C20E17839A37612F595B7DA45B1203B87AC6B"
+    },
+    {
+      "path": "logs/traceability/node_states.json",
+      "sha256": "9B3E91D7A6F8685124B978D205019521F596100C80391971B1B798C9519790F2"
+    },
+    {
+      "path": "logs/traceability/interfaces.json",
+      "sha256": "3E55B0F044F03E023B6B3FBA50D6BA1FF1689F5AE18ADD512F8BE9427ED415B3"
+    },
+    {
+      "path": "code/backend/src/server.js",
+      "sha256": "4F461CA854E403B4CC881AE0C7A10280EC9838B5F886472C07BF59C07A67EA85"
+    },
+    {
+      "path": "code/backend/data/db.json",
+      "sha256": "9968FFDFF1422D9E7839F723F8066B886B8EF9D82237E77EF2AC7EC451B13A3C"
+    },
+    {
+      "path": "code/frontend/src/app.js",
+      "sha256": "8785E88DCEAD29A7012961969C4F015FFD6346AA235D9102476F9D86492A7152"
+    }
+  ],
+  "notes": [
+    "This manifest records an independent local execution, not an ARC-Bench platform Run.",
+    "The analysis and raw evidence hashes were computed from the local bundle before writing this manifest.",
+    "No Agent code, official tests, ZIP, configuration, platform Run, or remote state was modified by this phase 4 review."
+  ]
+}

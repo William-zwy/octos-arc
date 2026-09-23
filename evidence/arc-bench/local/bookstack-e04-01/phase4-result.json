@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "PHASE4_RESULT": "complete",
+  "purpose": "ARC-Bench phase 4 read-only diagnosis for arc-bench-lite--bookstack",
+  "run_name": "bookstack-e04-01",
+  "issue_id": "P5-017",
+  "source": "local",
+  "platform_run_id": null,
+  "platform_run_merged": false,
+  "task_key": "arc-bench-lite--bookstack",
+  "manifest_path": "evidence/arc-bench/local/bookstack-e04-01/manifest.json",
+  "manifest_sha256": "FCD251FC6EBFC4244F4C5CE27662A4D37DCAB3051B7A3EFC8DF9416F7050D055",
+  "read_only": true,
+  "stage5_executed": false,
+  "local_execution": {
+    "runner_state": "completed",
+    "atomic_test_count": 34,
+    "passed_count": 13,
+    "failed_count": 21,
+    "completion_rate": 0.382,
+    "full_suite_round_0": {
+      "passed": 13,
+      "total": 34,
+      "failing_nodes": [
+        "REQ-2.1",
+        "REQ-2.2",
+        "REQ-3.1",
+        "REQ-4.3.1",
+        "REQ-4.3.2",
+        "REQ-4.5.1",
+        "REQ-5.3.1",
+        "REQ-5.3.2",
+        "REQ-5.4.1",
+        "REQ-5.6.1",
+        "REQ-6.1.1",
+        "REQ-6.1.2",
+        "REQ-6.1.3",
+        "REQ-6.2.1",
+        "REQ-6.3.1",
+        "REQ-6.3.2",
+        "REQ-7.1",
+        "REQ-7.2",
+        "REQ-8.1",
+        "REQ-8.2",
+        "REQ-9.1"
+      ]
+    },
+    "full_suite_round_1": {
+      "passed": 13,
+      "total": 34,
+      "same_failures_as_round_0": true
+    },
+    "passed_nodes": [
+      "REQ-1.1",
+      "REQ-1.2",
+      "REQ-4.1",
+      "REQ-4.2.1",
+      "REQ-4.4.1",
+      "REQ-4.4.2",
+      "REQ-4.5.2",
+      "REQ-5.1",
+      "REQ-5.2.1",
+      "REQ-5.2.2",
+      "REQ-5.4.2",
+      "REQ-5.5.1",
+      "REQ-5.5.2"
+    ],
+    "failed_nodes": [
+      "REQ-2.1",
+      "REQ-2.2",
+      "REQ-3.1",
+      "REQ-4.3.1",
+      "REQ-4.3.2",
+      "REQ-4.5.1",
+      "REQ-5.3.1",
+      "REQ-5.3.2",
+      "REQ-5.4.1",
+      "REQ-5.6.1",
+      "REQ-6.1.1",
+      "REQ-6.1.2",
+      "REQ-6.1.3",
+      "REQ-6.2.1",
+      "REQ-6.3.1",
+      "REQ-6.3.2",
+      "REQ-7.1",
+      "REQ-7.2",
+      "REQ-8.1",
+      "REQ-8.2",
+      "REQ-9.1"
+    ],
+    "observed_start": "2026-09-23 07:55:47",
+    "observed_end": "2026-09-23 11:00:59",
+    "observed_wall_clock_seconds": 11112,
+    "test_input": "34 frozen arc-bench-lite--bookstack spec files"
+  },
+  "generation_and_resource_evidence": {
+    "agent_identity": {
+      "build_id": "arc-agent-v1-16b029ef0dfee566a03d3c39",
+      "commit_sha": "e04db1e40084cfa7b50dce64305f9bc9c59acccb",
+      "payload_tree_sha256": "92FBC2E2B22A1C32D39C3B44E13E2E3B29BFA5489A7E8AF670F1C24BEACC3BE0",
+      "managed_file_count": 494
+    },
+    "llm_usage_log": {
+      "requests": 427,
+      "prompt_tokens": 15463401,
+      "completion_tokens": 262594,
+      "total_tokens": 15725995,
+      "reasoning_tokens": 164118,
+      "prompt_cache_hit_tokens": 14570240,
+      "source": "logs/llm-usage.jsonl"
+    },
+    "implement_turns": {
+      "unique_atomic_nodes_with_failed_implement_turn": 34,
+      "octos_turn_timeout_nodes": 23,
+      "quota_failure_nodes": 11,
+      "timeout_node_span": "REQ-1.1 through REQ-5.6.1",
+      "quota_node_span": "REQ-6.1.1 through REQ-9.1",
+      "quota_affected_leaf_nodes": [
+        "REQ-6.1.1",
+        "REQ-6.1.2",
+        "REQ-6.1.3",
+        "REQ-6.2.1",
+        "REQ-6.3.1",
+        "REQ-6.3.2",
+        "REQ-7.1",
+        "REQ-7.2",
+        "REQ-8.1",
+        "REQ-8.2",
+        "REQ-9.1"
+      ]
+    },
+    "quota": {
+      "first_observed_at_node": "REQ-6.1.1",
+      "first_observed_log_line": 1526,
+      "error": "HTTP 429 insufficient_quota: Free quota exhausted and balance too low",
+      "quota_related_log_records": 72,
+      "meter_data_independently_present": false
+    },
+    "other_log_counts": {
+      "connection_reset_error_records": 96,
+      "error_analysis_records": 178,
+      "error_analysis_categories": {
+        "other": 88,
+        "playwright-timeout": 64,
+        "api": 24,
+        "locator": 2
+      },
+      "count_semantics": "These are log or classifier record counts, not deduplicated root-cause counts."
+    }
+  },
+  "confirmed_code_findings": [
+    {
+      "node": "REQ-2.2",
+      "finding": "The generated backend snapshot has GET /login but no router.post('/login') handler, password verification, or session write.",
+      "evidence": [
+        "code/backend/src/server.js line 151 contains router.get('/login'); the file has no POST /login match.",
+        "logs/traceability/interfaces.json marks REQ-2.2 POST /login as implemented=false.",
+        "code/frontend/src/app.js submits fetch('/login', {method: 'POST', ...}).",
+        "code/backend/data/db.json contains the seeded user nickname BookStack User and email bookstack_user@example.com."
+      ],
+      "assessment": "Confirmed defect in this local generated artifact; the artifact-level diagnosis does not prove that every dependent failure has the same immediate runtime cause."
+    },
+    {
+      "finding": "The first 23 implement turns ended with octos turn timed out, while the following 11 failed after provider quota exhaustion.",
+      "assessment": "The local 13/34 result is a mixed generation-quality and resource-failure sample, not a clean application-quality score."
+    }
+  ],
+  "corrections_to_prior_diagnosis": [
+    "Replace the prior claim of 17 timed-out implement nodes with 23 unique timed-out atomic nodes, as shown by run.log.",
+    "Replace the prior claim of 12 quota-affected leaf nodes with 11: REQ-6.1.1 through REQ-9.1 inclusive in the actual 34-node list.",
+    "Treat error-analysis.json counts as repeated records and parent summaries, not independent root causes.",
+    "Do not claim that platform Run 6d41952769f7 is the same package or that its REQ-2.2 failed; its final failure list does not contain REQ-2.2 and its runtime identity differs from this local e04 identity."
+  ],
+  "platform_comparison": {
+    "platform_run_id": "6d41952769f7",
+    "merged_into_local_result": false,
+    "platform_final": "FAILED, score 88.2, 30/34",
+    "platform_failed_nodes": ["REQ-6.1.1", "REQ-6.2.1", "REQ-7.2", "REQ-8.1"],
+    "platform_runtime_identity": {
+      "build_id": "arc-agent-v1-9d7c83b9ce8e3c381db3a3a9",
+      "commit_sha": "adfe39832dd3d3098efd0a585cd2857f3ca7bc29",
+      "payload_tree_sha256": "09723C6BAF032F94A50DDA670523899A3BBC06908EB8FD8A59B53B49183C3DAA"
+    },
+    "comparison_conclusion": "Use only as a separate platform outcome and identity comparison. Current evidence does not bind the platform package to local e04db1e40084cfa7b50dce64305f9bc9c59acccb."
+  },
+  "evidence_boundaries": [
+    "The user-supplied meter claim of 1671 requests, about 57.88M tokens, and about 24.98 CNY is not present in the collected local evidence and is therefore not independently verified here.",
+    "No platform Run was created or rerun; no upload was performed.",
+    "No final local browser trace, DOM snapshot, network HAR, or server request trace was available for the 21 local failures.",
+    "The result does not assert that API quota was the only cause of all 21 failures."
+  ],
+  "stage5_handoff_recommendations": [
+    "Treat REQ-2.2 POST /login, password verification, and session persistence as the first product-level repair target.",
+    "Obtain a clean, quota-sufficient generation run before using the completion rate to compare Agent quality.",
+    "Keep implement-turn request/time budget and repair budget as separate harness optimization targets; do not change official tests.",
+    "Instrument the next local reproduction around login and the first post-login shelf/book flows, with clean database reset and runtime DOM/network evidence.",
+    "Do not merge this local execution with platform Run 6d41952769f7."
+  ],
+  "source_files": {
+    "manifest": "evidence/arc-bench/local/bookstack-e04-01/manifest.json",
+    "ack": "evidence/arc-bench/local/bookstack-e04-01/phase4-ack.json",
+    "result_markdown": "evidence/arc-bench/local/bookstack-e04-01/phase4-result.md",
+    "local_bundle": "D:/DataMove/arcbench-local/p5-014-e04/skill-output/local/bookstack-e04-01",
+    "local_workspace": "D:/DataMove/arcbench-local/p5-014-e04/runs/bookstack-e04-01",
+    "platform_comparison_result": "evidence/arc-bench/runs/6d41952769f7/phase4-result.json"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 4 read-only diagnosis for an independent local execution",
+  "run_name": "bookstack-e04-01",
+  "issue_id": "P5-017",
+  "source": "local",
+  "platform_run_id": null,
+  "platform_run_merged": false,
+  "task_key": "arc-bench-lite--bookstack",
+  "manifest_path": "evidence/arc-bench/local/bookstack-e04-01/manifest.json",
+  "manifest_sha256": "FCD251FC6EBFC4244F4C5CE27662A4D37DCAB3051B7A3EFC8DF9416F7050D055",
+  "status": "received",
+  "read_only": true,
+  "scope": "Only the local bookstack-e04-01 execution; no platform Run, rerun, upload, code change, official-test change, ZIP change, or configuration change.",
+  "created_at": "2026-09-24T00:00:00+08:00"
+}
