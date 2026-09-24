@@ -28,6 +28,10 @@
 
 当前“项目阶段5｜跨 Run 决策台账”会话（Thread `01a0bd66-5680-7e72-9e8a-24290780525e`）今后只做证据读取、事实核对、判断、信息收敛和决策/协同记录维护，**不得直接修改 Agent、业务代码、测试代码或打包实现**。任何需要代码写入的决定，必须先在本会话形成清楚的 issue、证据边界、授权状态、验收标准和 handoff，再交给“项目阶段5｜Agent 实现”会话（Thread `01a0bd66-75bd-7801-97fc-b3d1e136c112`）执行；实现结果通过提交 SHA、验证命令与产物哈希回交本会话归档。没有明确代码任务时不创建空转派。
 
+### 0.3 近期阶段 3/4/5 队友交接（2026-09-24）
+
+已新增[近期 Run 与阶段 3/4/5 队友协作交接](./ARC_BENCH_RECENT_RUNS_TEAM_HANDOFF_20260924.md)，统一收录 `1b0eaf914e94`、`88c08161c4d3`、`4bab82404c52`、`6d41952769f7`、`d9a97cb4c92d`、`32e08aaca2e4` 及本地 e04 实验的身份、分数、失败、证据 SHA、阶段结论、已解决问题、隐患和下一门禁；机器可读索引为 [`recent-runs-team-handoff-20260924.json`](../evidence/arc-bench/recent-runs-team-handoff-20260924.json)。当前 `d9a97cb4c92d / P5-017` 中 `REQ-4.3.1`、`REQ-6.1.1` 已由隔离复现确认为创建成功后 link/heading 语义与异步 fallback 机制，进入待用户授权的通用最小 Agent 切片；`REQ-8.1` 仍为时序敏感 strong candidate，必须单独闭合评分前 seed 和多轮时序。`4bab82404c52` 的模板单次替换和草稿路由遮蔽已经确定性复现，但只证明该次生成应用缺陷，不等于 Agent 已修复。Keep `88c08161c4d3` 与 `32e08aaca2e4` 仍须阶段 4完成后才能进入阶段 5。业务 GO 与严格 A/B 均为 false，未授权上传或新平台 Run。
+
 ## 1. 项目身份与范围
 
 - 当前工作区是 `William-zwy/octos-arc`，远程为 `git@github.com:William-zwy/octos-arc.git`。

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "purpose": "Phase 5 role mapping and idempotent handoff index; decisions live only in the Markdown register",
-  "updated_at": "2026-09-22",
+  "updated_at": "2026-09-24",
   "source_checkout": "D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松",
   "user_limits": {
     "remote_push_authorized": false,
@@ -19,6 +19,14 @@
   "role_handoff_id": "phase5-role-20260920-v1",
   "role_handoff_source_commit": "ad4f818a9f83b4a7c082d3e5da0b39855fcc9bd9",
   "baseline_gate": "Read-only ACK does not authorize writes. Before writing, verify the actual Git root and HEAD, acquire single-writer ownership, and use a worktree containing the authoritative Phase 5 commit; do not edit detached A0 role worktrees as current candidates.",
+  "recent_team_handoff": {
+    "human_path": "docs/ARC_BENCH_RECENT_RUNS_TEAM_HANDOFF_20260924.md",
+    "human_sha256": "744FD83C94F9188EB915AD80F124682F7A25F487F62E967CC899CE82B62F6E39",
+    "machine_path": "evidence/arc-bench/recent-runs-team-handoff-20260924.json",
+    "machine_sha256": "CF9571CC47F630A136F3AE499103D484DD6925161AD8934D5126FF58D035F53A",
+    "run_ids": ["1b0eaf914e94", "88c08161c4d3", "4bab82404c52", "6d41952769f7", "d9a97cb4c92d", "32e08aaca2e4"],
+    "purpose": "Teammate entry point for recent Stage 3/4/5 facts, evidence, decisions, blockers, risks, ownership, and acceptance gates."
+  },
   "routing_policy": {
     "effective_at": "2026-09-21",
     "source": "explicit_user_instruction",
@@ -1207,6 +1215,40 @@
       "business_go": false,
       "strict_ab_comparable": false,
       "next_gate": "Obtain separate budget approval before costly unmocked new-Agent BookStack generation. Bind Agent identity to generated app ZIP and final DOM, then run frozen REQ-2.2 and all 34 tests on that new app while preserving the old 33. Platform upload or Run requires separate explicit authorization and same-platform 2xx auth preflight."
+    },
+    {
+      "key": "d9a97cb4c92d:P5-017:ED36A73F09F8",
+      "run_id": "d9a97cb4c92d",
+      "submission_id": "0faa01c52d4a",
+      "task_key": "arc-bench-lite--bookstack",
+      "issue_id": "P5-017",
+      "source_handoff_id": "d9a97cb4c92d-955B36FF6BA4",
+      "manifest": "evidence/arc-bench/runs/d9a97cb4c92d/manifest.json",
+      "manifest_sha256": "955B36FF6BA46192010C247652D41D345D6669EF38D30AAD96C20D1A0BCA21CA",
+      "phase4_result": "evidence/arc-bench/runs/d9a97cb4c92d/phase4-result.json",
+      "phase4_result_sha256": "C1A4BC5956A4B67EC4AE00944133ED5CE10918ED6E4CE51D401C883BB23175AF",
+      "reproduction_handoff_id": "d9a97cb4c92d:P5-017:repro-20260924-v1",
+      "reproduction_thread_id": "01a0bd66-60c2-7441-9a85-332c0af24886",
+      "reproduction_evidence": "C:/Users/dayuruozhi/Doubao/chats/2026-09-24/new-chat/repro/evidence-manifest.json",
+      "reproduction_evidence_sha256": "ED36A73F09F874216A838BF710C46555B00CF72BF2579C96274B07DD76FBFB98",
+      "status": "partial_repro_confirmed_approval_required_and_favorite_repro_pending",
+      "decision": "confirm_create_result_heading_contract_keep_favorite_timing_separate",
+      "confirmed_requirements": ["REQ-4.3.1", "REQ-6.1.1"],
+      "strong_candidate_requirements": ["REQ-8.1"],
+      "needs_repro": true,
+      "reproduction_dispatched": true,
+      "reproduction_followup_handoff_id": "d9a97cb4c92d:P5-017:repro-8.1-timing-v2",
+      "metrics_review_dispatched": true,
+      "implementation_dispatched": false,
+      "code_change_authorized": false,
+      "new_platform_run_created_by_ledger": false,
+      "upload_performed_by_ledger": false,
+      "official_tests_modified": false,
+      "remote_pushed_by_ledger": false,
+      "business_go": false,
+      "strict_ab_comparable": false,
+      "identity_gaps": ["platform_uploaded_zip_sha", "agent_build_id", "code_sha", "task_snapshot_id", "zip_to_build_binding"],
+      "next_gate": "Finish the isolated REQ-8.1 seed/timing matrix. Separately obtain explicit user authorization before dispatching one generalized create-result heading-contract Agent slice for REQ-4.3.1 and REQ-6.1.1; do not include REQ-8.1 until confirmed, and do not create a platform Run without separate authorization."
     }
   ]
 }

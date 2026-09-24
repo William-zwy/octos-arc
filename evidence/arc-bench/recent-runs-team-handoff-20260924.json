@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "purpose": "Machine-readable index for the 2026-09-24 recent ARC-Bench Stage 3/4/5 teammate handoff",
+  "updated_at": "2026-09-24",
+  "human_handoff": {
+    "path": "docs/ARC_BENCH_RECENT_RUNS_TEAM_HANDOFF_20260924.md",
+    "sha256": "744FD83C94F9188EB915AD80F124682F7A25F487F62E967CC899CE82B62F6E39"
+  },
+  "authority": {
+    "platform_final_first": true,
+    "stage3_role": "normalize evidence and route",
+    "stage4_role": "single-run read-only diagnosis",
+    "stage5_role": "cross-run decision, isolated reproduction, authorized implementation, and A/B gates",
+    "chat_summary_is_authoritative": false
+  },
+  "runs": [
+    {
+      "run_id": "1b0eaf914e94",
+      "submission_id": "0cb0a4198304",
+      "task": "arc-bench-lite--bookstack",
+      "platform": {"status": "FAILED", "passed": 33, "total": 34, "score": 97.1, "token_count": 42725779, "cost_cny": 22.194327, "duration_seconds": 8548},
+      "failed_requirements": ["REQ-2.2"],
+      "manifest_sha256": "73C71551ABB524B5123D8D0DBCFDAAC9DDF4B4E7A103BA463A732F4DCE143437",
+      "phase4_result_sha256": "0F274A22C861EC57F5AA43A4787F9261F75AD6DC22DF97175D7550EF5DC57C87",
+      "stage5_status": "repro_verified_local_and_agent_candidate_built_functional_effect_unproven",
+      "decision": "login and session work locally; nickname is visible text but not a heading; new Agent must still generate and pass frozen REQ-2.2 plus all 34 tests",
+      "strict_ab_comparable": false
+    },
+    {
+      "run_id": "88c08161c4d3",
+      "submission_id": "0cb0a4198304",
+      "task": "arc-bench-lite--keep",
+      "platform": {"status": "FAILED", "passed": 30, "total": 32, "score": 93.8, "token_count": 40784030, "cost_cny": 21.356714, "duration_seconds": 8370},
+      "failed_requirements": ["REQ-2.4", "REQ-2.7.6.3"],
+      "manifest_sha256": "BF786C6896EABBDE3F6F9AEE00E555E0924F149BC137C5A2CB3FF0EAA8FDE437",
+      "phase4_status": "missing_needs_reconciliation",
+      "stage5_status": "not_accepted",
+      "decision": "finish the unique Keep Stage 4 handoff/ACK/result identity chain before any Stage 5 diagnosis or code dispatch",
+      "strict_ab_comparable": false
+    },
+    {
+      "run_id": "4bab82404c52",
+      "submission_id": "7e0bd4dc8e9d",
+      "task": "arc-bench-lite--bookstack",
+      "platform": {"status": "FAILED", "passed": 31, "total": 34, "score": 91.2, "token_count": 37625229, "cost_cny": 18.351171, "duration_seconds": 9817},
+      "failed_requirements": ["REQ-6.1.1", "REQ-6.1.2", "REQ-9.1"],
+      "manifest_sha256": "67C3A1BC3B312DABB0A1E858C6077F826BBC541770B632159A236CC3544DD1A1",
+      "phase4_result_sha256": "619DB204238400CB27985286F5A3E10FBD427E17EFE076C3D115236C272E921D",
+      "reproduction_report_sha256": "4DF24B7EE6B4E60AC679F703D9D53C3D689D6470F358CDA9C9033F705A6D18A6",
+      "reproduction_manifest_sha256": "C4FF507531504DF01D868E52C750C1251AF79F042A990885062B888639F71536",
+      "stage5_status": "controlled_reproduction_confirmed_generated_application_defects",
+      "confirmed_causes": [
+        "PAGE_ACTION placeholder replaced only once, causing encoded literal action URL and HTTP 404",
+        "generic page-id route shadows the drafts POST route, causing authenticated and anonymous HTTP 404"
+      ],
+      "decision": "isolated app fixes prove sufficiency but do not prove the Agent has been fixed",
+      "strict_ab_comparable": false
+    },
+    {
+      "run_id": "6d41952769f7",
+      "submission_id": "14111688f13e",
+      "task": "arc-bench-lite--bookstack",
+      "platform": {"status": "FAILED", "passed": 30, "total": 34, "score": 88.2, "token_count": 89254641, "cost_cny": 36.969671, "duration_seconds": 18827},
+      "failed_requirements": ["REQ-6.1.1", "REQ-6.2.1", "REQ-7.2", "REQ-8.1"],
+      "manifest_sha256": "EDF238B1AA31ECE8A746931980DF5DDB0B66312A0AAF5B1DC7C5EC23D9AF694E",
+      "phase4_result_sha256": "622FECA25C09FF3E5DABF8E7FD7216D27643C7EDCB843C67A8813E3E0CC0B70F",
+      "stage5_status": "phase4_complete_reproduction_not_closed",
+      "confirmed_harness_cause": "internal 0/34 was caused by invalid Playwright trace.snapshots configuration and is not application completion evidence",
+      "decision": "preserve final platform 30/34 as authoritative; UI semantics remain candidates and REQ-7.2 remains separate",
+      "strict_ab_comparable": false
+    },
+    {
+      "run_id": "d9a97cb4c92d",
+      "submission_id": "0faa01c52d4a",
+      "task": "arc-bench-lite--bookstack",
+      "platform": {"status": "FAILED", "passed": 31, "total": 34, "score": 91.2, "token_count": 56757262, "cost_cny": 29.912722, "duration_seconds": 12207},
+      "failed_requirements": ["REQ-4.3.1", "REQ-6.1.1", "REQ-8.1"],
+      "manifest_sha256": "955B36FF6BA46192010C247652D41D345D6669EF38D30AAD96C20D1A0BCA21CA",
+      "phase4_result_sha256": "C1A4BC5956A4B67EC4AE00944133ED5CE10918ED6E4CE51D401C883BB23175AF",
+      "reproduction_manifest_sha256": "ED36A73F09F874216A838BF710C46555B00CF72BF2579C96274B07DD76FBFB98",
+      "stage5_status": "partial_reproduction_confirmed_and_followup_dispatched",
+      "confirmed_requirements": ["REQ-4.3.1", "REQ-6.1.1"],
+      "strong_candidate_requirements": ["REQ-8.1"],
+      "decision": "request explicit authorization before one generalized create-result semantic-heading Agent slice; keep favorite timing separate",
+      "followup_handoff_id": "d9a97cb4c92d:P5-017:repro-8.1-timing-v2",
+      "strict_ab_comparable": false
+    },
+    {
+      "run_id": "32e08aaca2e4",
+      "submission_id": "0faa01c52d4a",
+      "task": "arc-bench-lite--keep",
+      "platform": {"status": "FAILED", "passed": 27, "total": 32, "score": 84.4, "token_count": 42677341, "cost_cny": 23.569978, "duration_seconds": 8842},
+      "failed_requirements": ["REQ-2.4", "REQ-2.7.1", "REQ-2.7.2", "REQ-2.7.5", "REQ-2.7.6.3"],
+      "manifest_sha256": "750C964566657B3126A6B40CE5AA4ACABD6839FEFD98DEEB5D6F543B05AD6996",
+      "phase4_status": "pending",
+      "stage5_status": "not_accepted",
+      "decision": "below the 31/32 no-regression floor, but no commit-level attribution before Stage 4 and identity closure",
+      "strict_ab_comparable": false
+    }
+  ],
+  "non_comparable_local_experiments": [
+    {
+      "id": "p5-014-e04-local-bookstack",
+      "path": "D:/DataMove/arcbench-local/p5-014-e04/skill-output/local/bookstack-e04-01/",
+      "observed_result": "13/34",
+      "contaminants": ["missing generated login backend", "OCTOS_ARC_IMPLEMENT_REQUESTS=20 truncation", "HTTP 429 quota exhaustion"],
+      "decision": "diagnostic only; not a P5-017 score or strict A/B result"
+    }
+  ],
+  "active_decisions": {
+    "create_result_semantic_contract": {
+      "requirements": ["REQ-4.3.1", "REQ-6.1.1"],
+      "status": "approval_required",
+      "code_change_authorized": false,
+      "implementation_dispatched": false
+    },
+    "favorite_timing": {
+      "requirements": ["REQ-8.1"],
+      "status": "strong_candidate_reproduction_followup",
+      "must_not_merge_with_create_slice": true
+    },
+    "keep_recent_runs": {
+      "requirements": ["88c08161c4d3", "32e08aaca2e4"],
+      "status": "stage4_required_before_stage5"
+    }
+  },
+  "global_gates": {
+    "business_go": false,
+    "strict_ab_comparable": false,
+    "new_platform_run_authorized": false,
+    "remote_push_authorized": false,
+    "official_tests_may_be_modified": false,
+    "secrets_may_be_persisted": false
+  },
+  "coordination": {
+    "ledger_thread_id": "01a0bd66-5680-7e72-9e8a-24290780525e",
+    "reproduction_thread_id": "01a0bd66-60c2-7441-9a85-332c0af24886",
+    "implementation_thread_id": "01a0bd66-75bd-7801-97fc-b3d1e136c112",
+    "metrics_thread_id": "01a0bd66-8b2a-7fb3-9a25-269204f6dbf1"
+  }
+}
