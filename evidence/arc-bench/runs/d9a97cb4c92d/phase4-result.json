@@ -1,0 +1,243 @@
+{
+  "schema_version": 1,
+  "PHASE4_RESULT": "complete",
+  "run_id": "d9a97cb4c92d",
+  "task_key": "arc-bench-lite--bookstack",
+  "handoff_id": "d9a97cb4c92d-955B36FF6BA4",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "manifest_sha256": "955B36FF6BA46192010C247652D41D345D6669EF38D30AAD96C20D1A0BCA21CA",
+  "source": "platform_run_attachments",
+  "analysis_scope": "read_only_single_run",
+  "read_only": true,
+  "prior_runs_merged": [],
+  "excluded_runs": [
+    "6d41952769f7",
+    "32e08aaca2e4"
+  ],
+  "stage5_executed": false,
+  "stage5_decision_written": false,
+  "confirmed": {
+    "run_identity": {
+      "submission_id": "0faa01c52d4a",
+      "competition_id": "arc-bench-lite",
+      "task_id": "arc-bench-lite--bookstack",
+      "task_snapshot_id": null,
+      "platform_model": "deepseek-v4-flash",
+      "status": "FAILED",
+      "score": 91.2,
+      "passed_count": 31,
+      "failed_count": 3,
+      "total_count": 34,
+      "run_duration_seconds": 12207,
+      "platform_token_count": 56757262,
+      "cost_cny": 29.912722,
+      "failure_reason": "Runner exited with test failures or runtime errors"
+    },
+    "failure_stage": {
+      "value": "final_playwright_execution",
+      "evidence": "run JSON plus Playwright report and failure details"
+    },
+    "final_failures": [
+      {
+        "test": "REQ-4.3.1: Create Shelf",
+        "file": "REQ-4.3.1.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10014,
+        "timeout_ms": 10000,
+        "locator": "getByRole('heading', { name: /Shelf\\s+Created\\s+4\\.3\\.1/i }).first()"
+      },
+      {
+        "test": "REQ-6.1.1: Save Page",
+        "file": "REQ-6.1.1.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10013,
+        "timeout_ms": 10000,
+        "locator": "getByRole('heading', { name: /Page\\s+Created\\s+6\\.1\\.1/i }).first()"
+      },
+      {
+        "test": "REQ-8.1: Favorite Items",
+        "file": "REQ-8.1.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10013,
+        "timeout_ms": 10000,
+        "locator": "getByRole('heading', { name: /^Unfavorite$/i }).first()"
+      }
+    ],
+    "playwright_metadata": {
+      "version": "1.57.0",
+      "workers": 1,
+      "timeout_ms": 10000,
+      "root_dir": "/workspace/tests",
+      "suite_duration_ms": 50865.449,
+      "expected": 31,
+      "unexpected": 3
+    },
+    "template_code_facts": [
+      {
+        "target": "REQ-4.3.1",
+        "source": "d9a97cb4c92d-template.zip / template/backend/server.js and template/frontend/src/shelf-create.html",
+        "facts": [
+          "POST /api/shelves exists and returns HTTP 201 with a shelf object.",
+          "The shelf creation success path redirects to shelves.html.",
+          "The success path does not visibly emit a heading named Shelf Created 4.3.1."
+        ]
+      },
+      {
+        "target": "REQ-6.1.1",
+        "source": "d9a97cb4c92d-template.zip / template/backend/server.js and template/frontend/src/page-create.html",
+        "facts": [
+          "POST /api/pages exists and returns HTTP 201 with a page object.",
+          "The page creation success path redirects to book.html with the book id.",
+          "The resulting book page renders book content and links but does not visibly emit a heading named Page Created 6.1.1."
+        ]
+      },
+      {
+        "target": "REQ-8.1",
+        "source": "d9a97cb4c92d-template.zip / template/frontend/src/book.html and template/backend/server.js",
+        "facts": [
+          "The favorite API and toggle handler exist and return a favorited state.",
+          "The initial control is a button with Favorite text.",
+          "The client changes the button text to Unfavorite and aria-pressed=true after success.",
+          "The observed official locator searches for a heading named Unfavorite, not a button."
+        ]
+      }
+    ],
+    "log_boundary": {
+      "events_count": 0,
+      "stdout_entries": 2,
+      "stdout_nonempty_entries": 0,
+      "pages_count": 2,
+      "interpretation": "The delivered logs JSON is structurally present but contains no lifecycle or provider events."
+    },
+    "identity_boundary": {
+      "platform_original_filename": "octos-arc-agent-e04db1e40084-5871fb40afb2.zip",
+      "candidate_submission_sha256": "5871FB40AFB203A4554F0620FE6FBA9C7C3E3FD2D4AC62313F725F7FF4661655",
+      "candidate_submission_binding": "unbound",
+      "template_sha256": "389FBAC2F6511F2BD017CA37DC47E2E9027A43149A20F7A53932CBC3D27D7C50",
+      "interpretation": "The user-provided submission ZIP is retained as a candidate identity comparison only; the platform did not provide a binding SHA."
+    },
+    "security": {
+      "api_key_value_stored": false,
+      "plaintext_key_hits_in_delivered_logs": 0,
+      "masked_key_status_only": true
+    }
+  },
+  "strong_candidate": [
+    {
+      "id": "SC-4.3.1-success-observation",
+      "test": "REQ-4.3.1: Create Shelf",
+      "hypothesis": "Shelf creation likely completes at the API level, but the post-create UI does not expose the heading/observable success contract required by the official test.",
+      "static_support": [
+        "The create endpoint exists and returns 201.",
+        "The frontend redirects directly to shelves.html after success.",
+        "No Shelf Created 4.3.1 heading is present in the inspected success path."
+      ],
+      "confidence": "strong_candidate",
+      "runtime_gap": "No final DOM snapshot, HTTP response capture, or redirect chain was delivered for this failed test, so API success and the exact rendered DOM cannot be confirmed."
+    },
+    {
+      "id": "SC-6.1.1-success-observation",
+      "test": "REQ-6.1.1: Save Page",
+      "hypothesis": "Page creation likely completes at the API level, but the redirect target does not expose the Page Created 6.1.1 heading/observable success contract required by the official test.",
+      "static_support": [
+        "The create endpoint exists and returns 201.",
+        "The frontend redirects to book.html after success.",
+        "The inspected book page does not emit Page Created 6.1.1 as a heading."
+      ],
+      "confidence": "strong_candidate",
+      "runtime_gap": "No final DOM snapshot, HTTP response capture, or redirect chain was delivered for this failed test, so the exact failure point cannot be confirmed."
+    },
+    {
+      "id": "SC-8.1-accessible-role",
+      "test": "REQ-8.1: Favorite Items",
+      "hypothesis": "Favorite state likely changes on a button, but the official test searches for a heading named Unfavorite; this role/name mismatch can cause the ten-second timeout even when the API and button state update succeed.",
+      "static_support": [
+        "The favorite API and handler exist.",
+        "The client changes button text to Unfavorite and aria-pressed=true.",
+        "The observed locator explicitly requests role heading."
+      ],
+      "confidence": "strong_candidate",
+      "runtime_gap": "No final DOM snapshot or network response was delivered, so successful persistence and the exact accessible tree cannot be confirmed."
+    }
+  ],
+  "unknown": [
+    {
+      "field": "provider_totals_and_request_count",
+      "reason": "The logs JSON has no provider events or totals; platform_token_count is the only available token metric."
+    },
+    {
+      "field": "visual_model_reasoning_time_budget_and_concurrency",
+      "reason": "These values are absent from the raw logs. Summary-only claims cannot override the empty logs payload."
+    },
+    {
+      "field": "acceptance_rounds",
+      "reason": "No acceptance round records are available for this run."
+    },
+    {
+      "field": "final_dom_network_and_redirect_trace",
+      "reason": "The report identifies failed locators and timeouts but does not provide the rendered DOM, HTTP responses, or redirect chain needed to elevate candidates to confirmed runtime causes."
+    },
+    {
+      "field": "platform_build_and_upload_identity",
+      "reason": "Build id, code SHA, payload tree SHA, upload-package SHA, and task snapshot id are absent; the candidate submission ZIP is not platform-bound."
+    },
+    {
+      "field": "raw_executor_error_context",
+      "reason": "The failure details refer to error-context files that were not delivered."
+    }
+  ],
+  "excluded_hypotheses": [
+    {
+      "item": "whole-application-unavailability",
+      "reason": "31 of 34 tests passed, including REQ-2.2, REQ-6.2.1, and REQ-7.2."
+    },
+    {
+      "item": "old-run-failure-reuse",
+      "reason": "The diagnosis is limited to d9a97cb4c92d and does not reuse failures from 6d41952769f7 or 32e08aaca2e."
+    },
+    {
+      "item": "global-timeout-increase-as-root-cause-fix",
+      "reason": "The evidence shows locator timeouts, but does not establish that increasing the global timeout would satisfy the missing UI contract."
+    },
+    {
+      "item": "platform-outage",
+      "reason": "No delivered evidence attributes the three test failures to a platform-wide outage."
+    }
+  ],
+  "impact_estimate": {
+    "current_pass_rate_percent": 91.2,
+    "current_pass_count": 31,
+    "total_count": 34,
+    "if_all_three_candidates_are_fixed_pass_rate_percent": 100.0,
+    "absolute_improvement_percentage_points": 8.8,
+    "final_playwright_suite_duration_seconds_approx": 50.9,
+    "theoretical_failed_timeout_budget_seconds": 30.0,
+    "run_duration_dominant_cost": "The 12207-second total run duration is primarily generation/runtime orchestration cost; the delivered evidence does not support attributing it to the three Playwright timeouts.",
+    "token_or_request_savings_estimate": null
+  },
+  "stage5_boundary": {
+    "status": "recommendations_only",
+    "recommended_scope": [
+      "Add a narrow, consistent post-success observable that satisfies the official Shelf Created and Page Created contracts while preserving existing API and navigation behavior.",
+      "Align Favorite state feedback with the official accessible-role contract while retaining the existing button semantics and API behavior where possible.",
+      "Run focused local checks for the three failed nodes plus adjacent already-passing nodes before any platform rerun.",
+      "Keep official tests, task snapshots, ZIPs, and global timeout configuration unchanged."
+    ],
+    "explicitly_not_recommended": [
+      "Do not treat this result as Stage 5 approval.",
+      "Do not rewrite the backend data model.",
+      "Do not globally increase Playwright timeouts as the primary fix.",
+      "Do not merge this diagnosis with an older BookStack run."
+    ]
+  },
+  "validation": {
+    "required_after_write": [
+      "Parse phase4-result.json",
+      "Recompute and compare manifest SHA-256",
+      "git diff --check",
+      "git show --check",
+      "Confirm phase4-result.json and phase4-result.md are regular files and Git-tracked"
+    ],
+    "remote_sync": "not_completed_by_user_instruction_and_remote_SSH_preflight_failure"
+  }
+}
