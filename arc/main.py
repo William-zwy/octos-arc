@@ -875,6 +875,14 @@ UI contract (the hidden Playwright tests depend on these; a violation scores 0):
 
 CODEGEN_SYSTEM = "You write complete, minimal web apps. Reply only with file blocks in the requested format."
 
+CREATE_RESULT_SEMANTICS = """\
+Create/save result semantics (when the requirement or acceptance spec creates a named entity): only after the
+request returns 2xx and persistence succeeds, make the stable result view expose the entity's exact visible name
+as one unique semantic heading. When that name must also navigate, prefer `<hN><a href="...">exact entity
+name</a></hN>` so the same text has both the correct heading and link accessible name without a duplicate title.
+Keep action/control labels distinct from the entity name and do not render a second same-name heading.
+"""
+
 CODEGEN_PROMPT = """\
 Requirement {node_id}: {description}
 
@@ -882,7 +890,7 @@ Acceptance test (ground truth):
 {spec}
 Files: frontend/src/index.html (+ one html per further route); backend/server.js = CommonJS (require) Node http server on process.env.PORT||{port} serving ../frontend/dist files (index.html for /, <name>.html for /<name>) plus any API routes the requirement needs (in-memory state), 404 for anything else, wrapped in try/catch and process.on('uncaughtException').{ports} Both package.json files already exist (build copies src/* to dist; start runs server.js): do not output them.
 Rules: texts, button accessible names, labels and test ids exactly as in the test; keep status text separate from a control's aria-label; the initial state is literally in the HTML and supports the test's first action, not its post-action state; after an async save/create/update, wait for success before navigation and expose the resulting entity with the exact tested role/name on the destination; do not rely on a pre-navigation match; state lives in the page script unless the requirement says it is persisted; async reads must not replace an active edit or reset its draft; no external resources, no CSS, no comments, no notes; Playwright strict mode: every locator in the test must match exactly one element on the served page (no duplicate links, labels, texts or ids; each label's for= resolves to its own control). {size_rule}
-"""
+""" + CREATE_RESULT_SEMANTICS
 
 CODEGEN_SIZE_SMALL = "index.html <= 20 lines, server.js <= 20 lines."
 CODEGEN_SIZE_FULL = ("As short as the tests allow; one page file per route. Mechanisms (follow exactly): "
@@ -961,7 +969,7 @@ Read the acceptance spec files for this node in full and the existing code they 
  "files": ["backend/server.js", "frontend/src/..."],
  "notes": "validation rules, session handling, fresh-start and packaged seed preconditions, async edit stability, performance decisions"}}
 Copy every accessible name verbatim from the specs. Distinguish control names from action-feedback text and record the initial state needed by the first test action. This is a reading turn: use only file reading, listing and grep — no builds, servers, curl or other shell commands — and do not create or modify any other file.\
-"""
+""" + "\n" + CREATE_RESULT_SEMANTICS
 
 NODE_PROMPT = """\
 {preamble}
@@ -999,7 +1007,7 @@ The official acceptance tests for requirement node {node_id} just ran against yo
 {failures}
 {corrections}{slow}{sources}
 Fix frontend/ and/or backend/ so these tests pass without breaking the passing ones. You have about 10 requests: in the FIRST response read at most two files (only the ones you will change), in the SECOND response emit every edit_file/write_file call together, then finish — do not read more files afterwards. No shell commands. The harness rebuilds and re-runs the official tests right after your turn. The spec files are read-only ground truth.
-""" + PORT_RULES
+""" + CREATE_RESULT_SEMANTICS + PORT_RULES
 
 FINAL_CHECK_PROMPT = """\
 Final end-to-end check of the web application in the current directory:

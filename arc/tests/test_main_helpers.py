@@ -335,6 +335,18 @@ class InteractionDiagnosticsTests(unittest.TestCase):
 
 
 class InteractionPromptTests(unittest.TestCase):
+    def test_create_result_semantics_is_one_shared_task_neutral_contract(self):
+        contract = m.CREATE_RESULT_SEMANTICS
+        self.assertIn("only after the\nrequest returns 2xx and persistence succeeds", contract)
+        self.assertIn("exact visible name\nas one unique semantic heading", contract)
+        self.assertIn('<hN><a href="...">exact entity\nname</a></hN>', contract)
+        self.assertIn("correct heading and link accessible name", contract)
+        self.assertIn("without a duplicate title", contract)
+        for prompt in (m.DESIGN_PROMPT, m.CODEGEN_PROMPT, m.REPAIR_PROMPT):
+            self.assertEqual(prompt.count(contract), 1)
+        for task_literal in ("BookStack", "Shelf", "REQ-4.3.1", "REQ-6.1.1", "Favorite", "Unfavorite"):
+            self.assertNotIn(task_literal, contract)
+
     def test_should_cover_names_initial_state_and_active_edits_in_existing_prompts(self):
         self.assertIn("aria-label on a control overrides its visible text", m.UI_CONTRACT_CORE)
         self.assertIn("resets an unsaved draft", m.UI_CONTRACT_CORE)
@@ -349,6 +361,9 @@ class InteractionPromptTests(unittest.TestCase):
         self.assertIn("save-success navigation", m.INLINE_DESIGN_NOTE)
         self.assertIn("start from the packaged file without deleting it", m.FINAL_CHECK_PROMPT)
         self.assertIn("successful write is observed before navigation", m.FINAL_CHECK_PROMPT)
+        self.assertIn("semantic welcome heading in authenticated main content", m.CODEGEN_SIZE_FULL)
+        self.assertIn("snapshots: true", Path(m.__file__).with_name("acceptance.py").read_text(encoding="utf-8"))
+        self.assertIn("signature-triggered hypotheses", Path(m.__file__).read_text(encoding="utf-8"))
 
     def test_post_login_identity_contract_is_conditional_and_not_navbar_only(self):
         from types import SimpleNamespace

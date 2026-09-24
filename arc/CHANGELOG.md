@@ -1,5 +1,13 @@
 # arc/ 适配层改动记录（工作流 A，分支 `wf-adapter`）
 
+## P5-017 create-result semantics — UNVERIFIED remote collaboration candidate
+
+- **UNVERIFIED：仅单元/静态门禁，本地非 mock 生成与平台结果尚未验证。** 基线为冻结分支 `codex/p5-017-e04-baseline-frozen-20260924` 的 `e04db1e40084cfa7b50dce64305f9bc9c59acccb`；候选分支为 `codex/p5-017-create-result-semantics-unverified`。
+- 新增一个任务无关的共享创建/保存结果语义契约，由 design、codegen、repair prompt 使用同一常量：仅在请求 2xx 且持久化成功后，稳定结果视图将新实体精确可见名称呈现为唯一语义 heading；需要导航时优先以 heading 包裹 link，使两种 accessible role/name 共用一份文字而不重复同名标题。
+- 范围仅覆盖已确认的创建结果共性机制；不包含状态切换问题，不改官方 spec/helper、`acceptance.py`、后端协议、认证、timeout、模型路由、请求上限或 repair 轮次。旧模板复现与旧平台分数不作为本候选验证结果。
+- 单测要求共享契约进入 design/codegen/repair 且每处仅一次、不含任务专用字面量，并保留既有登录 heading、Playwright trace 配置和签名化诊断约束。候选即使通过这些门禁仍保持 UNVERIFIED，直至非 mock 本地生成与平台结果另行验证。
+- 静态验证：相关定向单测 27/27、`py_compile`、secret scan、`git diff --check` 均退出 0。Windows 完整两文件单测为 63 项、仍为基线相同的 3 fail、1 error：三个 Unix 路径分隔符期望，以及临时 `.git/objects` 清理的 `WinError 5`；不得描述为全绿。
+
 ## P5-017 — final full-suite 的签名化修复建议（本地验证；未打包）
 
 - 基线：`4ac832f40207961f700919a16cccc00231eca4c7`。本切片仅扩展失败证据到修复提示的映射及测试；不改生成模板、官方测试、语义基线、模型路由或 timeout。
