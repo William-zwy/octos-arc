@@ -446,3 +446,15 @@ Pop-Location
 - **实现与验收门禁：**只允许在用户明确授权后，把两个 confirmed 创建题作为一个无 BookStack/REQ 字面量的“通用创建后结果语义契约”最小 Agent 切片；稳定目标页须以唯一可见 heading 承载精确实体名并保留 link。`REQ-8.1` 未 confirmed 前不得并入。先做平台同版定点各 3/3、邻接回归、BookStack 33 项非收藏集合三轮全绿与跨任务 canary；再做新 Agent 非 mock 生成和身份绑定。严格平台 A/B 至少三组配对并闭合 task snapshot、模型、预算、workers、tests/helper、ZIP/build/Run；上传和预算另行授权。
 - **相关 Run 边界：**`4bab82404c52` 已确认模板占位符只替换第一处和草稿路由被通用 pageId 路由遮蔽，两处最小生成应用补丁可使三个场景 3/3 通过，但不证明 Agent 已修；`6d41952769f7` 的 internal `0/34` 是无效 trace 配置，不是应用分数；`88c08161c4d3`、`32e08aaca2e4` 尚未完成阶段四；本地 e04 的 `13/34` 混入请求上限和 429，全部不得与 `P5-017` 合并。
 - **当前状态：**`code_change_authorized=false`、`implementation_dispatched=false`、`new_platform_run_authorized=false`、`business_go=false`、`strict_ab_comparable=false`。本轮只更新文档和协调索引，不修改 Agent、生成应用或官方测试。
+
+## 27. `P5-017` 最近问题的改动决策（2026-09-24）
+
+- **裁决：**`APPROVE_SCOPE / EXECUTION_HOLD`。允许把 `REQ-4.3.1` 与 `REQ-6.1.1` 定义为同一个待实现的“通用创建后结果语义契约”切片；当前消息只授权形成改动决策，尚不等于授权 Agent 代码写入、打包、上传或平台 Run。`REQ-8.1` 不进入该切片。
+- **改动层级：**只改 Agent harness 的共享 UI 契约，并由 design/codegen/repair 共用同一来源；不手工修 `d9a97cb4c92d` 生成应用，不改官方 spec/helper，不改后端 API、数据模型、认证、全局 timeout、模型路由、请求上限或 repair 轮次。这样能保持单变量并避免把平台测试字面量写进生成物。
+- **契约内容：**创建或保存请求获得 2xx 且持久化后，稳定结果页必须把新实体的精确可见名称渲染为唯一语义 heading；实体需要导航时优先使用 `<hN><a>实体名</a></hN>`，同时满足 heading 与 link 的可访问名称，且不得重复显示同名成功标题。禁止写入 BookStack、REQ 编号或固定测试数据。
+- **为何现在可决策：**两题已经形成“请求 201 → 数据库增加 → 最终 DOM 只有同名 link、没有 heading → 冻结 heading locator 稳定超时”的闭环，继续重复这两题隔离复现不会提高决策价值。隔离复现会话最新出现的 `CreateProcessWithLogonW failed: 267` / `preflight_blocked` 只影响尚未闭合的 `REQ-8.1` 后续时序矩阵，不推翻前两题的已确认结论，也不是 Agent 产品缺陷。
+- **实现前门禁：**必须由用户另行明确授权后，才向“项目阶段5｜Agent 实现”线程派发；实现提交须同时留档共享契约位置、调用点、单测、完整 commit SHA、产物 SHA/build ID，并声明官方测试零改动。若实现需要改变 backend protocol、模型、预算、timeout 或任务专用字符串，立即停止并退回本台账重审。
+- **本地验收：**平台同版 Playwright、`workers=1`、fresh DB；`REQ-4.3.1` 与 `REQ-6.1.1` 各至少 3/3，通过后检查 POST 2xx、DB `+1`、刷新保持、URL 正确、目标文本/heading/link 各唯一且无 console error。随后运行邻接创建/保存用例和排除 `REQ-8.1` 的 33 项集合三轮，要求每轮 `33/33`，不得以失败集合替换计为修复。
+- **跨任务与端到端门禁：**以 Keep、StackOverflow、PrestaShop、12306、Ctrip、ticket-booking 和 counter/dice 做创建/导航语义 canary；再用新 Agent 做非 mock 生成，绑定 commit、ZIP SHA、build ID、task snapshot、模型与运行配置，最后运行完整 BookStack 34 项。旧模板手工补丁或旧 Run 通过数不得转移为新 Agent 成绩。
+- **平台门禁：**平台上传与新 Run 必须单独授权。严格 A/B 至少三组配对、交替顺序、同任务快照和同配置；B 组两项目标题题均须 3/3，非 `REQ-8.1` 集合须 `33/33` 且无新失败。Token、费用、耗时中位数不得高于 A 组 10%；高于 20% 或出现新失败即 `NO-GO`。
+- **`REQ-8.1` 独立决策：**维持 `strong_candidate / timing_sensitive`。只补真实评分前 seed、同一 fresh-copy 至少 10 轮的点击→请求→响应→DOM→DB 时间线；不得为了它新增 heading 包装、扩大本次语义切片或重跑整套 P5-017。若本地执行环境继续 `preflight_blocked`，记录为基础设施阻断并转交可运行的隔离复现工作区，不伪造结论。
