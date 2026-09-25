@@ -5,3 +5,7 @@
 # Git-for-Windows version. Pinning `eol=lf` makes checkout deterministic and
 # overrides a Windows checkout's `core.autocrlf=true`.
 e2e/fixtures/compat-test-skill/main text eol=lf
+
+# P5-019 packages the frozen Lite BookStack public suite byte-for-byte.
+arc/public-tests/arc-bench-lite--bookstack/** -text
+arc/public-tests/arc-bench-lite--bookstack/index.json -text whitespace=cr-at-eol

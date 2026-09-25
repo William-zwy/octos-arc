@@ -41,7 +41,7 @@ cleanup() {
 trap cleanup EXIT HUP INT TERM
 
 git -c core.autocrlf=false -C "$repo_root" archive --format=zip --output="$temp_archive" HEAD:arc -- \
-  main.py octos_stdio.py requirement_order.py acceptance.py guard.py \
+  main.py octos_stdio.py requirement_order.py acceptance.py acceptance_identity.py guard.py \
   llm_proxy.py codegen.py build_identity.py package_shape.py hooks requirements.txt \
   arcbench_agent_runtime public-tests
 

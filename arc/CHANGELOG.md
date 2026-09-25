@@ -1,5 +1,14 @@
 # arc/ 适配层改动记录（工作流 A，分支 `wf-adapter`）
 
+## P5-019 acceptance test-suite identity routing — UNVERIFIED
+
+- **授权/问题 ID：** `78c6fbe6e804:P5-019:test-suite-identity-routing:implementation-20260926-v1`。基线与父提交均为 `fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7`；冻结分支 `codex/p5-019-fcfaa5f-baseline-frozen-20260926`，候选分支 `codex/p5-019-test-suite-identity-routing-unverified`。本候选只证明测试族路由和包身份，不证明 Lite BookStack 可达到 34/34。
+- 修复已确认的同名路由：不再按 requirement root title 选择第一个 manifest 项。若输入中有 manifest 已知的明确 task key（requirements 元数据或 requirement path 组件），先使用并强制核对 fingerprint；本次真实平台日志只提供通用 `/tmp/arcbench/requirements-source`，因此 Lite/Web BookStack 实际依赖解析后 requirements tree 的规范化 SHA-256 fingerprint。fingerprint 包含根/节点身份、类型、description、dependencies、scenarios 与 children，忽略 CRLF、键顺序和 YAML 引号等非语义表示差异。
+- `public-tests/manifest.json` 升级为 schema v2，逐 suite 记录 task key、competition、snapshot/source、requirements fingerprint、spec count/集合哈希和 helper 哈希。非空 platform tests 仅在完整 suite/helper 哈希匹配时优先；空 platform tests 才回退到 hash-verified bundled suite。错族、未知、同 fingerprint 多候选、task key/fingerprint 冲突或 bundle 篡改均 fail closed，并写入 `.arc/acceptance-suite-identity.json`，状态为 `acceptance_identity_ambiguous` / `acceptance_identity_mismatch` / `acceptance_identity_invalid`，不得宣称 acceptance 通过。
+- 包内新增 Lite BookStack 冻结公开测试 `arc-bench-lite--bookstack`，来源为 `official-snapshots/20260917-150121Z`；36 个文件（34 specs、`helpers.ts`、`index.json`）按原字节复制并逐文件 SHA-256 核对，未编辑官方 spec/helper。保留 Web BookStack suite，不加入无边界的其他 Lite 套件。
+- 范围明确不包含 UI_CONTRACT、create-result semantics、BookStack 控件、模型路由、预算、timeout、repair 轮次、后端协议或官方测试内容；不使用 API Key，不进行 LLM 非 mock 生成，不上传或运行平台。
+- 验证：新增身份路由单测 8/8；相关定向测试 17/17；真实 Web/Lite requirements 分别解析到 `arc-bench-web--bookstack` / `arc-bench-lite--bookstack`，Lite 冻结源与 bundle 36 文件逐字节 SHA-256 一致；`py_compile` 与 `git diff --check` 退出 0。Windows 相关完整测试为 72 项，仍为精确基线 `fcfaa5f…` 的同一组 3 fail、1 error（基线 64 项）：三项 Unix 路径/私有目录断言和临时 `.git/objects` 清理 `WinError 5`，不得描述为全绿。
+
 ## P5-017 create-result semantics — UNVERIFIED remote collaboration candidate
 
 - **UNVERIFIED：仅单元/静态门禁，本地非 mock 生成与平台结果尚未验证。** 基线为冻结分支 `codex/p5-017-e04-baseline-frozen-20260924` 的 `e04db1e40084cfa7b50dce64305f9bc9c59acccb`；候选分支为 `codex/p5-017-create-result-semantics-unverified`。

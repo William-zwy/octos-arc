@@ -1,13 +1,17 @@
 {
- "ticket-booking--ticket-booking": "火车票预订演示系统",
- "smoke--counter": "ARC Counter Smoke Test",
- "smoke--dice": "ARC Dice Smoke Test",
- "smoke-evolution--counter": "ARC Counter Evolution Smoke Test",
- "smoke-evolution--dice": "ARC Dice Evolution Smoke Test",
- "arc-bench-web--12306": "Train Ticket Booking System",
- "arc-bench-web--bookstack": "BookStack Knowledge Base System",
- "arc-bench-web--ctrip": "Ctrip Travel System",
- "arc-bench-web--keep": "Keep",
- "arc-bench-web--prestashop": "PrestaShop E-commerce Website",
- "arc-bench-web--stackoverflow": "Stack Overflow Platform"
+  "schema_version": 2,
+  "suites": [
+    {"suite_path":"arc-bench-lite--bookstack","task_key":"arc-bench-lite--bookstack","competition":"arc-bench-lite","snapshot":"official-snapshot:20260917-150121Z","requirements_fingerprint":"4DC5389CD22A2340D32F771277C802267902721527BD811AE6B4A0D5CAC36F40","spec_count":34,"specs_sha256":"761E4EA749A2C1DEEB517979F97C1D42548205CE579F107D63155E2B0DD17586","helper_sha256":"D6B74B7FFBF1739EE06E8D1675679B9ED3AA203CFAD3DE1BD37C06C6D4ECFACF"},
+    {"suite_path":"arc-bench-web--12306","task_key":"arc-bench-web--12306","competition":"arc-bench-web","snapshot":"repository:fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7","requirements_fingerprint":"85042A9B2E7A64D8E1F7D86B2EED5D1286F38E9C93DC013950E68D88345253C7","spec_count":117,"specs_sha256":"AB6E8851062DD40CBAC167E22080F237AE3A54273146560E517AF6CB490D5DB3","helper_sha256":"2A8914DDE7DC6DC0CF73B33CBCA513661664E4A90B23AD669FCD5347BC61BCAC"},
+    {"suite_path":"arc-bench-web--bookstack","task_key":"arc-bench-web--bookstack","competition":"arc-bench-web","snapshot":"repository:fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7","requirements_fingerprint":"7D630F26D31AEFFD13FD1AA993AB58580FF5C070C3285845B8E9831F5EDE22F4","spec_count":34,"specs_sha256":"71AF4390CC8EB3D3341A3C3AE8B78A2A118B83C8B533A6412CD2CA58FB4FC737","helper_sha256":"84D8837FA14680DC7AC29F4A51AEDE886C1F506D612578B773F28E2E2F2A4DDD"},
+    {"suite_path":"arc-bench-web--ctrip","task_key":"arc-bench-web--ctrip","competition":"arc-bench-web","snapshot":"repository:fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7","requirements_fingerprint":"7C8B9D5DAB7A8D8960E02341E64FF0DA2BC6206C1F18973C2CCBBC94C18068ED","spec_count":125,"specs_sha256":"41DFF579758CAFF43D0F73437C1568AA25437CE730A3D8E6AE592CCEC527EA79","helper_sha256":"756C4DC586491DFBAC5BDBC9FE2009CA709F95FB83468E88CEFBB186C6F8B7F2"},
+    {"suite_path":"arc-bench-web--keep","task_key":"arc-bench-web--keep","competition":"arc-bench-web","snapshot":"repository:fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7","requirements_fingerprint":"FEA05D98D71FEEF68A5B2BE501450260895EA1F545314752E8724319FE4FCCCC","spec_count":32,"specs_sha256":"4B1CC5A230061EED57D846716316B9FEA55FC1DB090E866AA1F35F657FC18DDF","helper_sha256":"4A118DB8568839B00C90BE8F0907AB1C9E13C72A1686365B4501223BC76E22A6"},
+    {"suite_path":"arc-bench-web--prestashop","task_key":"arc-bench-web--prestashop","competition":"arc-bench-web","snapshot":"repository:fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7","requirements_fingerprint":"E0CD886BC4B9530ED8481F3068228BFBDDB0BAE282AAD59F0038701D1FA55804","spec_count":86,"specs_sha256":"A0999FB81251E43AAF765EA1CED8CDB7DB6F7CC043B944E3E635AFD6997613ED","helper_sha256":"15F4D81A8076ED9954750CA6AF384954E7B989B15CB5289B0991962FD5D46D2B"},
+    {"suite_path":"arc-bench-web--stackoverflow","task_key":"arc-bench-web--stackoverflow","competition":"arc-bench-web","snapshot":"repository:fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7","requirements_fingerprint":"C2E17C049BF976F693908AADE5A77F383FE0D7007BABBE8373C74C7FD76D5A4F","spec_count":66,"specs_sha256":"E0CE15AFD5F8F44999387F6280DA72DC3AA13D0E9EE8AB0CBCC0AF24EC5B206C","helper_sha256":"2889FBE5BC06FFB7634B5232FC86BBB1E1EDEBD00155B8E99308341A6ECA1F76"},
+    {"suite_path":"smoke--counter","task_key":"smoke--counter","competition":"smoke","snapshot":"repository:fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7","requirements_fingerprint":"9DE9A527FD8C3904A7B2E8F99A6B5E7C711EA43FF8B456B7B9CE88EE95996FD1","spec_count":1,"specs_sha256":"B8C463177B061E07B702A7AEEBD4E9DDD1431FE0C5AC4319B92D030E842667E3","helper_sha256":null},
+    {"suite_path":"smoke--dice","task_key":"smoke--dice","competition":"smoke","snapshot":"repository:fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7","requirements_fingerprint":"6398E476E2FD7F7A632C0DAD4817FF5948B0CFA175B4525957305D40ECA3EEE9","spec_count":1,"specs_sha256":"2B6C3A8050FA40557AAF9BB5977FE0824596A1B793C7063F15CBD632357ADE10","helper_sha256":null},
+    {"suite_path":"smoke-evolution--counter","task_key":"smoke-evolution--counter","competition":"smoke-evolution","snapshot":"repository:fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7","requirements_fingerprint":"1707FED0BABBEBD887B529EA61C2E9FF0C2EB7688A02F75901E5D119AE17B143","spec_count":2,"specs_sha256":"E1890DF73EF766C5C8DD50C0B16C4DB6392B1CCB24F6C9480A3CF565EC03B16D","helper_sha256":null},
+    {"suite_path":"smoke-evolution--dice","task_key":"smoke-evolution--dice","competition":"smoke-evolution","snapshot":"repository:fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7","requirements_fingerprint":"6A836128510D3BAF3660CC2B4AB220E06360CAAFA6568FDBD44AAE69DA824563","spec_count":2,"specs_sha256":"F7A373FED294087DCCE84249C09F94063E27714031E9B78B3A8906BF8B5066E6","helper_sha256":null},
+    {"suite_path":"ticket-booking--ticket-booking","task_key":"ticket-booking--ticket-booking","competition":"ticket-booking","snapshot":"repository:fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7","requirements_fingerprint":"7896D398784242233DFE337889924CFB61A5A14474BD7C6E7AD7FC14EE859725","spec_count":2,"specs_sha256":"B57C88BA397EADDD74EC8F67A4778E6A96B44ED2F69C5F686D43A1F79FE9C7C5","helper_sha256":null}
+  ]
 }

@@ -26,6 +26,7 @@ AGENT_REQUIRED_FILES = (
     "octos_stdio.py",
     "requirement_order.py",
     "acceptance.py",
+    "acceptance_identity.py",
     "guard.py",
     "llm_proxy.py",
     "codegen.py",

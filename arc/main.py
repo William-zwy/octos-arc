@@ -85,6 +85,8 @@ from acceptance import (  # noqa: E402
     nodes_for_failures, playwright_candidates, playwright_version_hint, route_contract_gaps, restore_tree,
     restore_worktree, snapshot_worktree, tree_digest,
 )
+from acceptance_identity import (AcceptanceIdentityError, AcceptanceSelection,  # noqa: E402
+                                 locate_acceptance_suite)
 from build_identity import (BuildIdentityError, IDENTITY_FILENAME,  # noqa: E402
                             load_identity, make_identity, write_json)
 from codegen import FORMAT_INSTRUCTIONS, dedupe_nav_links, parse_file_blocks, write_files  # noqa: E402
@@ -1057,33 +1059,16 @@ def inline_spec_text(tests_dir: Path, files: list[str], max_chars: int) -> str:
     return INLINE_SPEC_HEADER + "".join(parts) if parts else ""
 
 
-def locate_acceptance_tests(tree: dict, bundle_dir: Path) -> Path | None:
-    """ARCBENCH_TESTS_DIR, then the runner's /workspace/tests, then the public
-    specs shipped in the bundle (matched by requirement root name)."""
-    candidates: list[Path] = []
+def locate_acceptance_tests(tree: dict, req_dir: Path, bundle_dir: Path) -> AcceptanceSelection:
+    """Select one hash-verified suite by explicit task key or requirement fingerprint."""
+    platform_candidates: list[Path] = []
     env_dir = os.environ.get("ARCBENCH_TESTS_DIR")
     if env_dir:
-        candidates.append(Path(env_dir))
-    candidates.append(Path("/workspace/tests"))
-    bundled = bundle_dir / "public-tests"
-    manifest = bundled / "manifest.json"
-    if manifest.is_file():
-        try:
-            mapping = json.loads(manifest.read_text(encoding="utf-8"))
-            root_name = str(tree.get("name", "")).strip()
-            for req_id, title in mapping.items():
-                if str(title).strip() == root_name and (bundled / req_id).is_dir():
-                    candidates.append(bundled / req_id)
-        except Exception as exc:  # noqa: BLE001
-            log(f"[tests] manifest unreadable: {exc}")
-    for cand in candidates:
-        try:
-            if cand.is_dir() and any(cand.rglob("*.spec.ts")):
-                return cand.resolve()
-            log(f"[tests] candidate {cand}: {'no *.spec.ts' if cand.is_dir() else 'absent'}")
-        except Exception as exc:  # noqa: BLE001
-            log(f"[tests] candidate {cand} unreadable: {exc}")
-    return None
+        platform_candidates.append(Path(env_dir))
+    workspace_tests = Path("/workspace/tests")
+    if workspace_tests not in platform_candidates:
+        platform_candidates.append(workspace_tests)
+    return locate_acceptance_suite(tree, req_dir, bundle_dir, platform_candidates, log)
 
 
 def spec_base_ports(tests_dir: Path | None) -> list[int]:
@@ -2036,14 +2021,20 @@ class Flow:
             self.nodes_to_implement = len([n for n in node_ids if n not in unchanged])
             self.n_nodes = len(ordered)
 
-            self.tests_dir = locate_acceptance_tests(tree, BUNDLE_DIR)
-            if self.tests_dir:
-                specs = sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.spec.ts"))
-                self.spec_map, self.aliases = map_specs_to_nodes(specs, node_ids)
-                log(f"[tests] {len(specs)} spec files at {self.tests_dir}; mapping "
-                    f"{ {k: v for k, v in self.spec_map.items() if v} }; aliases {self.aliases}")
-            else:
-                log("[tests] no acceptance specs found; building from requirement text only")
+            identity_path = self.output_dir / ".arc" / "acceptance-suite-identity.json"
+            try:
+                selection = locate_acceptance_tests(tree, self.req_dir, BUNDLE_DIR)
+            except AcceptanceIdentityError as exc:
+                write_json(identity_path, exc.audit)
+                log(f"[tests] {exc.status} {json.dumps(exc.audit, sort_keys=True)}")
+                raise
+            self.tests_dir = selection.path
+            write_json(identity_path, selection.audit)
+            log(f"[tests] acceptance identity {json.dumps(selection.audit, sort_keys=True)}")
+            specs = sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.spec.ts"))
+            self.spec_map, self.aliases = map_specs_to_nodes(specs, node_ids)
+            log(f"[tests] {len(specs)} spec files at {self.tests_dir}; mapping "
+                f"{ {k: v for k, v in self.spec_map.items() if v} }; aliases {self.aliases}")
 
             self.runtime.git.ensure_repo()
             self.setup_playwright()
