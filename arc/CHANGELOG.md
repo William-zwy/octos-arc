@@ -3,6 +3,7 @@
 ## P5-017 create-result semantics — UNVERIFIED remote collaboration candidate
 
 - **UNVERIFIED：仅单元/静态门禁，本地非 mock 生成与平台结果尚未验证。** 基线为冻结分支 `codex/p5-017-e04-baseline-frozen-20260924` 的 `e04db1e40084cfa7b50dce64305f9bc9c59acccb`；候选分支为 `codex/p5-017-create-result-semantics-unverified`。
+- **2026-09-25 推荐整合增量仍为 UNVERIFIED：** 以 `8bee207f62f090828b1f6185daff1edb9e1f0f16` 为精确基线，仅补入失败路径不得显示成功 heading，以及 design schema 可显式记录 heading role；未合并 `0917_hkt-20260924` 的旧 Agent 基线、HKT 脚本、工作流脚本、grader 改动或文档删除。
 - 新增一个任务无关的共享创建/保存结果语义契约，由 design、codegen、repair prompt 使用同一常量：仅在请求 2xx 且持久化成功后，稳定结果视图将新实体精确可见名称呈现为唯一语义 heading；需要导航时优先以 heading 包裹 link，使两种 accessible role/name 共用一份文字而不重复同名标题。
 - 范围仅覆盖已确认的创建结果共性机制；不包含状态切换问题，不改官方 spec/helper、`acceptance.py`、后端协议、认证、timeout、模型路由、请求上限或 repair 轮次。旧模板复现与旧平台分数不作为本候选验证结果。
 - 单测要求共享契约进入 design/codegen/repair 且每处仅一次、不含任务专用字面量，并保留既有登录 heading、Playwright trace 配置和签名化诊断约束。候选即使通过这些门禁仍保持 UNVERIFIED，直至非 mock 本地生成与平台结果另行验证。

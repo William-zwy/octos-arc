@@ -880,7 +880,8 @@ Create/save result semantics (when the requirement or acceptance spec creates a 
 request returns 2xx and persistence succeeds, make the stable result view expose the entity's exact visible name
 as one unique semantic heading. When that name must also navigate, prefer `<hN><a href="...">exact entity
 name</a></hN>` so the same text has both the correct heading and link accessible name without a duplicate title.
-Keep action/control labels distinct from the entity name and do not render a second same-name heading.
+Keep action/control labels distinct from the entity name and do not render a second same-name heading. On failure,
+keep the form and error feedback; show no success heading. Other interactions retain their existing semantics.
 """
 
 CODEGEN_PROMPT = """\
@@ -964,7 +965,7 @@ Design — do NOT implement yet — requirement node {node_id} of the web applic
 {tests}
 Read the acceptance spec files for this node in full and the existing code they will exercise. Then write ONE JSON object (at most 80 lines) to the file .arc/design/{node_id}.json AND repeat it in your reply inside a ```json fence. Shape:
 {{"routes": [{{"method": "POST", "path": "/api/...", "request": {{}}, "response": {{}}, "errors": []}}],
- "pages": [{{"path": "/...", "elements": [{{"role": "textbox|button|link|combobox|checkbox|radio|alert", "name": "exact accessible name", "notes": ""}}]}}],
+ "pages": [{{"path": "/...", "elements": [{{"role": "textbox|button|link|heading|combobox|checkbox|radio|alert", "name": "exact accessible name", "notes": ""}}]}}],
  "data_model": {{"collection": {{"field": "type"}}}},
  "files": ["backend/server.js", "frontend/src/..."],
  "notes": "validation rules, session handling, fresh-start and packaged seed preconditions, async edit stability, performance decisions"}}

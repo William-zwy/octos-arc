@@ -342,10 +342,15 @@ class InteractionPromptTests(unittest.TestCase):
         self.assertIn('<hN><a href="...">exact entity\nname</a></hN>', contract)
         self.assertIn("correct heading and link accessible name", contract)
         self.assertIn("without a duplicate title", contract)
+        self.assertIn("On failure,\nkeep the form and error feedback; show no success heading.", contract)
         for prompt in (m.DESIGN_PROMPT, m.CODEGEN_PROMPT, m.REPAIR_PROMPT):
             self.assertEqual(prompt.count(contract), 1)
         for task_literal in ("BookStack", "Shelf", "REQ-4.3.1", "REQ-6.1.1", "Favorite", "Unfavorite"):
             self.assertNotIn(task_literal, contract)
+
+    def test_create_result_design_schema_can_record_the_result_heading(self):
+        role_values = m.DESIGN_PROMPT.split('"role": "', 1)[1].split('"', 1)[0]
+        self.assertIn("heading", role_values.split("|"))
 
     def test_should_cover_names_initial_state_and_active_edits_in_existing_prompts(self):
         self.assertIn("aria-label on a control overrides its visible text", m.UI_CONTRACT_CORE)
