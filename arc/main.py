@@ -1071,6 +1071,11 @@ def locate_acceptance_tests(tree: dict, req_dir: Path, bundle_dir: Path) -> Acce
     return locate_acceptance_suite(tree, req_dir, bundle_dir, platform_candidates, log)
 
 
+def persist_acceptance_identity(destination: Path, audit: dict) -> None:
+    """Persist suite selection/failure evidence using write_json(value, destination)."""
+    write_json(audit, destination)
+
+
 def spec_base_ports(tests_dir: Path | None) -> list[int]:
     """Ports the specs hard-code as their default base URL (e.g. 3301)."""
     if not tests_dir:
@@ -2025,11 +2030,11 @@ class Flow:
             try:
                 selection = locate_acceptance_tests(tree, self.req_dir, BUNDLE_DIR)
             except AcceptanceIdentityError as exc:
-                write_json(identity_path, exc.audit)
+                persist_acceptance_identity(identity_path, exc.audit)
                 log(f"[tests] {exc.status} {json.dumps(exc.audit, sort_keys=True)}")
                 raise
             self.tests_dir = selection.path
-            write_json(identity_path, selection.audit)
+            persist_acceptance_identity(identity_path, selection.audit)
             log(f"[tests] acceptance identity {json.dumps(selection.audit, sort_keys=True)}")
             specs = sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.spec.ts"))
             self.spec_map, self.aliases = map_specs_to_nodes(specs, node_ids)

@@ -221,6 +221,19 @@ class FolderDescendantTests(unittest.TestCase):
         self.assertEqual(folder_descendants(tree), {"F-1": ["REQ-1", "REQ-2"], "ROOT": ["REQ-1", "REQ-2", "REQ-3"]})
 
 
+class AcceptanceIdentityPersistenceTests(unittest.TestCase):
+    def test_should_persist_selected_and_failure_audits_with_write_json_order(self):
+        import json
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tmp:
+            destination = Path(tmp) / ".arc" / "acceptance-suite-identity.json"
+            for audit in ({"status": "selected", "task_key": "suite"},
+                          {"status": "acceptance_identity_ambiguous", "matching_suites": []}):
+                m.persist_acceptance_identity(destination, audit)
+                self.assertEqual(json.loads(destination.read_text(encoding="utf-8")), audit)
+
+
 class SetupPlaywrightTests(unittest.TestCase):
     """Regression for cloud run d116ad5e3aa0: the private-install branch of
     setup_playwright must unpack (root, env_extra) and expose cleanup."""

@@ -1,5 +1,12 @@
 # arc/ 适配层改动记录（工作流 A，分支 `wf-adapter`）
 
+## P5-020 write_json argument order — UNVERIFIED
+
+- 基线/父提交：P5-019 候选 `0a809ca4ac1a3f4613e13319bfa0c7cf1a4dd7b2`；候选分支 `codex/p5-020-write-json-argument-order-unverified`。P5-019 在 acceptance suite 选择成功与 fail-closed 两条路径中将 `write_json(value, destination)` 误调用为 `(destination, value)`，会在写入 `.arc/acceptance-suite-identity.json` 时先于生成流程触发类型错误。
+- 新增单一 `persist_acceptance_identity(destination, audit)` 边界，内部固定按 `write_json(audit, destination)` 调用；成功审计与失败审计均复用该边界。回归测试实际写入并读回两种 audit，防止参数顺序再次反转。
+- 本切片不改 P5-019 identity 选择算法、manifest/fingerprint/hash、官方测试、UI/生成语义、模型、预算、timeout、repair、后端协议或包内测试内容；仍为 UNVERIFIED，不代表平台成绩。
+- 验证：P5-020 持久化回归与 P5-019 identity 路由合计 9/9，`py_compile`、调用点审计和 `git diff --check` 退出 0。Windows 相关完整测试为 73 项，仍为 P5-019 基线同一组 3 fail、1 error（Unix 路径/私有目录断言与临时 `.git/objects` 清理 `WinError 5`），不得描述为全绿。
+
 ## P5-019 acceptance test-suite identity routing — UNVERIFIED
 
 - **授权/问题 ID：** `78c6fbe6e804:P5-019:test-suite-identity-routing:implementation-20260926-v1`。基线与父提交均为 `fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7`；冻结分支 `codex/p5-019-fcfaa5f-baseline-frozen-20260926`，候选分支 `codex/p5-019-test-suite-identity-routing-unverified`。本候选只证明测试族路由和包身份，不证明 Lite BookStack 可达到 34/34。
