@@ -3,6 +3,10 @@
 All notable changes to octos will be documented in this file.
 ## [Unreleased]
 
+### ARC-Bench Agent
+
+- Share a named-entity create/save result contract across UI, design, codegen and repair prompts: show the persisted name as one visible heading, preserve its navigation link and avoid duplicate success text. Add prompt regression tests; generated-app and platform validation remain pending.
+
 ### ARC-Bench collaboration
 
 - Verify and acknowledge the four dedicated Phase 5 task identities; record their worktree mapping and complete a read-only Keep intake pilot without enabling automatic dispatch.

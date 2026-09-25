@@ -741,6 +741,10 @@ class OctosDriver:
 # Prompt text is deliberately static (no timestamps, fixed section order) so
 # that identical turns share the provider's prefix cache.
 
+CREATE_RESULT_CONTRACT = """\
+- Only for create/save flows with a named entity: after a successful 2xx response and persistence, render the exact entity name in one visible semantic heading on the stable destination. Preserve navigation with a link inside that heading, e.g. <h2><a href="...">name</a></h2>, using the existing destination and appropriate heading level. Do not duplicate the name in a separate success title, link or toast. On failure, keep the form and error feedback; show no success heading. Other interactions retain their existing semantics.
+"""
+
 UI_CONTRACT_CORE = """\
 UI contract (the hidden Playwright tests depend on these; a violation scores 0):
 - Buttons are real <button> elements, links are <a href>, every form control has a visible <label for=id>; their texts are copied VERBATIM from the requirement/spec (anchored regexes like /^name$/i reject "Full Name"). Use plain text/password/email inputs, native <select>/checkbox/radio; NEVER type="date"/"number". All controls exist in the served HTML itself and stay visible, enabled and editable at all times; no CSS transitions/animations and no JavaScript that re-renders or re-creates form controls after load (Playwright waits for elements to be "stable" — cloud run 954a231a3d23 timed out on a checkbox that kept changing).
@@ -750,7 +754,7 @@ UI contract (the hidden Playwright tests depend on these; a violation scores 0):
 - Zero external requests (no CDN, fonts, analytics); assets small and same-origin.
 - Live indicators (password-strength meters, counters, previews) update their OWN element's text/attributes synchronously in the `input` event handler — never on change/blur, never debounced, never only a wrapper's class (specs compare the element's outerHTML before and after typing).
 - Text only: never OCR reference images. Write files in your first actions.
-"""
+""" + CREATE_RESULT_CONTRACT
 
 CODEGEN_SYSTEM = "You write complete, minimal web apps. Reply only with file blocks in the requested format."
 
@@ -761,7 +765,7 @@ Acceptance test (ground truth):
 {spec}
 Files: frontend/src/index.html (+ one html per further route); backend/server.js = CommonJS (require) Node http server on process.env.PORT||{port} serving ../frontend/dist files (index.html for /, <name>.html for /<name>) plus any API routes the requirement needs (in-memory state), 404 for anything else, wrapped in try/catch and process.on('uncaughtException').{ports} Both package.json files already exist (build copies src/* to dist; start runs server.js): do not output them.
 Rules: texts, button names, labels and test ids exactly as in the test; the initial state is literally in the HTML; state lives in the page script unless the requirement says it is persisted; no external resources, no CSS, no comments, no notes; Playwright strict mode: every locator in the test must match exactly one element on the served page (no duplicate links, labels, texts or ids; each label's for= resolves to its own control). {size_rule}
-"""
+""" + CREATE_RESULT_CONTRACT
 
 CODEGEN_SIZE_SMALL = "index.html <= 20 lines, server.js <= 20 lines."
 CODEGEN_SIZE_FULL = ("As short as the tests allow; one page file per route. Mechanisms (follow exactly): "
@@ -832,12 +836,12 @@ Design — do NOT implement yet — requirement node {node_id} of the web applic
 {tests}
 Read the acceptance spec files for this node in full and the existing code they will exercise. Then write ONE JSON object (at most 80 lines) to the file .arc/design/{node_id}.json AND repeat it in your reply inside a ```json fence. Shape:
 {{"routes": [{{"method": "POST", "path": "/api/...", "request": {{}}, "response": {{}}, "errors": []}}],
- "pages": [{{"path": "/...", "elements": [{{"role": "textbox|button|link|combobox|checkbox|radio|alert", "name": "exact accessible name", "notes": ""}}]}}],
+ "pages": [{{"path": "/...", "elements": [{{"role": "textbox|button|link|heading|combobox|checkbox|radio|alert", "name": "exact accessible name", "notes": ""}}]}}],
  "data_model": {{"collection": {{"field": "type"}}}},
  "files": ["backend/server.js", "frontend/src/..."],
  "notes": "validation rules, session handling, seed data, performance decisions"}}
-Copy every accessible name verbatim from the specs. This is a reading turn: use only file reading, listing and grep — no builds, servers, curl or other shell commands — and do not create or modify any other file.\
-"""
+Copy every accessible name verbatim from the specs. This is a reading turn: use only file reading, listing and grep — no builds, servers, curl or other shell commands — and do not create or modify any other file.
+""" + CREATE_RESULT_CONTRACT
 
 NODE_PROMPT = """\
 {preamble}
@@ -875,7 +879,7 @@ The official acceptance tests for requirement node {node_id} just ran against yo
 {failures}
 {corrections}{slow}{sources}
 Fix frontend/ and/or backend/ so these tests pass without breaking the passing ones. You have about 10 requests: in the FIRST response read at most two files (only the ones you will change), in the SECOND response emit every edit_file/write_file call together, then finish — do not read more files afterwards. No shell commands. The harness rebuilds and re-runs the official tests right after your turn. The spec files are read-only ground truth.
-""" + PORT_RULES
+""" + CREATE_RESULT_CONTRACT + PORT_RULES
 
 FINAL_CHECK_PROMPT = """\
 Final end-to-end check of the web application in the current directory:

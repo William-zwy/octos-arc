@@ -132,6 +132,58 @@ class CodegenPromptTests(unittest.TestCase):
         self.assertIn("REQ-1", text)
 
 
+class CreateResultContractTests(unittest.TestCase):
+    def test_should_share_one_contract_across_generation_and_repair_prompts(self):
+        contract = m.CREATE_RESULT_CONTRACT
+        prompts = {
+            "ui_core": m.UI_CONTRACT_CORE,
+            "ui_full": m.UI_CONTRACT,
+            "design": m.DESIGN_PROMPT.format(node_id="item", node_spec="Create an item",
+                                           ancestors="", tests=""),
+            "codegen": m.CODEGEN_PROMPT.format(node_id="item", description="Create an item",
+                                              spec="", port=3000, ports="", size_rule=""),
+            "repair": m.REPAIR_PROMPT.format(node_id="item", passed=0, total=1,
+                                            failures="missing result", corrections="",
+                                            slow="", sources="", smoke=3001, port=3000),
+        }
+        for name, prompt in prompts.items():
+            with self.subTest(prompt=name):
+                self.assertEqual(prompt.count(contract), 1)
+
+    def test_should_include_contract_once_in_implementation_with_inline_design(self):
+        import argparse
+        from pathlib import Path
+        flow = m.Flow(argparse.Namespace(web_port=3000), Path("."), Path("."))
+        for description in ("Create a named item", "A counter initially zero"):
+            with self.subTest(description=description):
+                flow.classify_tree({"description": description})
+                prompt = m.NODE_PROMPT.format(
+                    preamble="", node_spec=description,
+                    design=m.INLINE_DESIGN_NOTE.format(node_id="item"), ancestors="",
+                    tests="", ui=flow.ui_contract(), performance="", verify="",
+                    smoke=3001, port=3000)
+                self.assertEqual(prompt.count(m.CREATE_RESULT_CONTRACT), 1)
+
+    def test_should_require_persisted_success_and_preserve_navigation_without_duplicate_text(self):
+        contract = m.CREATE_RESULT_CONTRACT
+        for phrase in ("Only for create/save flows with a named entity", "successful 2xx response",
+                       "persistence", "stable destination", "exact entity name",
+                       "one visible semantic heading", '<h2><a href="...">name</a></h2>',
+                       "existing destination", "Do not duplicate", "On failure", "no success heading"):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, contract)
+
+    def test_should_keep_contract_generic_and_bounded(self):
+        contract = m.CREATE_RESULT_CONTRACT
+        self.assertLessEqual(len(contract.split()), 100)
+        for literal in ("bookstack", "shelf", "favorite", "req-", "timeout", "retry"):
+            with self.subTest(literal=literal):
+                self.assertNotIn(literal, contract.lower())
+
+    def test_should_allow_heading_in_separate_design_schema(self):
+        self.assertIn("heading", m.DESIGN_PROMPT.split('"role": "', 1)[1].split('"', 1)[0])
+
+
 class AlreadyPassingProbeTests(unittest.TestCase):
     def test_should_mark_only_fully_passing_nodes_as_unchanged(self):
         import argparse

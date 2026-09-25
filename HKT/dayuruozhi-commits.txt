@@ -1,0 +1,90 @@
+﻿e72ba3c92272b2e8e6d3fd05ff460017c882e569|2026-09-24 15:46:07 +0800|docs(arc-bench): decide P5-017 semantic slice
+dc0bcebe615413588524552d2efaf936da7f65ab|2026-09-24 15:35:50 +0800|docs(arc-bench): add recent run teammate handoff
+74072676510a874f03bc27616c6f3a072d1d268a|2026-09-24 11:05:15 +0800|docs(arc-bench): record bookstack phase4 ack
+e5e09856c64ff830cb9ae06a6bf00942da1c8bb7|2026-09-24 11:01:26 +0800|docs(arc-bench): complete bookstack phase4 diagnosis
+59aeb55416ba3d2e7029c3389867f479865103c9|2026-09-24 00:47:29 +0800|docs(arc-bench): record local bookstack phase4 diagnosis
+c88dc3e902a7b258e2b20f69a49615cc0250cfda|2026-09-23 15:12:47 +0800|feat(skills): include arc-run-log-collector SKILL.md (force-add, repo .gitignore has *.md)
+431a8705df12cc2c2d45c85b064a2c9166bdc026|2026-09-23 15:11:53 +0800|feat(skills): arc-run-log-collector — post-run log collection with local/cloud separation
+3ce798836f1f289f3d50978596056fb1cac71e85|2026-09-23 15:03:13 +0800|fix(arc): Windows local-run compatibility patches
+345883c588f77b8851c5b2b05fb83c3c503e1e1b|2026-09-23 08:36:51 +0800|docs(arc): correct BookStack phase4 evidence 6d41952769f7
+5913e889acdab9bddd3cdd0f2cbd0c2fb054e715|2026-09-23 07:50:29 +0800|docs(arc): diagnose BookStack run 6d41952769f7
+2978b0810bffd5c05e0c751db6b6913c56f29eb9|2026-09-22 18:04:47 +0800|docs(arc): diagnose BookStack run 4bab82404c52
+eb24cc41d8184f7e1e892e1614f83ee5e9228b09|2026-09-22 17:55:47 +0800|docs(arc): hand off BookStack run 4bab82404c52
+8bd6537c5d151d5ceffcf647b592adf4bdeccfa1|2026-09-22 13:13:19 +0800|docs(arc): record P5-014 candidate and Keep intake gate
+8fa4629240bfdf076c2961338b4f02911cc7a5d5|2026-09-22 11:47:50 +0800|docs(phase5): verify P5-014 local login reproduction
+b006b16cb21327ea44081d78303280b1b320924f|2026-09-22 11:28:18 +0800|docs(arc): register Keep Lite run 88c08161c4d3
+899f47fc93723abd5d6a1c0b8255bca26ad2debb|2026-09-22 11:16:53 +0800|docs(phase5): register run 1b0eaf914e94 REQ-2.2 intake
+c545c3a81b022d7a50d3ea9acdf2649825d61d1f|2026-09-22 11:03:14 +0800|docs(arc): diagnose BookStack login readback run 1b0eaf914e94
+6f6c6fc8844046c1fa3f13302038fc3f9c450efb|2026-09-21 23:38:47 +0800|docs(arc): refine platform auth drift diagnosis
+a0aede09f1a964d3b270bf7ea802f80067f5b15c|2026-09-21 23:30:54 +0800|docs(arc): triage v4.1 platform auth failure
+86f02ff8eebd23d9d62595be8aae9f58795b97c8|2026-09-21 23:22:39 +0800|docs(arc-bench): record auth-blocked phase4 run
+a55a6425ccb626a608840b40a49f6a9233311e22|2026-09-21 23:01:33 +0800|docs(arc): approve v4.1 controlled platform package
+7e174c96394b6ff469b96e92597f85cc14679317|2026-09-21 22:46:31 +0800|docs(arc): register v4.1 provenance artifact
+3a8d0fff8b82046a69ac7a39261c16e0bf898d6b|2026-09-21 22:23:51 +0800|docs(arc): record v4.1 role acknowledgements
+ff3ba2d1881d8d4e0f272734ad5947e1335f0d93|2026-09-21 19:43:13 +0800|docs(arc): authorize v4.1 build provenance handoff
+08aff563c1bd801d5e604e9b05ac40ee6ac12ac0|2026-09-21 19:28:58 +0800|docs(arc): bind frozen v3 run provenance
+97bfadbedad6ec98854e7e63a3e546ef8a5dc61d|2026-09-21 19:15:37 +0800|docs(arc): quarantine incomplete Keep intake
+f33e40a4b93acfee5f107fb2e26dddda9418a115|2026-09-21 19:09:12 +0800|docs(arc): archive late incomplete Keep phase4 result
+c8bc4eac22e6965cf4ed613078fab1750a035279|2026-09-21 19:03:33 +0800|docs(arc): quarantine empty Keep phase4 handoff
+be5aa1d3c4cf035813fbae4bc95e6ae1b61cd769|2026-09-21 18:49:36 +0800|docs(arc): triage auth-blocked run cca008377368
+fa9e638f07e10f368480dea2fa6c4d11001701c4|2026-09-21 18:34:28 +0800|docs(arc): diagnose auth-blocked BookStack run cca008377368
+e05adcb5351ef8976c0d806b15a1bb66de102c87|2026-09-21 18:02:18 +0800|docs(arc): route code changes to implementation task
+71673eb512011f317c810ea625f2a079e27bc451|2026-09-21 17:50:20 +0800|docs(arc): bind v4 archive to git blobs
+17edfd0221029b32fe942d35b74557055de4a445|2026-09-21 17:41:49 +0800|docs(arc): archive v4 control-plane candidate
+850858712c3056badd8e105c9665e61583679a41|2026-09-21 14:45:26 +0800|docs(arc): diagnose incomplete BookStack run d4acec5dbbdf
+d8f2b04ab213022105270a2182bb57711d62c901|2026-09-21 14:23:51 +0800|docs(arc): register Keep generation gate
+c8a90431a925adcf00510a46774ef9beddaa4512|2026-09-21 14:17:55 +0800|docs(arc): register lite version lineage
+51ff407e6ff8285b3d867fc23b9b6cd2d7955f9c|2026-09-21 00:34:38 +0800|docs(arc): register ticket booking baseline
+0bdf39fe94166aae085ce081eb3ee5ebebffeaf9|2026-09-21 00:28:16 +0800|docs(arc): record passed ticket-booking phase4 run
+e4ae744c5d967d6434a098c85d65a274fd2ab1d1|2026-09-21 00:27:40 +0800|docs(arc): record P5-009 local candidate
+56ee78b32434224a16614077566df92a874c5603|2026-09-20 23:57:18 +0800|docs(arc): register conditional BookStack intake
+b62b72d9bfc67e2b25afd6cb5f25fd70c70a223c|2026-09-20 23:50:17 +0800|docs(arc): diagnose BookStack run 4ef2cf139806
+c2d29724f7255d5711888d3f162460fe1c5d94f7|2026-09-20 23:17:09 +0800|docs(arc): audit P5-009 evidence refresh
+c1009fee57d404b85dc0f929bc9190e9447cd29f|2026-09-20 23:15:14 +0800|docs(arc): route refreshed BookStack evidence to phase5
+c1bad1264ac006335c3e3b8369e48eceb041c789|2026-09-20 23:10:00 +0800|docs(arc): refresh BookStack phase4 evidence
+a1adbc57a96bc183c5c9ef0580571c82867c59e3|2026-09-20 22:56:46 +0800|docs(arc): record controlled BookStack reproduction
+5559c0103f7c6fa89da31938809acf13d9f2d55d|2026-09-20 22:48:39 +0800|docs(arc): record confirmed Keep evidence revision
+610c2dff5ce27adbfef411fb326d8f333fba9088|2026-09-20 22:45:27 +0800|docs(arc): record phase5 intake dispatch
+42efb908fa4d4c4155ddeb6148c3fccee67492bf|2026-09-20 22:40:13 +0800|docs(arc): route supplemental keep evidence through phase4
+55be618523055d131f6048972c2b122f954d6e03|2026-09-20 14:46:13 +0800|docs: acknowledge phase5 role handoffs
+ad4f818a9f83b4a7c082d3e5da0b39855fcc9bd9|2026-09-20 14:17:49 +0800|docs: record phase5 task provisioning state
+3f1743f61e9d4cabd2543b7d46944d7068f5b43f|2026-09-20 14:11:49 +0800|docs: scaffold phase5 role handoff workflow
+426b5576c0e7aa68d22f8d117f4576ab364e2ef6|2026-09-20 13:15:21 +0800|docs: record Keep Lite post-fix diagnosis
+c403ec6399bdd9370d85105e45dd67c75b803520|2026-09-20 13:05:03 +0800|chore: intake Keep Lite post-fix evidence
+30b353fd3cad5cd8805230687d600184ee18b0a4|2026-09-20 01:14:20 +0800|docs(arc): persist first-modified BookStack phase4 result
+46e4b077a4f8e44b2092d3e17b286e4d52a8951d|2026-09-20 01:06:01 +0800|docs(arc): analyze first-modified BookStack Lite run
+b8e79c1d14ee8436ed6c9fddfc43954640bc9954|2026-09-20 00:41:19 +0800|chore: intake first-modified BookStack evidence
+2de9c8d8c1b161dc66e0bf4da87e7db59c705d3f|2026-09-19 23:51:19 +0800|docs: correct phase 5 Keep database snapshot interpretation
+71b3f01f0f12b664f74afa72128eeb0d6ac8ab26|2026-09-19 23:15:32 +0800|docs(arc): record keep interaction slice and packaged state result
+a22cc7a2325c9e9c40024149436eb63f27bee67b|2026-09-19 21:27:42 +0800|docs: normalize phase4 result formatting
+3bca3db56a5993813804cd5246a1e9ee399c225a|2026-09-19 21:27:04 +0800|docs: track smoke evolution dice phase4 summary
+89cf044a6ec590358422f24834f3a325ffcf8d27|2026-09-19 21:26:35 +0800|docs: persist smoke evolution dice phase4 result
+cbbdcef97fa05fbb1c5eccfdcadc74296c22c97f|2026-09-19 21:13:33 +0800|docs(arc-bench): record smoke evolution phase4 result
+02492187a853ed9500e671bd1d173237b57a23c5|2026-09-19 21:09:16 +0800|docs: persist smoke evolution phase4 intake
+745e6eedf19b9a5438b9ea74b7bae3960b84a3e2|2026-09-19 21:07:17 +0800|docs: record keep targeted reproduction decisions
+033b3e7eaf8fe443881385509e3acfad7cbdca1d|2026-09-19 20:30:30 +0800|docs: record keep phase4 handoff ack
+ad4d8853aba460b10f59e65eb979cc156182fa32|2026-09-19 20:23:38 +0800|docs: record arc-bench keep run intake
+e0d0c1fef67e5ea38a5ca7c635639d74941d19c9|2026-09-19 16:23:00 +0800|docs: record A0 web bookstack stage5 decision
+d07fe872a49e43cf4029e939b900a4ba93d242ff|2026-09-19 16:18:02 +0800|docs: make phase4 readback filesystem-backed
+45401bfc7dc4a6866bada26b3cbe6e0b74a21d91|2026-09-19 16:14:10 +0800|docs: include phase4 readback summary
+5206588952c506d2a5191af01fc2b26a1fff16fe|2026-09-19 16:13:40 +0800|docs: persist phase4 web bookstack readback
+27eee1d076ab575cf2f40d837b44bf1e34a4eafa|2026-09-19 15:45:36 +0800|docs: bind web bookstack phase4 thread
+e1be24717111154537823a748c84845c7fd52868|2026-09-19 15:44:43 +0800|docs: record arc-bench web bookstack run evidence
+63be91be84f0149174e600be4367a79fdd6bcd25|2026-09-19 12:48:36 +0800|docs(arc-bench): record local phase 5 route candidate
+1474cc2cef6cff895e9c3e23ff0cabd68afefbe2|2026-09-19 12:43:03 +0800|docs: quarantine empty phase4 web thread
+e89064a045ed9406de0d5e212bce608b4bfce44f|2026-09-19 12:36:20 +0800|docs: harden phase4 thread routing and verification
+7dd691293824e919911f8bf00a329fac21a3bba7|2026-09-19 12:27:02 +0800|docs: record arc-bench web keep run evidence
+96975e38505cc95a3a1d0b5fb7303f4f2084196f|2026-09-19 12:22:43 +0800|docs(arc-bench): add phase 5 cross-run decision register
+4576232ea618546520a29f85994cc3950ab1b25e|2026-09-19 11:44:28 +0800|docs: record arc-bench bookstack run evidence
+096d5586a35ec043f5668f6ba83e2e386563e8a3|2026-09-19 11:28:22 +0800|docs: normalize phase4 task thread reuse workflow
+ac94f41bf3ea48530715b782c1a8129df5cec813|2026-09-19 11:04:13 +0800|docs(arc-bench): define phase4 thread workflow
+15ca3e3b376fbd53a0232f5774d32190ecdaf95a|2026-09-19 10:53:26 +0800|docs(arc-bench): record lite keep phase3 evidence
+f58da95ae8d6f08b1c3741f2b9fd18913ca955dd|2026-09-19 02:29:34 +0800|docs(arc-bench): update active phase status
+3b12a7ec71c70854950744651f110259eda62fd3|2026-09-19 02:20:08 +0800|docs(arc-bench): document phase 3-5 workflow
+b4a68a06a189eb918cb6487420ee0ec4ccd9676f|2026-09-18 20:09:28 +0800|docs(arc-bench): close smoke preflight gate
+8e963df45fdcce1795433129095ad069d48c510a|2026-09-18 19:57:20 +0800|docs(arc-bench): bind smoke dice preflight run
+7ba2fe87b6e4e80794c100b531b32989ed1c9704|2026-09-18 00:16:29 +0800|docs(arc-bench): add teammate execution plan
+34dd2f4ff514470646c0b425ccf8e920ad2d54b8|2026-09-18 00:06:07 +0800|docs(arc-bench): add phase 2.5 smoke binding gate
+69a9fe21abb5853c3bb469d5df2a31053f90f211|2026-09-17 23:58:34 +0800|docs(arc-bench): correct baseline provenance
+28cce073a54638f1b6a31be6d196ea70887757ac|2026-09-17 23:24:01 +0800|chore(arcbench): freeze official task snapshot
+3467e44286a81cf0d5d3cda7826429b215573c1e|2026-09-17 22:54:59 +0800|chore(arc-bench): freeze teammate baseline agent

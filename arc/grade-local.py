@@ -9,14 +9,21 @@ out = Path(sys.argv[1]).resolve(); req = sys.argv[2]; port = int(sys.argv[3]) if
 root = Path(__file__).resolve().parent
 specs = root / "public-tests" / req
 grader = root / "local-grader"
+env = os.environ.copy()
+node_bin = os.environ.get("NODE_BIN")
+if node_bin:
+    env["PATH"] = node_bin + os.pathsep + env["PATH"]
+npm = shutil.which("npm.cmd", path=env.get("PATH")) or shutil.which("npm", path=env.get("PATH")) or "npm"
+npx = shutil.which("npx.cmd", path=env.get("PATH")) or shutil.which("npx", path=env.get("PATH")) or "npx"
 if not (grader / "node_modules" / "@playwright").exists():
     grader.mkdir(exist_ok=True)
-    subprocess.run("npm init -y >/dev/null && npm install --no-audit --no-fund @playwright/test && npx playwright install chromium", cwd=grader, env=env, shell=True, check=True)
-env = os.environ.copy(); env["PATH"] = os.environ.get("NODE_BIN", "/opt/homebrew/opt/node@24/bin") + ":" + env["PATH"]
+    subprocess.run([npm, "init", "-y"], cwd=grader, env=env, stdout=subprocess.DEVNULL, check=True)
+    subprocess.run([npm, "install", "--no-audit", "--no-fund", "@playwright/test"], cwd=grader, env=env, check=True)
+    subprocess.run([npx, "playwright", "install", "chromium"], cwd=grader, env=env, check=True)
 def sh(cmd, cwd, **kw):
-    r = subprocess.run(cmd, cwd=cwd, env=env, shell=True, capture_output=True, text=True, **kw)
+    r = subprocess.run(cmd, cwd=cwd, env=env, shell=False, capture_output=True, text=True, **kw)
     return r.returncode, (r.stdout + r.stderr)[-1500:]
-for step, cwd in (("npm install --no-audit --no-fund && npm run build", out/"frontend"), ("npm install --no-audit --no-fund", out/"backend")):
+for step, cwd in (([npm, "install", "--no-audit", "--no-fund"], out/"frontend"), ([npm, "run", "build"], out/"frontend"), ([npm, "install", "--no-audit", "--no-fund"], out/"backend")):
     rc, log = sh(step, cwd)
     print(f"[grade] {cwd.name}: {step!r} -> {rc}"); 
     if rc: print(log); sys.exit(2)
@@ -25,13 +32,23 @@ for step, cwd in (("npm install --no-audit --no-fund && npm run build", out/"fro
 def git(*args): subprocess.run(["git", "-C", str(out), *args], capture_output=True)
 git("add", "-A")
 benv = dict(env, PORT=str(port))
-srv = subprocess.Popen("npm run start", cwd=out/"backend", env=benv, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, preexec_fn=os.setsid)
+popen_kwargs = {"stdout": subprocess.PIPE, "stderr": subprocess.STDOUT, "text": True}
+if os.name == "nt":
+    popen_kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
+else:
+    popen_kwargs["preexec_fn"] = os.setsid
+srv = subprocess.Popen([npm, "run", "start"], cwd=out/"backend", env=benv, shell=False, **popen_kwargs)
 for _ in range(60):
     with socket.socket() as s:
         if s.connect_ex(("127.0.0.1", port)) == 0: break
     time.sleep(0.5)
 else:
-    print("[grade] backend never bound", port); os.killpg(srv.pid, signal.SIGTERM); sys.exit(3)
+    print("[grade] backend never bound", port)
+    if os.name == "nt":
+        srv.terminate()
+    else:
+        os.killpg(srv.pid, signal.SIGTERM)
+    sys.exit(3)
 work = grader / "run" / f"{req}-{out.name}"
 if work.exists(): shutil.rmtree(work)
 shutil.copytree(specs, work / "tests")
@@ -40,9 +57,11 @@ shutil.copytree(specs, work / "tests")
     "export default defineConfig({ testDir: './tests', timeout: 60000, retries: 0, workers: 4, reporter: [['json', { outputFile: 'report.json' }], ['line']], use: { headless: true, baseURL: process.env.E2E_BASE_URL } });\n")
 tenv = dict(env, E2E_BASE_URL=f"http://127.0.0.1:{port}")
 t0 = time.time()
-r = subprocess.run(["npx", "playwright", "test", "-c", str(work/"playwright.config.ts")], cwd=grader, env=tenv, capture_output=True, text=True)
-os.killpg(srv.pid, signal.SIGTERM)
-git("checkout", "--", "."); git("clean", "-fdq", "-e", "node_modules", "-e", "dist", "--", "frontend", "backend")
+r = subprocess.run([npx, "playwright", "test", "-c", str(work/"playwright.config.ts")], cwd=grader, env=tenv, capture_output=True, text=True)
+if os.name == "nt":
+    srv.terminate()
+else:
+    os.killpg(srv.pid, signal.SIGTERM)
 rep = json.loads((work/"report.json").read_text()) if (work/"report.json").exists() else {}
 def walk(suites):
     for s in suites:
