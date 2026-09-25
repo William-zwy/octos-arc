@@ -1059,7 +1059,8 @@ def inline_spec_text(tests_dir: Path, files: list[str], max_chars: int) -> str:
     return INLINE_SPEC_HEADER + "".join(parts) if parts else ""
 
 
-def locate_acceptance_tests(tree: dict, req_dir: Path, bundle_dir: Path) -> AcceptanceSelection:
+def locate_acceptance_tests(tree: dict, req_dir: Path, bundle_dir: Path,
+                            requirement_path_source: str = "flow.req_dir") -> AcceptanceSelection:
     """Select one hash-verified suite by explicit task key or requirement fingerprint."""
     platform_candidates: list[Path] = []
     env_dir = os.environ.get("ARCBENCH_TESTS_DIR")
@@ -1068,7 +1069,10 @@ def locate_acceptance_tests(tree: dict, req_dir: Path, bundle_dir: Path) -> Acce
     workspace_tests = Path("/workspace/tests")
     if workspace_tests not in platform_candidates:
         platform_candidates.append(workspace_tests)
-    return locate_acceptance_suite(tree, req_dir, bundle_dir, platform_candidates, log)
+    return locate_acceptance_suite(
+        tree, req_dir, bundle_dir, platform_candidates, log,
+        requirement_path_source=requirement_path_source,
+    )
 
 
 def persist_acceptance_identity(destination: Path, audit: dict) -> None:
@@ -1119,6 +1123,7 @@ class Flow:
         self.args = args
         self.output_dir = output_dir
         self.req_dir = req_dir
+        self.requirement_path_source = getattr(args, "requirement_path_source", "flow.req_dir")
         self.web_port = args.web_port
         self.smoke_port = int(os.environ.get("OCTOS_SMOKE_PORT", "3100"))
         if self.smoke_port == self.web_port:
@@ -1161,6 +1166,22 @@ class Flow:
         self.folder_children: dict[str, list[str]] = {}
 
     # -- helpers ----------------------------------------------------------
+    def select_acceptance_tests(self, tree: dict) -> AcceptanceSelection:
+        identity_path = self.output_dir / ".arc" / "acceptance-suite-identity.json"
+        try:
+            selection = locate_acceptance_tests(tree, self.req_dir, BUNDLE_DIR, self.requirement_path_source)
+        except AcceptanceIdentityError as exc:
+            try:
+                persist_acceptance_identity(identity_path, exc.audit)
+            except Exception as audit_error:  # noqa: BLE001
+                log(f"[tests] identity diagnostic persistence failed ({type(audit_error).__name__})")
+            log(f"[tests] {exc.status} {json.dumps(exc.audit, sort_keys=True)}")
+            raise
+        self.tests_dir = selection.path
+        persist_acceptance_identity(identity_path, selection.audit)
+        log(f"[tests] acceptance identity {json.dumps(selection.audit, sort_keys=True)}")
+        return selection
+
     def remaining(self) -> float:
         return self.budget - (time.time() - self.t_start)
 
@@ -2026,16 +2047,7 @@ class Flow:
             self.nodes_to_implement = len([n for n in node_ids if n not in unchanged])
             self.n_nodes = len(ordered)
 
-            identity_path = self.output_dir / ".arc" / "acceptance-suite-identity.json"
-            try:
-                selection = locate_acceptance_tests(tree, self.req_dir, BUNDLE_DIR)
-            except AcceptanceIdentityError as exc:
-                persist_acceptance_identity(identity_path, exc.audit)
-                log(f"[tests] {exc.status} {json.dumps(exc.audit, sort_keys=True)}")
-                raise
-            self.tests_dir = selection.path
-            persist_acceptance_identity(identity_path, selection.audit)
-            log(f"[tests] acceptance identity {json.dumps(selection.audit, sort_keys=True)}")
+            selection = self.select_acceptance_tests(tree)
             specs = sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.spec.ts"))
             self.spec_map, self.aliases = map_specs_to_nodes(specs, node_ids)
             log(f"[tests] {len(specs)} spec files at {self.tests_dir}; mapping "
@@ -2234,6 +2246,11 @@ def main() -> int:
     parser.add_argument("--web-port", type=int,
                         default=int(os.environ.get("ARCBENCH_WEB_PORT", os.environ.get("ARC_WEB_PORT", "3000"))))
     args = parser.parse_args()
+    args.requirement_path_source = (
+        "argv.requirement_path" if args.requirement_path in sys.argv[1:] else
+        "environment.ARCBENCH_TASK_DIR" if os.environ.get("ARCBENCH_TASK_DIR") else
+        "default.requirement_path"
+    )
 
     req_src = Path(args.requirement_path).resolve()
     if args.output_dir:
@@ -2251,7 +2268,7 @@ def main() -> int:
     print(f"[env] OPENAI_API_KEY={'set' if key else '<unset>'}", flush=True)
     print(f"[env] ARCBENCH_TEMPLATE_DIR={os.environ.get('ARCBENCH_TEMPLATE_DIR', '<unset>')}", flush=True)
     print(f"[env] ARCBENCH_TASK_DIR={os.environ.get('ARCBENCH_TASK_DIR', '<unset>')}", flush=True)
-    print(f"[env] argv requirement_path={args.requirement_path}", flush=True)
+    print(f"[env] requirement_path_source={args.requirement_path_source}", flush=True)
     try:
         probe_endpoint()
     except PermanentAuthenticationError as exc:
