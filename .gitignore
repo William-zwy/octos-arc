@@ -66,6 +66,7 @@ test_a2.md
 
 # Agent research output
 *.md
+!HKT/**/*.md
 # Persistent project memory and teammate-facing execution plan for ARC-Bench.
 !docs/ARC_BENCH_HACKATHON_PROJECT_MEMORY.md
 !docs/ARC_BENCH_HACKATHON_EXECUTION_PLAN.md
