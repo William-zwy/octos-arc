@@ -805,7 +805,7 @@ Architecture (the runner depends on this EXACT layout; violation = 0 score):
 """
 
 VERIFY_FULL = """\
-Verify briefly before you finish — the harness runs the official acceptance tests for this node right after your turn and hands you the failures, so do not build your own test suite: `npm run build` in frontend/, start the backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, one curl per new endpoint (one success, one error case), stop the server.
+Verify incrementally as you implement — test every major UI component or API endpoint immediately after writing it (every 5-10 minutes of work). The harness runs the official acceptance tests for this node right after your turn and hands you the failures, so do not build your own test suite: `npm run build` in frontend/, start the backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, one curl per new endpoint (one success, one error case), stop the server. Run verification early and often to catch mistakes before running out of time.
 """
 
 VERIFY_MINIMAL = """\
@@ -848,6 +848,17 @@ NODE_PROMPT = """\
 {node_spec}
 {design}{ancestors}
 {tests}
+
+CRITICAL - Before writing any code:
+1. Read and analyze the test helper functions (like renameLabel, clickNamed, etc.) to understand the EXACT DOM structure and accessibility labels expected
+2. List all required HTML elements with their roles, names, and ARIA labels that the test will query
+3. Verify your understanding: describe what UI the test expects to see
+
+While implementing:
+- Test every major component immediately after writing it (every 5-10 minutes of work)
+- If a test fails, read the error message carefully and adjust your implementation strategy
+- Do not write large amounts of code without verification
+
 {ui}{performance}
 {verify}
 """ + PORT_RULES
@@ -878,6 +889,12 @@ REPAIR_PROMPT = """\
 The official acceptance tests for requirement node {node_id} just ran against your app: {passed}/{total} passed. Failing tests (Feature / where it failed / what was observed / the last steps before failure):
 {failures}
 {corrections}{slow}{sources}
+
+CRITICAL - Before attempting repairs:
+1. If this is your second repair attempt and the error is similar to the first, your approach is fundamentally wrong - read the test code carefully and implement a COMPLETELY DIFFERENT solution
+2. Analyze the test helper functions to understand what DOM structure and accessibility labels are expected
+3. Check if you misunderstood the requirement (e.g., "Edit labels" means editing label definitions, NOT assigning labels to notes)
+
 Fix frontend/ and/or backend/ so these tests pass without breaking the passing ones. You have about 10 requests: in the FIRST response read at most two files (only the ones you will change), in the SECOND response emit every edit_file/write_file call together, then finish — do not read more files afterwards. No shell commands. The harness rebuilds and re-runs the official tests right after your turn. The spec files are read-only ground truth.
 """ + CREATE_RESULT_CONTRACT + PORT_RULES
 
@@ -1002,14 +1019,14 @@ class Flow:
         self.smoke_port = int(os.environ.get("OCTOS_SMOKE_PORT", "3100"))
         if self.smoke_port == self.web_port:
             self.smoke_port += 1
-        self.node_timeout = int(os.environ.get("OCTOS_NODE_TIMEOUT", "1200"))
+        self.node_timeout = int(os.environ.get("OCTOS_NODE_TIMEOUT", "1200"))  # Keep baseline for reliability - success rate > speed
         self.design_timeout = int(os.environ.get("OCTOS_DESIGN_TIMEOUT", "420"))
         self.budget = int(os.environ["OCTOS_TIME_BUDGET"]) if os.environ.get("OCTOS_TIME_BUDGET") else 3600
         self.budget_explicit = bool(os.environ.get("OCTOS_TIME_BUDGET"))
         # keep-local-3 (workflow C): with 480 s/node, 16 of 17 implement/repair
         # turns were cut at 283 s; Web nodes need 10-20 min of implementation.
         self.seconds_per_node = int(os.environ.get("OCTOS_SECONDS_PER_NODE", "1500"))
-        self.min_repair_seconds = int(os.environ.get("OCTOS_MIN_REPAIR_SECONDS", "300"))
+        self.min_repair_seconds = int(os.environ.get("OCTOS_MIN_REPAIR_SECONDS", "300"))  # Keep baseline for more repair opportunities
         self.node_budget_cap = int(os.environ.get("OCTOS_NODE_TIME_BUDGET", "1500"))
         self.repair_rounds = int(os.environ.get("OCTOS_REPAIR_ROUNDS", "5"))
         self.design_enabled = os.environ.get("OCTOS_DESIGN_TURN", "1") != "0"
@@ -1019,7 +1036,7 @@ class Flow:
         # "separate": own read-only turn before implementing; "inline": the
         # implement turn writes .arc/design/<node>.json first, then codes.
         self.design_mode = os.environ.get("OCTOS_DESIGN_MODE", "inline")
-        self.implement_fraction = float(os.environ.get("OCTOS_IMPLEMENT_FRACTION", "0.6"))
+        self.implement_fraction = float(os.environ.get("OCTOS_IMPLEMENT_FRACTION", "0.6"))  # Keep baseline - quality over speed
         self.alias_states = os.environ.get("OCTOS_ARC_ALIAS_SPEC_IDS", "1") != "0"
         self.perf_contract = os.environ.get("OCTOS_PERF_CONTRACT", "1") != "0"
         self.guard_enabled = os.environ.get("OCTOS_GUARD", "1") != "0"
@@ -1472,6 +1489,13 @@ class Flow:
             slow = summary.slow(int(os.environ.get("OCTOS_ARC_SLOW_MS", "3000")))
             slow_text = ("Also, these tests took over 3 s on this fast machine and will exceed the grader's "
                          "10 s budget: " + "; ".join(slow) + ". Remove the latency.\n" + self.perf_text()) if slow else ""
+
+            # Time budget awareness in repair prompts
+            time_pressure_repair = ""
+            if left < 400:
+                time_pressure_repair = f"\n⚠️ CRITICAL: Only {left:.0f}s remaining. Make the most targeted fix possible.\n"
+            elif left < 600:
+                time_pressure_repair = f"\n⏱️ TIME LIMITED: {left:.0f}s left. Focus on the root cause only.\n"
             if passed == 0 and rebuild_prompt is not None and not rewrite_used \
                     and os.environ.get("OCTOS_ARC_REWRITE_ON_ZERO", "1") != "0":
                 rewrite_used = True
@@ -1487,6 +1511,7 @@ class Flow:
                                           failures=failures or "(no detail)", corrections=self.corrections_text(),
                                           slow=slow_text, smoke=self.smoke_port, port=self.web_port,
                                           sources=self.sources_text())
+            prompt = time_pressure_repair + prompt
             if self.codegen_mode():
                 self.codegen_turn(prompt + "\nReturn every file you change as a complete file block.",
                                   min(self.node_timeout, left), f"{node_id} repair {attempt + 1}/{self.repair_rounds}")
@@ -1575,11 +1600,19 @@ class Flow:
             preamble = NODE_PREAMBLE_EXTEND.format(node_id=node_id)
         else:  # single-node tree without a skeleton turn: create the app in this turn
             preamble = NODE_PREAMBLE_CREATE.format(node_id=node_id, req_dir=self.req_dir, port=self.web_port)
+        # Time budget awareness: inject remaining time context
+        time_left = deadline - time.time()
+        time_pressure_hint = ""
+        if time_left < 600:
+            time_pressure_hint = f"\n⚠️ TIME CONSTRAINT: You have only {time_left:.0f}s remaining for this node. Implement the minimum viable solution that passes tests. Focus on core functionality only.\n"
+        elif time_left < 900:
+            time_pressure_hint = f"\n⏱️ TIME AWARENESS: You have {time_left:.0f}s for this node. Work efficiently and test frequently.\n"
+
         prompt = NODE_PROMPT.format(node_id=node_id, node_spec=describe_node(node), design=design_text,
                                     preamble=preamble, ancestors=self.ancestors_text(node_id, ordered),
                                     tests=self.tests_prompt_for(node_id), smoke=self.smoke_port, port=self.web_port,
                                     performance=self.perf_text(), ui=self.ui_contract(), verify=self.verify_text(total))
-        prompt = self.corrections_text() + prompt
+        prompt = self.corrections_text() + time_pressure_hint + prompt
         codegen_prompt = None
         implement_timeout = min(self.node_timeout, self.implement_fraction * node_budget, deadline - time.time())
         if self.codegen_mode():
