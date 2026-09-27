@@ -124,6 +124,54 @@ class FailureNormalizationTests(unittest.TestCase):
         self.assertEqual(re.sub(r"\d+", "#", a), re.sub(r"\d+", "#", b))
 
 
+class CoreRegressionTests(unittest.TestCase):
+    """Cross-node breakage travels along shared UI/data surface, not the
+    declared dependency edges. keep-0927 REQ-2.4 (Update Note) passed alone
+    (4/4) but a later editor-touching node (2.5.x/2.7.x) rewrote the note card
+    and broke the 'Note content' textbox; dep-regression never re-ran 2.4
+    because 2.4 was not a *declared* ancestor. acceptance_specs_for() must
+    backfill the remaining regression budget with the earliest already-passed
+    node specs so a foundational spec is protected on every later node."""
+
+    def _flow(self):
+        import argparse
+        from pathlib import Path
+        flow = m.Flow(argparse.Namespace(web_port=3000), Path("."), Path("."))
+        # 3 nodes: A (base), B (editor CRUD, NOT declared as C's dependency), C.
+        flow.ordered_nodes = [
+            {"id": "A", "dependencies": []},
+            {"id": "B", "dependencies": ["A"]},
+            {"id": "C", "dependencies": ["A"]},  # C depends on A only, NOT B
+        ]
+        flow.spec_map = {None: [], "A": ["A.spec.ts"], "B": ["B.spec.ts"], "C": ["C.spec.ts"]}
+        return flow
+
+    def test_should_regress_passed_nonancestor_spec_when_budget_allows(self):
+        import os
+        flow = self._flow()
+        flow.test_verdict = {"A": True, "B": True}  # both built and passed
+        os.environ.pop("OCTOS_ARC_CORE_REGRESSION", None)
+        os.environ.pop("OCTOS_ARC_CORE_REGRESSION_SPECS", None)
+        specs = flow.acceptance_specs_for("C")
+        # B is not a declared ancestor of C, but it passed earlier and the
+        # budget has room, so it must be regressed to catch shared-UI breakage.
+        self.assertIn("B.spec.ts", specs)
+        self.assertIn("C.spec.ts", specs)  # own spec always first
+        self.assertIn("A.spec.ts", specs)  # declared ancestor
+
+    def test_should_not_add_core_regression_when_disabled(self):
+        import os
+        flow = self._flow()
+        flow.test_verdict = {"A": True, "B": True}
+        os.environ["OCTOS_ARC_CORE_REGRESSION"] = "0"
+        try:
+            specs = flow.acceptance_specs_for("C")
+        finally:
+            os.environ.pop("OCTOS_ARC_CORE_REGRESSION", None)
+        self.assertNotIn("B.spec.ts", specs)  # B is not a declared ancestor
+        self.assertIn("A.spec.ts", specs)      # A still comes in as ancestor
+
+
 class RewriteBudgetTests(unittest.TestCase):
     """A full rewrite re-implements the whole node; it must get the same
     request budget as the implement turn, not the hardcoded 20 that starved

@@ -1236,15 +1236,55 @@ class Flow:
         limit = max(0, int(os.environ.get("OCTOS_ARC_DEP_REGRESSION_MAX_SPECS", "12")))
         selected = list(current)
         seen = set(selected)
+
+        def take(spec: str) -> bool:
+            """Add one regression spec; return False once the budget is full."""
+            if spec in seen:
+                return True
+            if len(selected) - len(current) >= limit:
+                return False
+            selected.append(spec)
+            seen.add(spec)
+            return True
+
         for ancestor in ancestors_of(node_id, ordered):
             for spec in self.spec_map.get(ancestor) or []:
-                if spec in seen:
-                    continue
-                if len(selected) - len(current) >= limit:
+                if not take(spec):
                     return selected
-                selected.append(spec)
-                seen.add(spec)
+        # Backfill remaining budget with the earliest already-passed, non-ancestor
+        # nodes. Cross-node breakage travels along shared UI/data surface, not the
+        # declared dependency edges: keep-0927 REQ-2.4 (Update Note) passed alone
+        # but a later editor node rewrote the note card and broke it, and 2.4 was
+        # never a *declared* ancestor so dep-regression missed it until the full
+        # suite. The earliest passed nodes build the app shell + CRUD core every
+        # later node sits on, so regressing them guards that shared surface.
+        for spec in self.core_regression_specs(node_id, ordered):
+            if not take(spec):
+                break
         return selected
+
+    def core_regression_specs(self, node_id: str, ordered: list[dict]) -> list[str]:
+        """Foundational specs to regress on every node, beyond declared ancestors.
+        OCTOS_ARC_CORE_REGRESSION=0 disables it. OCTOS_ARC_CORE_REGRESSION_SPECS
+        (comma/space-separated spec basenames) pins an explicit set; otherwise the
+        earliest already-passed nodes (build order) stand in for the app's core."""
+        if os.environ.get("OCTOS_ARC_CORE_REGRESSION", "1") == "0":
+            return []
+        pinned = os.environ.get("OCTOS_ARC_CORE_REGRESSION_SPECS", "")
+        if pinned.strip():
+            wanted = {p.strip() for p in re.split(r"[,\s]+", pinned) if p.strip()}
+            out = []
+            for specs in self.spec_map.values():
+                for spec in specs or []:
+                    if spec in wanted or os.path.basename(spec) in wanted:
+                        out.append(spec)
+            return out
+        passed = {n for n, v in self.test_verdict.items() if v is True and n != node_id}
+        order = {str(n.get("id")): i for i, n in enumerate(ordered)}
+        out = []
+        for nid in sorted(passed, key=lambda n: order.get(n, 1 << 30)):
+            out.extend(self.spec_map.get(nid) or [])
+        return out
 
     def implement_request_budget(self) -> int:
         """Per-turn request cap for implement AND full-rewrite turns. A rewrite
