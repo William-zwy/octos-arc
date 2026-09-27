@@ -36,7 +36,11 @@ class OctosStdioSession:
         self.proc = subprocess.Popen(
             cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, text=True, cwd=self.cwd, env=env,
-            errors="replace", bufsize=1,
+            # octos emits UTF-8; without an explicit encoding text=True decodes
+            # with the platform default (gbk on zh-CN Windows) and the reader
+            # thread dies on the first non-ASCII byte. Linux defaults to UTF-8
+            # so this is a no-op there.
+            encoding="utf-8", errors="replace", bufsize=1,
         )
         self._pending: dict[str, queue.Queue] = {}
         self._pending_lock = threading.Lock()

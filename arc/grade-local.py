@@ -21,7 +21,8 @@ if not (grader / "node_modules" / "@playwright").exists():
     subprocess.run([npm, "install", "--no-audit", "--no-fund", "@playwright/test"], cwd=grader, env=env, check=True)
     subprocess.run([npx, "playwright", "install", "chromium"], cwd=grader, env=env, check=True)
 def sh(cmd, cwd, **kw):
-    r = subprocess.run(cmd, cwd=cwd, env=env, shell=False, capture_output=True, text=True, **kw)
+    r = subprocess.run(cmd, cwd=cwd, env=env, shell=False, capture_output=True, text=True,
+                       encoding="utf-8", errors="replace", **kw)
     return r.returncode, (r.stdout + r.stderr)[-1500:]
 for step, cwd in (([npm, "install", "--no-audit", "--no-fund"], out/"frontend"), ([npm, "run", "build"], out/"frontend"), ([npm, "install", "--no-audit", "--no-fund"], out/"backend")):
     rc, log = sh(step, cwd)
@@ -57,12 +58,12 @@ shutil.copytree(specs, work / "tests")
     "export default defineConfig({ testDir: './tests', timeout: 60000, retries: 0, workers: 4, reporter: [['json', { outputFile: 'report.json' }], ['line']], use: { headless: true, baseURL: process.env.E2E_BASE_URL } });\n")
 tenv = dict(env, E2E_BASE_URL=f"http://127.0.0.1:{port}")
 t0 = time.time()
-r = subprocess.run([npx, "playwright", "test", "-c", str(work/"playwright.config.ts")], cwd=grader, env=tenv, capture_output=True, text=True)
+r = subprocess.run([npx, "playwright", "test", "-c", str(work/"playwright.config.ts")], cwd=grader, env=tenv, capture_output=True, text=True, encoding="utf-8", errors="replace")
 if os.name == "nt":
     srv.terminate()
 else:
     os.killpg(srv.pid, signal.SIGTERM)
-rep = json.loads((work/"report.json").read_text()) if (work/"report.json").exists() else {}
+rep = json.loads((work/"report.json").read_text(encoding="utf-8")) if (work/"report.json").exists() else {}
 def walk(suites):
     for s in suites:
         for sp in s.get("specs", []):

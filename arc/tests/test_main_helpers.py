@@ -124,6 +124,35 @@ class FailureNormalizationTests(unittest.TestCase):
         self.assertEqual(re.sub(r"\d+", "#", a), re.sub(r"\d+", "#", b))
 
 
+class RewriteBudgetTests(unittest.TestCase):
+    """A full rewrite re-implements the whole node; it must get the same
+    request budget as the implement turn, not the hardcoded 20 that starved
+    REQ-2.5.1's rewrite (keep-0927-v2_1-f: 900s implement timeout -> rewrite
+    forced to finish at 20 requests -> 0/4)."""
+
+    def _flow(self):
+        import argparse
+        from pathlib import Path
+        return m.Flow(argparse.Namespace(web_port=3000), Path("."), Path("."))
+
+    def test_should_give_rewrite_unlimited_requests_on_multi_node_tasks(self):
+        import os
+        flow = self._flow()
+        flow.n_nodes = 32
+        os.environ.pop("OCTOS_ARC_IMPLEMENT_REQUESTS", None)
+        os.environ.pop("OCTOS_ARC_REWRITE_REQUESTS", None)
+        # 0 == uncapped, matching the implement turn on a 32-node task.
+        self.assertEqual(flow.implement_request_budget(), 0)
+
+    def test_should_cap_rewrite_like_implement_on_small_tasks(self):
+        import os
+        flow = self._flow()
+        flow.n_nodes = 1
+        os.environ.pop("OCTOS_ARC_IMPLEMENT_REQUESTS", None)
+        os.environ.pop("OCTOS_ARC_REWRITE_REQUESTS", None)
+        self.assertEqual(flow.implement_request_budget(), 20)
+
+
 class CodegenPromptTests(unittest.TestCase):
     def test_should_format_without_placeholder_errors_and_keep_build_command(self):
         import main as m
@@ -195,6 +224,105 @@ class AlreadyPassingProbeTests(unittest.TestCase):
                    "b.spec.ts": SimpleNamespace(error=None, total=2, passed=1, all_passed=False)}
         flow.run_specs = lambda specs, **kw: results[specs[0]]
         self.assertEqual(flow.already_passing_nodes(["REQ-1", "REQ-2", "REQ-3"]), {"REQ-1"})
+
+
+class ApplicationContractTests(unittest.TestCase):
+    def test_should_include_shared_contract_and_bounded_dependency_specs(self):
+        import argparse
+        import json
+        import os
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "out"
+            flow = m.Flow(argparse.Namespace(web_port=1), out, Path(tmp) / "req")
+            ordered = [
+                node("REQ-1", "base"),
+                node("REQ-2", "middle", ["REQ-1"]),
+                node("REQ-3", "leaf", ["REQ-2"]),
+            ]
+            flow.spec_map = {
+                "REQ-1": ["REQ-1.spec.ts"],
+                "REQ-2": ["REQ-2.spec.ts"],
+                "REQ-3": ["REQ-3.spec.ts"],
+                None: [],
+            }
+            flow.designs["REQ-1"] = {
+                "routes": [{"method": "GET", "path": "/api/items"}],
+                "pages": [{"path": "/", "elements": [{"role": "heading", "name": "Items"}]}],
+                "data_model": {"items": {"name": "string"}},
+            }
+            flow.initialize_application_contract({"id": "ROOT"}, ordered)
+            self.assertEqual(flow.acceptance_specs_for("REQ-3"), [
+                "REQ-3.spec.ts", "REQ-1.spec.ts", "REQ-2.spec.ts"])
+            os.environ["OCTOS_ARC_DEP_REGRESSION_MAX_SPECS"] = "1"
+            try:
+                self.assertEqual(flow.acceptance_specs_for("REQ-3"), [
+                    "REQ-3.spec.ts", "REQ-1.spec.ts"])
+            finally:
+                os.environ.pop("OCTOS_ARC_DEP_REGRESSION_MAX_SPECS", None)
+            payload = json.loads((out / ".arc" / "application-contract.json").read_text())
+            self.assertIn("REQ-1", payload["requirements"][0]["id"])
+            self.assertEqual(payload["routes"]["GET /api/items"], ["REQ-1"])
+            self.assertEqual(payload["acceptance_ownership"]["REQ-3.spec.ts"], "REQ-3")
+            self.assertIn("invariants", payload)
+
+    def test_should_inject_only_own_spec_while_running_ancestor_regression(self):
+        import argparse
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "out"
+            tests = Path(tmp) / "tests"
+            tests.mkdir()
+            (tests / "REQ-1.spec.ts").write_text("test('base', () => { /* BASE_BODY */ });")
+            (tests / "REQ-2.spec.ts").write_text("test('leaf', () => { /* LEAF_BODY */ });")
+            flow = m.Flow(argparse.Namespace(web_port=3000), out, Path(tmp) / "req")
+            flow.tests_dir = tests
+            flow.spec_map = {"REQ-1": ["REQ-1.spec.ts"], "REQ-2": ["REQ-2.spec.ts"], None: []}
+            ordered = [node("REQ-1", "base"), node("REQ-2", "leaf", ["REQ-1"])]
+            flow.initialize_application_contract({"id": "ROOT"}, ordered)
+            # Acceptance still runs the ancestor spec to catch regressions.
+            self.assertEqual(flow.acceptance_specs_for("REQ-2"), ["REQ-2.spec.ts", "REQ-1.spec.ts"])
+            # But the implement/design prompts see only the node's own spec, so
+            # the model stays focused and is not tempted to edit ancestor tests.
+            self.assertIn("LEAF_BODY", flow.spec_bodies("REQ-2"))
+            self.assertNotIn("BASE_BODY", flow.spec_bodies("REQ-2"))
+            prompt = flow.tests_prompt_for("REQ-2")
+            self.assertIn("REQ-2.spec.ts", prompt)
+            self.assertNotIn("REQ-1.spec.ts", prompt)
+
+    def test_should_skip_context_injection_when_no_cross_node_state_exists(self):
+        import argparse
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "out"
+            flow = m.Flow(argparse.Namespace(web_port=1), out, Path(tmp) / "req")
+            flow.spec_map = {"REQ-1": ["REQ-1.spec.ts"], None: []}
+            flow.initialize_application_contract({"id": "ROOT"}, [node("REQ-1", "base")])
+            # skeleton / first node: nothing implemented, passed, or designed yet.
+            self.assertEqual(flow.application_context_text(None), "")
+
+    def test_should_omit_invariants_until_a_node_is_implemented(self):
+        import argparse
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "out"
+            flow = m.Flow(argparse.Namespace(web_port=1), out, Path(tmp) / "req")
+            flow.spec_map = {"REQ-1": ["REQ-1.spec.ts"], "REQ-2": ["REQ-2.spec.ts"], None: []}
+            ordered = [node("REQ-1", "base"), node("REQ-2", "leaf", ["REQ-1"])]
+            flow.designs["REQ-1"] = {"routes": [{"method": "GET", "path": "/api/items"}]}
+            flow.initialize_application_contract({"id": "ROOT"}, ordered)
+            # a design exists but nothing implemented: context flows, invariants do not.
+            text = flow.application_context_text("REQ-2")
+            self.assertIn("APPLICATION CONTRACT", text)
+            self.assertNotIn("invariants", text)
+            # once a node is implemented, the protect-existing-work invariants apply.
+            flow.implemented_nodes.add("REQ-1")
+            flow.update_application_contract()
+            self.assertIn("invariants", flow.application_context_text("REQ-2"))
 
 
 class CodegenManifestTests(unittest.TestCase):

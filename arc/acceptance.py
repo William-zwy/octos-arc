@@ -166,11 +166,16 @@ def summarize_report(report: dict) -> RunSummary:
 
 def nodes_for_failures(results: list[TestOutcome], spec_map: dict) -> dict[str, list[TestOutcome]]:
     """Group failed outcomes by the requirement node that owns their spec file
-    (matched on the spec file's basename); unmapped files land under None."""
-    owner: dict[str, object] = {}
+    (matched on the spec file's basename); ambiguous or unmapped files land
+    under None because they are integration/shared application failures."""
+    owner_candidates: dict[str, set[object]] = {}
     for node_id, paths in spec_map.items():
         for path in paths or []:
-            owner[Path(path).name] = node_id
+            owner_candidates.setdefault(Path(path).name, set()).add(node_id)
+    owner: dict[str, object] = {
+        name: next(iter(nodes)) if len(nodes) == 1 else None
+        for name, nodes in owner_candidates.items()
+    }
     grouped: dict = {}
     for r in results:
         if r.ok:
@@ -252,7 +257,8 @@ def playwright_candidates(bundle_dir: Path, tests_dir: Path | None, output_dir: 
     cands.extend([output_dir, Path("/workspace"), Path("/workspace/tests"), Path("/app"), Path("/runner"),
                   Path("/opt/playwright"), Path("/ms-playwright"), Path.home()])
     try:  # global npm root: /usr/local/lib/node_modules -> parent holds node_modules/
-        root = subprocess.run([_npm(), "root", "-g"], capture_output=True, text=True, timeout=20).stdout.strip()
+        root = subprocess.run([_npm(), "root", "-g"], capture_output=True, text=True,
+                              encoding="utf-8", errors="replace", timeout=20).stdout.strip()
         if root:
             cands.append(Path(root).parent)
     except (OSError, subprocess.TimeoutExpired):
@@ -334,7 +340,8 @@ def ensure_playwright(install_root: Path, log: Callable[[str], None], timeout: i
             log("[acceptance] playwright install timed out")
             return None
         try:
-            r = subprocess.run(cmd, cwd=install_root, env=env, capture_output=True, text=True, timeout=remaining)
+            r = subprocess.run(cmd, cwd=install_root, env=env, capture_output=True, text=True,
+                               encoding="utf-8", errors="replace", timeout=remaining)
         except (subprocess.TimeoutExpired, OSError) as exc:
             log(f"[acceptance] playwright install step {Path(cmd[0]).name} {cmd[1]} failed: {exc}")
             return None
@@ -505,6 +512,7 @@ class AppServer:
     def _run(self, cmd: list[str], cwd: Path, timeout: int) -> tuple[int, str]:
         try:
             r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout,
+                               encoding="utf-8", errors="replace",
                                env=dict(os.environ, **self.env_extra))
         except subprocess.TimeoutExpired:
             return 124, f"timeout after {timeout}s"
@@ -519,7 +527,7 @@ class AppServer:
         for part in (frontend, backend):
             deps = {}
             try:
-                deps = json.loads((part / "package.json").read_text()).get("dependencies") or {}
+                deps = json.loads((part / "package.json").read_text(encoding="utf-8")).get("dependencies") or {}
             except Exception:  # noqa: BLE001
                 pass
             if deps and not (part / "node_modules").is_dir():
@@ -670,7 +678,8 @@ class AcceptanceRunner:
         env.pop("FORCE_COLOR", None)
         t0 = time.time()
         try:
-            r = subprocess.run(cmd, cwd=self.work_dir, env=env, capture_output=True, text=True, timeout=wall_timeout)
+            r = subprocess.run(cmd, cwd=self.work_dir, env=env, capture_output=True, text=True,
+                               encoding="utf-8", errors="replace", timeout=wall_timeout)
             tail = ((r.stdout or "") + (r.stderr or ""))[-2000:]
         except subprocess.TimeoutExpired:
             return RunSummary(error=f"playwright run exceeded {wall_timeout}s")
@@ -683,8 +692,12 @@ class AcceptanceRunner:
                                      f"playwright produced no report (rc={r.returncode}): {_ANSI.sub('', tail)[-600:]}"),
                               killed=killed)
         try:
-            summary = summarize_report(json.loads(report_path.read_text()))
-        except (OSError, json.JSONDecodeError) as exc:
+            # Playwright always writes report.json as UTF-8 (error banners carry
+            # box-drawing chars); read_text() would otherwise default to the
+            # Windows codepage (gbk) and raise UnicodeDecodeError. That error is
+            # a ValueError, not OSError, so catch it too rather than aborting.
+            summary = summarize_report(json.loads(report_path.read_text(encoding="utf-8")))
+        except (OSError, ValueError) as exc:
             return RunSummary(error=f"unreadable playwright report: {exc}")
         summary.stdout_tail = _ANSI.sub("", tail)
         if summary.total == 0:

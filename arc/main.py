@@ -140,6 +140,7 @@ def _reap_stray_processes(tag: str) -> None:
     def _run(cmd: list[str]) -> str:
         try:
             return subprocess.run(cmd, capture_output=True, text=True,
+                                  encoding="utf-8", errors="replace",
                                   timeout=20).stdout
         except (OSError, subprocess.TimeoutExpired) as exc:
             return f"<{cmd[0]} unavailable: {exc}>"
@@ -578,7 +579,7 @@ def run_octos(octos_bin: str, cwd: Path, prompt: str, env: dict, data_dir: Path,
         cmd += ["--profile", os.environ.get("OCTOS_CHAT_PROFILE", "coding")]
     try:
         proc = subprocess.run(cmd, cwd=str(cwd), env=env, capture_output=True, text=True,
-                              timeout=timeout, errors="replace")
+                              timeout=timeout, encoding="utf-8", errors="replace")
     except subprocess.TimeoutExpired:
         return False, f"octos timed out after {timeout}s"
     out = (proc.stdout or "").strip()
@@ -1055,6 +1056,11 @@ class Flow:
         self.pending_corrections: list[str] = []
         self.evolution = False
         self.folder_children: dict[str, list[str]] = {}
+        self.tree: dict = {}
+        self.ordered_nodes: list[dict] = []
+        self.application_contract: dict = {}
+        self.contract_path: Path | None = None
+        self.implemented_nodes: set[str] = set()
 
     # -- helpers ----------------------------------------------------------
     def remaining(self) -> float:
@@ -1088,6 +1094,169 @@ class Flow:
         self.pending_corrections = []
         return text
 
+    def _spec_owner(self, spec_file: str) -> str | None:
+        """Return a unique node owner for a report file, or None for shared/
+        unmapped files. Reports only contain basenames, so ambiguity matters."""
+        name = Path(spec_file or "").name
+        owners = {
+            str(node_id) for node_id, paths in self.spec_map.items()
+            if node_id is not None and any(Path(path).name == name for path in (paths or []))
+        }
+        return next(iter(owners)) if len(owners) == 1 else None
+
+    def _contract_payload(self) -> dict:
+        requirements = []
+        for node in self.ordered_nodes:
+            node_id = str(node.get("id"))
+            requirements.append({
+                "id": node_id,
+                "name": str(node.get("name") or ""),
+                "description": str(node.get("description") or "")[:1200],
+                "dependencies": [str(dep) for dep in (node.get("dependencies") or [])],
+            })
+        module_by_node = {}
+
+        def atomic_ids(node: dict) -> list[str]:
+            children = [child for child in (node.get("children") or []) if isinstance(child, dict)]
+            node_type = str(node.get("type") or "").upper()
+            if node_type == "ATOMIC" or (not children and node_type != "FOLDER"):
+                return [str(node.get("id"))]
+            ids = []
+            for child in children:
+                ids.extend(atomic_ids(child))
+            return ids
+
+        for module in (self.tree.get("children") or []) if isinstance(self.tree, dict) else []:
+            if not isinstance(module, dict):
+                continue
+            label = str(module.get("name") or module.get("id") or "root")
+            for node_id in atomic_ids(module):
+                module_by_node[node_id] = label
+        route_owners: dict[str, list[str]] = {}
+        pages: dict[str, list[dict]] = {}
+        data_models: dict[str, object] = {}
+        designs = {}
+        for node_id, design in self.designs.items():
+            if not isinstance(design, dict):
+                continue
+            slim = {key: design[key] for key in ("routes", "pages", "data_model", "files", "notes")
+                    if key in design}
+            designs[node_id] = slim
+            for route in design.get("routes") or []:
+                if not isinstance(route, dict):
+                    continue
+                path = str(route.get("path") or "")
+                method = str(route.get("method") or "GET").upper()
+                if path:
+                    route_owners.setdefault(f"{method} {path}", []).append(node_id)
+            if design.get("pages"):
+                pages[node_id] = design["pages"]
+            if design.get("data_model"):
+                data_models[node_id] = design["data_model"]
+        ownership = {}
+        for node_id, paths in self.spec_map.items():
+            owner = str(node_id) if node_id is not None else "integration/shared"
+            for path in paths or []:
+                ownership[str(path)] = owner
+        return {
+            "version": 1,
+            "requirements": requirements,
+            "module_by_node": module_by_node,
+            "implemented_nodes": sorted(self.implemented_nodes),
+            "passed_nodes": sorted(node_id for node_id, verdict in self.test_verdict.items() if verdict is True),
+            "routes": {key: sorted(set(value)) for key, value in sorted(route_owners.items())},
+            "pages": pages,
+            "data_models_by_node": data_models,
+            "designs": designs,
+            "source_listing": source_listing(self.output_dir, limit=80),
+            "acceptance_ownership": ownership,
+            "invariants": [
+                "Preserve routes, accessible labels, and data owned by already implemented nodes.",
+                "When extending a shared server, keep every existing route reachable and return JSON errors instead of crashing.",
+                "Use one coherent data model across dependent nodes; do not create duplicate stores for the same entity.",
+                "Keep browser sessions isolated unless the requirement explicitly requires shared state.",
+            ],
+        }
+
+    def update_application_contract(self) -> None:
+        """Persist cross-node context owned by the harness, not by the model."""
+        if self.contract_path is None:
+            self.contract_path = self.output_dir / ".arc" / "application-contract.json"
+        try:
+            self.contract_path.parent.mkdir(parents=True, exist_ok=True)
+            self.application_contract = self._contract_payload()
+            self.contract_path.write_text(
+                json.dumps(self.application_contract, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8")
+        except OSError as exc:
+            log(f"[contract] could not write {self.contract_path}: {exc}")
+
+    def initialize_application_contract(self, tree: dict, ordered: list[dict]) -> None:
+        self.tree = tree
+        self.ordered_nodes = list(ordered)
+        self.contract_path = self.output_dir / ".arc" / "application-contract.json"
+        self.update_application_contract()
+
+    def application_context_text(self, node_id: str | None = None) -> str:
+        if not self.application_contract:
+            return ""
+        payload = dict(self.application_contract)
+        # Skeleton and the first node carry no cross-node state: nothing is
+        # implemented, passed, or designed yet. Injecting the contract there is
+        # pure token cost and its "protect already implemented nodes" invariants
+        # are misleading, so keep the turn lean until real state exists.
+        if not (payload.get("implemented_nodes") or payload.get("passed_nodes")
+                or payload.get("designs")):
+            return ""
+        # Invariants describe how to protect already-implemented work; they only
+        # apply once a node has actually been implemented.
+        if not payload.get("implemented_nodes"):
+            payload.pop("invariants", None)
+        payload["current_node"] = node_id
+        payload["source_listing"] = str(payload.get("source_listing") or "")[:4000]
+        text = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+        if len(text) > 14000:
+            payload["designs"] = {}
+            payload["pages"] = {}
+            payload["source_listing"] = str(payload.get("source_listing") or "")[:1800]
+            payload["requirements"] = [
+                {**req, "description": str(req.get("description") or "")[:300]}
+                for req in payload.get("requirements") or []
+            ]
+            text = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+        return ("HARNESS-MAINTAINED APPLICATION CONTRACT (read-only; do not edit this file directly):\n"
+                + text + "\n\n")
+
+    def acceptance_specs_for(self, node_id: str, ordered: list[dict] | None = None) -> list[str]:
+        """Run the node's own specs plus a bounded set from its dependencies."""
+        current = list(self.spec_map.get(node_id) or [])
+        if not current or os.environ.get("OCTOS_ARC_DEP_REGRESSION", "1") == "0":
+            return current
+        ordered = ordered or self.ordered_nodes
+        limit = max(0, int(os.environ.get("OCTOS_ARC_DEP_REGRESSION_MAX_SPECS", "12")))
+        selected = list(current)
+        seen = set(selected)
+        for ancestor in ancestors_of(node_id, ordered):
+            for spec in self.spec_map.get(ancestor) or []:
+                if spec in seen:
+                    continue
+                if len(selected) - len(current) >= limit:
+                    return selected
+                selected.append(spec)
+                seen.add(spec)
+        return selected
+
+    def implement_request_budget(self) -> int:
+        """Per-turn request cap for implement AND full-rewrite turns. A rewrite
+        re-implements the whole node, so it must share the implement budget:
+        multi-node tasks are uncapped (0), small tasks keep the 20 cap. The old
+        code hardcoded 20 at the rewrite call site, so a 32-node task capped its
+        rewrite at 20 requests while the implement it was rescuing ran uncapped —
+        the rewrite was force-finished half-written (keep-0927-v2_1-f REQ-2.5.1).
+        OCTOS_ARC_REWRITE_REQUESTS overrides the rewrite budget alone."""
+        return int(os.environ.get("OCTOS_ARC_IMPLEMENT_REQUESTS",
+                                  "20" if self.minimal_mode(getattr(self, "n_nodes", 99)) else "0"))
+
     def turn(self, prompt: str, timeout: int, label: str, expect_verification: bool = True,
              request_budget: int | None = None) -> tuple[bool, str]:
         monitor = TurnMonitor(self.protected_prefixes(), expect_verification=expect_verification,
@@ -1101,8 +1270,8 @@ class Flow:
             is_implement = label.endswith(" implement") or label.startswith("skeleton")
             proxy.mode = impl_mode if (impl_mode and is_implement and self.minimal_mode(getattr(self, "n_nodes", 99))) else base_mode
             if request_budget is None:
-                request_budget = int(os.environ.get("OCTOS_ARC_REPAIR_REQUESTS", "10")) if "repair" in label else \
-                    int(os.environ.get("OCTOS_ARC_IMPLEMENT_REQUESTS", "20" if self.minimal_mode(getattr(self, "n_nodes", 99)) else "0"))
+                request_budget = int(os.environ.get("OCTOS_ARC_REPAIR_REQUESTS", "10")) if "repair" in label \
+                    else self.implement_request_budget()
             proxy.begin_turn(request_budget)
         t0 = time.time()
         ok, text = self.driver.run(prompt, max(60, int(timeout)), monitor)
@@ -1197,7 +1366,10 @@ class Flow:
         """Just the spec file contents for a node (codegen prompts)."""
         if not self.tests_dir:
             return "(none)"
-        files = list(self.spec_map.get(node_id) or [])
+        # Inject only the node's own spec. Ancestor specs are still RUN for
+        # regression (acceptance_specs_for), but injecting their bodies here
+        # scatters the model's attention and tempts it to edit ancestor tests.
+        files = list(self.spec_map.get(node_id) or []) if node_id else []
         files += sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.ts")
                         if not p.name.endswith(".spec.ts") and str(p.relative_to(self.tests_dir)) not in files)
         parts = []
@@ -1221,7 +1393,8 @@ class Flow:
                     f"({', '.join(support[:10]) or 'none'}) and at most two spec files to learn the base URL, "
                     f"navigation and header conventions; do not implement the features yet.\n"
                     + acceptance_tests_prompt(self.tests_dir, self.web_port, self.smoke_port, []).split("\n", 1)[-1])
-        files = list(self.spec_map.get(node_id) or [])
+        # Own spec only for the prompt; ancestor regression is run, not injected.
+        files = list(self.spec_map.get(node_id) or []) if node_id else []
         support = sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.ts")
                          if not p.name.endswith(".spec.ts"))
         if not files:  # node without its own spec: show everything
@@ -1404,7 +1577,10 @@ class Flow:
         try:
             for r in summary.results:
                 test_id = re.sub(r"[^A-Za-z0-9._-]+", "-", r.title)[:120]
-                self.runtime.traceability.upsert_test(test_id=test_id, req_id=node_id, type="e2e",
+                owner = self._spec_owner(r.file)
+                if owner is None:
+                    continue
+                self.runtime.traceability.upsert_test(test_id=test_id, req_id=owner, type="e2e",
                                                       file_path=r.file or None, passed=r.ok, emit_event=False)
         except Exception as exc:  # noqa: BLE001
             log(f"[trace] test rows not recorded: {exc}")
@@ -1504,10 +1680,12 @@ class Flow:
                 if self.codegen_mode():
                     self.codegen_turn(prompt, min(self.node_timeout, left), f"{node_id} rewrite (repair {attempt + 1})")
                 else:
+                    rewrite_budget = int(os.environ["OCTOS_ARC_REWRITE_REQUESTS"]) \
+                        if os.environ.get("OCTOS_ARC_REWRITE_REQUESTS") else self.implement_request_budget()
                     self.turn(prompt, min(self.node_timeout, left), f"{node_id} rewrite (repair {attempt + 1})",
-                              request_budget=int(os.environ.get("OCTOS_ARC_IMPLEMENT_REQUESTS", "20")))
+                              request_budget=rewrite_budget)
                 continue
-            prompt = REPAIR_PROMPT.format(node_id=node_id, passed=passed, total=summary.total,
+            prompt = self.application_context_text(node_id) + REPAIR_PROMPT.format(node_id=node_id, passed=passed, total=summary.total,
                                           failures=failures or "(no detail)", corrections=self.corrections_text(),
                                           slow=slow_text, smoke=self.smoke_port, port=self.web_port,
                                           sources=self.sources_text())
@@ -1525,7 +1703,7 @@ class Flow:
     # -- per node ---------------------------------------------------------
     def design(self, node: dict, ordered: list[dict], deadline: float) -> dict | None:
         node_id = str(node.get("id"))
-        prompt = DESIGN_PROMPT.format(node_id=node_id, node_spec=describe_node(node),
+        prompt = self.application_context_text(node_id) + DESIGN_PROMPT.format(node_id=node_id, node_spec=describe_node(node),
                                       ancestors=self.ancestors_text(node_id, ordered),
                                       tests=self.tests_prompt_for(node_id))
         ok, text = self.turn(prompt, min(self.design_timeout, deadline - time.time()), f"{node_id} design",
@@ -1554,6 +1732,7 @@ class Flow:
         design_dir = self.output_dir / ".arc" / "design"
         design_dir.mkdir(parents=True, exist_ok=True)
         (design_dir / f"{node_id}.json").write_text(json.dumps(design, ensure_ascii=False, indent=2), encoding="utf-8")
+        self.update_application_contract()
         try:
             self.runtime.traceability.upsert_node_contract(node_id, design)
             for i, route in enumerate(design.get("routes") or []):
@@ -1566,7 +1745,7 @@ class Flow:
 
     def node_cycle(self, node: dict, ordered: list[dict], index: int, total: int) -> None:
         node_id = str(node.get("id"))
-        specs = list(self.spec_map.get(node_id) or [])
+        specs = self.acceptance_specs_for(node_id, ordered)
         self.codegen_blocked = False  # a previous node's fallback to tool mode must not leak into this one
         nodes_left = total - index + 1
         node_budget = min(self.node_budget_cap, max(240, self.remaining() / nodes_left))
@@ -1608,7 +1787,7 @@ class Flow:
         elif time_left < 900:
             time_pressure_hint = f"\n⏱️ TIME AWARENESS: You have {time_left:.0f}s for this node. Work efficiently and test frequently.\n"
 
-        prompt = NODE_PROMPT.format(node_id=node_id, node_spec=describe_node(node), design=design_text,
+        prompt = self.application_context_text(node_id) + NODE_PROMPT.format(node_id=node_id, node_spec=describe_node(node), design=design_text,
                                     preamble=preamble, ancestors=self.ancestors_text(node_id, ordered),
                                     tests=self.tests_prompt_for(node_id), smoke=self.smoke_port, port=self.web_port,
                                     performance=self.perf_text(), ui=self.ui_contract(), verify=self.verify_text(total))
@@ -1619,6 +1798,7 @@ class Flow:
             compact = CODEGEN_PROMPT.format(node_id=node_id, description=str(node.get("description") or "").strip(),
                                             spec=self.spec_bodies(node_id), port=self.web_port, ports=self.codegen_ports_clause(),
                                             size_rule=CODEGEN_SIZE_SMALL if self.n_nodes <= 1 else CODEGEN_SIZE_FULL)
+            compact = self.application_context_text(node_id) + compact
             if self.has_app():  # evolution: keep the existing app, return every changed file complete
                 compact = (compact.replace("Files:", "Existing app below; keep everything that works and output "
                                            "every changed file complete. Files:", 1)
@@ -1668,6 +1848,8 @@ class Flow:
             else:
                 self.mark("design_done", node_id, "design folded into the implementation turn (no JSON file)")
         self.mark("implementation_done", node_id, (text[-500:] or None) if ok else "implement turn timed out; partial code")
+        self.implemented_nodes.add(node_id)
+        self.update_application_contract()
         self.commit(f"{node_id} (implement): {node.get('name', '')}")
 
         def rebuild_prompt(failures: str) -> str:
@@ -1682,6 +1864,7 @@ class Flow:
 
         verdict = self.acceptance_loop(node_id, specs, deadline, rebuild_prompt=rebuild_prompt)
         self.test_verdict[node_id] = verdict
+        self.update_application_contract()
         if verdict is True:
             self.mark("test_passed", node_id, f"{len(specs)} acceptance spec file(s) pass locally")
             try:
@@ -1738,7 +1921,7 @@ class Flow:
     def regression_cycle(self, node: dict) -> None:
         """Evolution: unchanged node — carry the design/impl over, re-run its specs."""
         node_id = str(node.get("id"))
-        specs = list(self.spec_map.get(node_id) or [])
+        specs = self.acceptance_specs_for(node_id)
         self.mark("design_started", node_id)
         self.mark("design_done", node_id, "unchanged since the previous requirement version; carried over")
         self.mark("implementation_started", node_id)
@@ -1759,6 +1942,8 @@ class Flow:
                         "without removing the new behaviour.")
                     verdict = self.acceptance_loop(node_id, specs, deadline)
         self.test_verdict[node_id] = verdict
+        self.implemented_nodes.add(node_id)
+        self.update_application_contract()
         if verdict is True:
             self.mark("test_passed", node_id, "regression specs pass locally")
         elif verdict is False:
@@ -1780,6 +1965,7 @@ class Flow:
         previous_failing: set[str] | None = None
         for attempt in range(rounds + 1):
             summary = self.run_specs(all_specs, workers=workers, grader_like=True)
+            shared_failure = False
             if summary.error and summary.killed:
                 # Cloud 29c840566f36: the runner was OOM-killed under a 512 MiB
                 # cgroup; two repair rounds were wasted on a non-failure.
@@ -1795,16 +1981,23 @@ class Flow:
                 failures = (f"- Feature: application startup exactly as the grader runs it (only PORT set)\n"
                             f"  Failed at: npm start\n  Observation: {summary.error[:700]}\n  Steps: npm run build -> npm start")
                 summary = RunSummary(passed=0, total=len(all_specs))
+                shared_failure = True
             else:
                 grouped = nodes_for_failures(summary.results, self.spec_map)
                 failures = failure_summaries(RunSummary(results=[r for rs in grouped.values() for r in rs]))
+                shared_failure = bool(grouped.get(None))
             log(f"[acceptance] full suite round {attempt}: {summary.passed}/{summary.total}; failing nodes "
-                f"{sorted(k for k in grouped if k) or ('all' if None in grouped and not summary.results else [])}")
+                f"{sorted(k for k in grouped if k) or ('integration/shared application' if shared_failure else [])}")
             for node_id, specs in self.spec_map.items():
                 if node_id and specs and summary.results:
-                    self.record_tests(node_id, specs, RunSummary(results=[r for r in summary.results
-                                      if Path(r.file or "").name in {Path(p).name for p in specs}]))
-                    self.test_verdict[node_id] = node_id not in grouped
+                    self.record_tests(node_id, specs, RunSummary(results=[
+                        r for r in summary.results if self._spec_owner(r.file) == node_id]))
+                    self.test_verdict[node_id] = False if shared_failure else node_id not in grouped
+            if shared_failure:
+                for node_id, specs in self.spec_map.items():
+                    if node_id and specs:
+                        self.test_verdict[node_id] = False
+            self.update_application_contract()
             if not grouped:
                 self.commit(f"chore: full acceptance suite {summary.passed}/{summary.total} pass (parallel)")
                 return
@@ -1815,8 +2008,12 @@ class Flow:
             previous_failing = failing_titles
             if attempt == rounds or self.remaining() < 240:
                 break
-            failing = sorted(k for k in grouped if k) or ["all nodes"]
-            prompt = REPAIR_PROMPT.format(
+            failing = sorted(k for k in grouped if k)
+            if shared_failure:
+                failing.append("integration/shared application")
+            if not failing:
+                failing = ["all nodes"]
+            prompt = self.application_context_text(", ".join(failing)) + REPAIR_PROMPT.format(
                 node_id=", ".join(failing), passed=summary.passed, total=summary.total, failures=failures,
                 sources=self.sources_text(),
                 corrections=self.corrections_text() + "The grader runs all spec files IN PARALLEL against one "
@@ -1833,6 +2030,9 @@ class Flow:
         log("[flow] skeleton turn starting")
         prompt = SKELETON_PROMPT.format(req_dir=self.req_dir, port=self.web_port, smoke=self.smoke_port,
                                         tests=self.tests_prompt_for(None, skeleton=True))
+        # No application_context_text here: at skeleton time the contract holds no
+        # implemented nodes, designs, or routes, so it is empty overhead. The
+        # skeleton turn must stay a fast scaffold, not a whole-app planning pass.
         for attempt in range(1, 5):
             if self.time_up():
                 raise RuntimeError("time budget exhausted before the skeleton existed")
@@ -1911,6 +2111,7 @@ class Flow:
                     f"{ {k: v for k, v in self.spec_map.items() if v} }; aliases {self.aliases}")
             else:
                 log("[tests] no acceptance specs found; building from requirement text only")
+            self.initialize_application_contract(tree, ordered)
 
             self.runtime.git.ensure_repo()
             self.setup_playwright()
@@ -1967,7 +2168,8 @@ class Flow:
                 final_ok = None
                 if undecided and not self.time_up():
                     log(f"[flow] final check turn for nodes without a local verdict: {undecided}")
-                    final_ok, _ = self.turn(FINAL_CHECK_PROMPT.format(smoke=self.smoke_port, port=self.web_port,
+                    final_ok, _ = self.turn(self.application_context_text(None) + FINAL_CHECK_PROMPT.format(
+                                                                      smoke=self.smoke_port, port=self.web_port,
                                                                       tests=self.tests_prompt_for(None),
                                                                       performance=self.perf_text(), ui=self.ui_contract()),
                                             self.node_timeout, "final check")

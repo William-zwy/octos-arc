@@ -141,6 +141,14 @@ class FailureGroupingTests(unittest.TestCase):
         grouped = nodes_for_failures(summary.results, {"REQ-1": ["REQ-1.spec.ts"], "REQ-2": ["sub/REQ-2.spec.ts"], None: []})
         self.assertEqual({k: [r.title for r in v] for k, v in grouped.items()}, {"REQ-1": ["one"], "REQ-2": ["three"]})
 
+    def test_should_send_duplicate_spec_basenames_to_shared_integration_bucket(self):
+        result = summarize_report({"suites": [{"file": "REQ-1.spec.ts", "specs": [
+            {"title": "shared", "file": "REQ-1.spec.ts", "tests": [{"status": "unexpected",
+             "results": [{"status": "failed", "duration": 1}]}]}]}]}).results
+        grouped = nodes_for_failures(result, {
+            "REQ-1": ["REQ-1.spec.ts"], "REQ-2": ["other/REQ-1.spec.ts"], None: []})
+        self.assertEqual(list(grouped), [None])
+
 
 class PrivateInstallTests(unittest.TestCase):
     def test_should_pin_version_from_tests_package_lock_or_fallback(self):
@@ -200,6 +208,24 @@ class MemoryWorkersTests(unittest.TestCase):
         self.assertEqual(workers_for_memory(512 * 1024 * 1024, 4), 1)
         self.assertEqual(workers_for_memory(2 * 1024 * 1024 * 1024, 4), 2)
         self.assertEqual(workers_for_memory(8 * 1024 * 1024 * 1024, 4), 4)
+
+
+class Utf8ReportTests(unittest.TestCase):
+    def test_should_read_report_with_box_drawing_banner_without_codepage_crash(self):
+        # Regression: Playwright writes report.json as UTF-8. Its browser-missing
+        # error banner uses box-drawing chars whose bytes are illegal in the
+        # Windows default codepage (gbk), so read_text() without encoding aborted
+        # the whole flow with UnicodeDecodeError (a ValueError, not OSError).
+        import json
+        banner = "browserType.launch: Executable doesn't exist\n╔══════╗\n║ install ║\n╚══════╝"
+        payload = report(("REQ-1: increments", "failed", banner, [], 1))
+        with tempfile.TemporaryDirectory() as tmp:
+            report_path = Path(tmp) / "report.json"
+            report_path.write_text(json.dumps(payload), encoding="utf-8")
+            # Mirrors acceptance.py's read: must use utf-8, must not raise here.
+            summary = summarize_report(json.loads(report_path.read_text(encoding="utf-8")))
+        self.assertEqual(summary.total, 1)
+        self.assertEqual(summary.passed, 0)
 
 
 class RobustnessProbeTests(unittest.TestCase):
