@@ -1,5 +1,19 @@
 # arc/ 适配层改动记录（工作流 A，分支 `wf-adapter`）
 
+## 2026-09-29｜紧急合并 UI 契约与静态自检候选（平台未验证）
+
+- 证据来源：BookStack Lite Run `53cc4b062b0d` 平台 `24/34`，以及历史
+  `1b0eaf914e94`、`d9a97cb4c92d`、`00c59e0762fb`、`5669f7d1777c` 的
+  重复失败机制。平台测试未改。
+- 共享契约统一进入 design、codegen、implementation 与 repair：认证昵称 heading、
+  创建/保存结果 heading+link、UI action/handler/backend dispatcher 闭环、显式 disclosure
+  状态、draft/detail 动作、首屏 dashboard 入口和 Favorite/`aria-pressed` 状态。
+- 新增 advisory 静态自检：检查必要生成文件和 scripts、label/control 唯一关系、重复
+  heading、明显断开的按钮、设计 route/page element 遗漏及 Favorite 状态语义。它只向后续
+  repair 提供提示，Playwright 仍是唯一通过判据。
+- 保留 v2.3 的 rewrite 请求预算、核心跨节点回归和最佳状态恢复，不调整模型、超时、
+  请求上限或 repair 轮数。本切片尚未获得平台 Run 验证，必须以新 ZIP SHA 绑定后测试。
+
 度量口径：本机 `.arc/octos-events.jsonl` 的 `turn/completed`（tokens_in / tokens_out 之和，不含缓存命中）与 `token_cost_update`（每个 session 的累计 `session_cost`，多 session 求和）；耗时取 `.arc/runner-events.jsonl` 的 running → completed；通过数由 `arc/grade-local.py` 用平台公开 Playwright 测试打分（`arc/metrics.py <输出目录>` 可一次打印整行）。所有运行都是本机、同一二进制（`octos 2.0.3-rc.11 (82e3bef3)`，`target/release/octos`，SHA-256 `b0b670ba…cd8c5`）、同一模型（`deepseek-v4-flash` 经 `api.arc-bench.com`）。「未评测」表示没有云端运行。
 
 ## 结论表（改前 → 改后，均为本机最终配置一次运行；云端未评测）

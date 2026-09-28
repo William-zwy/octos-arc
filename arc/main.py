@@ -68,6 +68,7 @@ import sys
 import tempfile
 import threading
 import time
+from html.parser import HTMLParser
 from pathlib import Path
 
 import yaml
@@ -378,6 +379,206 @@ def source_listing(output_dir: Path, limit: int = 60) -> str:
                 lines.append("...")
                 return "\n".join(lines)
     return "\n".join(lines)
+
+
+class _StaticUiParser(HTMLParser):
+    """Collect only cheap, high-confidence facts from generated HTML."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.controls: list[dict] = []
+        self.labels: list[dict] = []
+        self.headings: list[dict] = []
+        self.buttons: list[dict] = []
+        self._captures: list[dict] = []
+        self._form_depth = 0
+
+    @staticmethod
+    def _attrs(attrs: list[tuple[str, str | None]]) -> dict[str, str]:
+        return {str(k).lower(): str(v or "") for k, v in attrs}
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        tag = tag.lower()
+        values = self._attrs(attrs)
+        if tag == "form":
+            self._form_depth += 1
+        if tag in ("input", "select", "textarea"):
+            if values.get("type", "").lower() != "hidden":
+                self.controls.append({"tag": tag, "attrs": values, "in_form": self._form_depth > 0})
+        if tag in ("label", "button", "h1", "h2", "h3", "h4", "h5", "h6"):
+            self._captures.append({"tag": tag, "attrs": values, "text": []})
+
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.handle_starttag(tag, attrs)
+        self.handle_endtag(tag)
+
+    def handle_data(self, data: str) -> None:
+        for capture in self._captures:
+            capture["text"].append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        tag = tag.lower()
+        for index in range(len(self._captures) - 1, -1, -1):
+            capture = self._captures[index]
+            if capture["tag"] != tag:
+                continue
+            self._captures.pop(index)
+            capture["text"] = " ".join("".join(capture["text"]).split())
+            if tag == "label":
+                self.labels.append(capture)
+            elif tag in ("h1", "h2", "h3", "h4", "h5", "h6"):
+                self.headings.append(capture)
+            elif tag == "button":
+                self.buttons.append(capture)
+            break
+        if tag == "form":
+            self._form_depth = max(0, self._form_depth - 1)
+
+
+def _generated_source_files(output_dir: Path) -> list[Path]:
+    files: list[Path] = []
+    for part in ("frontend/src", "backend"):
+        base = output_dir / part
+        if not base.is_dir():
+            continue
+        for path in sorted(base.rglob("*")):
+            if not path.is_file() or any(p in ("node_modules", "dist", "data") for p in path.parts):
+                continue
+            if path.suffix.lower() in (".html", ".js", ".mjs", ".cjs", ".css"):
+                files.append(path)
+    return files
+
+
+def structural_self_check(output_dir: Path, design: dict | None = None,
+                          requirement_text: str = "") -> list[str]:
+    """Return actionable static contract findings without running the app.
+
+    This is intentionally advisory: acceptance tests remain the verdict. The
+    check catches omissions that repeatedly waste a repair turn while leaving
+    dynamic/template-heavy implementations to Playwright.
+    """
+    issues: list[str] = []
+    required = ("frontend/package.json", "backend/package.json", "backend/server.js",
+                "frontend/src/index.html")
+    for rel in required:
+        if not (output_dir / rel).is_file():
+            issues.append(f"missing generated file {rel}; create the required app file before repairing UI")
+    for rel, script, command in (("frontend/package.json", "build", "build"),
+                                 ("backend/package.json", "start", "start")):
+        path = output_dir / rel
+        if not path.is_file():
+            continue
+        try:
+            package = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            issues.append(f"{rel} is not valid JSON ({exc}); restore the generated manifest")
+            continue
+        if not isinstance(package.get("scripts"), dict) or not package["scripts"].get(script):
+            issues.append(f"{rel} lacks scripts.{script}; keep the required {command} command wired")
+
+    source_paths = _generated_source_files(output_dir)
+    source_text: dict[Path, str] = {}
+    for path in source_paths:
+        try:
+            source_text[path] = path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+    all_source = "\n".join(source_text.values())
+    script_source = "\n".join(
+        text for path, text in source_text.items()
+        if path.suffix.lower() in (".js", ".mjs", ".cjs")
+    )
+    server_path = output_dir / "backend" / "server.js"
+    server_text = source_text.get(server_path, "")
+    html_paths = [p for p in source_paths if p.suffix.lower() == ".html"]
+    designs = design if isinstance(design, dict) else {}
+
+    for path in html_paths:
+        parser = _StaticUiParser()
+        try:
+            parser.feed(source_text[path])
+        except Exception as exc:  # HTMLParser is best-effort by design.
+            log(f"[structural] could not parse {path.name}: {exc}")
+            continue
+        rel = path.relative_to(output_dir).as_posix()
+        controls_by_id: dict[str, int] = {}
+        for control in parser.controls:
+            control_id = control["attrs"].get("id", "")
+            if not control_id:
+                issues.append(f"{rel} has a visible {control['tag']} without id/label wiring; add a unique id and <label for=...>")
+                continue
+            controls_by_id[control_id] = controls_by_id.get(control_id, 0) + 1
+            label_count = sum(1 for label in parser.labels if label["attrs"].get("for") == control_id)
+            if label_count != 1:
+                issues.append(f"{rel} control #{control_id} has {label_count} explicit labels; add exactly one visible <label for=\"{control_id}\">")
+        for control_id, count in controls_by_id.items():
+            if count > 1:
+                issues.append(f"{rel} repeats control id #{control_id}; keep label/control relationships unique")
+        heading_counts: dict[str, int] = {}
+        for heading in parser.headings:
+            text = str(heading["text"]).strip()
+            if text:
+                heading_counts[text.casefold()] = heading_counts.get(text.casefold(), 0) + 1
+        for text, count in heading_counts.items():
+            if count > 1:
+                issues.append(f"{rel} renders heading {text!r} {count} times; keep the success/runtime heading unique")
+        for button in parser.buttons:
+            button_id = button["attrs"].get("id", "")
+            attrs = button["attrs"]
+            if attrs.get("onclick") or attrs.get("type", "").lower() == "submit":
+                continue
+            label = button["text"] or attrs.get("aria-label", "")
+            if button_id:
+                escaped = re.escape(button_id)
+                handler = re.search(
+                    rf"(?:getElementById\s*\(\s*['\"]{escaped}['\"]\s*\)|querySelector\s*\(\s*['\"]#?{escaped}['\"]\s*\))"
+                    rf".{{0,320}}(?:addEventListener|\.onclick)", script_source, re.S)
+                if not handler:
+                    issues.append(f"{rel} button #{button_id} ({label!r}) has no explicit handler; wire its action to the page flow")
+            for attr_name in attrs:
+                if not attr_name.startswith("data-") or attr_name in ("data-testid", "data-test-id"):
+                    continue
+                if attr_name not in script_source:
+                    issues.append(f"{rel} button [{attr_name}] ({label!r}) has no delegated handler; connect the data action in the page script")
+
+    for route in designs.get("routes") or []:
+        if not isinstance(route, dict):
+            continue
+        method = str(route.get("method") or "GET").upper()
+        path = str(route.get("path") or "")
+        if not path:
+            continue
+        if path.startswith("/api/") and path not in server_text:
+            issues.append(f"declared route {method} {path} is absent from backend/server.js; add it to the main dispatcher")
+        elif path not in all_source:
+            issues.append(f"declared route {method} {path} is not referenced by generated files; connect the UI action and route")
+        elif path in server_text and not re.search(r"req\.method|req\.url|pathname|router|routes|switch\s*\(", server_text, re.I):
+            issues.append(f"declared route {method} {path} has no visible request-dispatch branch; register the route in the main handler")
+
+    for page in designs.get("pages") or []:
+        if not isinstance(page, dict):
+            continue
+        for element in page.get("elements") or []:
+            if not isinstance(element, dict):
+                continue
+            role = str(element.get("role") or "").lower()
+            name = str(element.get("name") or "").strip()
+            if role not in ("button", "link", "heading") or not name or len(name) > 100:
+                continue
+            if name.casefold() not in all_source.casefold():
+                issues.append(f"declared {role} {name!r} is missing from generated source; render the required accessible action")
+
+    requirement_lower = requirement_text.casefold()
+    if "favorite" in requirement_lower:
+        favorite_buttons = re.findall(r"<button\b([^>]*)>(.*?)</button>", all_source, re.I | re.S)
+        for attrs, text in favorite_buttons:
+            if re.search(r"favorite", re.sub(r"<[^>]+>", "", text), re.I) and "aria-pressed" not in attrs.lower():
+                issues.append("Favorite/Unfavorite button lacks aria-pressed; derive initial state from data and update the attribute on click")
+    if "book tags" in all_source.casefold() and "classlist.toggle" in all_source.casefold():
+        issues.append("Book Tags disclosure uses unconditional classList.toggle; use explicit show/hide state and keep its input editable")
+
+    # Preserve order while avoiding repeated findings from multiple pages.
+    return list(dict.fromkeys(issues))
 
 
 # ---------------------------------------------------------------- octos driver
@@ -751,6 +952,12 @@ UI contract (the hidden Playwright tests depend on these; a violation scores 0):
 - Buttons are real <button> elements, links are <a href>, every form control has a visible <label for=id>; their texts are copied VERBATIM from the requirement/spec (anchored regexes like /^name$/i reject "Full Name"). Use plain text/password/email inputs, native <select>/checkbox/radio; NEVER type="date"/"number". All controls exist in the served HTML itself and stay visible, enabled and editable at all times; no CSS transitions/animations and no JavaScript that re-renders or re-creates form controls after load (Playwright waits for elements to be "stable" — cloud run 954a231a3d23 timed out on a checkbox that kept changing).
 - Sort controls: when a test locates sorting with getByRole('button'), implement each sorting action as a real native <button>, never a <select> or a select styled to look like a button. For the name sort control, its accessible name must be exactly `Alphabetical/Name` (use visible text or aria-label as appropriate), it must remain keyboard-focusable/activatable, and each activation must preserve the required ascending/descending sort toggle. Do not add a second control with the same accessible name.
 - Comments sections: do not put `Comment` or `Comments` in the section's aria-label or other landmark accessible name when the test uses getByLabel(/Comment/i).first(); otherwise the section can be captured before the editor. Give the actual comment textarea one unique, explicit label containing `Comment` (for example `<label for="comment-input">Comment</label><textarea id="comment-input">`), and keep the section heading/region separately named without the word Comment. The first matching `getByLabel(/Comment/i)` must therefore be the textarea, which remains keyboard-editable.
+- Authentication: after a successful login, render the runtime nickname returned by the session verbatim in exactly one visible semantic heading. Never replace it with a hard-coded example/placeholder nickname and never expose a duplicate accessible copy of that heading.
+- Actions and routes: every declared UI action has an explicit reachable handler (button/form/link), and every mutating action has a backend route that is registered in the main request dispatcher. Do not leave a named route function or an Edit/Delete/Confirm button disconnected from the page flow.
+- Disclosure controls: model show/hide as explicit state (`show`/`hide` or equivalent), not unconditional toggle inversion. After a disclosure such as a tags section is opened, its target input remains stably visible and editable.
+- Detail and draft pages: render each requirement-mandated Edit, Delete, Confirm, or equivalent action on the detail/draft page where the test starts; an API or action on another page is not a substitute.
+- Authenticated dashboard: provide stable accessible headings/links for dashboard entry points, including recently updated content, in the initial authenticated page HTML; do not require a late fetch just to expose the entry.
+- Favorites: initialize the Favorite/Unfavorite control from the actual persisted item state and update it on click with matching text and `aria-pressed="true"|"false"`. Do not hard-code a particular fixture/seed name to decide the state.
 - No native HTML5 validation attributes; validate in JavaScript and show ONE inline error element (role="alert") naming the problem (required / invalid / match / terms / duplicate). On error stay on the page and create no record.
 - Strict mode: every echoed value (username, city, date) appears in EXACTLY ONE element per page; every link target appears in EXACTLY ONE <a> per page (one "Register" link, one "Login" link — never a nav link plus a call-to-action to the same href; the specs click `a[href="/register"]` and fail on two matches); never both a short and a long form of one entity, never a per-field error plus a summary. Serve a SEPARATE HTML document per route (`/`, `/register`, `/login`, ...) — never several forms in one document with hidden views: hidden inputs and labels still collide in getByLabel/getByRole.
 - State: persist ONLY what the requirement says is persisted and reproduce that seed on EVERY fresh start; a page's initial state (e.g. "the count is initially 0") is per-page-load client state, never a shared server value — the grader runs several test files in parallel against ONE server. The initial state must already be in the served HTML (e.g. the element contains `0` in the markup); never leave it empty until a fetch completes — the tests assert immediately after load.
@@ -768,7 +975,7 @@ Acceptance test (ground truth):
 {spec}
 Files: frontend/src/index.html (+ one html per further route); backend/server.js = CommonJS (require) Node http server on process.env.PORT||{port} serving ../frontend/dist files (index.html for /, <name>.html for /<name>) plus any API routes the requirement needs (in-memory state), 404 for anything else, wrapped in try/catch and process.on('uncaughtException').{ports} Both package.json files already exist (build copies src/* to dist; start runs server.js): do not output them.
 Rules: texts, button names, labels and test ids exactly as in the test; the initial state is literally in the HTML; state lives in the page script unless the requirement says it is persisted; no external resources, no CSS, no comments, no notes; Playwright strict mode: every locator in the test must match exactly one element on the served page (no duplicate links, labels, texts or ids; each label's for= resolves to its own control). {size_rule}
-""" + CREATE_RESULT_CONTRACT
+""" + UI_CONTRACT_CORE
 
 CODEGEN_SIZE_SMALL = "index.html <= 20 lines, server.js <= 20 lines."
 CODEGEN_SIZE_FULL = ("As short as the tests allow; one page file per route. Mechanisms (follow exactly): "
@@ -844,7 +1051,7 @@ Read the acceptance spec files for this node in full and the existing code they 
  "files": ["backend/server.js", "frontend/src/..."],
  "notes": "validation rules, session handling, seed data, performance decisions"}}
 Copy every accessible name verbatim from the specs. This is a reading turn: use only file reading, listing and grep — no builds, servers, curl or other shell commands — and do not create or modify any other file.
-""" + CREATE_RESULT_CONTRACT
+""" + UI_CONTRACT_CORE
 
 NODE_PROMPT = """\
 {preamble}
@@ -899,7 +1106,7 @@ CRITICAL - Before attempting repairs:
 3. Check if you misunderstood the requirement (e.g., "Edit labels" means editing label definitions, NOT assigning labels to notes)
 
 Fix frontend/ and/or backend/ so these tests pass without breaking the passing ones. You have about 10 requests: in the FIRST response read at most two files (only the ones you will change), in the SECOND response emit every edit_file/write_file call together, then finish — do not read more files afterwards. No shell commands. The harness rebuilds and re-runs the official tests right after your turn. The spec files are read-only ground truth.
-""" + CREATE_RESULT_CONTRACT + PORT_RULES
+""" + UI_CONTRACT_CORE + PORT_RULES
 
 FINAL_CHECK_PROMPT = """\
 Final end-to-end check of the web application in the current directory:
@@ -1095,6 +1302,19 @@ class Flow:
         text = "Corrections from the harness:\n" + "\n".join(f"- {c}" for c in self.pending_corrections) + "\n"
         self.pending_corrections = []
         return text
+
+    def queue_structural_corrections(self, design: dict | None = None,
+                                     requirement_text: str = "", enqueue: bool = True) -> list[str]:
+        findings = structural_self_check(self.output_dir, design=design,
+                                         requirement_text=requirement_text)
+        if findings:
+            log("[structural] " + "; ".join(findings[:8]))
+            if enqueue:
+                for finding in findings:
+                    correction = "Structural self-check: " + finding
+                    if correction not in self.pending_corrections:
+                        self.pending_corrections.append(correction)
+        return findings
 
     def _spec_owner(self, spec_file: str) -> str | None:
         """Return a unique node owner for a report file, or None for shared/
@@ -1390,6 +1610,7 @@ class Flow:
             deduped = dedupe_nav_links(self.output_dir)
             if deduped:
                 log(f"[codegen] {label}: removed static nav links duplicating the NAV placeholder in {deduped}")
+            self.queue_structural_corrections(enqueue=False)
             return True, text
         if ok:
             log(f"[codegen] {label}: reply contained no file blocks")
@@ -1676,6 +1897,7 @@ class Flow:
             if summary.total and passed == summary.total:
                 self.commit(f"{node_id} (accepted): {passed}/{summary.total} acceptance tests pass")
                 return True
+            self.queue_structural_corrections(design=self.designs.get(node_id), enqueue=True)
             if passed > best_passed:
                 if best_passed >= 0:
                     self.commit(f"{node_id} (repair {attempt}): {passed}/{summary.total} pass")
@@ -1718,7 +1940,7 @@ class Flow:
                     and os.environ.get("OCTOS_ARC_REWRITE_ON_ZERO", "1") != "0":
                 rewrite_used = True
                 log(f"[flow] {node_id}: nothing passed; one full rewrite turn instead of a patch")
-                prompt = rebuild_prompt(failures or "(no detail)")
+                prompt = rebuild_prompt((failures or "(no detail)") + self.corrections_text())
                 if self.codegen_mode():
                     self.codegen_turn(prompt, min(self.node_timeout, left), f"{node_id} rewrite (repair {attempt + 1})")
                 else:
@@ -1889,6 +2111,9 @@ class Flow:
                 self.mark("design_done", node_id, "design JSON written inline to .arc/design/" + node_id + ".json")
             else:
                 self.mark("design_done", node_id, "design folded into the implementation turn (no JSON file)")
+        self.queue_structural_corrections(
+            design=design if isinstance(design, dict) else self.designs.get(node_id),
+            requirement_text=str(node.get("description") or ""), enqueue=False)
         self.mark("implementation_done", node_id, (text[-500:] or None) if ok else "implement turn timed out; partial code")
         self.implemented_nodes.add(node_id)
         self.update_application_contract()
@@ -2086,6 +2311,7 @@ class Flow:
                     if self.has_app():
                         break
             if self.has_app():
+                self.queue_structural_corrections(enqueue=False)
                 self.commit("chore: scaffold web application skeleton")
                 return
             time.sleep(30)

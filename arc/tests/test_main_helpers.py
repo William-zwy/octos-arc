@@ -260,6 +260,87 @@ class CreateResultContractTests(unittest.TestCase):
     def test_should_allow_heading_in_separate_design_schema(self):
         self.assertIn("heading", m.DESIGN_PROMPT.split('"role": "', 1)[1].split('"', 1)[0])
 
+    def test_should_share_urgent_ui_contract_across_design_codegen_and_repair(self):
+        phrases = (
+            "after a successful login",
+            "every declared UI action has an explicit reachable handler",
+            "not unconditional toggle inversion",
+            "Detail and draft pages",
+            "Authenticated dashboard",
+            "aria-pressed=\"true\"|\"false\"",
+        )
+        prompts = {
+            "design": m.DESIGN_PROMPT.format(node_id="item", node_spec="Edit an item",
+                                             ancestors="", tests=""),
+            "codegen": m.CODEGEN_PROMPT.format(node_id="item", description="Edit an item",
+                                                spec="", port=3000, ports="", size_rule=""),
+            "repair": m.REPAIR_PROMPT.format(node_id="item", passed=0, total=1,
+                                              failures="missing action", corrections="",
+                                              slow="", sources="", smoke=3001, port=3000),
+        }
+        for prompt_name, prompt in prompts.items():
+            for phrase in phrases:
+                with self.subTest(prompt=prompt_name, phrase=phrase):
+                    self.assertIn(phrase, prompt)
+
+
+class StructuralSelfCheckTests(unittest.TestCase):
+    def test_should_report_high_confidence_ui_and_route_contract_breaks(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "frontend/src").mkdir(parents=True)
+            (root / "backend").mkdir()
+            (root / "frontend/package.json").write_text(
+                json.dumps({"scripts": {"build": "node build.js"}}))
+            (root / "backend/package.json").write_text(
+                json.dumps({"scripts": {"start": "node server.js"}}))
+            (root / "backend/server.js").write_text(
+                "const http=require('http'); http.createServer((req,res)=>res.end()).listen(3000);")
+            (root / "frontend/src/index.html").write_text(
+                '<h1>Dashboard</h1><h2>Dashboard</h2>'
+                '<input id="nickname"><button id="edit-item">Edit</button>'
+                '<button data-edit-shelf>Edit shelf</button>'
+                '<button>Favorite</button>')
+            findings = m.structural_self_check(
+                root,
+                design={
+                    "routes": [{"method": "PUT", "path": "/api/items/:id"}],
+                    "pages": [{"path": "/items/:id", "elements": [
+                        {"role": "button", "name": "Confirm Delete"}]}],
+                },
+                requirement_text="Users can favorite an item",
+            )
+            text = "\n".join(findings)
+            self.assertIn("control #nickname has 0 explicit labels", text)
+            self.assertIn("renders heading 'dashboard' 2 times", text)
+            self.assertIn("button #edit-item", text)
+            self.assertIn("button [data-edit-shelf]", text)
+            self.assertIn("declared route PUT /api/items/:id", text)
+            self.assertIn("declared button 'Confirm Delete'", text)
+            self.assertIn("Favorite/Unfavorite button lacks aria-pressed", text)
+
+    def test_should_accept_minimal_well_wired_generated_app(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "frontend/src").mkdir(parents=True)
+            (root / "backend").mkdir()
+            (root / "frontend/package.json").write_text(
+                json.dumps({"scripts": {"build": "node build.js"}}))
+            (root / "backend/package.json").write_text(
+                json.dumps({"scripts": {"start": "node server.js"}}))
+            (root / "frontend/src/index.html").write_text(
+                '<h1>Profile</h1><label for="nickname">Nickname</label>'
+                '<input id="nickname"><button id="save" type="submit">Save</button>')
+            (root / "backend/server.js").write_text(
+                "const http=require('http'); http.createServer((req,res)=>res.end()).listen(3000);")
+            self.assertEqual(m.structural_self_check(root), [])
+
 
 class AlreadyPassingProbeTests(unittest.TestCase):
     def test_should_mark_only_fully_passing_nodes_as_unchanged(self):
