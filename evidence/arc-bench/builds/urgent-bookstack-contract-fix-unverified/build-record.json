@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "status": "platform_unverified",
+  "branch": "codex/urgent-bookstack-contract-fix",
+  "base_commit": "281bf79c03fa9adce299b7f93289d98843c721ae",
+  "source_commit": "0428dcd422d638ff32c3730187ad8dd26aada241",
+  "built_on": "2026-09-29",
+  "timezone": "Asia/Shanghai",
+  "decision": {
+    "mode": "deadline_emergency_combined_fix",
+    "evidence_runs": [
+      "53cc4b062b0d",
+      "1b0eaf914e94",
+      "d9a97cb4c92d",
+      "00c59e0762fb",
+      "5669f7d1777c"
+    ],
+    "summary": "Merged repeated accessibility, action wiring, state initialization, and cross-node regression mitigations instead of preserving a single-variable slice."
+  },
+  "changes": [
+    "Inject one shared UI contract into design, codegen, implementation, and repair.",
+    "Require runtime login nickname and create/save results to expose stable semantic headings.",
+    "Require explicit UI action, backend route, and dispatcher closure.",
+    "Require explicit disclosure state, draft/detail actions, dashboard entries, and persisted favorite semantics.",
+    "Add advisory structural checks for generated files/scripts, labels, duplicate headings, id and data-* action handlers, routes, and declared page elements.",
+    "Preserve v2.3 rewrite budget, core cross-node regression, and best-state restore behavior."
+  ],
+  "non_changes": [
+    "Official acceptance tests were not modified.",
+    "Model, global timeout, implementation/repair request caps, and repair rounds were not modified.",
+    "Static checks only enqueue corrections; Playwright remains the verdict."
+  ],
+  "validation": {
+    "py_compile": {
+      "command": "python -m py_compile main.py tests\\test_main_helpers.py",
+      "exit_code": 0
+    },
+    "focused_tests": {
+      "command": "python -m unittest tests.test_main_helpers.CreateResultContractTests tests.test_main_helpers.StructuralSelfCheckTests tests.test_main_helpers.CoreRegressionTests tests.test_main_helpers.RewriteBudgetTests",
+      "passed": 12,
+      "total": 12,
+      "exit_code": 0
+    },
+    "full_tests": {
+      "command": "python -m unittest discover -s tests -t .",
+      "passed": 93,
+      "total": 97,
+      "exit_code": 1,
+      "known_windows_baseline": [
+        "two path-separator assertions",
+        "one Unix npm_config_cache path assertion",
+        "one temporary .git/objects cleanup PermissionError"
+      ],
+      "new_failures": 0
+    },
+    "git_diff_check_exit_code": 0,
+    "platform_run_performed": false,
+    "generated_bookstack_full_suite_performed": false
+  },
+  "bundle": {
+    "path": "octos-arc-bundle_urgent-bookstack-contract-fix-unverified.zip",
+    "bytes": 333004,
+    "entries": 492,
+    "sha256": "210F6DBCDFA1C32E053766E08DCDDB22578C53CAC9669CE22ED18403D65C6955",
+    "root_main_py": true,
+    "forbidden_arc_prefix": false,
+    "forbidden_python_cache": false,
+    "main_matches_source_commit_after_line_ending_normalization": true
+  },
+  "handoff": "Bind the next platform Run ID and task name to this exact ZIP SHA, then record the platform score and failed requirement list. Do not mark this build GO before that evidence exists."
+}
