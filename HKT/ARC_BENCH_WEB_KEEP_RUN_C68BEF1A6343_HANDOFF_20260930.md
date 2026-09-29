@@ -2,7 +2,7 @@
 
 Date: 2026-09-30
 Purpose: Preserve the complete Phase 3 intake and the available Phase 4 handoff for later multi-Run decisions.
-Status: Phase 3 archived; Phase 4 is pending identity reconciliation and has no verified ACK/result. No Agent, generated application, official test, runtime configuration, ZIP, upload, or platform Run was modified or created by this intake.
+Status: Phase 3 and Phase 4 are closed. Phase 4 used the canonical registered thread identity through the authorized filesystem fallback after automatic dispatch returned `Invalid app tool request`. No Agent, generated application, official test, runtime configuration, ZIP, upload, or platform Run was modified or created by this intake.
 
 ## 1. Identity and final result
 
@@ -52,13 +52,30 @@ Available Phase 3 files from the external evidence workspace:
 | `manifest.json` | `E4008585EE9406A004D71ED70D98D2312C257D71528233C90DEE3C6449C60463` | Phase 3 |
 | `phase3-analysis.md` | `73C5E1171EE5C5C684A788A5BB8417B35EECE509604DA8A6A643BE7727D9AC5D` | Phase 3 analysis |
 | `phase4-handoff.json` | `86612976AC42B8829D6DFE2A5A2C69B93A75E4C10163FA27357D360077FDEE5D` | handoff only |
-| `phase4-ack.json` | not present | No ACK |
-| `phase4-result.json` | not present | No result |
-| `phase4-result.md` | not present | No result |
+| `phase4-ack.json` | `2684293EBB0D9F60A3BC76B41DFA92A397055DB1631F6CD774D143F956DE79EC` | received |
+| `phase4-result.json` | `975A84289EA1F153B1CD862F35E8D4ACF2CF8C1E399950358B10D6D55CE3E12F` | `PHASE4_RESULT: complete` |
+| `phase4-result.md` | `977ECBEC8A1DEADBE702F397252BB0EBE8C4547B4ADD386B3FB712E5BCA31FC9` | complete |
 
-The handoff records `dispatch_status=blocked_thread_identity_reconciliation`, a quarantined registered thread, duplicate same-title conversations, and an `Invalid app tool request` from `list_threads`. Therefore Phase 4 is not closed and no Phase 4 root-cause claim is promoted here.
+The handoff records the original `dispatch_status=blocked_thread_identity_reconciliation`. The later ACK/result use the same canonical thread ID, handoff ID, and manifest SHA; all identity checks pass. The app route remained unavailable, but the authorized manual filesystem fallback closed the read-only diagnosis without creating a duplicate thread.
 
-## 4. Intermediate execution evidence
+## 4. Phase 4 root-cause ruling
+
+### Confirmed
+
+1. The submitted ZIP contains a generated-run `template/backend/data/db.json`. `server.js` loads that file whenever it exists, while the seed function defines `Delete me 2.3.1` and `Delete me 2.3.3` as clean. The persisted DB has both notes with `trashed=true`, and the default notes endpoint filters trashed notes. This directly explains the missing delete fixtures in `REQ-2.3.1` and `REQ-2.3.3`.
+2. The application starts in grid mode but the initial `#view-toggle` accessible label is `Grid view`; the frozen `REQ-5.2` test searches for the available `List view` action before clicking. The label only changes after the first click. The default grid layout is present; the initial accessible action contract is wrong.
+
+### Strong candidates
+
+- Archive and label mutations call `loadNotes()` or `loadLabels()` without awaiting the refresh; `renderNotes()` clears and rebuilds the notes area. This is consistent with the detached card in `REQ-2.5.4` and stale label state in `REQ-2.7.2`, but no clean-seed browser trace proves the exact race.
+- The visible Settings trigger and nested menu item share the accessible name `Settings`; helper resolution can toggle the menu rather than open the detail panel, leaving `Save` hidden in `REQ-4.2`.
+- Color mutation also rebuilds the notes DOM asynchronously before the screenshot helper captures the note bounding box, consistent with the empty clip in `REQ-2.6.1` but not sufficient to prove exact geometry.
+
+### Unknown and limits
+
+The clean-seed browser replay for the settings and screenshot candidates was not run because the recovery environment lacked Playwright. Octos turn timeouts, the single provider proxy error, and runner `not_verified` nodes remain Phase 3 execution evidence; they are not product-template root causes for the other final tests.
+
+## 5. Intermediate execution evidence
 
 - Octos stream: 17,996 parsed JSON lines; 62 turns started, 56 completed, 1 error, 5 unclosed; 1,531 tool starts and 1,531 completions.
 - Runner: lifecycle completed; 32 nodes designed, 31 implemented, 12 not verified.
@@ -71,7 +88,7 @@ The handoff records `dispatch_status=blocked_thread_identity_reconciliation`, a 
 
 These facts support a repair-convergence and execution-hygiene problem. They do not prove that resource pressure alone caused the final UI failures.
 
-## 5. Initial classification for later multi-Run comparison
+## 6. Initial classification for later multi-Run comparison
 
 ### Confirmed
 
@@ -80,10 +97,11 @@ These facts support a repair-convergence and execution-hygiene problem. They do 
 3. The suite identity matched this Run; the prior Lite/Web routing defect is excluded from this Run.
 4. Generation had incomplete verification and repeated bounded-guard/turn-timeout events.
 5. The run has a process-cleanup and resource-hygiene risk, without OOM-kill evidence.
+6. Phase 4 confirmed the persisted generated-run DB state defect and the initial view-toggle accessible-label defect.
 
 ### Strong candidates, not yet code-confirmed
 
-1. Delete, archive, color, label, settings, and view controls do not consistently expose the accessible names, visibility, scope, persistence, or DOM stability required by the frozen helpers.
+1. Archive, color, label, settings and DOM lifecycle surfaces remain candidates for accessible-name, visibility, persistence or stability mismatches after the two confirmed defects above.
 2. Hover-triggered rerender or broad list redraw may detach cards before Playwright can act.
 3. Seed identity or duplicate-name selection may contribute to label failures, but no clean-seed before/after proof is attached.
 4. Broad late repair and incomplete node verification reduced convergence and may have left multiple surfaces unfinished.
@@ -96,18 +114,18 @@ These facts support a repair-convergence and execution-hygiene problem. They do 
 - Platform build ID, commit SHA, task snapshot ID, platform upload ZIP binding, and the exact final helper/test source fingerprint.
 - A verified Phase 4 thread identity and target delivery ACK.
 
-## 6. Decision and next gate
+## 7. Decision and next gate
 
-Decision: `EVIDENCE_ARCHIVED / PHASE4_PENDING_RECONCILIATION / IMPLEMENTATION_NOT_DISPATCHED`.
+Decision: `EVIDENCE_ARCHIVED / PHASE4_COMPLETE / IMPLEMENTATION_NOT_DISPATCHED`.
 
-- Do not call this Run Phase 4-complete.
+- Phase 4 is complete as a read-only single-Run diagnosis; no Stage 5 implementation was triggered.
 - Do not combine its 21/32 with Lite Keep or BookStack scores.
-- Do not dispatch maximum-applicability Agent changes from this Run alone.
+- Do not dispatch maximum-applicability Agent changes from this Run alone; use the confirmed defects as candidates for cross-Run comparison.
 - Preserve the BookStack `34/34` baseline recorded in `53a102f3ee96`.
 - When more Runs arrive, compare by task, suite identity, submission, ZIP/build binding, seed, helper version, and failure mechanism before promoting a shared Agent contract.
 - If a later closed Phase 4 result confirms a repeated shared contract, send the implementation decision to the Agent implementation session; this decision ledger remains read-only for code.
 
-## 7. Raw evidence index and hashes
+## 8. Raw evidence index and hashes
 
 Source directory: `C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-arc-bench-web-keep/`.
 

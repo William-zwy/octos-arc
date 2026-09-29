@@ -12,7 +12,7 @@
   "failed": 11,
   "failure_shape": {"timed_out": 10, "failed_assertion_or_runtime": 1},
   "phase3_status": "archived",
-  "phase4_status": "pending_reconciliation",
+  "phase4_status": "complete",
   "stage5_triggered": false,
   "implementation_dispatched": false,
   "platform_rerun_or_upload": false,
@@ -54,16 +54,35 @@
     "manifest_sha256": "E4008585EE9406A004D71ED70D98D2312C257D71528233C90DEE3C6449C60463",
     "phase3_analysis_sha256": "73C5E1171EE5C5C684A788A5BB8417B35EECE509604DA8A6A643BE7727D9AC5D",
     "phase4_handoff_sha256": "86612976AC42B8829D6DFE2A5A2C69B93A75E4C10163FA27357D360077FDEE5D",
-    "phase4_ack_present": false,
-    "phase4_result_present": false
+    "phase4_ack_sha256": "2684293EBB0D9F60A3BC76B41DFA92A397055DB1631F6CD774D143F956DE79EC",
+    "phase4_result_sha256": "975A84289EA1F153B1CD862F35E8D4ACF2CF8C1E399950358B10D6D55CE3E12F",
+    "phase4_result_md_sha256": "977ECBEC8A1DEADBE702F397252BB0EBE8C4547B4ADD386B3FB712E5BCA31FC9",
+    "phase4_ack_present": true,
+    "phase4_result_present": true
+  },
+  "phase4_ruling": {
+    "status": "complete",
+    "dispatch_mode": "manual_intervention_filesystem_fallback",
+    "confirmed": [
+      {"req_ids": ["REQ-2.3.1", "REQ-2.3.3"], "cause": "generated-run backend/data/db.json persisted trashed fixture state; server loads it and filters trashed notes from the default listing"},
+      {"req_ids": ["REQ-5.2"], "cause": "initial grid-mode toggle exposes Grid view while frozen test searches for List view before clicking"}
+    ],
+    "strong_candidates": [
+      {"req_ids": ["REQ-2.5.4", "REQ-2.7.1", "REQ-2.7.2", "REQ-2.7.5"], "cause": "unawaited mutation refreshes clear and rebuild the notes DOM, causing detach or stale label observations"},
+      {"req_ids": ["REQ-4.2"], "cause": "Settings trigger and nested menu item share an accessible name, so helper resolution may toggle the wrong control"},
+      {"req_ids": ["REQ-2.6.1"], "cause": "color mutation refreshes the notes DOM before the screenshot helper captures the bounding box"}
+    ],
+    "platform_rerun": false,
+    "agent_modified": false,
+    "official_tests_modified": false
   },
   "classification": {
-    "confirmed": ["final Playwright symptoms", "matching web-keep suite identity", "incomplete verification and execution guards", "process hygiene risk without OOM kill"],
-    "strong_candidates": ["accessible-name/visibility/scope mismatch", "hover or list redraw DOM detachment", "seed or duplicate-name selection", "repair convergence failure"],
-    "unknown": ["exact source root cause per test", "seed versus persistence versus rendering responsibility", "platform build/task/ZIP binding", "verified Phase 4 thread identity"]
+    "confirmed": ["final Playwright symptoms", "matching web-keep suite identity", "persisted generated-run DB state contaminates delete fixtures", "initial view-toggle accessible label mismatch", "incomplete verification and execution guards", "process hygiene risk without OOM kill"],
+    "strong_candidates": ["unawaited mutation refresh and DOM detachment", "Settings accessible-name ambiguity", "color screenshot timing", "repair convergence failure"],
+    "unknown": ["exact clean-seed browser cause for settings and screenshot cases", "platform build/task/ZIP binding"]
   },
-  "decision": "EVIDENCE_ARCHIVED / PHASE4_PENDING_RECONCILIATION / IMPLEMENTATION_NOT_DISPATCHED",
-  "next_gate": "Collect additional independent Runs and close Phase 4 identity before maximum-applicability Agent changes; preserve the BookStack 34/34 baseline.",
+  "decision": "EVIDENCE_ARCHIVED / PHASE4_COMPLETE / IMPLEMENTATION_NOT_DISPATCHED",
+  "next_gate": "Compare the two confirmed defects and three strong candidates with additional independent Runs before dispatching shared Agent changes; preserve the BookStack 34/34 baseline.",
   "source_directory": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-arc-bench-web-keep/",
   "security": {"status": "redacted_only", "secrets_copied": false}
 }
