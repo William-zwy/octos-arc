@@ -284,6 +284,86 @@ class CreateResultContractTests(unittest.TestCase):
                     self.assertIn(phrase, prompt)
 
 
+class WorkflowStateContractTests(unittest.TestCase):
+    def test_should_share_conditional_workflow_contract_across_agent_turns(self):
+        import argparse
+        from pathlib import Path
+
+        flow = m.Flow(argparse.Namespace(web_port=3000), Path("."), Path("."))
+        flow.classify_tree({"description": "Open an existing parent record, create a draft, edit it, then filter the list"})
+        prompts = {
+            "design": m.DESIGN_PROMPT.format(node_id="record", node_spec="Edit a record",
+                                             ancestors="", tests=""),
+            "codegen": m.CODEGEN_PROMPT.format(node_id="record", description="Edit a record",
+                                               spec="", port=3000, ports="", size_rule=""),
+            "implementation": m.NODE_PROMPT.format(
+                preamble="", node_spec="Edit a record", design="", ancestors="", tests="",
+                ui=flow.ui_contract(), performance="", verify="", smoke=3001, port=3000),
+            "repair": m.REPAIR_PROMPT.format(node_id="record", passed=0, total=1,
+                                             failures="missing action", corrections="", slow="",
+                                             sources="", smoke=3001, port=3000),
+        }
+        for name, prompt in prompts.items():
+            with self.subTest(prompt=name):
+                self.assertEqual(prompt.count(m.WORKFLOW_STATE_CONTRACT), 1)
+        for phrase in ("existing named record or parent/context", "draft-save distinct",
+                       "editor's accessible scope", "preserve unsaved content",
+                       "preserve the selected filter", "one navigation owner"):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, m.WORKFLOW_STATE_CONTRACT)
+        self.assertNotIn("bookstack", m.WORKFLOW_STATE_CONTRACT.lower())
+        self.assertNotIn("arc-bench-lite--keep", m.WORKFLOW_STATE_CONTRACT.lower())
+        self.assertNotIn("req-", m.WORKFLOW_STATE_CONTRACT.lower())
+
+    def test_should_enable_seed_contract_for_existing_parent_context_language(self):
+        import argparse
+        from pathlib import Path
+
+        flow = m.Flow(argparse.Namespace(web_port=3000), Path("."), Path("."))
+        flow.classify_tree({"description": "Start from an existing parent context before creating a record"})
+        self.assertTrue(flow.needs_data)
+        self.assertIn("seed that required starting record once", flow.ui_contract())
+        self.assertIn("Do not pre-create an entity", flow.ui_contract())
+
+    def test_should_match_frozen_label_locators_to_editor_scope_contract(self):
+        from pathlib import Path
+
+        repo = Path(__file__).resolve().parents[2]
+        tests = (repo / "workstreams/arc-bench/official-snapshots/20260917-150121Z/competitions/"
+                 "arc-bench-lite/tasks/arc-bench-lite--keep/public-tests")
+        helper = (tests / "helpers.ts").read_text(encoding="utf-8")
+        locator = "noteEditor(page).getByRole('checkbox'"
+        self.assertIn(locator, helper)
+        for name in ("REQ-2.7.1.spec.ts", "REQ-2.7.2.spec.ts", "REQ-2.7.4.spec.ts"):
+            with self.subTest(spec=name):
+                self.assertIn("setLabel(page", (tests / name).read_text(encoding="utf-8"))
+        self.assertIn("in that editor's accessible scope", m.WORKFLOW_STATE_CONTRACT)
+        self.assertIn("prefer a fieldset, region, or disclosure panel over a second dialog",
+                      m.WORKFLOW_STATE_CONTRACT)
+
+    def test_should_preserve_frozen_context_and_draft_authoring_sequences(self):
+        from pathlib import Path
+
+        repo = Path(__file__).resolve().parents[2]
+        tests = (repo / "workstreams/arc-bench/official-snapshots/20260917-150121Z/competitions/"
+                 "arc-bench-lite/tasks/arc-bench-lite--bookstack/public-tests")
+        helper = (tests / "helpers.ts").read_text(encoding="utf-8")
+        shelf_create = (tests / "REQ-4.3.1.spec.ts").read_text(encoding="utf-8")
+        shelf_cancel = (tests / "REQ-4.3.2.spec.ts").read_text(encoding="utf-8")
+        draft_save = (tests / "REQ-6.1.2.spec.ts").read_text(encoding="utf-8")
+        draft_delete = (tests / "REQ-6.1.3.spec.ts").read_text(encoding="utf-8")
+
+        self.assertIn("h.openShelfDetails(page, h.FIXTURES.shelves.create.contextName)", shelf_create)
+        self.assertIn("h.openShelfDetails(page, h.FIXTURES.shelves.cancelCreate.contextName)", shelf_cancel)
+        self.assertIn("await clickNamed(page, /^New Page$/i)", helper)
+        self.assertIn("await clickNamed(page, /^Edit$/i)", helper)
+        self.assertIn("/^Save Draft$/i", draft_save)
+        self.assertIn("/^Delete Draft$/i", draft_delete)
+        self.assertIn("draft-save distinct from the existing publish/save action", m.WORKFLOW_STATE_CONTRACT)
+        self.assertIn("available from the editor the flow enters", m.WORKFLOW_STATE_CONTRACT)
+        self.assertIn("enter edit mode only when invoked", m.WORKFLOW_STATE_CONTRACT)
+
+
 class StructuralSelfCheckTests(unittest.TestCase):
     def test_should_report_high_confidence_ui_and_route_contract_breaks(self):
         import json

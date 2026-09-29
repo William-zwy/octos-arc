@@ -466,3 +466,39 @@ Pop-Location
 - **跨任务与端到端门禁：**以 Keep、StackOverflow、PrestaShop、12306、Ctrip、ticket-booking 和 counter/dice 做创建/导航语义 canary；再用新 Agent 做非 mock 生成，绑定 commit、ZIP SHA、build ID、task snapshot、模型与运行配置，最后运行完整 BookStack 34 项。旧模板手工补丁或旧 Run 通过数不得转移为新 Agent 成绩。
 - **平台门禁：**平台上传与新 Run 必须单独授权。严格 A/B 至少三组配对、交替顺序、同任务快照和同配置；B 组两项目标题题均须 3/3，非 `REQ-8.1` 集合须 `33/33` 且无新失败。Token、费用、耗时中位数不得高于 A 组 10%；高于 20% 或出现新失败即 `NO-GO`。
 - **`REQ-8.1` 独立决策：**维持 `strong_candidate / timing_sensitive`。只补真实评分前 seed、同一 fresh-copy 至少 10 轮的点击→请求→响应→DOM→DB 时间线；不得为了它新增 heading 包装、扩大本次语义切片或重跑整套 P5-017。若本地执行环境继续 `preflight_blocked`，记录为基础设施阻断并转交可运行的隔离复现工作区，不伪造结论。
+
+## 28. 三 Run 联动修复决策与验证边界（2026-09-29）
+
+### 证据与身份
+
+本节合并评估三个已完成阶段 3/4 的 Run，但不把它们当作同一代码构建或同一测试套件：
+
+| Run | 任务 / 结果 | 阶段 3 manifest SHA-256 | 阶段 4 result SHA-256 | 主要失败事实 |
+|---|---|---|---|---|
+| `363336da9695` | BookStack Lite，29/34，85.3 | `9342DC14E7F5B4D236143C6B8F6EE6032D38F4D2BED08BBDE148264FFC5E12E9` | `45F69E82C7CC839CD43AE10D588095C1C2516D9CED9AF80A012C027168D14256` | 两个创建流程缺起始 Shelf context；New Page 流缺 draft-save 操作；Draft detail 缺测试所需显式 Edit 步骤；登录后同 URL 导航中断为 strong candidate。 |
+| `414407a79923` | Keep Lite，25/32，78.1 | `C7FA8EA330F356B56E23E5B6AF3D07D1C144A977B08D1E16DA6D771EBAEA03DD` | `B88AB19A1B9868560C6D02CAC2D3DA7E78B807A67CB38346C751C16B6B03B8E9` | Reminders 选择后被 `showHome()` 清空是 confirmed；seed 初态漂移为 candidate；label checkbox scope 与冻结 locator/生成设计不兼容，且最终 suite 身份有歧义。 |
+| `fb59eaf67f65` | Keep Lite Evolution，2/6，33.3 | `B7ACB4351B8CBC06FA5A8C81AE17C1E137C24BB12452C6701ABAC652F4D43BAB` | `904F10A29B5733CE0F79ADBF532894132FF6B74F417F1C6FAE8AFF8EEB80F41B` | 两项 browser/page closed；checklist 项目未读回且评分后出现同名空记录；Groceries seed 在 DB 但卡片不可见。缺 trace、request payload 和 DOM 时间线，不裁定发起根因。 |
+
+三个 Run 的 `generation_identity` 均缺 build ID、commit SHA、payload/upload SHA 与 task snapshot。提交名或用户本地 ZIP 不能替代平台绑定；本节结论是 Run-local 机制归并，不证明本分支造成这些结果，也不预言分数改善。
+
+### 改动裁决
+
+批准在共享 Agent 提示路径增加短小、需求/验收语义触发的 workflow-state 契约，由 design、codegen、implementation、repair 共用，不增加运行时依赖或模型调用：
+
+- 起始状态：若流程从已有 named record 或 parent/context 开始，按指定前置状态建立 seed；区分 fixture 与场景新建实体，避免同名记录遮蔽首个匹配；不以清库代替正确初始化。
+- Draft 作者流：只有任务要求时，draft-save 与既有 publish/save 保持独立并在实际进入的 editor 可用；若流程明确包含 draft detail 的 Edit 步骤，不得跳过该操作直接呈现编辑态。
+- 辅助属性编辑：若任务从 item editor 打开属性控件，checkbox 等控件应位于该 editor 的可访问作用域，优先使用 fieldset/region/disclosure，而非 sibling/nested dialog；保留 editor、未提交内容、Close 行为和合理焦点返回。
+- 过滤与导航：视图重绘/同视图导航保留显式选中的过滤状态；认证成功跳转只允许单一导航所有者。最后一项仅作为 `363336da9695` 的低成本候选提示，不标记为生命周期根因已修。
+
+Keep label scope 的原文核验：冻结 helper 的 `setLabel()` 用 `noteEditor(page).getByRole('checkbox', ...)`；三个 frozen spec 均调用它，其中创建流程明确从 Note editor 打开 Change labels；阶段 4记录的生成模板把 `Note labels` dialog 放在 `Note editor` 之外。冻结 helper SHA-256 `42AE20F9D533C768E9A96A62F29FE8A36ED1C1CC366638671F4A07782D72C01A`；spec SHA-256：2.7.1 `56585FCC8F06032563766893F0476942EE80AD90A296ADA82A139B09E4031254`、2.7.2 `A21CDF7C4E2B8D4C287D1800C4E2C59E3F84825D66084BDE6EAD2E32F94B4EAA`、2.7.4 `CBD75BE14FFC58908668AFA2EC05E1E66BE267658609CBFC4BB76B7522883BA8`。这支持为同一 editor 的可访问范围提供兼容，不支持更改冻结官方 tests。平台最终 tests/helper bytes 仍未知；若未来证据表明平台版本与 frozen snapshot 不同，重新核对，不静默扩大兼容假设。
+
+### 风险、保护项与未解问题
+
+- 保留既有 `CREATE_RESULT_CONTRACT`，不改变已要求 heading+link 的行为；不重写 Save Page / publish/save，不把草稿保存当成发布；不改认证 heading、Undo/消息分离、归档按钮状态、收藏 `aria-pressed`、排序/评论 locator 或静态自检行为。
+- 已有 `UI_CONTRACT_CORE` 是跨任务提示。本轮加入约 1 KB 条件化文本；Python 回归证明提示注入路径，不证明模型遵循、token/费用影响或其他任务分数无损。须用完整跨任务回归判定，不可只看失败项是否换组。
+- `REQ-7.1` 登录导航竞态为 strong candidate；Evolution page-closed、checklist payload/hydration 与 Groceries rendering 的起因仍 unknown。未加全局 timeout、模型/预算/并发/repair 轮次，也未改 official tests 或新增固定任务/REQ/实体字面量。
+- Keep label dialog 的平台 suite 身份不明；提示为条件式可访问作用域兼容，不据此单独宣称标签功能在平台已修。
+
+### 本地验证与交付边界
+
+改前 Windows 全量基线 97 项：3 failures + 1 error。改后 101 项：仍为同三个失败（Unix npm cache 路径断言、两处路径分隔符断言）和一个临时 `.git/objects` 权限清理错误，退出码 1；无新增失败。定向 workflow/create-result 测试 10/10，`py_compile` exit 0。Playwright scope smoke 使用现有系统 Chrome `154.0.8037.58` 对合成 DOM 运行并通过，验证 frozen locator 的 editor 内 checkbox scope、关辅助面板后的草稿值/焦点保留及关闭 editor；它不测试 Agent 生成应用。真实生成应用、三 Run 官方全量回归、平台上传与新 Run 均未执行；候选只可标记 `platform_unverified`。交付 ZIP/build SHA、commit 和验证细节以同目录 build record 为准。

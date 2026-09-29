@@ -6,6 +6,7 @@ All notable changes to octos will be documented in this file.
 ### ARC-Bench Agent
 
 - Share a named-entity create/save result contract across UI, design, codegen and repair prompts: show the persisted name as one visible heading, preserve its navigation link and avoid duplicate success text. Add prompt regression tests; generated-app and platform validation remain pending.
+- Add a requirements-driven workflow-state contract for existing context fixtures, distinct draft authoring steps, editor-scoped auxiliary properties, filter persistence, and single-owner sign-in navigation. Add frozen BookStack/Keep locator-source regressions and a standalone Playwright scope smoke; prompt tests and the synthetic-DOM browser smoke pass, but generated-app and platform behavior remain unverified.
 
 ### ARC-Bench collaboration
 

@@ -947,6 +947,14 @@ CREATE_RESULT_CONTRACT = """\
 - Only for create/save flows with a named entity: after a successful 2xx response and persistence, render the exact entity name in one visible semantic heading on the stable destination. Preserve navigation with a link inside that heading, e.g. <h2><a href="...">name</a></h2>, using the existing destination and appropriate heading level. Do not duplicate the name in a separate success title, link or toast. On failure, keep the form and error feedback; show no success heading. Other interactions retain their existing semantics.
 """
 
+WORKFLOW_STATE_CONTRACT = """\
+- Scenario state: when an acceptance flow starts from an existing named record or parent/context, initialize it in the required pre-action state. Do not pre-create an entity the flow is meant to create, or leave same-name duplicates that make first-match selection ambiguous. Preserve normal persistence; do not clear shared data to imitate a fresh seed.
+- Draft authoring: only when required by the scenario, keep draft-save distinct from the existing publish/save action and available from the editor the flow enters. If the flow explicitly requires an edit step on a draft detail view, expose that action there and enter edit mode only when invoked.
+- Auxiliary editor properties: when a scenario opens property controls from an item's editor, keep those controls in that editor's accessible scope (prefer a fieldset, region, or disclosure panel over a second dialog). Keep the editor open, preserve unsaved content, and restore focus when the auxiliary panel closes.
+- Filtered views: preserve the selected filter through rendering or navigation within that view; clear it only on an explicit action that leaves or resets the filter.
+- Authentication navigation: if sign-in redirects, use one navigation owner; do not schedule a competing same-destination redirect after another navigation may have begun.
+"""
+
 UI_CONTRACT_CORE = """\
 UI contract (the hidden Playwright tests depend on these; a violation scores 0):
 - Buttons are real <button> elements, links are <a href>, every form control has a visible <label for=id>; their texts are copied VERBATIM from the requirement/spec (anchored regexes like /^name$/i reject "Full Name"). Use plain text/password/email inputs, native <select>/checkbox/radio; NEVER type="date"/"number". All controls exist in the served HTML itself and stay visible, enabled and editable at all times; no CSS transitions/animations and no JavaScript that re-renders or re-creates form controls after load (Playwright waits for elements to be "stable" — cloud run 954a231a3d23 timed out on a checkbox that kept changing).
@@ -964,7 +972,7 @@ UI contract (the hidden Playwright tests depend on these; a violation scores 0):
 - Zero external requests (no CDN, fonts, analytics); assets small and same-origin.
 - Live indicators (password-strength meters, counters, previews) update their OWN element's text/attributes synchronously in the `input` event handler — never on change/blur, never debounced, never only a wrapper's class (specs compare the element's outerHTML before and after typing).
 - Text only: never OCR reference images. Write files in your first actions.
-""" + CREATE_RESULT_CONTRACT
+""" + CREATE_RESULT_CONTRACT + WORKFLOW_STATE_CONTRACT
 
 CODEGEN_SYSTEM = "You write complete, minimal web apps. Reply only with file blocks in the requested format."
 
@@ -991,6 +999,7 @@ CODEGEN_SIZE_FULL = ("As short as the tests allow; one page file per route. Mech
 
 UI_CONTRACT_DATA = """\
 - Concrete example values in the requirement (seed records, option labels, sample accounts, nationalities, seat classes) are FIXTURE DATA: they must exist verbatim as <option>s / seed rows. When a control's values are described but not listed, offer a broad standard set.
+- If a scenario opens a named existing record or context before acting, seed that required starting record once with the specified initial state; distinguish it from records created by the scenario and never use a post-test snapshot as the initial seed.
 """
 
 UI_CONTRACT_SESSION = """\
@@ -1560,7 +1569,11 @@ class Flow:
         session/hashing rules; the hidden specs only test what the tree says."""
         text = json.dumps(tree, ensure_ascii=False).lower()
         self.needs_session = bool(re.search(r"login|log in|sign in|password|session|register|注册|登录|密码|会话", text))
-        self.needs_data = bool(re.search(r"seed|published|fixture|option|select|dropdown|nationalit|车次|train|选项|下拉|预置", text))
+        self.needs_data = bool(re.search(
+            r"seed|published|fixture|option|select|dropdown|nationalit|车次|train|选项|下拉|预置|"
+            r"starting state|initial state|existing (?:record|item|parent|context)|parent record|context record",
+            text,
+        ))
 
     def ui_contract(self) -> str:
         blocks = [UI_CONTRACT_CORE]

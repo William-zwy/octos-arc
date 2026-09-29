@@ -16,6 +16,13 @@
 
 度量口径：本机 `.arc/octos-events.jsonl` 的 `turn/completed`（tokens_in / tokens_out 之和，不含缓存命中）与 `token_cost_update`（每个 session 的累计 `session_cost`，多 session 求和）；耗时取 `.arc/runner-events.jsonl` 的 running → completed；通过数由 `arc/grade-local.py` 用平台公开 Playwright 测试打分（`arc/metrics.py <输出目录>` 可一次打印整行）。所有运行都是本机、同一二进制（`octos 2.0.3-rc.11 (82e3bef3)`，`target/release/octos`，SHA-256 `b0b670ba…cd8c5`）、同一模型（`deepseek-v4-flash` 经 `api.arc-bench.com`）。「未评测」表示没有云端运行。
 
+## 2026-09-29｜三 Run 联动 workflow-state 契约（平台未验证）
+
+- 证据：BookStack Lite `363336da9695`（29/34）、Keep Lite `414407a79923`（25/32）、Keep Evolution `fb59eaf67f65`（2/6）。三个 Run 均缺平台上传 ZIP/build/commit/task snapshot 绑定，不归因到本分支源码。
+- 新增共享、按任务语义条件适用的 workflow-state 契约：起始 parent/context fixture 状态；保留 publish/save 与 draft-save 的区分及显式 draft edit 步骤；辅助属性控件留在所属 editor 的可访问作用域并保留未提交内容；重绘时保留筛选状态；认证跳转使用单一导航所有者。现有 Save Page 行为及官方测试均未改。
+- 扩展 `needs_data` 的通用语义识别；新增 frozen locator/source 回归与独立 Playwright scope smoke。没有引入新运行时依赖、任务/REQ 名称或固定实体名。
+- Python 定向契约测试 10/10、`py_compile` exit 0；全量 101 项与改前 97 项同为 3 failures + 1 error，未新增失败。Playwright scope smoke 使用现有系统 Chrome `154.0.8037.58` 对合成 DOM 通过；这不代表真实生成应用通过。Agent 生成应用与平台运行均未验证。详见阶段 5 台账第 28 节。
+
 ## 结论表（改前 → 改后，均为本机最终配置一次运行；云端未评测）
 
 | 题 | 指标 | 改前 R0 | 改后 | 运行 |
