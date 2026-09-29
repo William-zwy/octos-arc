@@ -517,3 +517,12 @@ Keep label scope 的原文核验：冻结 helper 的 `setLabel()` 用 `noteEdito
 - 阶段 4确认中间失败均未形成最终业务失败：单轮 900s cap、上游 proxy EOF、favicon ConnectionResetError、repair guard 和进程清理属于恢复链/效率风险；全局预算、内存和最终 Playwright 不是瓶颈。
 - 详细阶段输入输出、终态/中间态、证据 SHA 和多 Run 使用规则见 [`HKT/ARC_BENCH_WEB_BOOKSTACK_RUN_53A102F3EE96_HANDOFF_20260930.md`](ARC_BENCH_WEB_BOOKSTACK_RUN_53A102F3EE96_HANDOFF_20260930.md)；机器索引见 [`evidence/arc-bench/web-bookstack-run-53a102f3ee96.json`](../evidence/arc-bench/web-bookstack-run-53a102f3ee96.json)。
 - 当前决策：继续收集独立 Run；多 Run 输入完成前不派发最大适用化 Agent 修改，保护该 `34/34` 基线不被无证据回归。
+
+## 31. Lite Keep `8ea6503bfa95` 阶段 3/4归档（2026-09-30）
+
+- Run `8ea6503bfa95`（`arc-bench-lite--keep`）阶段 3/4已闭合，最终 `18/32`、score `56.2`；14 项全部为最终 Playwright 10 秒 timeout，未触发阶段 5。
+- 已确认最高优先级问题是内部验收套件错配：Run 任务为 `arc-bench-lite--keep`，内部却选择 `arc-bench-web--keep`，内部 `29/32`不能作为 Lite Keep 的通过预测。后续 harness 必须对 task suite identity fail-closed。
+- 阶段 4确认删除状态、归档/颜色动作名、标签编辑器作用域、卡片标签可见性、搜索建议 role、Settings accessible name 等 UI/状态契约不匹配；置顶问题保留为 seed/first-match `strong_candidate`。
+- 900s turn cap、13 次 request guard、一次 proxy EOF 和 402 个残留进程是生成/运行卫生风险，不替代 14 项最终业务症状，也不证明全局预算或 OOM 是根因。
+- 详细阶段输入输出、证据 SHA 和后续多 Run 规则见 [`HKT/ARC_BENCH_LITE_KEEP_RUN_8EA6503BFA95_HANDOFF_20260930.md`](ARC_BENCH_LITE_KEEP_RUN_8EA6503BFA95_HANDOFF_20260930.md)；机器索引见 [`evidence/arc-bench/lite-keep-run-8ea6503bfa95.json`](../evidence/arc-bench/lite-keep-run-8ea6503bfa95.json)。
+- 当前决策：继续收集多个独立 Run；在多 Run 汇总前不派发最大适用化 Agent 修改，且不得为修复 Keep 失败而破坏 BookStack `34/34`基线。

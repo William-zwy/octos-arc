@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "record_type": "phase3_phase4_single_run_handoff",
+  "recorded_at": "2026-09-30",
+  "run_id": "8ea6503bfa95",
+  "submission_id": "6be3ce5a778e",
+  "task_key": "arc-bench-lite--keep",
+  "status": "FAILED",
+  "score": 56.2,
+  "passed": 18,
+  "total": 32,
+  "failed": 14,
+  "phase4_status": "complete",
+  "stage5_triggered": false,
+  "implementation_dispatched": false,
+  "platform_rerun_or_upload": false,
+  "model": "deepseek-v4-flash",
+  "reasoning": "low",
+  "run_duration_seconds": 20611,
+  "platform_token_count": 432984489,
+  "provider": {"requests": 1180, "total_tokens": 34526353},
+  "cost": {"value": 215.543912, "currency": "CNY"},
+  "local_submission_zip_sha256": "9F8EE636363A5BCA75EA9E15E4403C83401965443EB0BC0941BBE6E09ADD890E",
+  "platform_identity": {
+    "build_id": null,
+    "commit_sha": null,
+    "task_snapshot_id": null,
+    "upload_zip_sha256_binding_verified": false
+  },
+  "suite_routing": {
+    "run_task": "arc-bench-lite--keep",
+    "internal_selected_suite": "arc-bench-web--keep",
+    "identity_match": false,
+    "internal_rounds": [
+      {"round": 0, "passed": "29/32", "failed_nodes": ["REQ-2.6.1", "REQ-2.7.4", "REQ-2.7.5"]},
+      {"round": 1, "passed": "29/32", "failed_nodes": ["REQ-2.6.1", "REQ-2.7.4", "REQ-2.7.5"]}
+    ],
+    "decision": "confirmed_harness_orchestration_defect; fail closed on task-suite mismatch"
+  },
+  "final_failures": {
+    "all_status": "timedOut",
+    "count": 14,
+    "req_ids": ["REQ-2.3.1", "REQ-2.5.1", "REQ-2.5.2", "REQ-2.5.3", "REQ-2.5.4", "REQ-2.6.1", "REQ-2.7.1", "REQ-2.7.2", "REQ-2.7.4", "REQ-2.8.1", "REQ-2.8.3", "REQ-3.1", "REQ-4.1", "REQ-4.2"],
+    "confirmed_contract_clusters": [
+      "delete status accessible name",
+      "archive and color per-note action names",
+      "label editor scope and card label rendering",
+      "search suggestion role",
+      "settings button accessible name"
+    ],
+    "strong_candidate_clusters": ["pin seed state and duplicate-title first-match contamination"]
+  },
+  "generation_risks": {
+    "implementation_turns_at_900s": 5,
+    "repair_request_guard_events": 13,
+    "proxy_unexpected_eof_events": 1,
+    "connection_reset_unique": 6,
+    "postflight_stray_processes": 402,
+    "global_budget_exhausted": false,
+    "oom_evidenced": false
+  },
+  "evidence_hashes": {
+    "manifest.json": "437048B007EC797D83F8A6784CEEE261F6F01FEF46206FCB92716C054A0CCBCA",
+    "phase3-analysis.md": "B0D4A9218D17A1E158D3C3EEDFD33579B77295229D0AA1C73C4333B70A055D70",
+    "phase4-handoff.json": "601F9AF6233CA65186F82B29477A29B1FBFF4E425D0207BCC1AB39DC73A8F018",
+    "phase4-ack.json": "F5770BA9414DACF53D1EE3C7B5F4212B4E68617601D4FED70ED77C7A98757F0E",
+    "phase4-result.json": "696C3588EE779A09BD1DF9BD832CE3B8AC5EBAC7E87BE585EDD2B34E623D1D82",
+    "phase4-result.md": "DF3930EEE38FCE3F8C8361A81200AC56CD06783A36879D8F57F4D7BFAA47658E"
+  },
+  "next_decision_gate": "Collect additional independent Runs before maximum-applicability Agent changes; preserve BookStack 34/34 baseline and do not treat Web Keep 29/32 as Lite Keep validation."
+}
