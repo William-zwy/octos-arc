@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "record_type": "phase3_phase4_pair_handoff",
+  "recorded_at": "2026-09-30",
+  "status": "evidence_archived",
+  "implementation_dispatched": false,
+  "platform_rerun_or_upload": false,
+  "source_workspace": "D:\\DataMove\\codex\\worktrees\\9015\\AI智能体软件工厂黑客松\\evidence\\arc-bench\\runs",
+  "shared_submission": {
+    "submission_id": "a9475f8e5f57",
+    "local_zip_sha256": "9F8EE636363A5BCA75EA9E15E4403C83401965443EB0BC0941BBE6E09ADD890E",
+    "platform_binding_verified": false,
+    "missing_binding": ["platform_upload_sha256", "agent_build_id", "commit_sha", "task_snapshot_id"]
+  },
+  "runs": [
+    {
+      "run_id": "a774fb34f1b6",
+      "task_key": "arc-bench-lite-evolution--bookstack",
+      "result": {"status": "FAILED", "score": 66.7, "passed": 4, "total": 6, "failed": ["REQ-10.2", "REQ-11.1"]},
+      "phase4": {"status": "complete", "stage5_triggered": false},
+      "artifact_hashes": {
+        "manifest.json": "5C8C42D4648800CD74693170F471B196C68E8012FDCACD4B5C02475837A87DF3",
+        "phase4-handoff.json": "55F49A0AF220A1EC426FFF916E489504441A974B012B52FBCEB3648306890B45",
+        "phase4-ack.json": "F4CDEABF39B44811B816DBA39D5F2F35DDB820E8995BCD4A66F39E4A6BF319FE",
+        "phase4-result.json": "4D07E124EF00CA1150A7DBEEEB9B2026FE57722ABFFEDC5AEFA1946A7B5570DF",
+        "phase4-result.md": "45030C87A3223447B5C1979684659A6B255FC8EECE4BCC76E6C33FD2C4F43BF9"
+      },
+      "confirmed": [
+        {"req_id": "REQ-10.2", "mechanism": "sort-save full navigation destroys Playwright execution context", "fix_boundary": "update or retain sorted list in place; close panel; no navigation on error"},
+        {"req_id": "REQ-11.1", "mechanism": "comment is persisted but not exposed through the expected accessible heading contract; success reload adds lifecycle risk", "fix_boundary": "append returned comment in place with required accessible contract; clear input; no immediate reload"}
+      ],
+      "unknown_or_candidate": ["large-file/image read pressure", "locator-level regression prevention"],
+      "process_risks": ["backend/server.js versus backend/src/server.js structural path mismatch", "node_states disagrees with final Playwright", "implementation cap pressure", "broad process cleanup", "internal checks are not official Playwright coverage"]
+    },
+    {
+      "run_id": "82a833cabe9e",
+      "task_key": "arc-bench-lite-evolution--keep",
+      "result": {"status": "FAILED", "score": 33.3, "passed": 2, "total": 6, "failed": ["REQ-7.1", "REQ-7.2", "REQ-8.2", "REQ-9.1"]},
+      "phase4": {"status": "complete", "stage5_triggered": false},
+      "artifact_hashes": {
+        "manifest.json": "CFC4FE4C8DA468453658200FA87F88D345486F59B45E676FCA2539ADF319F934",
+        "phase4-handoff.json": "28F350B166B47D6D96EF5BA080802F1779F6288921707699AFE2358B43FEE307",
+        "phase4-ack.json": "FF09E0DB869BFEBD7A4ECEBE16F48074564586D4CECB1D3FBB3ACA8585B1BFA8",
+        "phase4-result.json": "22FCF5E4E735A7B5FD3712B81E460C5C9A54307D5B2410C3B093B3F6479BD260",
+        "phase4-result.md": "52DCAD176F3EFF781A3C40D90668532974009813B918572546F58658218172E8"
+      },
+      "confirmed": [
+        {"req_id": "REQ-7.1", "mechanism": "suggestion buttons write data-type while handler reads data-label, so Lists filtering receives null", "fix_boundary": "define one data attribute and use it in both markup and handler"},
+        {"req_id": "REQ-8.2", "mechanism": "Remind me exists in editor but not inside the target Call dentist card scope", "fix_boundary": "keep entity action in the target entity accessible scope"}
+      ],
+      "unknown": [
+        {"req_id": "REQ-7.2", "reason": "platform timeout has no assertion stack; derived clean-seed replay passed; exact spec and original seed missing"},
+        {"req_id": "REQ-9.1", "reason": "platform missed Groceries, derived replay retained it; platform seed and exact spec missing"}
+      ],
+      "process_risks": ["6/6 implemented versus 0/6 verified runner layer conflict", "no generated spec observed during acceptance while final report has six specs", "BrokenPipeError", "favicon ConnectionResetError", "four unmasked api_key-field candidates in source attachments; values not copied"]
+    }
+  ],
+  "cross_run_decision": {
+    "mergeable_mechanisms": ["in-place post-success update instead of immediate reload/navigation", "entity actions stay in entity accessible scope", "data attributes and event-handler fields share one contract", "minimal locator regressions when official specs are unavailable"],
+    "not_mergeable": ["scores or completion rates", "REQ-7.2 and REQ-9.1 as confirmed roots", "process and favicon noise as business causes", "platform A/B attribution without build/task binding"],
+    "next_gate": "A future implementation agent may consume the four shared mechanisms conditionally; this decision ledger does not itself authorize code changes, packaging, upload, or a new platform Run."
+  },
+  "security": {
+    "raw_logs_copied": false,
+    "credential_values_propagated": false,
+    "action": "If source candidates are active credentials, inspect, redact, and rotate at source."
+  }
+}

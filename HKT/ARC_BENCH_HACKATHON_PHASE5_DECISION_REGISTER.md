@@ -502,3 +502,10 @@ Keep label scope 的原文核验：冻结 helper 的 `setLabel()` 用 `noteEdito
 ### 本地验证与交付边界
 
 改前 Windows 全量基线 97 项：3 failures + 1 error。改后 101 项：仍为同三个失败（Unix npm cache 路径断言、两处路径分隔符断言）和一个临时 `.git/objects` 权限清理错误，退出码 1；无新增失败。定向 workflow/create-result 测试 10/10，`py_compile` exit 0。Playwright scope smoke 使用现有系统 Chrome `154.0.8037.58` 对合成 DOM 运行并通过，验证 frozen locator 的 editor 内 checkbox scope、关辅助面板后的草稿值/焦点保留及关闭 editor；它不测试 Agent 生成应用。真实生成应用、三 Run 官方全量回归、平台上传与新 Run 均未执行；候选只可标记 `platform_unverified`。交付 ZIP/build SHA、commit 和验证细节以同目录 build record 为准。
+
+## 29. Evolution BookStack/Keep 配对证据归档（2026-09-30）
+
+- 已综合归档阶段 3/4 Run `a774fb34f1b6`（BookStack，4/6，66.7）与 `82a833cabe9e`（Keep，2/6，33.3）。两者阶段 4 均为 `complete`，均未触发阶段 5；不得合并分数，也不得据共同 submission 推断严格 A/B。
+- 详细事实、五份阶段文件 SHA-256、确认根因、unknown、流程风险和多 Run 使用规则见 [`HKT/ARC_BENCH_EVOLUTION_RUN_PAIR_HANDOFF_20260930.md`](ARC_BENCH_EVOLUTION_RUN_PAIR_HANDOFF_20260930.md)；机器索引见 [`evidence/arc-bench/evolution-run-pair-20260930.json`](../evidence/arc-bench/evolution-run-pair-20260930.json)。
+- 当前可供后续 Agent 实现会话参考的共享机制只有：成功写入后原地更新、实体动作保持在实体可访问作用域、控件 `data-*` 与事件处理器字段保持一致，以及缺官方 spec 时的最小 locator 回归。Keep `REQ-7.2`/`REQ-9.1` 仍为 `unknown`，不得当作确定根因。
+- 当前状态：`EVIDENCE_ARCHIVED / IMPLEMENTATION_NOT_DISPATCHED`。本会话未修改 Agent、官方测试或 ZIP，未上传、未创建平台 Run。
