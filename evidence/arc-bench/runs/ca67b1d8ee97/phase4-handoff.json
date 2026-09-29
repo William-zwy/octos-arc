@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "handoff_id": "ca67b1d8ee97:phase4:20260930-v1",
+  "run_id": "ca67b1d8ee97",
+  "submission_id": "362bc0d7b112",
+  "task_key": "arc-bench-web--stackoverflow",
+  "scope": "phase4_read_only_single_run_diagnosis",
+  "dispatch_status": "pending_canonical_thread_delivery",
+  "stage5_triggered": false,
+  "agent_modified": false,
+  "platform_run_created": false,
+  "platform_final": {"status": "FAILED", "score": 90.9, "pass_total": "60/66", "failed_ids": ["REQ-2.7", "REQ-4.5.1", "REQ-4.6", "REQ-7.3", "REQ-8.2.1", "REQ-9.6"]},
+  "confirmed_stage3_facts": [
+    "Generated application, deployment and official Playwright execution were reached.",
+    "All six final failures were ten-second timeouts.",
+    "Implement and repair execution had timeout/proxy/non-verifying events.",
+    "No OOM or global platform budget exhaustion was evidenced."
+  ],
+  "diagnosis_constraints": [
+    "Do not infer exact source root causes from timeout symptoms alone.",
+    "Keep profile/filter/reply, answer edit/delete and badge as separate mechanisms until source/runtime evidence connects them.",
+    "Preserve Run JSON versus Playwright internal stats conflict.",
+    "Do not modify Agent, official tests, packer or platform state.",
+    "Do not trigger Stage 5 implementation from this single Run."
+  ],
+  "required_outputs": [
+    "confirmed facts",
+    "strong candidates and evidence paths",
+    "excluded causes",
+    "unknowns and missing evidence",
+    "minimum clean-seed or DOM/timing reproduction",
+    "recommendation for later multi-Run Stage 5 comparison"
+  ],
+  "source_manifest": "evidence/arc-bench/runs/ca67b1d8ee97/manifest.json",
+  "analysis_input": "evidence/arc-bench/runs/ca67b1d8ee97/phase3-analysis.md",
+  "source_sha256": "CF4597DE9B0B6D6A1E538E50319766A8C2411E10E2BBCA8FCE4767511AD780"
+}

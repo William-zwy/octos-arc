@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "run_id": "ca67b1d8ee97",
+  "submission_id": "362bc0d7b112",
+  "task_key": "arc-bench-web--stackoverflow",
+  "phase3_status": "normalized_intake_complete",
+  "phase4_status": "pending_structured_diagnosis",
+  "platform_final": {"status": "FAILED", "score": 90.9, "passed": 60, "failed": 6, "total": 66},
+  "failure_ids": ["REQ-2.7", "REQ-4.5.1", "REQ-4.6", "REQ-7.3", "REQ-8.2.1", "REQ-9.6"],
+  "failure_shape": "All six failures are official Playwright 10-second timeouts; no non-timeout assertion failure.",
+  "runtime_reached": true,
+  "implementation_diagnosis": {
+    "confirmed": ["generated application and official suite were reached", "repair did not converge", "no OOM", "no proven global budget exhaustion"],
+    "strong_candidate": ["accessible role/name or navigation-state gaps", "mutation readback or DOM refresh gaps", "hidden/seed/name mismatch for badge"],
+    "unknown": ["exact source root causes", "seed contamination", "bundled fallback use", "platform build and task snapshot binding"]
+  },
+  "stage5_gate": "Do not modify Agent from this Run alone; wait for more Run inputs and Stage 4 structured result.",
+  "source_record": "HKT/ARC_BENCH_WEB_STACKOVERFLOW_RUN_CA67B1D8EE97_HANDOFF_20260930.md",
+  "normalized_record": "evidence/arc-bench/web-stackoverflow-run-ca67b1d8ee97.json",
+  "artifact_sha256": {
+    "run_json": "CF4597DE9B0B6D6A1E538E50319766A8C2411E10E2BBCA8FCE4767511AD780",
+    "logs": "9ED27D50FAFCD2EE8A507943276D855930A4169C71DCFD0B6E4A9C114F8651A4",
+    "midrun": "873B17AF6A4A5785500080D6B64606B01F57D746D73BF1F68277F9673FAB3A63",
+    "midrun_traceability": "6C9E3D4A747D506C98FB0BE002CDF0B6E2594643B36898FDC8349EEBB1BABB81",
+    "summary": "35A96910E6C553DCDAC8D369BED5E921E2080EFC52B8A12E9EF708BE5F0DDA55",
+    "failure_details": "4F531759976FFC1886D7AAE77EFD4D487EEF539AFCF9091633F028C0A4D223AD",
+    "design_midrun": "B83D445AF80A6B496F641C1BD024BECC82B63AF6FBB1AE237FE1FAB32CE5D041",
+    "snapshots": "7CD7F47C2F08FD3B57E67E1F6888D58718C8B21248B71649BCE9680E47FC9BBE",
+    "stdout": "8C7A1CC9F20BDD02B90CD4244C79271C0E6BC22CD0117DB11A57633DCCCD5FE7",
+    "runner_events": "1F0C2EE05444BB9E20D436B2C1C29B8F18CE13D4436B55043237D9A37E774954",
+    "octos_events": "AC7C7ADFDAD5A5BF90B31BB086882D7B84FBB3F2DA96EC5897A340E5EBB2EABB",
+    "playwright_report": "03FDA0D30169FF4C3723481F759A8B813CA992D5FE4DDE211CE4B1E8A942011C",
+    "template_zip": "EA95A8A2AAA409E8BDD93D4C9D8C67AE84672F5E5598AA3F983124FEDD329CBB",
+    "submission_zip": "9F8EE636363A5BCA75EA9E15E4403C83401965443EB0BC0941BBE6E09ADD890E"
+  }
+}

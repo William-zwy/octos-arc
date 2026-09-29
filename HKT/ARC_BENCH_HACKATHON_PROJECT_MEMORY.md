@@ -288,3 +288,9 @@ The durable record is [`ARC_BENCH_WEB_KEEP_RUN_C68BEF1A6343_HANDOFF_20260930.md`
 ## 8. 安全记录
 
 外部交接资料曾包含明文 API Key。本项目记忆不复制该 Key，也不记录其值。应确认它没有进入 Git、日志、截图或公开文档；如曾暴露到不可信位置，应在平台轮换，并继续使用环境变量管理。
+
+## 9. Web Stack Overflow `ca67b1d8ee97` 基础归档（2026-09-30）
+
+本 Run 已完成阶段 3归一化，阶段 4尚待结构化结果。平台最终为 `60/66`、score `90.9`，6 项均为官方 10 秒 Playwright 超时；应用生成、部署和测试均实际到达。中间过程有 7 个 implement timeout、4 个 proxy error、两次未验证 full-suite repair 和 465 个残留进程清理，但没有 OOM 或已证实全局预算耗尽。Run JSON 与 Playwright 内部 stats 存在 `60/66` 对 `expected=60/unexpected=6` 的口径差异，按项目规则保留并以 Run JSON 为权威。
+
+当前只记录三组待复核方向：Profile/Filter/Reply 可访问语义或页面状态，Answer 编辑/删除的 mutation 读回，Badge 的隐藏/seed/name 契约。它们都是本 Run 的 strong candidate，不是已确认的通用 Agent 根因。用户要求先收集多个 Run，再进行最大适用化修改；因此本 Run 不触发 Agent 实现、不启动平台 Run、不改变官方测试。完整事实、证据 SHA 和阶段 4边界见 `HKT/ARC_BENCH_WEB_STACKOVERFLOW_RUN_CA67B1D8EE97_HANDOFF_20260930.md`。

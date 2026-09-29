@@ -219,3 +219,7 @@
 ---
 
 *本摘要基于 dayuruozhi 的 90 个提交和 7 份核心文档生成。详细内容请参阅各文档原文。*
+
+## 新增 Run 归档：Web Stack Overflow `ca67b1d8ee97`
+
+已完成基础输入和了解判断：平台 `60/66`、score `90.9`，6 项均为官方 10 秒超时；生成应用、部署和官方测试均到达。该 Run 暂不形成 Agent 修改结论，等待阶段 4结构化诊断及更多 Run 的同机制证据。详见 `HKT/ARC_BENCH_WEB_STACKOVERFLOW_RUN_CA67B1D8EE97_HANDOFF_20260930.md` 与 `evidence/arc-bench/runs/ca67b1d8ee97/`。

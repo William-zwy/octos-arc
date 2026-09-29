@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench Stage 3 normalized intake and Stage 4 pending handoff",
+  "run_id": "ca67b1d8ee97",
+  "submission_id": "362bc0d7b112",
+  "task_key": "arc-bench-web--stackoverflow",
+  "catalog": "competition",
+  "model": "deepseek-v4-flash",
+  "status": "FAILED",
+  "platform_final": {
+    "score": 90.9,
+    "passed": 60,
+    "total": 66,
+    "failed": 6,
+    "failure_shape": "6 official Playwright 10-second timeouts; no non-timeout assertion failure",
+    "tests_reached": true,
+    "generated_app_reached": true,
+    "startup_failure": false
+  },
+  "failed_requirements": [
+    {"req_id": "REQ-2.7", "symptom": "profile button role/name locator not found", "evidence_level": "confirmed_symptom"},
+    {"req_id": "REQ-4.5.1", "symptom": "edited button role/name locator not visible", "evidence_level": "confirmed_symptom"},
+    {"req_id": "REQ-4.6", "symptom": "answer text remains after delete", "evidence_level": "confirmed_symptom"},
+    {"req_id": "REQ-7.3", "symptom": "Filter button role/name locator not found", "evidence_level": "confirmed_symptom"},
+    {"req_id": "REQ-8.2.1", "symptom": "teacher or badge text not visible; hidden Badges heading matched", "evidence_level": "confirmed_symptom"},
+    {"req_id": "REQ-9.6", "symptom": "Reply button role/name locator not found", "evidence_level": "confirmed_symptom"}
+  ],
+  "intermediate": {
+    "runtime": "application generated, deployed and tested",
+    "implement_timeout_nodes": 7,
+    "upstream_proxy_errors": 4,
+    "full_suite_repairs": [
+      {"duration_seconds": 67, "wrote": true, "verified": false, "request_budget": 10},
+      {"duration_seconds": 63, "wrote": true, "verified": false, "request_budget": 10}
+    ],
+    "turn_started": 189,
+    "turn_completed": 180,
+    "turn_error_events": 95,
+    "connection_reset_errors": 66,
+    "oom": false,
+    "oom_kill": false,
+    "postflight_stray_processes_reaped": 465
+  },
+  "metrics": {
+    "run_duration_seconds": 30388,
+    "run_tokens": 634131909,
+    "provider_requests": 2886,
+    "provider_tokens": 114267293,
+    "cost_cny": 301.716608,
+    "workers": 2,
+    "memory_limit_bytes": 2147483648,
+    "memory_peak_bytes": 1396043776
+  },
+  "playwright_stats_conflict": {
+    "run_json": "60/66",
+    "playwright_internal": "expected=60, unexpected=6",
+    "ruling": "Use Run JSON as platform final; preserve Playwright stats as auxiliary conflict."
+  },
+  "assessment": {
+    "confirmed": [
+      "The official suite reached the generated application.",
+      "The final platform result is 60/66 with six timeout-shaped failures.",
+      "The implementation/repair pipeline did not converge and produced unverified repair writes.",
+      "No OOM or global budget exhaustion was evidenced."
+    ],
+    "strong_candidate": [
+      "Profile, filter and reply controls may share accessible role/name or navigation-state contract gaps.",
+      "Answer edit/delete may have mutation readback, DOM refresh or persistence gaps.",
+      "Badge failure may involve hidden state, seed state or name mismatch."
+    ],
+    "unknown": [
+      "Exact source root cause for each failed requirement",
+      "Seed contamination or cross-test state pollution",
+      "Whether the full official suite used bundled fallback",
+      "Platform build, code, task snapshot and ZIP-to-build binding",
+      "Canonical Stage 4 ACK/result identity"
+    ]
+  },
+  "stage5": {
+    "status": "phase4_pending",
+    "implementation_dispatched": false,
+    "agent_modified": false,
+    "platform_rerun_created": false,
+    "next_gate": "Receive Stage 4 structured diagnosis, then compare with additional independent Runs before any generalized Agent change."
+  },
+  "source_folder": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-arc-bench-web-stackoverflow/",
+  "artifact_sha256": {
+    "run_json": "CF4597DE9B0B6D6A1E538E50319766A8C2411E10E2BBCA8FCE4767511AD7806",
+    "logs": "9ED27D50FAFCD2EE8A507943276D855930A4169C71DCFD0B6E4A9C114F8651A4",
+    "midrun": "873B17AF6A4A5785500080D6B64606B01F57D746D73BF1F68277F9673FAB3A63",
+    "midrun_traceability": "6C9E3D4A747D506C98FB0BE002CDF0B6E2594643B36898FDC8349EEBB1BABB81",
+    "summary": "35A96910E6C553DCDAC8D369BED5E921E2080EFC52B8A12E9EF708BE5F0DDA55",
+    "failure_details": "4F531759976FFC1886D7AAE77EFD4D487EEF539AFCF9091633F028C0A4D223AD",
+    "design_midrun": "B83D445AF80A6B496F641C1BD024BECC82B63AF6FBB1AE237FE1FAB32CE5D041",
+    "snapshots": "7CD7F47C2F08FD3B57E67E1F6888D58718C8B21248B71649BCE9680E47FC9BBE",
+    "stdout": "8C7A1CC9F20BDD02B90CD4244C79271C0E6BC22CD0117DB11A57633DCCCD5FE7",
+    "runner_events": "1F0C2EE05444BB9E20D436B2C1C29B8F18CE13D4436B55043237D9A37E774954",
+    "octos_events": "AC7C7ADFDAD5A5BF90B31BB086882D7B84FBB3F2DA96EC5897A340E5EBB2EABB",
+    "playwright_report": "03FDA0D30169FF4C3723481F759A8B813CA992D5FE4DDE211CE4B1E8A942011C",
+    "template_zip": "EA95A8A2AAA409E8BDD93D4C9D8C67AE84672F5E5598AA3F983124FEDD329CBB",
+    "submission_zip": "9F8EE636363A5BCA75EA9E15E4403C83401965443EB0BC0941BBE6E09ADD890E"
+  }
+}

@@ -529,6 +529,16 @@ Keep label scope 的原文核验：冻结 helper 的 `setLabel()` 用 `noteEdito
 
 ## 32. Web Keep `c68bef1a6343` 阶段 3/4归档（2026-09-30）
 
+## 33. Web Stack Overflow `ca67b1d8ee97` 基础输入与阶段 4待处理（2026-09-30）
+
+`ca67b1d8ee97`（submission `362bc0d7b112`，任务 `arc-bench-web--stackoverflow`）已完成阶段 3证据归一化。平台 Run JSON 的最终结果是 `FAILED`、`60/66`、score `90.9`；生成应用、部署和官方 Playwright 均已执行，不属于启动失败、包形状拒绝、认证 fail-fast 或 OOM。6 个失败（`REQ-2.7`、`REQ-4.5.1`、`REQ-4.6`、`REQ-7.3`、`REQ-8.2.1`、`REQ-9.6`）全部是官方 10 秒超时。Playwright 内部 stats 另记 `expected=60`、`unexpected=6`，与 Run JSON 口径冲突，保留冲突并以 Run JSON 为平台最终成绩。
+
+过程上确认存在 7 个 implement turn timeout、4 个 proxy_error 事件、两次 full-suite repair `wrote=true/verified=false`，以及 request budget 10 触发；同时无 OOM、无已证实全局平台预算耗尽。故本 Run 的第一层风险是“高消耗但修复不收敛”，第二层才是生成应用的最终 DOM/交互契约缺口。
+
+阶段 4当前只允许做单 Run 只读诊断：Profile/Filter/Reply 的 role/name 或导航状态、Answer 编辑/删除的 mutation 读回或持久化、Badge 的隐藏/seed/name 状态均暂列 `strong_candidate`，没有任何一个升级为跨 Run 通用根因。阶段 4必须补最终生成代码与失败 locator/DOM/时序/clean-seed证据；不得修改 Agent、官方测试、打包器或启动平台 Run。用户已要求后续输入多个 Run 后再做最大适用化修改，因此本条状态为 `phase4_pending`，不转派实现。
+
+证据索引：[`ARC_BENCH_WEB_STACKOVERFLOW_RUN_CA67B1D8EE97_HANDOFF_20260930.md`](./ARC_BENCH_WEB_STACKOVERFLOW_RUN_CA67B1D8EE97_HANDOFF_20260930.md)、[`web-stackoverflow-run-ca67b1d8ee97.json`](../evidence/arc-bench/web-stackoverflow-run-ca67b1d8ee97.json)、[`manifest.json`](../evidence/arc-bench/runs/ca67b1d8ee97/manifest.json)、[`phase3-analysis.md`](../evidence/arc-bench/runs/ca67b1d8ee97/phase3-analysis.md)、[`phase4-handoff.json`](../evidence/arc-bench/runs/ca67b1d8ee97/phase4-handoff.json)。
+
 - Run `c68bef1a6343`（`arc-bench-web--keep`）最终 `21/32`、score `65.6`，11 项失败：10 项官方 10 秒 `timedOut`，1 项 `REQ-2.6.1` 截图裁剪失败。应用启动、部署和官方 Web Keep suite 均已到达；本 Run 的内部 suite identity 与任务匹配，不存在 `8ea6503bfa95` 的 Lite/Web 错配。
 - 阶段 3输入、终态、中间态、阶段 4 ACK/result、原始证据文件哈希和诊断已归档到 [`ARC_BENCH_WEB_KEEP_RUN_C68BEF1A6343_HANDOFF_20260930.md`](ARC_BENCH_WEB_KEEP_RUN_C68BEF1A6343_HANDOFF_20260930.md)，机器索引为 [`evidence/arc-bench/web-keep-run-c68bef1a6343.json`](../evidence/arc-bench/web-keep-run-c68bef1a6343.json)。ACK/result 的 Run、submission、task、handoff、thread、manifest SHA 全部匹配，`PHASE4_RESULT=complete`。
 - 阶段 4确认两项 Run-local 根因：①提交 ZIP 携带生成运行后的 `template/backend/data/db.json`，两条删除 fixture 已 `trashed=true`，而服务端优先加载该 DB 并过滤回收记录，直接解释 `REQ-2.3.1/2.3.3`；②初始 grid 模式的 `#view-toggle` 暴露 `Grid view`，冻结 `REQ-5.2` 在点击前寻找 `List view`，属于初始 accessible action 契约错误。

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "purpose": "Phase 5 role mapping and idempotent handoff index; decisions live only in the Markdown register",
-  "updated_at": "2026-09-24",
+  "updated_at": "2026-09-30",
   "source_checkout": "D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松",
   "user_limits": {
     "remote_push_authorized": false,
@@ -1302,6 +1302,32 @@
       "new_platform_run_created": false,
       "decision": "phase4_consumable_for_later_multi_run_comparison; no_single_run_maximum_applicability_dispatch",
       "next_gate": "Compare with additional Web/Lite Keep Runs and preserve the BookStack 34/34 baseline before Agent implementation."
+    },
+    {
+      "key": "ca67b1d8ee97:phase3:normalized",
+      "run_id": "ca67b1d8ee97",
+      "submission_id": "362bc0d7b112",
+      "task_key": "arc-bench-web--stackoverflow",
+      "source_record": "HKT/ARC_BENCH_WEB_STACKOVERFLOW_RUN_CA67B1D8EE97_HANDOFF_20260930.md",
+      "normalized_record": "evidence/arc-bench/web-stackoverflow-run-ca67b1d8ee97.json",
+      "manifest": "evidence/arc-bench/runs/ca67b1d8ee97/manifest.json",
+      "phase3_analysis": "evidence/arc-bench/runs/ca67b1d8ee97/phase3-analysis.md",
+      "phase4_handoff": "evidence/arc-bench/runs/ca67b1d8ee97/phase4-handoff.json",
+      "platform_final": {"status": "FAILED", "score": 90.9, "passed": 60, "failed": 6, "total": 66},
+      "phase4_status": "pending_structured_diagnosis",
+      "stage5_status": "not_triggered",
+      "agent_modified": false,
+      "platform_run_created": false,
+      "decision": "record_single_run_facts_only; wait_for_more_runs_before_maximum_applicability_agent_change",
+      "confirmed": ["generated application and official suite reached", "six final failures are timeout-shaped", "repair pipeline did not converge", "no OOM evidenced"],
+      "strong_candidates": ["profile/filter/reply accessible contract or navigation state", "answer mutation readback or persistence", "badge hidden/seed/name state"],
+      "unknown": ["exact source root causes", "seed contamination", "bundled fallback use", "platform build/task snapshot/ZIP binding", "canonical phase4 ACK/result"],
+      "artifact_sha256": {
+        "run_json": "CF4597DE9B0B6D6A1E538E50319766A8C2411E10E2BBCA8FCE4767511AD780",
+        "logs": "9ED27D50FAFCD2EE8A507943276D855930A4169C71DCFD0B6E4A9C114F8651A4",
+        "submission_zip": "9F8EE636363A5BCA75EA9E15E4403C83401965443EB0BC0941BBE6E09ADD890E"
+      },
+      "next_gate": "Receive structured Stage 4 diagnosis and additional independent Runs; do not dispatch implementation from this Run alone."
     }
   ]
 }
