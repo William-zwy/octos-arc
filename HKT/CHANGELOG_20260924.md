@@ -4,6 +4,12 @@
 
 ---
 
+## 2026-09-30
+
+- 归档 Web Keep Run `c68bef1a6343` 的阶段 3输入、终态/中间态指标、原始证据 SHA-256 和阶段 4待闭合状态。
+- 新增 `ARC_BENCH_WEB_KEEP_RUN_C68BEF1A6343_HANDOFF_20260930.md` 与 `evidence/arc-bench/web-keep-run-c68bef1a6343.json`。
+- 明确该 Run 的 Web Keep suite identity 匹配；阶段 4缺少 ACK/result，暂不升级代码根因、不派发 Agent 修改、不触发平台 Run。
+
 ## 📁 文档列表
 
 | 文件名 | 类型 | 创建/更新日期 | 摘要 |

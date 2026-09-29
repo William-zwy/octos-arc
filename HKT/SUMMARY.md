@@ -56,6 +56,7 @@
 | `6d41952769f7` | BookStack | **30/34 (88.2%)** | `6.1.1`、`6.2.1`、`7.2`、`8.1` | 三项 UI 语义为 strong candidate |
 | `d9a97cb4c92d` | BookStack | **31/34 (91.2%)** | `4.3.1`、`6.1.1`、`8.1` | 前两项 confirmed；收藏项继续第二阶段隔离 |
 | `32e08aaca2e4` | Keep | **27/32 (84.4%)** | 5 项失败 | 最新 Keep 明显低于 no-regression floor |
+| `c68bef1a6343` | Web Keep | **21/32 (65.6%)** | 删除/归档/颜色、标签、设置、视图 | 阶段 3已归档；阶段 4待身份闭合，不升级代码根因 |
 
 ### 🚫 不可混用的本地实验
 
@@ -166,6 +167,7 @@
 - 项目记忆：`docs/ARC_BENCH_HACKATHON_PROJECT_MEMORY.md`
 - 阶段五协同索引：`evidence/arc-bench/phase5-coordination.json`
 - Run 证据：`evidence/arc-bench/runs/<run_id>/manifest.json`
+- Web Keep `c68bef1a6343`：[`ARC_BENCH_WEB_KEEP_RUN_C68BEF1A6343_HANDOFF_20260930.md`](ARC_BENCH_WEB_KEEP_RUN_C68BEF1A6343_HANDOFF_20260930.md) 与 [`web-keep-run-c68bef1a6343.json`](../evidence/arc-bench/web-keep-run-c68bef1a6343.json)
 
 ### 外部只读证据
 

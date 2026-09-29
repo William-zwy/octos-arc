@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "record_type": "phase3_phase4_single_run_handoff",
+  "recorded_at": "2026-09-30",
+  "run_id": "c68bef1a6343",
+  "submission_id": "362bc0d7b112",
+  "task_key": "arc-bench-web--keep",
+  "status": "FAILED",
+  "score": 65.6,
+  "passed": 21,
+  "total": 32,
+  "failed": 11,
+  "failure_shape": {"timed_out": 10, "failed_assertion_or_runtime": 1},
+  "phase3_status": "archived",
+  "phase4_status": "pending_reconciliation",
+  "stage5_triggered": false,
+  "implementation_dispatched": false,
+  "platform_rerun_or_upload": false,
+  "model": "deepseek-v4-flash",
+  "reasoning": "low",
+  "run_duration_seconds": 21858,
+  "platform_token_count": 458597168,
+  "provider": {"requests": 1384, "total_tokens": 40421103},
+  "cost": {"value": 228.090402, "currency": "CNY"},
+  "local_submission_zip_sha256": "9F8EE636363A5BCA75EA9E15E4403C83401965443EB0BC0941BBE6E09ADD890E",
+  "suite_routing": {
+    "run_task": "arc-bench-web--keep",
+    "internal_selected_suite": "arc-bench-web--keep",
+    "identity_match": true,
+    "decision": "suite_identity_confirmed_for_this_run"
+  },
+  "final_failures": {
+    "timed_out": ["REQ-2.3.1", "REQ-2.3.2", "REQ-2.3.3", "REQ-2.5.1", "REQ-2.5.4", "REQ-2.7.1", "REQ-2.7.2", "REQ-2.7.5", "REQ-4.2", "REQ-5.2"],
+    "failed": ["REQ-2.6.1"],
+    "clusters": ["delete_archive_action_or_dom_stability", "label_editor_and_label_state", "settings_and_view_toggle_accessibility"]
+  },
+  "execution_evidence": {
+    "octos": {"parsed_lines": 17996, "turns_started": 62, "turns_completed": 56, "turn_errors": 1, "unclosed_turns": 5, "tool_starts": 1531, "tool_completions": 1531},
+    "runner": {"designed": 32, "implemented": 31, "not_verified": 12, "lifecycle_completed": true},
+    "long_turn_failures": ["REQ-2.1 repair rewrite 719s", "REQ-2.4 repair rewrite 365s", "REQ-2.7.1 implementation 900s", "REQ-2.7.3 implementation 900s"],
+    "proxy_error_node": "REQ-2.6.2",
+    "request_budget_guard_events": 16,
+    "protected_file_guard_events": 2,
+    "claim_without_build_guard_events": 8,
+    "connection_reset_observations": 5,
+    "postflight_stray_processes_reaped": 672,
+    "memory_peak_bytes": 2037133312,
+    "memory_limit_bytes": 2147483648,
+    "oom_kill": 0,
+    "global_budget_exhausted": false
+  },
+  "platform_identity": {"build_id": null, "commit_sha": null, "task_snapshot_id": null, "upload_zip_sha256_binding_verified": false},
+  "phase_files": {
+    "manifest_sha256": "E4008585EE9406A004D71ED70D98D2312C257D71528233C90DEE3C6449C60463",
+    "phase3_analysis_sha256": "73C5E1171EE5C5C684A788A5BB8417B35EECE509604DA8A6A643BE7727D9AC5D",
+    "phase4_handoff_sha256": "86612976AC42B8829D6DFE2A5A2C69B93A75E4C10163FA27357D360077FDEE5D",
+    "phase4_ack_present": false,
+    "phase4_result_present": false
+  },
+  "classification": {
+    "confirmed": ["final Playwright symptoms", "matching web-keep suite identity", "incomplete verification and execution guards", "process hygiene risk without OOM kill"],
+    "strong_candidates": ["accessible-name/visibility/scope mismatch", "hover or list redraw DOM detachment", "seed or duplicate-name selection", "repair convergence failure"],
+    "unknown": ["exact source root cause per test", "seed versus persistence versus rendering responsibility", "platform build/task/ZIP binding", "verified Phase 4 thread identity"]
+  },
+  "decision": "EVIDENCE_ARCHIVED / PHASE4_PENDING_RECONCILIATION / IMPLEMENTATION_NOT_DISPATCHED",
+  "next_gate": "Collect additional independent Runs and close Phase 4 identity before maximum-applicability Agent changes; preserve the BookStack 34/34 baseline.",
+  "source_directory": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-arc-bench-web-keep/",
+  "security": {"status": "redacted_only", "secrets_copied": false}
+}

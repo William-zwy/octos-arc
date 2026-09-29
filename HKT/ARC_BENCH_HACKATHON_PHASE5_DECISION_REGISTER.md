@@ -526,3 +526,12 @@ Keep label scope 的原文核验：冻结 helper 的 `setLabel()` 用 `noteEdito
 - 900s turn cap、13 次 request guard、一次 proxy EOF 和 402 个残留进程是生成/运行卫生风险，不替代 14 项最终业务症状，也不证明全局预算或 OOM 是根因。
 - 详细阶段输入输出、证据 SHA 和后续多 Run 规则见 [`HKT/ARC_BENCH_LITE_KEEP_RUN_8EA6503BFA95_HANDOFF_20260930.md`](ARC_BENCH_LITE_KEEP_RUN_8EA6503BFA95_HANDOFF_20260930.md)；机器索引见 [`evidence/arc-bench/lite-keep-run-8ea6503bfa95.json`](../evidence/arc-bench/lite-keep-run-8ea6503bfa95.json)。
 - 当前决策：继续收集多个独立 Run；在多 Run 汇总前不派发最大适用化 Agent 修改，且不得为修复 Keep 失败而破坏 BookStack `34/34`基线。
+
+## 32. Web Keep `c68bef1a6343` 阶段 3输入与阶段 4待闭合（2026-09-30）
+
+- Run `c68bef1a6343`（`arc-bench-web--keep`）最终 `21/32`、score `65.6`，11 项失败：10 项官方 10 秒 `timedOut`，1 项 `REQ-2.6.1` 截图裁剪失败。应用启动、部署和官方 Web Keep suite 均已到达；本 Run 的内部 suite identity 与任务匹配，不存在 `8ea6503bfa95` 的 Lite/Web 错配。
+- 阶段 3输入、终态、中间态、原始证据文件哈希和阶段 4 handoff 已归档到 [`ARC_BENCH_WEB_KEEP_RUN_C68BEF1A6343_HANDOFF_20260930.md`](ARC_BENCH_WEB_KEEP_RUN_C68BEF1A6343_HANDOFF_20260930.md)，机器索引为 [`evidence/arc-bench/web-keep-run-c68bef1a6343.json`](../evidence/arc-bench/web-keep-run-c68bef1a6343.json)。
+- 当前只能确认最终症状：删除/归档/颜色动作与 DOM 稳定性、标签编辑与状态、设置可见性、视图切换均有失败。不能在阶段 4未闭合时把 accessible-name、seed、持久化、渲染或时序候选升级为代码根因。
+- 中间态显示 62 个 turn started、56 个 completed、1 个 error、5 个未闭合；4 个长 turn 超时，16 次 request-budget guard，8 次 claim-without-build guard，672 个残留进程被清理；内存峰值约 1.90 GiB/2 GiB 但 `oom_kill=0`。这些支持修复收敛/运行卫生风险，不替代业务根因。
+- 阶段 4 handoff 标记 `blocked_thread_identity_reconciliation`；`phase4-ack.json`、`phase4-result.json`、`phase4-result.md` 均不存在。因此本 Run 状态为 `EVIDENCE_ARCHIVED / PHASE4_PENDING_RECONCILIATION / IMPLEMENTATION_NOT_DISPATCHED`，不得触发阶段 5或最大适用化 Agent 修改。
+- 后续门禁：先闭合唯一阶段 4会话并补齐身份匹配的 ACK/result；再与其他 Web/Lite Keep Run 按 task、suite、seed、helper、submission/build/ZIP 绑定和失败机制比较。继续保护 BookStack `53a102f3ee96` 的 `34/34` 正向基线，不把本 Run与 Lite Keep或 BookStack 分数合并。

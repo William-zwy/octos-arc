@@ -267,6 +267,12 @@
 
 新会话只接收[精简上下文交接](./ARC_BENCH_HACKATHON_PHASE5_CONTEXT_HANDOFF.md)及其职责相关的证据路径；旧会话长历史可回读但不整段复制，更不能把聊天摘要当权威。用户提供的本地隔离复现交给复现会话，新的平台 Run 交给阶段 3。当前 `737b56972d5a` 已有已核验的阶段 4 结果，尚待新决策会话正式纳入；`4b792b72d7dd` 的阶段 4 路由仍在隔离状态，不自动分流。当前继续遵守“暂不推送远程、未经授权不启动新平台 Run”。
 
+### 6.7 Web Keep `c68bef1a6343` intake (2026-09-30)
+
+Run `c68bef1a6343` is now recorded as a separate `arc-bench-web--keep` evidence item: final `21/32`, score `65.6`, with ten official 10-second timeouts and one screenshot clipping failure. Its internal suite identity matches the Run task, so it must not inherit the Lite/Web suite mismatch from `8ea6503bfa95`. The Phase 3 manifest, analysis and Phase 4 handoff are available, but Phase 4 ACK/result files are absent because thread identity reconciliation is not closed. Treat the final UI symptoms as confirmed observations, keep code-level causes as candidates/unknown, and do not dispatch maximum-applicability Agent changes until more Runs and a closed Phase 4 result are available. Preserve the BookStack `53a102f3ee96` 34/34 baseline.
+
+The durable record is [`ARC_BENCH_WEB_KEEP_RUN_C68BEF1A6343_HANDOFF_20260930.md`](./ARC_BENCH_WEB_KEEP_RUN_C68BEF1A6343_HANDOFF_20260930.md), with machine-readable index [`web-keep-run-c68bef1a6343.json`](../evidence/arc-bench/web-keep-run-c68bef1a6343.json).
+
 ## 7. 后续工作原则
 
 - 当前仓库代码、最新平台结果和正式赛事公告优先于历史交接文档。
