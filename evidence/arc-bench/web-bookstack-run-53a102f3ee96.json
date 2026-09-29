@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "record_type": "phase3_phase4_single_run_handoff",
+  "recorded_at": "2026-09-30",
+  "run_id": "53a102f3ee96",
+  "submission_id": "362bc0d7b112",
+  "task_key": "arc-bench-web--bookstack",
+  "status": "PASSED",
+  "score": 100,
+  "passed": 34,
+  "total": 34,
+  "phase4_status": "complete",
+  "stage5_triggered": false,
+  "implementation_dispatched": false,
+  "platform_rerun_or_upload": false,
+  "model": "deepseek-v4-flash",
+  "reasoning": "low",
+  "run_duration_seconds": 16537,
+  "platform_token_count": 315086357,
+  "structured_cost": {"value": 161.881459, "currency": "CNY", "unit_conflict": true},
+  "local_submission_zip_sha256": "9F8EE636363A5BCA75EA9E15E4403C83401965443EB0BC0941BBE6E09ADD890E",
+  "platform_identity": {
+    "build_id": null,
+    "commit_sha": null,
+    "task_snapshot_id": null,
+    "upload_zip_sha256_binding_verified": false
+  },
+  "tests": {
+    "source": "/workspace/submission/public-tests/arc-bench-web--bookstack",
+    "spec_count": 34,
+    "workers": 1,
+    "timeout_ms": 10000,
+    "bundled_fallback_evidenced": false,
+    "generated_application_reached": true
+  },
+  "intermediate_failures": [
+    {"req_id": "REQ-2.2", "classification": "recoverable_turn_cap", "details": "900s cap; wrote and verified; immediate acceptance 4/4"},
+    {"req_id": "REQ-4.2.1", "classification": "strong_candidate_shared_repair", "details": "900s cap; 6/7; 589s repair hit guard; later shared repair restored pass"},
+    {"req_id": "REQ-5.5.2", "classification": "confirmed_upstream_proxy_error", "details": "HTTP 400 proxy_error unexpected EOF from api.taotoken.net"},
+    {"req_id": "REQ-6.1.1", "classification": "recoverable_route_or_fixture_issue", "details": "Name fill timeout; two repairs remained 12/13; later shared route work restored pass"},
+    {"req_id": "REQ-6.1.2", "classification": "recoverable_route_or_draft_issue", "details": "Name fill timeout; later draft-save handler and dashboard heading restored pass"},
+    {"req_id": "REQ-6.1.3", "classification": "confirmed_infrastructure_trigger", "details": "favicon ConnectionResetError caused 0/13 round; later rounds and final suite passed"}
+  ],
+  "optimization_candidates": [
+    "shorter per-node implementation budget with stop-and-verify checkpoints",
+    "repair budget prioritized by concrete failure evidence",
+    "PID-scoped server cleanup",
+    "stable 404 for unknown paths",
+    "avoid repeated exploration and full rewrites"
+  ],
+  "resource_findings": {
+    "global_budget_seconds": 51000,
+    "global_budget_used_seconds": 16537,
+    "memory_limit_bytes": 2147483648,
+    "memory_peak_bytes": 1076064256,
+    "oom": false,
+    "repair_guard_independent_triggers": 8,
+    "postflight_stray_processes": 196,
+    "provider_requests": 1272,
+    "provider_total_tokens": 40033246
+  },
+  "evidence_hashes": {
+    "manifest.json": "E049C5C5C0119DF24C337D5914C9B92A24F4D05D7553AE4741D909D5762255FF",
+    "phase4-handoff.json": "27133CAC5D7428F48F920B18F8C9D85B61E21D6FD66C0369E2FF3E5B9544379C",
+    "phase4-ack.json": "010C4CBA24536BDB5F3597374CFBC3F13F7D14D747DBFED90B5400A3819C2276",
+    "phase4-result.json": "06E7DE6AE04106E43CAC3E7DB45BF33AB694FB780A60D5B6AC0D9334DDC73F37",
+    "phase4-result.md": "EB206C3ADB7B364528B90F146735504AE5399E01EFD30B2A9FB2727F5C0A9594"
+  },
+  "next_decision_gate": "Collect additional independent Runs before dispatching maximum-applicability Agent changes; preserve this 34/34 BookStack baseline and do not infer strict A/B without platform build/task binding."
+}

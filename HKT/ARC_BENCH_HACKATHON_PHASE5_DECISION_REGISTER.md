@@ -509,3 +509,11 @@ Keep label scope 的原文核验：冻结 helper 的 `setLabel()` 用 `noteEdito
 - 详细事实、五份阶段文件 SHA-256、确认根因、unknown、流程风险和多 Run 使用规则见 [`HKT/ARC_BENCH_EVOLUTION_RUN_PAIR_HANDOFF_20260930.md`](ARC_BENCH_EVOLUTION_RUN_PAIR_HANDOFF_20260930.md)；机器索引见 [`evidence/arc-bench/evolution-run-pair-20260930.json`](../evidence/arc-bench/evolution-run-pair-20260930.json)。
 - 当前可供后续 Agent 实现会话参考的共享机制只有：成功写入后原地更新、实体动作保持在实体可访问作用域、控件 `data-*` 与事件处理器字段保持一致，以及缺官方 spec 时的最小 locator 回归。Keep `REQ-7.2`/`REQ-9.1` 仍为 `unknown`，不得当作确定根因。
 - 当前状态：`EVIDENCE_ARCHIVED / IMPLEMENTATION_NOT_DISPATCHED`。本会话未修改 Agent、官方测试或 ZIP，未上传、未创建平台 Run。
+
+## 30. Web BookStack `53a102f3ee96` 正向基线与阶段 4归档（2026-09-30）
+
+- Run `53a102f3ee96`（`arc-bench-web--bookstack`）阶段 3/4已闭合，最终 `34/34`、score `100`；阶段 4为只读诊断，未触发阶段 5。
+- 该 Run 作为 BookStack Web 正向基线保存，不与 `arc-bench-lite-evolution` 的 Run 分数合并，也不能替代平台 build、commit、task snapshot 和上传 ZIP 绑定。
+- 阶段 4确认中间失败均未形成最终业务失败：单轮 900s cap、上游 proxy EOF、favicon ConnectionResetError、repair guard 和进程清理属于恢复链/效率风险；全局预算、内存和最终 Playwright 不是瓶颈。
+- 详细阶段输入输出、终态/中间态、证据 SHA 和多 Run 使用规则见 [`HKT/ARC_BENCH_WEB_BOOKSTACK_RUN_53A102F3EE96_HANDOFF_20260930.md`](ARC_BENCH_WEB_BOOKSTACK_RUN_53A102F3EE96_HANDOFF_20260930.md)；机器索引见 [`evidence/arc-bench/web-bookstack-run-53a102f3ee96.json`](../evidence/arc-bench/web-bookstack-run-53a102f3ee96.json)。
+- 当前决策：继续收集独立 Run；多 Run 输入完成前不派发最大适用化 Agent 修改，保护该 `34/34` 基线不被无证据回归。
