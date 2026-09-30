@@ -196,6 +196,7 @@ tsconfig.tsbuildinfo
 
 # ARC-Bench generated task outputs
 /arc/arc-output/
+**/.arc/context-cache/
 
 .venv
 

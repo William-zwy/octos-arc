@@ -1,0 +1,34 @@
+{
+  "name": "arc-project-context",
+  "version": "1.0.0",
+  "timeout_secs": 15,
+  "tools": [
+    {
+      "name": "project_map",
+      "description": "Return a compact, stable map of workspace files and likely entry points while excluding high-noise generated directories",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "workspace_root": {"type": "string", "description": "Absolute or process-relative project root"},
+          "max_files": {"type": "integer", "minimum": 1, "maximum": 10000, "default": 2000}
+        },
+        "required": ["workspace_root"]
+      }
+    },
+    {
+      "name": "source_read",
+      "description": "Read a bounded source or specification excerpt with persistent SHA/range caching and omitted-range metadata",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "workspace_root": {"type": "string", "description": "Absolute or process-relative project root"},
+          "path": {"type": "string", "description": "Workspace-relative or absolute regular file path"},
+          "start_line": {"type": "integer", "minimum": 1, "default": 1},
+          "end_line": {"type": "integer", "minimum": 1},
+          "max_chars": {"type": "integer", "minimum": 256, "maximum": 60000, "default": 12000}
+        },
+        "required": ["workspace_root", "path"]
+      }
+    }
+  ]
+}

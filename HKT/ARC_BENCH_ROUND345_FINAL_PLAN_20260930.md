@@ -48,6 +48,23 @@
 
 本地定向验证：`26 tests` 通过；`py_compile` 和 `git diff --check` 通过。完整测试集合仍有基线中的 Windows 临时目录权限、npm cache 路径和路径分隔符断言问题，未归因于本切片。
 
+### 2B. 通用上下文 Skill 已落地
+
+已新增可调用 Skill：`skills/arc-project-context/`。
+
+- `project_map`：对工作区做一次有界文件/目录索引，排除 `.git`、`.arc`、`node_modules`、构建产物和缓存目录，并返回稳定 `project_map_hash`、入口/路由/模型线索。
+- `source_read`：按 `path + SHA-256 + 行范围 + max_chars` 缓存读取结果；文件变化自动失效；超限时返回 `excerpt`、`returned_line_range` 和 `omitted`，避免 Agent 重新读取整文件。
+- 缓存写入 `.arc/context-cache/cache.json`，采用临时文件改名；Skill 不执行 shell、不修改源码、不承担 quota/checkpoint/预算/官方验收职责。
+- `manifest.json` 使用标准 stdin/stdout 工具协议，输入路径经过工作区边界和真实路径校验，拒绝路径逃逸与外部 symlink。
+
+验证记录：
+
+- `node skills/arc-project-context/test.js`：退出码 `0`，8 项行为断言通过。
+- `python D:/DataMove/codex/skills/.system/skill-creator/scripts/quick_validate.py skills/arc-project-context`：退出码 `0`。
+- 尚未进行平台 Run；本 Skill 的缓存命中率和最终比赛完成率仍需在后续探索性 Run 中观察，不能预先宣称因果收益。
+
+开源复用审查：仓库已有 `arc/acceptance.py` 的 SHA-256 文件指纹逻辑、Rust `globset`/`walkdir`/`sha2` 依赖，以及 Agent 内部 `file_state_cache`；这些组件分别服务于 Python 验收、Rust 工具层和进程内文件状态，不能直接作为独立 Skill 的 stdin/stdout 入口。当前 Skill 因需零安装、跨 Windows/Linux 直接运行，使用 Node.js 标准库实现协议适配和原子缓存，不新增重复第三方依赖；其路径边界、SHA 指纹和忽略目录规则与现有实现保持一致。后续若宿主暴露 `file_state_cache` 或稳定的 `walkdir` Skill API，应优先替换此适配层，而不是继续扩展本地实现。
+
 ## 3. 新计划（36 小时终版）
 
 ### 3.1 P0：必须实现的高收益硬门禁
