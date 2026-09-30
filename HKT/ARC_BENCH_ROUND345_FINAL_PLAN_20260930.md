@@ -58,7 +58,7 @@ Round 3/4/5 的运行时保护只有在交付包不丢文件、身份不漂移�
 - 当前需求包 `E:\飞书下载\arcbench-hackathon-requirements (3).zip` 的 SHA-256 为 `9884F23EA10C3DFEEE170D1EED57966C8FCE9A5CE18A0AC43B3D7942EBA8C414`。它同时包含 `hackathon--sheet` 和 `hackathon--github`；正式上传前必须使用平台实际分配的 suite key，不能用本地猜测值冒充官方绑定。
 - 当前 ZIP 仍包含 `public-tests` 作为本地回归夹具；它不是新题私有官方 suite，也不能作为官方成绩证据。若发布流程要求最小包，应在平台契约明确后再单独裁剪并重新计算所有 SHA。
 
-门禁验证：从 `arc/` 运行四组定向测试共 `58/58`；递归 `py_compile`、`git diff --check`、`node skills/arc-project-context/test.js`（8 assertions）通过；PowerShell 打包使用真实需求包 SHA 的结构/离线导入检查通过；Git Bash 路径修复已合并，但本机仅有 `E:\Program Files\Git\bin\bash.exe`，未发现可直接调用的 `sh` 命令，因此真实 Git Bash 打包仍列为首次发布前复核项。
+门禁验证：从 `arc/` 运行定向测试共 `60`（`OK, skipped=1`；唯一跳过项是本机没有独立 `sh` 命令的语法测试）；递归 `py_compile`、`git diff --check`、`node skills/arc-project-context/test.js`（8 assertions）通过。PowerShell 和 `E:\Program Files\Git\bin\bash.exe` 两条打包链路均使用真实需求包 SHA 完成结构/离线导入检查；Git Bash 自动跳过无 PyYAML 的 Windows Store `python3` shim，选择可用解释器。修复提交为 `a77443c0c960adf23eb0a01f5e87f4c31453e2e5`，已由 Integrator 接入。
 
 ### 2B. 通用上下文 Skill 已落地
 

@@ -4,7 +4,7 @@
 
 - Integrator 分支 `codex/hkt-round345-integration` 接入 quota hard-stop、原子 checkpoint、有限 rewrite、失败摘要去循环、上下文 cache shadow，以及通用语义契约；这些规则不绑定历史题目名称、REQ 编号或 locator。
 - 新增 commit-bound Agent ZIP 门禁：`agent-build.json`、包形状/危险条目检查、解包 `import main` smoke、task/suite/requirements/build/artifact sidecar。Windows PowerShell 与 Git Bash 路径均有处理；正式平台 suite key 未知前不得宣称已完成官方绑定。
-- 验证：从 `arc/` 运行 `python -m unittest tests.test_llm_proxy tests.test_main_helpers tests.test_run_controls tests.test_package_gate` 为 `58/58`；递归 `py_compile`、`git diff --check`、Skill 8 项行为测试通过。需求 ZIP SHA-256：`9884F23EA10C3DFEEE170D1EED57966C8FCE9A5CE18A0AC43B3D7942EBA8C414`。
+- 验证：从 `arc/` 运行定向运行时/打包测试共 `60`（`OK, skipped=1`；跳过项仅因本机无独立 POSIX `sh`）；递归 `py_compile`、`git diff --check`、Skill 8 项行为测试通过。PowerShell 与 Git Bash 均完成真实需求 SHA 的包形状和离线 `import main` 检查；Git Bash 解释器选择修复见 `a77443c0`。需求 ZIP SHA-256：`9884F23EA10C3DFEEE170D1EED57966C8FCE9A5CE18A0AC43B3D7942EBA8C414`。
 - `public-tests` 仅作为本地回归夹具随当前包保留；新题官方 tests/snapshot 私有，内部 smoke、公开夹具和平台成绩严格分层。
 
 ## 2026-09-29｜紧急合并 UI 契约与静态自检候选（平台未验证）
