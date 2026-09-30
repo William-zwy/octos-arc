@@ -420,6 +420,24 @@ def source_listing(output_dir: Path, limit: int = 60) -> str:
     return "\n".join(lines)
 
 
+def source_fingerprint(output_dir: Path) -> str:
+    """Return a compact content fingerprint for structural-gate de-duplication."""
+    digest = hashlib.sha256()
+    paths = list(_generated_source_files(output_dir))
+    paths.extend(output_dir / rel for rel in ("frontend/package.json", "backend/package.json")
+                 if (output_dir / rel).is_file())
+    for path in sorted(set(paths)):
+        try:
+            rel = path.relative_to(output_dir).as_posix().encode("utf-8")
+            payload = path.read_bytes()
+        except OSError:
+            continue
+        digest.update(len(rel).to_bytes(4, "big"))
+        digest.update(rel)
+        digest.update(hashlib.sha256(payload).digest())
+    return digest.hexdigest()
+
+
 class _StaticUiParser(HTMLParser):
     """Collect only cheap, high-confidence facts from generated HTML."""
 
@@ -497,7 +515,7 @@ def structural_self_check(output_dir: Path, design: dict | None = None,
     dynamic/template-heavy implementations to Playwright.
     """
     issues: list[str] = []
-    required = ("frontend/package.json", "backend/package.json", "frontend/src/index.html")
+    required = ("frontend/package.json", "backend/package.json")
     for rel in required:
         if not (output_dir / rel).is_file():
             issues.append(f"missing generated file {rel}; create the required app file before repairing UI")
@@ -505,6 +523,8 @@ def structural_self_check(output_dir: Path, design: dict | None = None,
                           if (output_dir / rel).is_file()), None)
     if backend_entry is None:
         issues.append("missing backend entry (backend/server.js or backend/src/server.js); create the app entry before repairing UI")
+    if not any((output_dir / rel).is_file() for rel in ("frontend/src/index.html", "frontend/index.html")):
+        issues.append("missing generated file frontend/index.html or frontend/src/index.html; create the app entry before repairing UI")
     for rel, script, command in (("frontend/package.json", "build", "build"),
                                  ("backend/package.json", "start", "start")):
         path = output_dir / rel
@@ -1335,9 +1355,13 @@ class Flow:
         self.current_node: str | None = None
         self.current_phase = "initializing"
         self.quota_gated = False
+        self.last_turn_wrote = False
+        self.last_turn_verified = False
         self.run_id = f"run-{os.getpid()}-{int(self.t_start * 1000)}"
         self.requirements_hash: str | None = None
         self.checkpoints = CheckpointStore(output_dir)
+        self._last_structural_key: tuple[str, str] | None = None
+        self.acceptance_unavailable = False
 
     # -- helpers ----------------------------------------------------------
     def remaining(self) -> float:
@@ -1400,9 +1424,21 @@ class Flow:
             "specs": specs,
             "agent_commit": os.environ.get("OCTOS_AGENT_COMMIT") or (self.head() if self.runtime else None),
             "submission_sha256": os.environ.get("ARCBENCH_SUBMISSION_SHA256") or None,
+            "verification_mode": "acceptance_specs" if specs else "requirement_only",
+            "official_suite_available": bool(specs),
         }
         try:
             atomic_json_write(self.output_dir / ".arc" / "run-identity.json", identity)
+            # Keep identity in the exported runner log as well as .arc.  Some
+            # hackathon runs do not expose .arc artifacts, which otherwise
+            # makes a result impossible to bind to its task and requirements.
+            log("[identity] " + json.dumps({
+                "task_key": identity["task_key"],
+                "suite_key": identity["suite_key"],
+                "requirements_hash": identity["requirements_hash"],
+                "agent_commit": identity["agent_commit"],
+                "submission_sha256": identity["submission_sha256"],
+            }, ensure_ascii=False, sort_keys=True))
         except OSError as exc:
             log(f"[identity] could not write run identity: {exc}")
 
@@ -1436,6 +1472,13 @@ class Flow:
         findings = structural_self_check(self.output_dir, design=design,
                                          requirement_text=requirement_text)
         if findings:
+            finding_digest = hashlib.sha256("\n".join(findings).encode("utf-8")).hexdigest()
+            source_digest = source_fingerprint(self.output_dir)
+            key = (finding_digest, source_digest)
+            if key == self._last_structural_key:
+                log("[structural] unchanged findings and source fingerprint; skipping duplicate correction")
+                return findings
+            self._last_structural_key = key
             log("[structural] " + "; ".join(findings[:8]))
             if enqueue:
                 for finding in findings:
@@ -1668,6 +1711,8 @@ class Flow:
             proxy.begin_turn(request_budget)
         t0 = time.time()
         ok, text = self.driver.run(prompt, max(60, int(timeout)), monitor)
+        self.last_turn_wrote = bool(monitor.wrote_files)
+        self.last_turn_verified = bool(monitor.verified and ok)
         log(f"[flow] {label} {'ok' if ok else 'FAILED'} in {time.time()-t0:.0f}s "
             f"(tools={monitor.tool_calls} wrote={monitor.wrote_files} verified={monitor.verified}): {text[-240:]!r}")
         if proxy is not None and proxy.turn_budget and proxy.turn_requests > proxy.turn_budget:
@@ -1746,6 +1791,7 @@ class Flow:
         files = parse_file_blocks(text) if ok else {}
         if files:
             written = write_files(self.output_dir, files)
+            self.last_turn_wrote = bool(written)
             log(f"[codegen] {label}: wrote {len(written)} file(s): {written[:8]}")
             deduped = dedupe_nav_links(self.output_dir)
             if deduped:
@@ -2258,6 +2304,13 @@ class Flow:
             self.driver.close()
             self.pending_corrections.append(
                 "Your implementation turn ran out of time; work in smaller steps and verify with curl early.")
+            # A partial turn must remain resumable, but it is not an
+            # implementation verdict.  Do not emit implementation_done or
+            # consume this node as completed merely because files exist.
+            self.mark("implementation_failed", node_id, "implement turn timed out; partial code retained")
+            self.impl_failed.append(node_id)
+            self.set_node_state(node_id, "inconclusive", reason="implement_timeout")
+            return
         if inline_design:
             written = self.output_dir / ".arc" / "design" / f"{node_id}.json"
             try:
@@ -2270,12 +2323,25 @@ class Flow:
                 self.mark("design_done", node_id, "design JSON written inline to .arc/design/" + node_id + ".json")
             else:
                 self.mark("design_done", node_id, "design folded into the implementation turn (no JSON file)")
-        self.queue_structural_corrections(
+        findings = self.queue_structural_corrections(
             design=design if isinstance(design, dict) else self.designs.get(node_id),
             requirement_text=str(node.get("description") or ""), enqueue=False)
+        hard_findings = tuple(issue for issue in findings if (
+            issue.startswith("missing generated file")
+            or issue.startswith("missing backend entry")
+            or "is not valid JSON" in issue
+            or "lacks scripts." in issue
+        ))
+        if hard_findings or not self.has_app():
+            self.mark("implementation_failed", node_id,
+                      "scaffold gate failed; structural corrections required before this node can complete")
+            self.impl_failed.append(node_id)
+            self.set_node_state(node_id, "inconclusive", reason="scaffold_gate", findings=list(hard_findings))
+            return
         self.mark("implementation_done", node_id, (text[-500:] or None) if ok else "implement turn timed out; partial code")
         self.implemented_nodes.add(node_id)
-        self.set_node_state(node_id, "implemented", wrote=bool(text), turn_ok=ok)
+        self.set_node_state(node_id, "implemented", wrote=self.last_turn_wrote, turn_ok=ok,
+                            verification="pending_acceptance")
         self.update_application_contract()
         self.commit(f"{node_id} (implement): {node.get('name', '')}")
 
@@ -2302,6 +2368,10 @@ class Flow:
         elif verdict is False:
             self.set_node_state(node_id, "inconclusive", reason="acceptance_failed")
             self.mark("test_failed", node_id, "acceptance specs still failing after repair rounds")
+        else:
+            self.set_node_state(node_id, "implementation_unverified",
+                                reason="verification_unavailable" if self.acceptance_unavailable
+                                else "no_local_acceptance_verdict")
 
     def snapshot_sources(self, node_id: str, attempt: int) -> Path | None:
         """Copy the app sources that the next repair will overwrite into
@@ -2485,8 +2555,30 @@ class Flow:
         raise RuntimeError("skeleton scaffolding failed: no frontend/ and backend/ after 4 attempts")
 
     def has_app(self) -> bool:
-        return (self.output_dir / "frontend" / "package.json").is_file() and \
-            (self.output_dir / "backend" / "package.json").is_file()
+        """Only treat a scaffold as usable after its real entrypoints exist.
+
+        Empty package manifests were previously enough to enter the node loop,
+        which caused every later turn to rediscover the missing app and spend
+        its request budget repeating structural corrections.
+        """
+        manifests = (self.output_dir / "frontend" / "package.json",
+                     self.output_dir / "backend" / "package.json")
+        if not all(path.is_file() for path in manifests):
+            return False
+        try:
+            frontend = json.loads(manifests[0].read_text(encoding="utf-8"))
+            backend = json.loads(manifests[1].read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return False
+        if not isinstance(frontend.get("scripts"), dict) or not frontend["scripts"].get("build"):
+            return False
+        if not isinstance(backend.get("scripts"), dict) or not backend["scripts"].get("start"):
+            return False
+        frontend_entry = any((self.output_dir / rel).is_file()
+                             for rel in ("frontend/src/index.html", "frontend/index.html"))
+        backend_entry = any((self.output_dir / rel).is_file()
+                            for rel in ("backend/server.js", "backend/src/server.js"))
+        return frontend_entry and backend_entry
 
     # -- final ------------------------------------------------------------
     def rehearsal(self) -> bool:
@@ -2546,9 +2638,11 @@ class Flow:
             if self.tests_dir:
                 specs = sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.spec.ts"))
                 self.spec_map, self.aliases = map_specs_to_nodes(specs, node_ids)
+                self.acceptance_unavailable = not specs
                 log(f"[tests] {len(specs)} spec files at {self.tests_dir}; mapping "
                     f"{ {k: v for k, v in self.spec_map.items() if v} }; aliases {self.aliases}")
             else:
+                self.acceptance_unavailable = True
                 log("[tests] no acceptance specs found; building from requirement text only")
             self.initialize_application_contract(tree, ordered)
 
@@ -2616,7 +2710,11 @@ class Flow:
                     self.driver.end_scope("node")
                 undecided = [i for i in node_ids if self.test_verdict.get(i) is None and i not in self.impl_failed]
                 final_ok = None
-                if undecided and not self.time_up() and not self.quota_gated:
+                if self.acceptance_unavailable:
+                    log("[verification] official acceptance suite unavailable; startup rehearsal is not a test verdict")
+                    for node_id in undecided:
+                        self.set_node_state(node_id, "inconclusive", reason="verification_unavailable")
+                elif undecided and not self.time_up() and not self.quota_gated:
                     log(f"[flow] final check turn for nodes without a local verdict: {undecided}")
                     final_ok, _ = self.turn(self.application_context_text(None) + FINAL_CHECK_PROMPT.format(
                                                                       smoke=self.smoke_port, port=self.web_port,
@@ -2625,12 +2723,13 @@ class Flow:
                                             self.node_timeout, "final check")
                     self.commit("chore: final verification pass")
                 rehearsed = self.rehearsal()
-                for node_id in undecided:
-                    if rehearsed and final_ok is not False:
-                        self.mark("test_passed", node_id, "final check and startup rehearsal passed")
-                    else:
-                        self.mark("test_failed", node_id, "final check or startup rehearsal failed")
-                    self.test_verdict[node_id] = bool(rehearsed and final_ok is not False)
+                if not self.acceptance_unavailable:
+                    for node_id in undecided:
+                        if rehearsed and final_ok is not False:
+                            self.mark("test_passed", node_id, "final check and startup rehearsal passed")
+                        else:
+                            self.mark("test_failed", node_id, "final check or startup rehearsal failed")
+                        self.test_verdict[node_id] = bool(rehearsed and final_ok is not False)
             finally:
                 watchdog_stop.set()
                 if self.driver:
@@ -2692,6 +2791,11 @@ class Flow:
                     self.events.mark_implementation_done(folder_id, f"{len(done)}/{len(leaves)} atomic children implemented")
                 else:
                     self.events.mark_implementation_failed(folder_id, "no atomic child implemented")
+            if self.acceptance_unavailable:
+                # Build/start evidence is useful, but cannot replace the
+                # private official suite. Leave folder test state absent so
+                # the traceability stream does not report a synthetic pass.
+                continue
             if all(v is True for v in verdicts):
                 self.events.mark_test_passed(folder_id, f"all {len(leaves)} atomic children pass")
             else:

@@ -424,6 +424,21 @@ class StructuralSelfCheckTests(unittest.TestCase):
                 "const http=require('http'); http.createServer((req,res)=>res.end()).listen(3000);")
             self.assertEqual(m.structural_self_check(root), [])
 
+    def test_scaffold_gate_rejects_manifests_without_real_entries(self):
+        import argparse
+        import json
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "frontend").mkdir()
+            (root / "backend").mkdir()
+            manifest = {"scripts": {"build": "node build.js"}}
+            (root / "frontend/package.json").write_text(json.dumps(manifest))
+            (root / "backend/package.json").write_text(json.dumps({"scripts": {"start": "node server.js"}}))
+            flow = m.Flow(argparse.Namespace(web_port=3000), root, root / "requirements")
+            self.assertFalse(flow.has_app())
+
 
 class AlreadyPassingProbeTests(unittest.TestCase):
     def test_should_mark_only_fully_passing_nodes_as_unchanged(self):

@@ -33,6 +33,11 @@ class TurnMonitor:
         self.protected_writes: list[str] = []
         self.written_paths: list[str] = []
         self._pending: dict[str, tuple[str, dict]] = {}
+        # A tool being started is not proof that it wrote a file or that a
+        # verification command passed.  Keep those claims pending until the
+        # matching completion event reports success.
+        self._pending_writes: set[str] = set()
+        self._pending_verifications: set[str] = set()
         self._final_text = ""
 
     # -- events -----------------------------------------------------------
@@ -43,18 +48,25 @@ class TurnMonitor:
             args = params.get("arguments") or {}
             self._pending[str(params.get("tool_call_id"))] = (name, args)
             if name in _WRITE_TOOLS:
-                self.wrote_files = True
+                self._pending_writes.add(str(params.get("tool_call_id")))
                 self._note_path(str(args.get("path") or args.get("file_path") or ""))
             elif name in _SHELL_TOOLS:
                 cmd = str(args.get("cmd") or args.get("command") or "")
                 if _VERIFY.search(cmd):
-                    self.verified = True
+                    self._pending_verifications.add(str(params.get("tool_call_id")))
                 if re.search(r"\b(cat|echo|printf|tee|cp|mv|sed)\b.*(>|tee|-i)", cmd) or re.search(r"\b(cp|mv)\s", cmd):
-                    self.wrote_files = True
+                    self._pending_writes.add(str(params.get("tool_call_id")))
                     for m in _REDIRECT.finditer(cmd):
                         self._note_path(m.group(1).strip("'\""))
         elif method == "tool/completed":
+            call_id = str(params.get("tool_call_id"))
             ok = bool(params.get("success", True))
+            if ok and call_id in self._pending_writes:
+                self.wrote_files = True
+            if ok and call_id in self._pending_verifications:
+                self.verified = True
+            self._pending_writes.discard(call_id)
+            self._pending_verifications.discard(call_id)
             preview = str(params.get("output_preview") or "")[:300]
             if not ok:
                 key = re.sub(r"\d+", "#", preview)
@@ -84,7 +96,8 @@ class TurnMonitor:
     # -- verdicts ---------------------------------------------------------
     def corrections(self) -> list[str]:
         out: list[str] = []
-        if self.expect_verification and self.wrote_files and not self.verified and _CLAIM.search(self._final_text):
+        if self.expect_verification and (self.wrote_files or self.written_paths) \
+                and not self.verified and _CLAIM.search(self._final_text):
             out.append("Your previous turn claimed completion without running any build, start or "
                        "request command. Never declare a step done before executing `npm run build`, "
                        "starting the backend on the smoke port and exercising the endpoint with curl.")

@@ -28,6 +28,17 @@ class TurnMonitorTests(unittest.TestCase):
         m.finish("Implemented and verified.")
         self.assertEqual(m.corrections(), [])
 
+    def test_failed_write_and_probe_do_not_count_as_evidence(self):
+        m = TurnMonitor(protected_prefixes=[])
+        m.observe(*started("write_file", {"path": "backend/server.js"}, "write"))
+        m.observe(*completed("write", False, "permission denied"))
+        m.observe(*started("bash", {"cmd": "npm run build"}, "build"))
+        m.observe(*completed("build", False, "exit 1"))
+        m.finish("Implemented and verified.")
+        self.assertFalse(m.wrote_files)
+        self.assertFalse(m.verified)
+        self.assertTrue(any("claimed completion without running" in c for c in m.corrections()))
+
     def test_should_flag_three_identical_consecutive_errors(self):
         m = TurnMonitor(protected_prefixes=[])
         for i in range(3):

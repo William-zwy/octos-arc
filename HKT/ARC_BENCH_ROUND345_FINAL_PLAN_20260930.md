@@ -298,3 +298,32 @@ Sheet 更适合作为第一主探针：原子节点较少，先验证 workbook/w
 - 终版前必须完成 `git diff --check`、本地测试/静态检查、打包身份检查和工作树清洁验证。
 - 当前首次打包状态：PowerShell/Git Bash 本地 fixture 包均通过形状、身份和离线导入门禁；正式平台上传保持 `NO-GO`，直到平台提供与需求包精确对应的 suite key、task snapshot（以及可记录的 submission/ZIP SHA）。
 - 远程协作规则：提交到远程后，协作文档只引用当前分支的 GitHub `blob`/`raw` 地址；本机绝对路径只能保留在“来源 provenance/不可远程读取”说明中，不能作为队友唯一入口。新增证据、输入镜像和发布包必须在同一同步周期内提交并验证远程存在。
+
+## 10. 新题首轮 Run 复盘（2026-09-30）
+
+### 10.1 可确认事实
+
+- `39626bbcf702`（`hackathon--sheet`）：`0/100`、`0/24`，Agent 段约 `1338s`、`254` requests、`3307706` provider tokens、约 `3.605376 CNY`；生成和最终 startup rehearsal 到达，首轮 rehearsal 曾有一次后端提前退出，随后恢复监听。
+- `1c498c860d81`（`hackathon--github`）：`0/100`、`0/47`，Agent 段约 `4634s`、`446` requests、`8460563` provider tokens、约 `9.680698 CNY`；生成和 rehearsal 到达，日志有 `262` 行长 turn keepalive。
+- 两个 Run 共用 submission `1becbe535e9b` 和 Agent ZIP SHA-256 `9d4cad2d1136d1edd3f326fe0c58048be281b50b0c06853e63236a7cf71f5c17`；平台未提供 Agent commit、build identity、requirements/snapshot SHA 或 suite key。
+- 两个 Run 均为 requirement-text-only：`tests[]` 为空，Playwright 输出、`.arc` 产物和逐测试失败明细均不可用；`node_states` 的 `test-passed` 不能单独作为官方验收证据。
+
+### 10.2 诊断边界与高置信度线索
+
+- `0/100` 不能被分类为“100 个业务断言失败”，因为平台没有暴露测试入口、测试 ID、locator、DOM、trace 或 report；本轮结果标记为 `exploratory / needs_reconciliation`。
+- 生成产物仍显示真实收敛问题：Sheet 最终模板只有首页骨架和 `GET /api/workbooks`，GitHub 虽有登录/健康/Fork 等少量路由，但仍缺失大部分需求功能。日志中大量 `wrote=True, verified=False`、结构门禁重复和最终 check 承认未实现，说明 Agent 侧确有高概率不完整。
+- 两个 Run 的耗时和请求量随节点数显著增长，重复的 scaffold/repair 上下文是主要优化目标；不能用本次平台 0 分估计每个业务节点的缺陷率。
+
+### 10.3 已并入基线的领域无关门禁
+
+- `has_app()` 现在要求合法 manifest、`build/start` 脚本、真实 frontend entry 和 backend entry，空 `package.json` 不再触发节点循环。
+- 工具 Guard 只在 `tool/completed(success=true)` 后记录写入/验证；失败命令和模型口头声明不能制造 evidence。
+- 实现 turn 超时或 scaffold hard finding 时进入 `inconclusive`，不再发出 `implementation_done`/`implemented` 的虚假完成状态。
+- 无官方 acceptance spec 时写入 `verification_mode=requirement_only` 和 `official_suite_available=false`，startup rehearsal 只证明可启动，不再合成 `test_passed`。
+- 结构 findings 按 finding digest + source fingerprint 去重，未改变源码时不重复消耗 repair turn。
+
+### 10.4 下一次平台 Run 门禁
+
+1. 先用 Sheet 作为短探针；候选包必须重新绑定当前 Agent commit、ZIP SHA、requirements SHA 和 task/suite 身份。
+2. 平台若仍返回 `tests[]=[]`、无 Playwright/report 和无 build identity，只记录 exploratory，不进入业务定点修复 A/B。
+3. 只有出现可复核的真实 test ID/DOM/trace 失败，且身份闭合，才允许进入 GitHub 或第二轮平台 Run；单个候选 Run 触发 quota/余额中断立即 hard-stop，并保留 final reserve。
