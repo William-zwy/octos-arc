@@ -1,7 +1,7 @@
 # ARC-Bench Round 3/4/5 Agent 优化协作计划
 
 日期：2026-09-30
-状态：`IMPLEMENTING`（本轮已开始落地） 仅修改 Agent 与本协作文档；官方测试、需求 ZIP 和平台 Run 不修改。
+状态：`READY_FOR_PLATFORM_IDENTITY`（Agent 与本协作文档改动已完成） 仅修改 Agent 与本协作文档；官方测试、需求 ZIP 和平台 Run 未修改。
 目标分支：`codex/hkt-round345-integration`
 基线：`codex/urgent-bookstack-contract-fix-r2` @ `f10bd9f42429c09672c9a68b79f486c44cc41e9f`
 
@@ -287,3 +287,4 @@ Sheet 更适合作为第一主探针：原子节点较少，先验证 workbook/w
 - 每次修改必须记录文件、原因、测试命令、退出码和 commit SHA。
 - 平台结果必须绑定 task、suite、requirements、Agent build/commit、ZIP/submission 和 Run 配置；缺字段只能作为 exploratory。
 - 终版前必须完成 `git diff --check`、本地测试/静态检查、打包身份检查和工作树清洁验证。
+- 当前首次打包状态：PowerShell/Git Bash 本地 fixture 包均通过形状、身份和离线导入门禁；正式平台上传保持 `NO-GO`，直到平台提供与需求包精确对应的 suite key、task snapshot（以及可记录的 submission/ZIP SHA）。
