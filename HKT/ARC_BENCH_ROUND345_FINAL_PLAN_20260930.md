@@ -46,7 +46,19 @@
 - `arc/main.py`：写入 requirements/spec/build identity；在 run/node/turn/acceptance/quota 边界写 checkpoint；quota-gated 跳过剩余节点、full-suite repair 和 rehearsal；区分 implemented、built、smoke_verified、acceptance_verified、inconclusive；将多节点 rewrite 从无界改成有限预算；同一 failure digest 重复后切换策略并停止；读取缓存和 omitted-range 摘要避免超限后整文件重读；允许两种后端入口路径，降低结构检查器误报。
 - `arc/tests/test_llm_proxy.py`、`arc/tests/test_main_helpers.py`、`arc/tests/test_run_controls.py`：覆盖 billing gate、有限 rewrite、spec omitted 摘要、回归上限和 checkpoint 原子写入。
 
-本地定向验证：`26 tests` 通过；`py_compile` 和 `git diff --check` 通过。完整测试集合仍有基线中的 Windows 临时目录权限、npm cache 路径和路径分隔符断言问题，未归因于本切片。
+本地定向验证：`58 tests` 通过；`py_compile` 和 `git diff --check` 通过。完整测试集合仍有基线中的 Windows 临时目录权限、npm cache 路径和路径分隔符断言问题，未归因于本切片。测试命令必须从 `arc/` 目录运行，避免把仓库外部同名 `tests` 包误当作项目测试。
+
+### 2C. 首次打包门禁（已落地，平台前置）
+
+Round 3/4/5 的运行时保护只有在交付包不丢文件、身份不漂移时才有意义，因此新增提交 `61ab832c`、`f086f729`、`2b35512a`：
+
+- `arc/pack.ps1` 与 `arc/pack.sh` 都纳入 `run_controls.py`、构建身份和包形状门禁；Windows 使用 Python ZIP 写入，Git Bash 通过 `cygpath` 将 Python 参数转换为原生路径。
+- `agent-build.json` 绑定源提交、payload tree SHA 和 build id；sidecar 绑定 task key、suite key、需求包 SHA 与最终 ZIP SHA。
+- 离线解包后执行 `import main` smoke，并拒绝危险/重复/禁止条目、缺失身份和 placeholder identity。
+- 当前需求包 `E:\飞书下载\arcbench-hackathon-requirements (3).zip` 的 SHA-256 为 `9884F23EA10C3DFEEE170D1EED57966C8FCE9A5CE18A0AC43B3D7942EBA8C414`。它同时包含 `hackathon--sheet` 和 `hackathon--github`；正式上传前必须使用平台实际分配的 suite key，不能用本地猜测值冒充官方绑定。
+- 当前 ZIP 仍包含 `public-tests` 作为本地回归夹具；它不是新题私有官方 suite，也不能作为官方成绩证据。若发布流程要求最小包，应在平台契约明确后再单独裁剪并重新计算所有 SHA。
+
+门禁验证：从 `arc/` 运行四组定向测试共 `58/58`；递归 `py_compile`、`git diff --check`、`node skills/arc-project-context/test.js`（8 assertions）通过；PowerShell 打包使用真实需求包 SHA 的结构/离线导入检查通过；Git Bash 路径修复已合并，但本机仅有 `E:\Program Files\Git\bin\bash.exe`，未发现可直接调用的 `sh` 命令，因此真实 Git Bash 打包仍列为首次发布前复核项。
 
 ### 2B. 通用上下文 Skill 已落地
 
