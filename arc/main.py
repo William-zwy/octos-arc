@@ -58,6 +58,7 @@ Environment (all optional):
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -86,8 +87,30 @@ from codegen import FORMAT_INSTRUCTIONS, dedupe_nav_links, parse_file_blocks, wr
 from guard import TurnMonitor  # noqa: E402
 from llm_proxy import LlmProxy  # noqa: E402
 from requirement_order import ancestors_of, node_fingerprint, topo_order  # noqa: E402
+from run_controls import CheckpointStore, atomic_json_write  # noqa: E402
 
 BUNDLE_DIR = Path(__file__).resolve().parent
+_READ_CACHE: dict[str, tuple[int, int, str, str]] = {}
+
+
+def _cached_text(path: Path) -> tuple[str, str] | None:
+    """Read a file once per unchanged mtime/size and return text plus SHA.
+
+    This is a harness-side guard; it does not rely on the model remembering a
+    prompt rule not to reread the same source.
+    """
+    try:
+        stat = path.stat()
+        key = str(path.resolve())
+        cached = _READ_CACHE.get(key)
+        if cached and cached[0] == stat.st_mtime_ns and cached[1] == stat.st_size:
+            return cached[2], cached[3]
+        text = path.read_text(encoding="utf-8", errors="replace")
+        digest = hashlib.sha256(text.encode("utf-8", errors="replace")).hexdigest()
+        _READ_CACHE[key] = (stat.st_mtime_ns, stat.st_size, text, digest)
+        return text, digest
+    except OSError:
+        return None
 
 
 def log(msg: str) -> None:
@@ -95,6 +118,18 @@ def log(msg: str) -> None:
     stdout on long runs but keeps stderr as a separate field)."""
     print(msg, flush=True)
     print(msg, file=sys.stderr, flush=True)
+
+
+def requirements_digest(req_dir: Path) -> str:
+    """Stable identity for resume and test-suite binding."""
+    digest = hashlib.sha256()
+    for path in sorted(p for p in req_dir.rglob("*") if p.is_file()):
+        try:
+            digest.update(str(path.relative_to(req_dir)).replace("\\", "/").encode())
+            digest.update(path.read_bytes())
+        except OSError:
+            continue
+    return digest.hexdigest()
 
 
 # ---------------------------------------------------------------- postflight
@@ -116,11 +151,14 @@ def _postflight_structure_check(output_dir: Path) -> None:
             tree_lines.append("... (truncated)")
             break
     log("[postflight] workspace tree:\n" + "\n".join(tree_lines))
-    if (output_dir / "frontend").is_dir() and (output_dir / "backend").is_dir():
-        log("[postflight] frontend/ and backend/ present at workspace root")
+    backend_entry = next((output_dir / rel for rel in ("backend/server.js", "backend/src/server.js")
+                          if (output_dir / rel).is_file()), None)
+    if (output_dir / "frontend").is_dir() and (output_dir / "backend").is_dir() and backend_entry:
+        log(f"[postflight] frontend/ and backend/ present at workspace root ({backend_entry.relative_to(output_dir)})")
         return
     for child in [p for p in output_dir.iterdir() if p.is_dir() and p.name not in (".git", ".arc", "requirements")]:
-        if (child / "frontend").is_dir() and (child / "backend").is_dir():
+        if ((child / "frontend").is_dir() and (child / "backend").is_dir()
+                and any((child / rel).is_file() for rel in ("backend/server.js", "backend/src/server.js"))):
             log(f"[postflight] app found nested at {child.name}/; lifting to root")
             for item in child.iterdir():
                 dest = output_dir / item.name
@@ -350,15 +388,16 @@ def inline_sources(output_dir: Path, max_chars: int = 40000, exts: tuple = (".js
                     files.append(path)
     parts, total = [], 0
     for path in sorted(files, key=lambda p: p.stat().st_size):
-        try:
-            text = path.read_text(encoding="utf-8", errors="replace")
-        except OSError:
+        cached = _cached_text(path)
+        if cached is None:
             continue
+        text, digest = cached
         if total + len(text) > max_chars:
-            parts.append(f"--- {path.relative_to(output_dir)} --- (omitted, {len(text)} chars; read it if you must change it)\n")
+            parts.append(f"--- {path.relative_to(output_dir).as_posix()} --- (omitted, {len(text)} chars, sha256={digest[:12]}; "
+                         "use the source-cache reference and read only if this file is in the change impact)\n")
             continue
         total += len(text)
-        parts.append(f"--- {path.relative_to(output_dir)} ---\n{text.rstrip()}\n")
+        parts.append(f"--- {path.relative_to(output_dir).as_posix()} ---\n{text.rstrip()}\n")
     return ("Current source files (quoted; edit them directly, no need to read):\n" + "".join(parts)) if parts else ""
 
 
@@ -458,11 +497,14 @@ def structural_self_check(output_dir: Path, design: dict | None = None,
     dynamic/template-heavy implementations to Playwright.
     """
     issues: list[str] = []
-    required = ("frontend/package.json", "backend/package.json", "backend/server.js",
-                "frontend/src/index.html")
+    required = ("frontend/package.json", "backend/package.json", "frontend/src/index.html")
     for rel in required:
         if not (output_dir / rel).is_file():
             issues.append(f"missing generated file {rel}; create the required app file before repairing UI")
+    backend_entry = next((output_dir / rel for rel in ("backend/server.js", "backend/src/server.js")
+                          if (output_dir / rel).is_file()), None)
+    if backend_entry is None:
+        issues.append("missing backend entry (backend/server.js or backend/src/server.js); create the app entry before repairing UI")
     for rel, script, command in (("frontend/package.json", "build", "build"),
                                  ("backend/package.json", "start", "start")):
         path = output_dir / rel
@@ -488,7 +530,7 @@ def structural_self_check(output_dir: Path, design: dict | None = None,
         text for path, text in source_text.items()
         if path.suffix.lower() in (".js", ".mjs", ".cjs")
     )
-    server_path = output_dir / "backend" / "server.js"
+    server_path = backend_entry or (output_dir / "backend" / "server.js")
     server_text = source_text.get(server_path, "")
     html_paths = [p for p in source_paths if p.suffix.lower() == ".html"]
     designs = design if isinstance(design, dict) else {}
@@ -898,6 +940,9 @@ class OctosDriver:
         lowered = text.lower()
         if "octos turn timed out" in lowered or "octos timed out after" in lowered:
             return False  # our own wall-clock cap, not a provider hiccup: never replay the turn
+        if "402" in lowered or "insufficient_balance" in lowered or "quota_gated" in lowered \
+                or "insufficient balance" in lowered:
+            return False  # billing failures are terminal for this run, never retry them
         return any(k in lowered for k in (
             "temporarily unavailable", "503", "502", "429", "rate limit", "timeout", "timed out",
             "connection reset", "overloaded", "failed to send", "streaming request",
@@ -1149,17 +1194,23 @@ def inline_spec_text(tests_dir: Path, files: list[str], max_chars: int) -> str:
     model would otherwise issue is a full-context round trip (~11k tokens)."""
     parts = []
     total = 0
+    omitted = []
     for rel in files:
         path = tests_dir / rel
-        try:
-            text = path.read_text(encoding="utf-8", errors="replace")
-        except OSError:
+        cached = _cached_text(path)
+        if cached is None:
             continue
+        text, digest = cached
         if total + len(text) > max_chars:
-            return ""  # too big to inline; let the model read selectively
+            omitted.append(f"{rel} ({len(text)} chars, sha256={digest[:12]})")
+            continue
         total += len(text)
         parts.append(f"--- {rel} ---\n{text.rstrip()}\n")
-    return INLINE_SPEC_HEADER + "".join(parts) if parts else ""
+    if not parts and not omitted:
+        return ""
+    suffix = ("\nOMITTED SPEC RANGES (do not reread unchanged files; request only the "
+              "specific range needed for the current node): " + "; ".join(omitted) + "\n") if omitted else ""
+    return INLINE_SPEC_HEADER + "".join(parts) + suffix
 
 
 def locate_acceptance_tests(tree: dict, bundle_dir: Path) -> Path | None:
@@ -1248,6 +1299,7 @@ class Flow:
         self.min_repair_seconds = int(os.environ.get("OCTOS_MIN_REPAIR_SECONDS", "300"))  # Keep baseline for more repair opportunities
         self.node_budget_cap = int(os.environ.get("OCTOS_NODE_TIME_BUDGET", "1500"))
         self.repair_rounds = int(os.environ.get("OCTOS_REPAIR_ROUNDS", "5"))
+        self.final_reserve_seconds = int(os.environ.get("OCTOS_FINAL_RESERVE_SECONDS", "300"))
         self.design_enabled = os.environ.get("OCTOS_DESIGN_TURN", "1") != "0"
         self.design_min_nodes = int(os.environ.get("OCTOS_DESIGN_MIN_NODES", "3"))
         self.skeleton_min_nodes = int(os.environ.get("OCTOS_SKELETON_MIN_NODES", "3"))
@@ -1279,6 +1331,13 @@ class Flow:
         self.application_contract: dict = {}
         self.contract_path: Path | None = None
         self.implemented_nodes: set[str] = set()
+        self.node_states: dict[str, str] = {}
+        self.current_node: str | None = None
+        self.current_phase = "initializing"
+        self.quota_gated = False
+        self.run_id = f"run-{os.getpid()}-{int(self.t_start * 1000)}"
+        self.requirements_hash: str | None = None
+        self.checkpoints = CheckpointStore(output_dir)
 
     # -- helpers ----------------------------------------------------------
     def remaining(self) -> float:
@@ -1286,6 +1345,66 @@ class Flow:
 
     def time_up(self) -> bool:
         return self.remaining() <= 0
+
+    def checkpoint(self, reason: str, **extra) -> None:
+        """Persist a small recoverable boundary; never make resume depend on it."""
+        payload = {
+            "run_id": self.run_id,
+            "workspace": str(self.output_dir.resolve()),
+            "requirements_hash": self.requirements_hash,
+            "current": {"node_id": self.current_node, "phase": self.current_phase},
+            "node_states": dict(self.node_states),
+            "test_verdict": dict(self.test_verdict),
+            "quota_gated": self.quota_gated,
+            "git_head": self.head() if self.runtime is not None else None,
+            "reason": reason,
+        }
+        payload.update(extra)
+        try:
+            self.checkpoints.write(payload)
+        except OSError as exc:
+            log(f"[checkpoint] could not write {reason}: {exc}")
+
+    def set_node_state(self, node_id: str, state: str, **extra) -> None:
+        self.node_states[str(node_id)] = state
+        self.checkpoint("node_state", node_id=str(node_id), state=state, **extra)
+
+    def enter_quota_gate(self, reason: str) -> None:
+        if self.quota_gated:
+            return
+        self.quota_gated = True
+        log(f"[quota] HARD STOP: {reason[:240]}")
+        self.current_phase = "quota_gated"
+        self.checkpoint("quota_gated", reason=reason[:500])
+
+    def write_run_identity(self, tree: dict) -> None:
+        """Persist enough identity to reject a misleading suite/result pairing."""
+        task_key = os.environ.get("ARCBENCH_TASK_KEY", os.environ.get("ARCBENCH_TASK", ""))
+        suite_key = os.environ.get("ARCBENCH_TEST_SUITE_KEY", "")
+        if task_key and suite_key and task_key != suite_key:
+            raise RuntimeError(f"suite identity mismatch: task={task_key!r} suite={suite_key!r}")
+        specs = []
+        if self.tests_dir and self.tests_dir.is_dir():
+            for path in sorted(self.tests_dir.rglob("*.spec.ts")):
+                cached = _cached_text(path)
+                if cached:
+                    specs.append({"path": str(path.relative_to(self.tests_dir)), "sha256": cached[1]})
+        identity = {
+            "schema_version": 1,
+            "run_id": self.run_id,
+            "task_key": task_key or None,
+            "suite_key": suite_key or None,
+            "requirement_root": str(tree.get("name") or tree.get("id") or ""),
+            "requirements_hash": self.requirements_hash,
+            "tests_dir": str(self.tests_dir) if self.tests_dir else None,
+            "specs": specs,
+            "agent_commit": os.environ.get("OCTOS_AGENT_COMMIT") or (self.head() if self.runtime else None),
+            "submission_sha256": os.environ.get("ARCBENCH_SUBMISSION_SHA256") or None,
+        }
+        try:
+            atomic_json_write(self.output_dir / ".arc" / "run-identity.json", identity)
+        except OSError as exc:
+            log(f"[identity] could not write run identity: {exc}")
 
     def mark(self, kind: str, node_id: str, message: str | None = None) -> None:
         fn = getattr(self.events, f"mark_{kind}")
@@ -1464,7 +1583,9 @@ class Flow:
         if not current or os.environ.get("OCTOS_ARC_DEP_REGRESSION", "1") == "0":
             return current
         ordered = ordered or self.ordered_nodes
-        limit = max(0, int(os.environ.get("OCTOS_ARC_DEP_REGRESSION_MAX_SPECS", "12")))
+        # Keep regression evidence bounded under the short exploration window;
+        # callers can opt into a larger set after a no-regression canary.
+        limit = max(0, int(os.environ.get("OCTOS_ARC_DEP_REGRESSION_MAX_SPECS", "3")))
         selected = list(current)
         seen = set(selected)
 
@@ -1518,18 +1639,19 @@ class Flow:
         return out
 
     def implement_request_budget(self) -> int:
-        """Per-turn request cap for implement AND full-rewrite turns. A rewrite
-        re-implements the whole node, so it must share the implement budget:
-        multi-node tasks are uncapped (0), small tasks keep the 20 cap. The old
-        code hardcoded 20 at the rewrite call site, so a 32-node task capped its
-        rewrite at 20 requests while the implement it was rescuing ran uncapped —
-        the rewrite was force-finished half-written (keep-0927-v2_1-f REQ-2.5.1).
-        OCTOS_ARC_REWRITE_REQUESTS overrides the rewrite budget alone."""
+        """Return a finite default; zero/unbounded requests caused quota tails."""
         return int(os.environ.get("OCTOS_ARC_IMPLEMENT_REQUESTS",
-                                  "20" if self.minimal_mode(getattr(self, "n_nodes", 99)) else "0"))
+                                  "20" if self.minimal_mode(getattr(self, "n_nodes", 99)) else "8"))
+
+    def rewrite_request_budget(self) -> int:
+        """One bounded rewrite, preserving a request reserve for final checks."""
+        configured = int(os.environ.get("OCTOS_ARC_REWRITE_REQUESTS", str(self.implement_request_budget())))
+        return max(1, min(configured, int(os.environ.get("OCTOS_ARC_MAX_REWRITE_REQUESTS", "8"))))
 
     def turn(self, prompt: str, timeout: int, label: str, expect_verification: bool = True,
              request_budget: int | None = None) -> tuple[bool, str]:
+        if self.quota_gated:
+            return False, "quota_gated: no further model turns are allowed"
         monitor = TurnMonitor(self.protected_prefixes(), expect_verification=expect_verification,
                               allowed_prefixes=[".arc/design/", str(self.output_dir / ".arc" / "design")])
         proxy = getattr(self, "llm_proxy", None)
@@ -1550,6 +1672,11 @@ class Flow:
             f"(tools={monitor.tool_calls} wrote={monitor.wrote_files} verified={monitor.verified}): {text[-240:]!r}")
         if proxy is not None and proxy.turn_budget and proxy.turn_requests > proxy.turn_budget:
             log(f"[guard] {label}: request budget {proxy.turn_budget} hit; turn forced to finish")
+        if proxy is not None and proxy.quota_gated:
+            self.enter_quota_gate(proxy.quota_reason or f"{label}: upstream billing limit")
+        self.current_phase = "turn_end"
+        self.checkpoint("turn_end", label=label, ok=ok, tool_calls=monitor.tool_calls,
+                        wrote=monitor.wrote_files, verified=monitor.verified)
         for c in monitor.corrections():
             log(f"[guard] {label}: {c[:160]}")
             if self.guard_enabled:
@@ -1872,8 +1999,12 @@ class Flow:
         best_passed, best_sha, regressions, stalls = -1, self.head(), 0, 0
         rewrite_used = False
         previous_failures = None
+        same_failure_streak = 0
         self.codegen_blocked = False  # same failure twice in codegen mode -> tool mode for this node
         for attempt in range(self.repair_rounds + 1):
+            if self.quota_gated:
+                self.set_node_state(node_id, "inconclusive", reason="quota_gated")
+                return None
             summary = self.run_specs(specs)
             if summary.error and summary.killed:
                 log(f"[acceptance] {node_id}: test runner killed ({summary.error[:120]}); no verdict from this round")
@@ -1887,16 +2018,26 @@ class Flow:
                 passed = summary.passed
                 failures = failure_summaries(summary)
                 self.record_tests(node_id, specs, summary)
+                # run_specs has already built, started and reached the app;
+                # keep those facts separate from the later official verdict.
+                self.node_states[node_id] = "built"
+                self.set_node_state(node_id, "smoke_verified", passed=passed, total=summary.total)
             log(f"[acceptance] {node_id} round {attempt}: {passed}/{summary.total}")
             normalized = re.sub(r"\d+", "#", failures or "")
             if normalized and normalized == previous_failures:
-                # Cloud 91aaecaf31af: three codegen rounds, identical observation.
+                same_failure_streak += 1
                 self.codegen_blocked = True
                 self.pending_corrections.append(
                     "Your last two attempts produced EXACTLY the same failure. The same logic will fail again: read the "
                     "Expected/Received values in the observation, change the approach (e.g. render the initial state in "
                     "the served HTML instead of after a fetch), and check the spec's locator against your markup.")
                 log(f"[flow] {node_id}: identical failure twice; switching repairs to tool mode")
+                if same_failure_streak >= 2:
+                    log(f"[flow] {node_id}: failure digest did not change after strategy switch; stopping repair")
+                    self.checkpoint("repair_stopped", node_id=node_id, failure_digest=normalized[:500])
+                    break
+            else:
+                same_failure_streak = 0
             previous_failures = normalized
             if attempt >= int(os.environ.get("OCTOS_ARC_CODEGEN_REPAIRS", "2")) and passed < summary.total \
                     and self.codegen_mode():
@@ -1908,6 +2049,7 @@ class Flow:
                 if line.strip().startswith(("Failed at:", "Observation:")):
                     log(f"[acceptance]   {' '.join(line.strip().split())[:360]}")
             if summary.total and passed == summary.total:
+                self.set_node_state(node_id, "acceptance_verified", passed=passed, total=summary.total)
                 self.commit(f"{node_id} (accepted): {passed}/{summary.total} acceptance tests pass")
                 return True
             self.queue_structural_corrections(design=self.designs.get(node_id), enqueue=True)
@@ -1932,13 +2074,15 @@ class Flow:
             if attempt == self.repair_rounds:
                 break
             left = deadline - time.time()
-            if left < self.min_repair_seconds or self.time_up():
+            if left < self.min_repair_seconds + self.final_reserve_seconds or self.time_up():
                 # A repair turn that starts with only a couple of minutes left
                 # times out too (keep-local-3); keep the best state instead.
-                log(f"[flow] {node_id}: {left:.0f}s left, below the {self.min_repair_seconds}s a repair needs; "
-                    f"keeping the best state")
+                log(f"[flow] {node_id}: {left:.0f}s left, below repair+final reserve "
+                    f"({self.min_repair_seconds + self.final_reserve_seconds}s); keeping the best state")
                 break
             self.snapshot_sources(node_id, attempt)
+            self.checkpoint("acceptance_verdict", node_id=node_id, attempt=attempt,
+                            passed=passed, total=summary.total)
             slow = summary.slow(int(os.environ.get("OCTOS_ARC_SLOW_MS", "3000")))
             slow_text = ("Also, these tests took over 3 s on this fast machine and will exceed the grader's "
                          "10 s budget: " + "; ".join(slow) + ". Remove the latency.\n" + self.perf_text()) if slow else ""
@@ -1957,8 +2101,7 @@ class Flow:
                 if self.codegen_mode():
                     self.codegen_turn(prompt, min(self.node_timeout, left), f"{node_id} rewrite (repair {attempt + 1})")
                 else:
-                    rewrite_budget = int(os.environ["OCTOS_ARC_REWRITE_REQUESTS"]) \
-                        if os.environ.get("OCTOS_ARC_REWRITE_REQUESTS") else self.implement_request_budget()
+                    rewrite_budget = self.rewrite_request_budget()
                     self.turn(prompt, min(self.node_timeout, left), f"{node_id} rewrite (repair {attempt + 1})",
                               request_budget=rewrite_budget)
                 continue
@@ -2022,6 +2165,8 @@ class Flow:
 
     def node_cycle(self, node: dict, ordered: list[dict], index: int, total: int) -> None:
         node_id = str(node.get("id"))
+        self.current_node, self.current_phase = node_id, "node_start"
+        self.checkpoint("node_start", node_id=node_id, index=index, total=total)
         specs = self.acceptance_specs_for(node_id, ordered)
         self.codegen_blocked = False  # a previous node's fallback to tool mode must not leak into this one
         nodes_left = total - index + 1
@@ -2043,6 +2188,7 @@ class Flow:
             self.mark("design_done", node_id, "design folded into the implementation prompt")
 
         self.mark("implementation_started", node_id)
+        self.set_node_state(node_id, "implementing")
         design_text = ("Design contract for this node (follow it):\n"
                        + json.dumps(design, ensure_ascii=False)[:4000] + "\n") if design else ""
         if inline_design:
@@ -2129,6 +2275,7 @@ class Flow:
             requirement_text=str(node.get("description") or ""), enqueue=False)
         self.mark("implementation_done", node_id, (text[-500:] or None) if ok else "implement turn timed out; partial code")
         self.implemented_nodes.add(node_id)
+        self.set_node_state(node_id, "implemented", wrote=bool(text), turn_ok=ok)
         self.update_application_contract()
         self.commit(f"{node_id} (implement): {node.get('name', '')}")
 
@@ -2153,6 +2300,7 @@ class Flow:
             except Exception:  # noqa: BLE001
                 pass
         elif verdict is False:
+            self.set_node_state(node_id, "inconclusive", reason="acceptance_failed")
             self.mark("test_failed", node_id, "acceptance specs still failing after repair rounds")
 
     def snapshot_sources(self, node_id: str, attempt: int) -> Path | None:
@@ -2201,6 +2349,8 @@ class Flow:
     def regression_cycle(self, node: dict) -> None:
         """Evolution: unchanged node — carry the design/impl over, re-run its specs."""
         node_id = str(node.get("id"))
+        self.current_node, self.current_phase = node_id, "regression"
+        self.checkpoint("node_start", node_id=node_id, mode="regression")
         specs = self.acceptance_specs_for(node_id)
         self.mark("design_started", node_id)
         self.mark("design_done", node_id, "unchanged since the previous requirement version; carried over")
@@ -2223,6 +2373,8 @@ class Flow:
                     verdict = self.acceptance_loop(node_id, specs, deadline)
         self.test_verdict[node_id] = verdict
         self.implemented_nodes.add(node_id)
+        self.set_node_state(node_id, "acceptance_verified" if verdict is True else "inconclusive",
+                            reason="regression_cycle")
         self.update_application_contract()
         if verdict is True:
             self.mark("test_passed", node_id, "regression specs pass locally")
@@ -2233,14 +2385,14 @@ class Flow:
         """Run EVERY spec file together, files in parallel, like the grader does.
         Per-node runs cannot see cross-node interference through shared server
         state; this pass can, and it repairs the nodes whose tests fail."""
-        if self.runner is None or not self.tests_dir:
+        if self.quota_gated or self.runner is None or not self.tests_dir:
             return
         all_specs = sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.spec.ts"))
         unverified = [n for n, v in self.test_verdict.items() if v is not True] or \
             [n for n in self.spec_map if n and self.spec_map[n] and n not in self.test_verdict]
         if len(all_specs) < 2 and not unverified:
             return  # single spec already judged by the node run
-        rounds = int(os.environ.get("OCTOS_FINAL_REPAIR_ROUNDS", "2"))
+        rounds = int(os.environ.get("OCTOS_FINAL_REPAIR_ROUNDS", "1"))
         workers = workers_for_memory(getattr(self, "mem_limit", None), int(os.environ.get("OCTOS_ARC_FINAL_WORKERS", "4")))
         previous_failing: set[str] | None = None
         for attempt in range(rounds + 1):
@@ -2303,6 +2455,8 @@ class Flow:
                 slow="", smoke=self.smoke_port, port=self.web_port)
             self.turn(prompt, min(self.node_timeout, max(120, self.remaining() - 200)),
                       f"full-suite repair {attempt + 1}/{rounds}")
+            if self.quota_gated:
+                return
             self.commit(f"fix: full-suite repair {attempt + 1}")
 
     # -- skeleton ---------------------------------------------------------
@@ -2336,6 +2490,9 @@ class Flow:
 
     # -- final ------------------------------------------------------------
     def rehearsal(self) -> bool:
+        if self.quota_gated:
+            log("[rehearsal] skipped: run is quota_gated")
+            return False
         for attempt in range(1, 4):
             log(f"[rehearsal] startup rehearsal {attempt}/3 (smoke port {self.smoke_port}, grader-like env)")
             server = self.app_server(grader_like=True)
@@ -2363,6 +2520,7 @@ class Flow:
         try:
             previous = previous_requirement_records(self.output_dir)
             tree = load_requirement_tree(self.req_dir)
+            self.requirements_hash = requirements_digest(self.req_dir)
             self.runtime.traceability.store_requirement_tree(tree)
             ordered = topo_order(tree)
             if not ordered:
@@ -2395,6 +2553,9 @@ class Flow:
             self.initialize_application_contract(tree, ordered)
 
             self.runtime.git.ensure_repo()
+            self.write_run_identity(tree)
+            self.current_phase = "run_initialized"
+            self.checkpoint("run_start", node_count=len(ordered))
             self.setup_playwright()
             if self.evolution and self.runner is not None:
                 # The platform's template app carries no traceability records, so
@@ -2430,11 +2591,19 @@ class Flow:
                     log(f"[flow] {len(ordered)}-node tree: skeleton folded into the first node turn")
                 for index, node in enumerate(ordered, 1):
                     node_id = str(node.get("id"))
+                    if self.quota_gated:
+                        log(f"[flow] quota gated; skipping remaining node {node_id}")
+                        self.mark("implementation_started", node_id)
+                        self.mark("implementation_failed", node_id, "skipped: quota_gated")
+                        self.impl_failed.append(node_id)
+                        self.set_node_state(node_id, "inconclusive", reason="quota_gated")
+                        continue
                     if self.time_up():
                         log(f"[flow] time budget exhausted; skipping {node_id}")
                         self.mark("implementation_started", node_id)
                         self.mark("implementation_failed", node_id, "skipped: time budget exhausted")
                         self.impl_failed.append(node_id)
+                        self.set_node_state(node_id, "inconclusive", reason="time_budget_exhausted")
                         continue
                     if node_id in unchanged:
                         self.regression_cycle(node)
@@ -2442,12 +2611,12 @@ class Flow:
                         self.node_cycle(node, ordered, index, len(ordered))
                     self.driver.end_scope("node")
 
-                if not self.time_up():
+                if not self.time_up() and not self.quota_gated:
                     self.final_acceptance()
                     self.driver.end_scope("node")
                 undecided = [i for i in node_ids if self.test_verdict.get(i) is None and i not in self.impl_failed]
                 final_ok = None
-                if undecided and not self.time_up():
+                if undecided and not self.time_up() and not self.quota_gated:
                     log(f"[flow] final check turn for nodes without a local verdict: {undecided}")
                     final_ok, _ = self.turn(self.application_context_text(None) + FINAL_CHECK_PROMPT.format(
                                                                       smoke=self.smoke_port, port=self.web_port,

@@ -1,7 +1,9 @@
 import json
 import unittest
 
-from llm_proxy import BUDGET_NOTICE, destream_request, enforce_turn_budget, ensure_max_tokens, inject_reasoning, request_shape, to_sse, trim_request, trim_system_prompt, usage_record
+from llm_proxy import (BUDGET_NOTICE, destream_request, enforce_turn_budget, ensure_max_tokens,
+                       inject_reasoning, is_quota_response, request_shape, to_sse, trim_request,
+                       trim_system_prompt, usage_record)
 
 
 class InjectTests(unittest.TestCase):
@@ -37,6 +39,11 @@ class UsageTests(unittest.TestCase):
     def test_should_return_none_without_usage(self):
         self.assertIsNone(usage_record(b'{"choices": []}', 1, "low"))
         self.assertIsNone(usage_record(b"garbage", 1, "low"))
+
+    def test_billing_responses_are_terminal_but_plain_rate_limit_is_not(self):
+        self.assertTrue(is_quota_response(402, b"payment required"))
+        self.assertTrue(is_quota_response(429, b'{"error":"insufficient_balance"}'))
+        self.assertFalse(is_quota_response(429, b"temporary rate limit"))
 
 
 class SseTests(unittest.TestCase):

@@ -99,7 +99,9 @@ class InlineSpecTests(unittest.TestCase):
             text = inline_spec_text(tests, ["REQ-1.spec.ts", "support/e2e.ts"], 1000)
             self.assertIn("--- REQ-1.spec.ts ---\nspec body", text)
             self.assertIn("--- support/e2e.ts ---\nhelper", text)
-            self.assertEqual(inline_spec_text(tests, ["REQ-1.spec.ts", "support/e2e.ts"], 10), "")
+            limited = inline_spec_text(tests, ["REQ-1.spec.ts", "support/e2e.ts"], 10)
+            self.assertIn("OMITTED SPEC RANGES", limited)
+            self.assertIn("sha256=", limited)
 
 
 class InlineSourcesTests(unittest.TestCase):
@@ -183,14 +185,14 @@ class RewriteBudgetTests(unittest.TestCase):
         from pathlib import Path
         return m.Flow(argparse.Namespace(web_port=3000), Path("."), Path("."))
 
-    def test_should_give_rewrite_unlimited_requests_on_multi_node_tasks(self):
+    def test_should_bound_rewrite_requests_on_multi_node_tasks(self):
         import os
         flow = self._flow()
         flow.n_nodes = 32
         os.environ.pop("OCTOS_ARC_IMPLEMENT_REQUESTS", None)
         os.environ.pop("OCTOS_ARC_REWRITE_REQUESTS", None)
-        # 0 == uncapped, matching the implement turn on a 32-node task.
-        self.assertEqual(flow.implement_request_budget(), 0)
+        self.assertGreater(flow.implement_request_budget(), 0)
+        self.assertLessEqual(flow.rewrite_request_budget(), 8)
 
     def test_should_cap_rewrite_like_implement_on_small_tasks(self):
         import os
@@ -199,6 +201,7 @@ class RewriteBudgetTests(unittest.TestCase):
         os.environ.pop("OCTOS_ARC_IMPLEMENT_REQUESTS", None)
         os.environ.pop("OCTOS_ARC_REWRITE_REQUESTS", None)
         self.assertEqual(flow.implement_request_budget(), 20)
+        self.assertLessEqual(flow.rewrite_request_budget(), 8)
 
 
 class CodegenPromptTests(unittest.TestCase):

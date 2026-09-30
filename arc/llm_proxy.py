@@ -22,6 +22,18 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 HOP_HEADERS = {"host", "content-length", "transfer-encoding", "connection", "accept-encoding"}
+QUOTA_MARKERS = ("insufficient_balance", "insufficient balance", "quota exhausted", "quota exceeded",
+                 "billing limit", "payment required", "out of credits", "balance is not enough")
+
+
+def is_quota_response(status: int, payload: bytes) -> bool:
+    """Treat HTTP 402 as terminal; gate 429 only when its body signals billing."""
+    if status == 402:
+        return True
+    if status != 429:
+        return False
+    text = payload.decode("utf-8", errors="replace").lower()
+    return any(marker in text for marker in QUOTA_MARKERS)
 
 
 def inject_reasoning(body: bytes, mode: str) -> bytes:
@@ -326,6 +338,8 @@ class LlmProxy:
         self.turn_budget = 0
         self.turn_requests = 0
         self.budget_hits = 0
+        self.quota_gated = False
+        self.quota_reason: str | None = None
         self.log_path = log_path
         self.dump_dir = dump_dir      # OCTOS_ARC_PROXY_DUMP=1: first N request bodies for prefix analysis
         self.dump_limit = dump_limit
@@ -340,6 +354,14 @@ class LlmProxy:
                 pass
 
             def _forward(self, method: str) -> None:
+                if proxy.quota_gated and method == "POST" and self.path.rstrip("/").endswith("/chat/completions"):
+                    payload = json.dumps({"error": {"message": "quota_gated: upstream calls stopped after billing limit"}}).encode()
+                    self.send_response(402)
+                    self.send_header("Content-Type", "application/json")
+                    self.send_header("Content-Length", str(len(payload)))
+                    self.end_headers()
+                    self.wfile.write(payload)
+                    return
                 length = int(self.headers.get("Content-Length") or 0)
                 body = self.rfile.read(length) if length else b""
                 was_streaming = False
@@ -377,6 +399,10 @@ class LlmProxy:
                     status, payload, resp_headers = exc.code, exc.read(), exc.headers
                 except Exception as exc:  # noqa: BLE001
                     status, payload, resp_headers = 502, json.dumps({"error": {"message": f"proxy: {exc}"}}).encode(), {}
+                if is_quota_response(status, payload):
+                    with proxy._lock:
+                        proxy.quota_gated = True
+                        proxy.quota_reason = f"HTTP {status}: {payload.decode('utf-8', errors='replace')[:240]}"
                 proxy._log(payload, int((time.time() - t0) * 1000), body, len(body), len(payload))
                 ctype = resp_headers.get("Content-Type", "application/json") if resp_headers else "application/json"
                 if was_streaming and status == 200:
