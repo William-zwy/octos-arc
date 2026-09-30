@@ -339,6 +339,8 @@ Sheet 更适合作为第一主探针：原子节点较少，先验证 workbook/w
 
 本节归并 `2b6a1f545c37`（Sheet）与 `0564f5955f16`（GitHub）的阶段 3只读审计。原始附件仍位于用户侧归档目录，尚未镜像进仓库；本节只记录可由 Run JSON、logs、traceability、发布 sidecar 和当前源码相互核验的事实。由于仓库中没有这些原始附件，本节属于 `analysis_only / evidence_not_independently_reproducible`，不能单独作为阶段 5最终裁决或修改授权；后续裁决仍须先镜像并校验原始证据。本轮只更新计划和变更日志，不修改 Agent、Skill、ZIP、requirements 或官方测试，也不启动平台 Run。
 
+归档入口：[Sheet manifest](../evidence/arc-bench/runs/2b6a1f545c37/manifest.json)、[Sheet Phase 3 analysis](../evidence/arc-bench/runs/2b6a1f545c37/phase3-analysis.md)、[GitHub manifest](../evidence/arc-bench/runs/0564f5955f16/manifest.json)、[GitHub Phase 3 analysis](../evidence/arc-bench/runs/0564f5955f16/phase3-analysis.md)。上述 manifest 只登记本地原始附件的大小与 SHA-256；原始附件仍为 `local_only`，未复制进仓库。
+
 ### 11.1 终态和证据边界
 
 | Run | 平台终态 | Agent 过程 | 最终部署 | 官方测试可见性 |

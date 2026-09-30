@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "run_id": "2b6a1f545c37",
+  "task_id": "hackathon--sheet",
+  "status": "FAILED",
+  "score": 0,
+  "pass_total": "0/100",
+  "feature_total": "0/24",
+  "normalized_status": "phase3_complete_phase4_pending_identity_inconclusive",
+  "submission": {
+    "submission_id": "c2c0b5b2ab3c",
+    "zip_sha256": "9B7B39D38EFDE6CF75F4129A70DBCF421FAFF9F7A0E34B536737ED3B8CD51F1E",
+    "embedded_agent_commit": "1821c3f5e99836765d23c0f0b7b49d5155e150ab",
+    "runtime_reported_identity": "d5b777...",
+    "identity_resolution": "conflict: runtime workspace HEAD is not a verified Agent source identity"
+  },
+  "metrics": {
+    "unique_budget_hits": 29,
+    "all_feature_nodes_hit_cap": true,
+    "feature_nodes_at_cap": "24/24",
+    "verified_writes": 2,
+    "wrote_unverified": 19,
+    "no_write": 3,
+    "rehearsal_failures": 2,
+    "final_rehearsal_success": true
+  },
+  "official_test_details_available": false,
+  "official_test_timeouts": "unknown",
+  "evidence": [
+    {"filename": "arcbench-run-2b6a1f545c37.json", "size": 3173, "sha256": "99361286158F99CC067A58829FC273CEFB00701647407C78D88C20DE1D6E6537", "local_only": true},
+    {"filename": "arcbench-run-2b6a1f545c37-logs.json", "size": 80437, "sha256": "96FFF80330732324CD4A3B7101BE75F5AEA90011D31295D9C873AD1C903DF5B1", "local_only": true},
+    {"filename": "arcbench-run-2b6a1f545c37-traceability.json", "size": 2123, "sha256": "5713EE4028189397D32DF0716BFDE6D4BDBC823CCC69B408F8A6181F55388B86", "local_only": true},
+    {"filename": "arcbench-2b6a1f545c37-summary.md", "size": 5597, "sha256": "E74AB3A5CC217E82B3419F504CB9CE10098E487F3D2041523E0958018F19B739", "local_only": true},
+    {"filename": "arcbench-2b6a1f545c37-failure-analysis.md", "size": 2641, "sha256": "38FE96CC615317BAEA320DA7BA5EEC66963945B58C87B14A7E840C33B152AC47", "local_only": true},
+    {"filename": "arcbench-run-2b6a1f545c37-known-final.json", "size": 3205, "sha256": "9D29398DBACAC710152791E0550B76F7C88487B0E14381D48629A180627475AF", "local_only": true},
+    {"filename": "arcbench-run-2b6a1f545c37-midrun.json", "size": 2406, "sha256": "31FC8D12A99042AF498CB27D96A9698105FB76534686CD5470956DC1E44C2628", "local_only": true},
+    {"filename": "arcbench-run-2b6a1f545c37-midrun-logs.json", "size": 41551, "sha256": "F08888B30EFA14B5F940A76818F1E184035C162C233003721DE3AC7CE1A16497", "local_only": true},
+    {"filename": "arcbench-run-2b6a1f545c37-midrun-traceability.json", "size": 1528, "sha256": "1E1F18AE970304EAC63686DB02CAD995327A9E7CE30ED90DF8D50EEB3F5DC5A5", "local_only": true},
+    {"filename": "arcbench-run-2b6a1f545c37-tmp.json", "size": 3850, "sha256": "D21233A52B50B18007481600024EC4BE0631EEF733D63AB01A35EE28A069CEDE", "local_only": true, "duplicate_excluded": true},
+    {"filename": "submission-c2c0b5b2ab3c.zip", "size": 348577, "sha256": "9B7B39D38EFDE6CF75F4129A70DBCF421FAFF9F7A0E34B536737ED3B8CD51F1E", "local_only": true}
+  ],
+  "missing_evidence": [
+    "template",
+    "playwright_report",
+    "playwright_trace",
+    "screenshots",
+    "test_ids",
+    "platform_generation_identity"
+  ]
+}
