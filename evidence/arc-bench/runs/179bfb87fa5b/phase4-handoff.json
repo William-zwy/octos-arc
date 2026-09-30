@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "handoff_id": "179bfb87fa5b-BFF495520B79",
+  "run_id": "179bfb87fa5b",
+  "submission_id": "a944fed9e1b5",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "thread_title": "06 项目阶段4 + arc-bench-lite--bookstack",
+  "manifest": "evidence/arc-bench/runs/179bfb87fa5b/manifest.json",
+  "manifest_sha256": "BFF495520B7954A7076A6183FF9A26D00C4D3EAF63BA5FB627D09D4A57722E7C",
+  "scope": "phase4_read_only_single_run_diagnosis",
+  "source_precedence": ["run.json final status, lifecycle steps and IDs","raw logs for generation identity resolution and execution checks","failure details for test-stage evidence","summary markdown for navigation only"],
+  "card": {
+    "platform_final": {"status":"FAILED","score":0,"pass_total":"0/0","failure_stage":"generation_agent","tests_reached":false,"failure":"main.py exit 1 after acceptance identity resolution aborted: identity_unverified, expected one provenance-backed exact fingerprint, found 0"},
+    "internal_acceptance": {"available":false,"rounds":[],"note":"No business acceptance or Playwright test result exists because suite identity resolution failed first"},
+    "generation_identity": {"build_id":"arc-agent-v1-28a60ce10cd6f9fe289342dc","commit_sha":"d3529b8f85925724408de2cd52f6b9b0230123d3","payload_tree_sha256":"A09D2F401123C1EE4D67445CCB455887B95105FCA964F62E6145E6A8290A97CF","submission_zip_sha256":"714980CD64B75DBB4F6ECA50A839AF02008AC8410601ED24A63E4085FABD1D11"},
+    "acceptance_identity": {"requirements_fingerprint":"5DD4F3C4226EE6E7426E9FF95526291F4663F2C1720BF411F33A0C8A54476F34","manifest_sha256":"39835E80D640DB54E78DE1CB92C22E0856582AEB90CA43284EDFF703E086AE0B","matching_suites":[],"task_key_input":null,"selected_suite":null},
+    "metering": {"requests":null,"provider_total_tokens":null,"platform_token_count":118,"cost_cny":0.000534,"duration_seconds":94},
+    "platform_validation": {"entrypoint":"main.py (run command)","tests_dir":null,"bundled_fallback_hits":0,"plaintext_api_key_hits":0,"time_budget_seconds":51000,"package_shape_missing":["frontend/","backend/"],"probe":"raw chat/completions HTTP 200 after transient timeout retries"},
+    "conflicts": ["summary claims /workspace/tests, but raw logs contain no such path and tests were not reached","all run node_states are test-failed although run_tests is pending and tests array is empty","run_duration_seconds=94 while lifecycle timestamps span 100.455706 seconds"]
+  },
+  "required_ack": {"path":"evidence/arc-bench/runs/179bfb87fa5b/phase4-ack.json","must_match":["handoff_id","run_id","task_key","thread_id"]},
+  "required_result": {"json_path":"evidence/arc-bench/runs/179bfb87fa5b/phase4-result.json","markdown_path":"evidence/arc-bench/runs/179bfb87fa5b/phase4-result.md","must_match":["handoff_id","run_id","task_key","thread_id","manifest_sha256"],"required_marker":"PHASE4_RESULT: complete|incomplete"},
+  "instructions": [
+    "Write phase4-ack.json before reading evidence.",
+    "Analyze only Run 179bfb87fa5b; ignore dbf1f727a3dc, b985ae04f3cd, 8d6925802b44, 977a8ae04117 and every other Run.",
+    "Do not create a platform Run, rerun tests, upload, modify Agent code, official tests, task snapshots, ZIPs, assets or runtime configuration.",
+    "Classify the confirmed generation-stage identity_unverified failure separately from hypotheses about the package or requirements provenance.",
+    "Do not claim a BookStack business test failure: run_tests was not reached and tests[] is empty.",
+    "Treat summary claims about /workspace/tests as unverified because the raw logs contain no occurrence.",
+    "Write phase4-result.json and phase4-result.md with confirmed, strong_candidate and unknown evidence levels, preserving all run and submission identities."
+  ]
+}

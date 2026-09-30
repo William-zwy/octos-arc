@@ -1,0 +1,254 @@
+{
+  "schema_version": 1,
+  "intake_label": "stage3-1dbe8860eda8",
+  "status": "normalized_intake_complete_pending_phase4",
+  "run_id": "1dbe8860eda8",
+  "submission_id": "05dd90ac2135",
+  "identity": {
+    "competition_id": "arc-bench-lite-evolution",
+    "task_id": "bookstack",
+    "task_key": "arc-bench-lite-evolution--bookstack",
+    "catalog": "competition",
+    "task_snapshot_id": null,
+    "platform_agent_filename": "octos-arc-agent-p5-017-integrated-unverified-fcfaa5f0093f-b4a732592c14.zip",
+    "platform_submission_sha256_binding": null
+  },
+  "intake_routing": {
+    "source_folder": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-evolution",
+    "phase3_scope": "facts_manifest_and_routing_only",
+    "phase4_auto_dispatch": "allowed_no_registered_thread",
+    "next_stage": "phase4_read_only_single_run_diagnosis",
+    "stage5_triggered": false,
+    "prior_runs_merged": []
+  },
+  "artifacts": [
+    {
+      "role": "run_json",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-evolution\\arcbench-run-1dbe8860eda8.json",
+      "bytes": 6550,
+      "sha256": "ADC8600EC825ACCF3BE9455264F457592B94D228BBD239F0A7C269E16E7B85BA"
+    },
+    {
+      "role": "logs_json",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-evolution\\arcbench-run-1dbe8860eda8-logs.json",
+      "bytes": 59741,
+      "sha256": "568CD9810A339FA2AAB05936D87329C6648902A604434DF4E6E378418589C5F1"
+    },
+    {
+      "role": "summary_navigation_only",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-evolution\\arcbench-run-1dbe8860eda8-summary.md",
+      "bytes": 3399,
+      "sha256": "E099F8C5AF2D5019CA6004B733D87A3AC3928D475B6693910970F44B79BA3AFB"
+    },
+    {
+      "role": "failure_details",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-evolution\\arcbench-1dbe8860eda8-failure-details.md",
+      "bytes": 3605,
+      "sha256": "4733B74D16B0F4284F2F06FF3D494FB514E7F317DFDBF63D545C705F3EC293B0"
+    },
+    {
+      "role": "playwright_report",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-evolution\\arcbench-1dbe8860eda8-pw-report.json",
+      "bytes": 16524,
+      "sha256": "FB9812D858E247A71F6FFB0F1B7A2647EF3BBC76A332651C972CF6399A881BD3"
+    },
+    {
+      "role": "snapshots",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-evolution\\arcbench-1dbe8860eda8-snapshots.json",
+      "bytes": 16571,
+      "sha256": "14F6583232658CA7F3511EAACDB8DD2C38D852C2A55C7C7EA668C04EBCBBA10F"
+    },
+    {
+      "role": "template_zip",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-evolution\\1dbe8860eda8-template.zip",
+      "bytes": 13348579,
+      "sha256": "AFC71C29414483E17D9D00BCC92B67FE1C86B028A8F6DCEF97A26123E3718F75"
+    },
+    {
+      "role": "submission_agent_zip",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-evolution\\submission-05dd90ac2135-agent.zip",
+      "bytes": 347937,
+      "sha256": "B4A732592C146FEB8EA76A65B1920C64FC8EE5100C73D3F2E240D84BD0FBA10B"
+    }
+  ],
+  "run_timing": {
+    "created_at": "2026-09-25T10:01:42.308916",
+    "started_at": "2026-09-25T10:01:46.072616",
+    "finished_at": "2026-09-25T11:10:49.498143",
+    "run_duration_seconds": 4099
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 50,
+    "passed_count": 3,
+    "failed_count": 3,
+    "total_count": 6,
+    "test_pass_rate": 50,
+    "feature_implementation_rate": {
+      "implemented": 3,
+      "total": 6,
+      "percent": 50
+    },
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "failure_stage": "final_playwright_execution",
+    "tests_reached": true,
+    "tests": [
+      {
+        "id": "REQ-10.1",
+        "title": "invalid login",
+        "status": "passed",
+        "duration_ms": 736
+      },
+      {
+        "id": "REQ-10.2",
+        "title": "sort pages/chapters",
+        "status": "timedOut",
+        "duration_ms": 10017,
+        "timeout_ms": 10000,
+        "locator": "getByRole('button', { name: /alphabetical|name/i }).first()",
+        "source": "failure_details"
+      },
+      {
+        "id": "REQ-11.1",
+        "title": "add comment",
+        "status": "failed",
+        "duration_ms": 833,
+        "error_kind": "locator_fill_target_not_editable",
+        "locator": "getByLabel(/Comment/i).first()",
+        "resolved_element": "section.comments[aria-label=Comments]",
+        "source": "failure_details"
+      },
+      {
+        "id": "REQ-11.2",
+        "title": "export Markdown",
+        "status": "passed",
+        "duration_ms": 814
+      },
+      {
+        "id": "REQ-12.1",
+        "title": "search current book",
+        "status": "timedOut",
+        "duration_ms": 10016,
+        "timeout_ms": 10000,
+        "locator": "heading /Evolution Search Book/i",
+        "source": "failure_details"
+      },
+      {
+        "id": "REQ-12.2",
+        "title": "revision history",
+        "status": "passed",
+        "duration_ms": 1010
+      }
+    ],
+    "node_state_note": "run.json node_states are coarse and mark all six test nodes test-failed; tests[] and final platform counts are authoritative for pass/fail detail"
+  },
+  "internal_acceptance": {
+    "available": false,
+    "rounds": [],
+    "note": "Raw logs show generation and final platform execution, but no independently verifiable internal acceptance round result"
+  },
+  "metering": {
+    "platform_token_count": 15048005,
+    "provider_totals": {
+      "requests": 378,
+      "prompt_tokens": 14712229,
+      "completion_tokens": 335665,
+      "reasoning_tokens": 254324,
+      "prompt_cache_hit_tokens": 13775616,
+      "total_tokens": 15047894
+    },
+    "cost": {
+      "amount": 7.208864,
+      "currency": "CNY",
+      "source_field": "token_cost_usd + currency"
+    },
+    "note": "Platform token_count and provider total_tokens are retained as distinct accounting scopes"
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": null,
+    "reasoning": "low",
+    "time_budget_seconds": 9000,
+    "agent_acceptance_workers": null,
+    "test_workers": 1,
+    "sources": {
+      "model": "run_json",
+      "reasoning_and_time_budget": "raw_logs",
+      "visual_model_and_agent_workers": "not_found"
+    }
+  },
+  "generation_identity": {
+    "build_id": "arc-agent-v1-e8f8b92bcae1da56d185f259",
+    "commit_sha": "fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7",
+    "managed_file_count": 494,
+    "package_contract": "arc_agent_bundle_v1",
+    "payload_tree_sha256": "7B9DF0D9B602369EF4ACB7187383487CAC73DD7FBCDFBA312B5302972E67FFD7",
+    "schema_version": 1
+  },
+  "platform_validation": {
+    "entrypoint": {
+      "value": "main.py",
+      "raw_log_verified": true
+    },
+    "tests_directory": {
+      "value": "/workspace/tests",
+      "raw_log_verified": true,
+      "scan_note": "No *.spec.ts and no acceptance specs found in the generation candidate scan; this is not evidence of a bundled-test fallback"
+    },
+    "bundled_fallback_hits": 0,
+    "plaintext_api_key_hits": 0,
+    "probe": "raw chat/completions HTTP 200",
+    "package_shape": {
+      "workspace_directory_entries": 539,
+      "entries_sha256": "BF4C24852E0E4FD3A851CB148B721935FE6DDC8B913113B8EDC00867B813FE12",
+      "missing": 0,
+      "unsafe": 0,
+      "duplicates": 0,
+      "forbidden": 0,
+      "secrets": 0
+    }
+  },
+  "agent_logs": {
+    "events_count": 0,
+    "stdout_pages": 2,
+    "raw_log_chars": 59737,
+    "raw_log_sha256": "568CD9810A339FA2AAB05936D87329C6648902A604434DF4E6E378418589C5F1",
+    "checks": {
+      "main_py_seen": true,
+      "workspace_tests_seen": true,
+      "bundled_seen": false,
+      "api_key_plaintext_seen": false
+    }
+  },
+  "conflicts": [
+    {
+      "field": "node_states_vs_tests",
+      "description": "node_states are coarse and do not agree with tests[]/final counts for the three passing tests",
+      "resolution": "retain both; use run.json tests[] and final counts as platform test authority"
+    },
+    {
+      "field": "submission_zip_binding",
+      "description": "the submission ZIP hash is locally verified but the platform run object does not expose a direct uploaded-package SHA binding",
+      "resolution": "record hash as candidate local artifact identity, not platform-proven binding"
+    }
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "visual_model",
+    "agent_acceptance_rounds",
+    "agent_acceptance_workers",
+    "raw error-context.md bodies for the three failures",
+    "platform-upload SHA binding for submission ZIP",
+    "structured events are empty in logs JSON"
+  ],
+  "source_precedence": [
+    "platform run JSON for final status, score and test counts",
+    "raw logs, failure details and Playwright report for execution evidence",
+    "snapshots and template ZIP for later Stage 4 diagnosis",
+    "summary markdown for navigation only"
+  ],
+  "security": {
+    "plaintext_api_key_found": false,
+    "log_scan_scope": "raw logs and supplied artifacts"
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "intake_label": "stage3-32e08aaca2e4",
+  "status": "normalized_intake_complete_pending_phase4",
+  "routing": {
+    "phase4_auto_dispatch": "allowed_after_mapping_reconciliation",
+    "registered_thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
+    "registered_thread_title": "05 项目阶段4 + arc-bench-lite--keep",
+    "registered_thread_status": "quarantined_reconciled_pending_new_handoff",
+    "next_stage": "phase4_read_only_diagnosis",
+    "boundary": "Stage 3 records normalized facts and routes; root-cause judgment remains in Stage 4."
+  },
+  "run": {
+    "run_id": "32e08aaca2e4",
+    "submission_id": "0faa01c52d4a",
+    "display_name": "luyun18029839909@163.com",
+    "original_filename": "octos-arc-agent-e04db1e40084-5871fb40afb2.zip",
+    "catalog": "competition",
+    "competition_id": "arc-bench-lite",
+    "task_id": "arc-bench-lite--keep",
+    "task_snapshot_id": null,
+    "runtime": "python",
+    "agent_source": "upload",
+    "created_at": "2026-09-23T01:56:48.059632",
+    "started_at": "2026-09-23T01:56:49.855377",
+    "finished_at": "2026-09-23T04:25:24.644456",
+    "status": "FAILED",
+    "score": 84.4,
+    "test_pass_rate": 84.4,
+    "passed_count": 27,
+    "failed_count": 5,
+    "feature_implementation_rate": 84.4,
+    "run_duration_seconds": 8842,
+    "failure_reason": "Runner exited with test failures or runtime errors"
+  },
+  "generation_identity": {
+    "build_id": null,
+    "commit_sha": null,
+    "payload_tree_sha256": null,
+    "upload_package_sha256": null,
+    "original_filename_binding": "missing",
+    "note": "The platform run object does not bind the uploaded Agent release to the user-provided submission ZIP by SHA."
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": null,
+    "reasoning": null,
+    "time_budget_seconds": null,
+    "agent_acceptance_workers": null,
+    "test_workers": null,
+    "missing_reason": "The delivered logs JSON contains empty events and empty stdout; configuration claims in the human summary are not independently raw-log verified."
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 84.4,
+    "passed": 27,
+    "total": 32,
+    "failure_stage": "final_playwright_execution",
+    "failed_tests": [
+      {
+        "name": "REQ-2.4: Update Note",
+        "file": "REQ-2.4.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10018,
+        "error": "locator.fill: Test timeout of 10000ms exceeded",
+        "observed_locator": "getByRole('dialog', { name: /^Note editor$/i }).getByRole('textbox', { name: /^Note content$/i })"
+      },
+      {
+        "name": "REQ-2.7.1: Assign label to a note",
+        "file": "REQ-2.7.1.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10017,
+        "error": "locator.check: Test timeout of 10000ms exceeded",
+        "observed_locator": "getByRole('dialog', { name: /^Note editor$/i }).getByRole('checkbox', { name: /^Work$/i })"
+      },
+      {
+        "name": "REQ-2.7.2: Remove label from a note",
+        "file": "REQ-2.7.2.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10019,
+        "error": "locator.uncheck: Test timeout of 10000ms exceeded",
+        "observed_locator": "getByRole('dialog', { name: /^Note editor$/i }).getByRole('checkbox', { name: /^Work$/i })"
+      },
+      {
+        "name": "REQ-2.7.5: Edit labels",
+        "file": "REQ-2.7.5.spec.ts",
+        "status": "timedOut",
+        "duration_ms": 10016,
+        "error": "expect(locator).toBeVisible failed; element(s) not found",
+        "observed_locator": "getByRole('textbox', { name: /^Label Projects$/i })"
+      },
+      {
+        "name": "REQ-2.7.6.3: View Reminders",
+        "file": "REQ-2.7.6.3.spec.ts",
+        "status": "failed",
+        "duration_ms": 298,
+        "error": "locator.click strict mode violation: /^Reminders$/i resolved to 2 elements",
+        "observed_locator": "getByRole('complementary').getByRole('button', { name: /^Reminders$/i })"
+      }
+    ],
+    "source": "run JSON plus Playwright report and failure details"
+  },
+  "internal_acceptance": {
+    "available": false,
+    "rounds": null,
+    "note": "No acceptance round records are present in the delivered raw logs."
+  },
+  "metering": {
+    "platform_token_count": 42677341,
+    "provider_total_tokens": null,
+    "prompt_tokens": null,
+    "completion_tokens": null,
+    "cache_tokens": null,
+    "requests": null,
+    "cost": 23.569978,
+    "currency": "CNY",
+    "run_duration_seconds": 8842
+  },
+  "platform_validation": {
+    "entrypoint": {
+      "value": "main.py",
+      "source": "run object lifecycle logs",
+      "raw_log_verified": false
+    },
+    "tests_dir": {
+      "value": "/workspace/tests",
+      "source": "human summary",
+      "raw_log_verified": false
+    },
+    "bundled_fallback_hits": {
+      "value": 0,
+      "source": "human summary",
+      "raw_log_verified": false
+    },
+    "api_key_plaintext_hits": {
+      "value": 0,
+      "source": "human summary",
+      "raw_log_verified": false
+    },
+    "log_payload": {
+      "events_count": 0,
+      "stdout_entries": 2,
+      "stdout_nonempty_entries": 0,
+      "pages_count": 2
+    }
+  },
+  "source_precedence": [
+    "run JSON for final status, score, tests, metrics and identifiers",
+    "Playwright report for failure locator and timeout/strict-mode evidence",
+    "failure details for normalized failure excerpts",
+    "logs JSON for lifecycle and provider fields; this payload is empty for this Run",
+    "summary markdown for navigation only; it cannot override structured fields",
+    "snapshots and template ZIP for later Stage 4 diagnosis only"
+  ],
+  "conflicts": [
+    "The summary reports configuration and provider values that are not independently present in the raw logs payload, which has empty events and empty stdout.",
+    "The user-provided submission ZIP name does not equal the platform original_filename and no platform SHA binding is available.",
+    "The platform token_count and any future provider total use different accounting scopes and must not be added."
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "platform build ID",
+    "platform code SHA",
+    "platform upload-package SHA",
+    "provider input/output/cache totals",
+    "provider request count",
+    "visual model, reasoning level, time budget and concurrency from raw logs",
+    "internal acceptance rounds",
+    "raw executor error-context.md files referenced by failure details"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-run-32e08aaca2e4.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-32e08aaca2e4.json",
+      "role": "raw_run_object",
+      "bytes": 14271,
+      "sha256": "4CDDF86212FF1556F8B85C6B6B942CA12EC04478FEE0053DB16649A721C0F27F",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-32e08aaca2e4-logs.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-32e08aaca2e4-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 66,
+      "sha256": "BB66EDFF20C6DB619883C715ECC2CC637B027F4530C052F2E5B17084243A2F92",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-32e08aaca2e4-summary.md",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-32e08aaca2e4-summary.md",
+      "role": "human_normalized_summary",
+      "bytes": 2870,
+      "sha256": "D3A7C396110DFA4D74C42967C9A329401D7DEF62175FD70BC8420A4D2DF532EA",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-32e08aaca2e4-failure-details.md",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-32e08aaca2e4-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 5742,
+      "sha256": "B34E90B106E4361D39A6E3D16EE5E1E6E7116893913F65EAB6F99AF751C0592E",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-32e08aaca2e4-pw-report.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-32e08aaca2e4-pw-report.json",
+      "role": "raw_playwright_report",
+      "bytes": 53435,
+      "sha256": "102B9C76E71266B8E62E00DD7E3DBA5D966478DCD43B5305B483AF1E86981525",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-32e08aaca2e4-snapshots.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-32e08aaca2e4-snapshots.json",
+      "role": "arc_design_and_codegen_snapshots",
+      "bytes": 53482,
+      "sha256": "BD90D26439BBA9F2AA62A62AFC109DBA994BBD26D5FDD2CBCEDF64A25F95AEAA",
+      "stored_in_repository": false
+    },
+    {
+      "name": "32e08aaca2e4-template.zip",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/32e08aaca2e4-template.zip",
+      "role": "platform_generated_template_snapshot",
+      "bytes": 1834083,
+      "sha256": "0937AD119881A7F97D138F4193F5E59C49413D99B848F872CA1626C54CC41F1F",
+      "stored_in_repository": false
+    },
+    {
+      "name": "submission-0faa01c52d4a-agent-for-32e08aaca2e4.zip",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/submission-0faa01c52d4a-agent-for-32e08aaca2e4.zip",
+      "role": "user_provided_candidate_submission_zip_not_platform_bound",
+      "bytes": 347637,
+      "sha256": "5871FB40AFB203A4554F0620FE6FBA9C7C3E3FD2D4AC62313F725F7FF4661655",
+      "stored_in_repository": false
+    }
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0,
+    "masked_key_status_only": true
+  }
+}

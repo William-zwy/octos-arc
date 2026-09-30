@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "PHASE4_RESULT": "complete",
+  "run_id": "a1ab93feb2eb",
+  "task_key": "arc-bench-lite--bookstack",
+  "handoff_id": "a1ab93feb2eb-1B42A59740DC",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "manifest_sha256": "1B42A59740DC1F00E499C0579F3980A3D878F3661E9FDD69785A84B2E04C822B",
+  "source": "platform_run_attachments",
+  "analysis_scope": "read_only_single_run_only",
+  "read_only": true,
+  "prior_runs_merged": [],
+  "other_runs_analyzed": [],
+  "stage5_executed": false,
+  "stage5_decision_executed": false,
+  "confirmed": {
+    "run_state": {
+      "status": "PAUSED",
+      "pause_reason": "Execution paused by user request",
+      "can_resume": true,
+      "finished_at": null,
+      "score": null,
+      "passed_count": null,
+      "failed_count": null,
+      "total_count": null,
+      "tests_reached": false,
+      "official_test_result_available": false,
+      "usage_settled": false
+    },
+    "lifecycle": [
+      "deploy_agent completed; environment preflight passed",
+      "start_agent remained running while the uploaded generation agent worked",
+      "the run was paused while REQ-5.3.2 was in implementation",
+      "run_tests remained pending and was not reached"
+    ],
+    "generation_progress": {
+      "traceability_requirements": 56,
+      "traceability_scenarios": 34,
+      "completed_generation_nodes": 17,
+      "completed_node_ids": [
+        "REQ-1.1",
+        "REQ-1.2",
+        "REQ-2.1",
+        "REQ-2.2",
+        "REQ-3.1",
+        "REQ-4.1",
+        "REQ-4.2.1",
+        "REQ-4.3.1",
+        "REQ-4.3.2",
+        "REQ-4.4.1",
+        "REQ-4.4.2",
+        "REQ-4.5.1",
+        "REQ-4.5.2",
+        "REQ-5.1",
+        "REQ-5.2.1",
+        "REQ-5.2.2",
+        "REQ-5.3.1"
+      ],
+      "active_node_at_pause": "REQ-5.3.2",
+      "active_node_phase": "implement",
+      "active_node_status": "running",
+      "remaining_atomic_nodes_not_completed": 17
+    },
+    "verification_boundary": {
+      "internal_node_verifications_present": true,
+      "internal_verification_examples": [
+        "npm run build and smoke HTTP checks were reported for completed nodes",
+        "temporary data mutations were reported as restored before the pause snapshot"
+      ],
+      "official_benchmark_passes": 0,
+      "official_benchmark_passes_unknown": true,
+      "reason": "Internal implement-ok/completed events are not official benchmark test results."
+    },
+    "interim_output": {
+      "artifact": "a1ab93feb2eb-template-interim.zip",
+      "sha256": "AEB08E20128E4ACB9D31D40A081C59C62E7FF8FBAA89BC50974026FB04D83134",
+      "is_final": false,
+      "entry_count": 33,
+      "contains_template_frontend": true,
+      "contains_template_backend": true,
+      "contains_final_arc_metadata": false,
+      "note": "Paused-generation snapshot only; it is not a final benchmark submission result."
+    },
+    "preflight_and_environment": {
+      "preflight_passed": true,
+      "browser_check": "chromium-ready",
+      "node_version": "v20.19.3",
+      "runner_playwright_version": "1.57.0",
+      "runner_image_digest": "sha256:3538e4b982d43bb73c4f57c79e445f679abcaeb4ffe619c3148fb9f69498c296",
+      "raw_probe": "HTTP 200 after transient timeout retries"
+    },
+    "configuration_and_usage": {
+      "model": "deepseek-v4-flash",
+      "reasoning": "low",
+      "time_budget_seconds": 51000,
+      "platform_token_count": null,
+      "provider_totals": null,
+      "requests": null,
+      "cost": null,
+      "note": "Paused before settlement; null usage is unavailable, not zero."
+    },
+    "log_boundaries": {
+      "raw_log_events": 0,
+      "raw_log_stdout_pages": 2,
+      "main_py_seen": true,
+      "workspace_tests_raw_log_verified": false,
+      "bundled_fallback_hits": 0,
+      "plaintext_api_key_hits": 0
+    }
+  },
+  "strong_candidate": [
+    {
+      "id": "SC-PAUSE-01-incomplete-generation",
+      "statement": "The run is incomplete because user pause occurred during generation at REQ-5.3.2, before the remaining 17 nodes and all official tests.",
+      "evidence": [
+        "Run status is PAUSED and can_resume is true.",
+        "REQ-5.3.2 is running at the pause boundary.",
+        "run_tests is pending and no final score or test counts exist."
+      ],
+      "confidence": "strong_candidate",
+      "limitation": "This is an execution-state conclusion, not a product defect diagnosis."
+    },
+    {
+      "id": "SC-PAUSE-02-interim-artifact-risk",
+      "statement": "The interim template is unsuitable as final benchmark evidence until generation completes and the platform runs its official suite.",
+      "evidence": [
+        "The artifact is explicitly named template-interim.",
+        "The run has no finished_at, score, test counts, or settled usage.",
+        "The paused node and 17 remaining atomic nodes show generation was not complete."
+      ],
+      "confidence": "strong_candidate",
+      "limitation": "The interim ZIP can show snapshot contents only; it cannot establish final runtime behavior."
+    }
+  ],
+  "unknown": [
+    "Whether the 17 internally completed nodes would pass the official Playwright suite.",
+    "Whether REQ-5.3.2 or any later node would introduce regressions or require repairs.",
+    "The final generated template contents, final package shape, final score, test counts, and official failure details.",
+    "Provider token totals, request count, settled cost, and final run duration.",
+    "Whether the interim snapshot's restored seed state remains correct after a future resume.",
+    "The summary-style /workspace/tests claim is not independently verified by raw logs; official tests were not reached.",
+    "No causal product defect should be inferred from this paused state."
+  ],
+  "excluded_hypotheses": [
+    {
+      "hypothesis": "The 17 implement-ok nodes are official benchmark passes",
+      "reason": "They are internal generation and smoke-verification events; no official test suite ran."
+    },
+    {
+      "hypothesis": "The run is a FAILED benchmark",
+      "reason": "Its platform state is PAUSED, not FAILED, and no final score exists."
+    },
+    {
+      "hypothesis": "The missing official test result proves application defects",
+      "reason": "Tests were not reached; absence of a result is caused by the pause boundary."
+    },
+    {
+      "hypothesis": "A platform/API outage caused the pause",
+      "reason": "The raw probe ultimately returned HTTP 200; the supplied evidence attributes the state to a user-requested pause."
+    }
+  ],
+  "evidence_gaps": [
+    "No final template ZIP, final .arc metadata, Playwright report, snapshots, score, or test result exists.",
+    "No settled provider totals, request count, token cost, or final duration exists.",
+    "No completed REQ-5.3.2 or subsequent generation-node evidence exists.",
+    "The raw logs payload has events=[]; detailed progress comes from supplied Octos/runner event attachments."
+  ],
+  "stage5_recommendation": {
+    "status": "not_ready",
+    "reason": "A paused, untested intermediate generation cannot support Stage 5 product changes or a go/no-go decision.",
+    "recommended_boundary": [
+      "Do not resume or rerun within this read-only task.",
+      "After a separately authorized continuation, let generation finish and collect the final template and official test result.",
+      "Use the official test failures, if any, to scope Stage 5; do not modify code based solely on internal implement-ok messages or the interim ZIP."
+    ],
+    "not_executed": true,
+    "prohibited_in_this_result": [
+      "No Agent code modification",
+      "No official-test, task-snapshot, ZIP, asset, or configuration modification",
+      "No resume, rerun, upload, or Stage 5 implementation",
+      "No benchmark score or pass-rate claim"
+    ]
+  },
+  "impact_estimate": {
+    "current_completion": "17 internal generation nodes completed out of 34 enumerated; official benchmark completion is not measurable",
+    "official_score": null,
+    "official_pass_rate": null,
+    "platform_tokens_and_cost": "unsettled/null",
+    "potential_gain": "Not estimable until generation completes and the official suite runs.",
+    "note": "The 17/34 figure is generation progress only, not a feature implementation rate."
+  },
+  "identity": {
+    "submission_id": "9d7e9395c677",
+    "platform_original_filename": "octos-arc-bundle_v2_3.zip",
+    "platform_submission_sha256_binding": null,
+    "manifest_sha256": "1B42A59740DC1F00E499C0579F3980A3D878F3661E9FDD69785A84B2E04C822B"
+  },
+  "validation_contract": {
+    "required_marker": "PHASE4_RESULT: complete",
+    "remote_push": false,
+    "result_files": [
+      "evidence/arc-bench/runs/a1ab93feb2eb/phase4-ack.json",
+      "evidence/arc-bench/runs/a1ab93feb2eb/phase4-result.json",
+      "evidence/arc-bench/runs/a1ab93feb2eb/phase4-result.md"
+    ]
+  }
+}

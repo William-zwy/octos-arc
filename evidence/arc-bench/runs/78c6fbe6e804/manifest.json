@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "intake_label": "stage3-78c6fbe6e804",
+  "status": "normalized_intake_complete_needs_reconciliation",
+  "run_id": "78c6fbe6e804",
+  "submission_id": "97fc7ba59103",
+  "identity": {
+    "competition_id": "arc-bench-lite",
+    "task_id": "bookstack",
+    "task_key": "arc-bench-lite--bookstack",
+    "catalog": "competition",
+    "task_snapshot_id": null,
+    "platform_agent_filename": "not exposed in run object",
+    "platform_submission_sha256_binding": null
+  },
+  "intake_routing": {
+    "source_folder": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite",
+    "phase3_scope": "facts_manifest_and_routing_only",
+    "phase4_auto_dispatch": "blocked_existing_unverified_mapping",
+    "next_stage": "phase4_mapping_reconciliation_then_single_run_diagnosis",
+    "stage5_triggered": false,
+    "prior_runs_merged": []
+  },
+  "artifacts": [
+    {
+      "role": "run_json",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-run-78c6fbe6e804.json",
+      "bytes": 14805,
+      "sha256": "BD54850B8D51C0215EF5A8FAEA28689D0789EF31A3AF7162EB843C30351CB907"
+    },
+    {
+      "role": "logs_json",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-run-78c6fbe6e804-logs.json",
+      "bytes": 187844,
+      "sha256": "11157BA706B776B816EB1FFE4088668BBC6E24EC7361C2B960B7248321697A4B"
+    },
+    {
+      "role": "summary_navigation_only",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-run-78c6fbe6e804-summary.md",
+      "bytes": 3761,
+      "sha256": "6858FCB5A3A8128CBECC2BADB6DA4B74A93645DF401E4481CE7794C5E29EDCD0"
+    },
+    {
+      "role": "failure_details",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-78c6fbe6e804-failure-details.md",
+      "bytes": 14610,
+      "sha256": "2F6C89DE96DB26EDFC4A65849F7B658EB4971836B1EEF1A5B326907249E7E7F8"
+    },
+    {
+      "role": "playwright_report",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-78c6fbe6e804-pw-report.json",
+      "bytes": 68874,
+      "sha256": "3024A1FD7AC00DC2A7D2847C4D9D6E59809BD9C62FCE4880A3EB264D68E57B9A"
+    },
+    {
+      "role": "snapshots",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-78c6fbe6e804-snapshots.json",
+      "bytes": 68921,
+      "sha256": "97C220038D5BDC9A724BF5E7FFFE0AFC1CF07044699CFE6FC964FB2CF3C3E5D4"
+    },
+    {
+      "role": "template_zip",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\78c6fbe6e804-template.zip",
+      "bytes": 9822443,
+      "sha256": "29D859FA1EDFC63ACB4CBE54E1AE05C601F9D123951BC85A3EABAA0CB19583AD"
+    },
+    {
+      "role": "submission_agent_zip",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\submission-97fc7ba59103-agent.zip",
+      "bytes": 347937,
+      "sha256": "B4A732592C146FEB8EA76A65B1920C64FC8EE5100C73D3F2E240D84BD0FBA10B"
+    }
+  ],
+  "run_timing": {
+    "created_at": "2026-09-25T12:03:14.667327",
+    "started_at": "2026-09-25T12:03:16.274620",
+    "finished_at": "2026-09-25T16:05:59.015778",
+    "run_duration_seconds": 14383
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 58.8,
+    "passed_count": 20,
+    "failed_count": 14,
+    "total_count": 34,
+    "test_pass_rate": 58.8,
+    "feature_implementation_rate": {
+      "implemented": 20,
+      "total": 34,
+      "percent": 58.8
+    },
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "failure_stage": "final_playwright_execution",
+    "tests_reached": true,
+    "all_failures": "timedOut with Test timeout of 10000ms exceeded",
+    "failed_tests": [
+      {"id":"REQ-1.2","title":"Back to Homepage from Other Pages","duration_ms":10015},
+      {"id":"REQ-2.2","title":"Log In Successfully","duration_ms":10012},
+      {"id":"REQ-3.1","title":"Enter Authenticated Homepage","duration_ms":10014},
+      {"id":"REQ-4.3.1","title":"Create Shelf","duration_ms":10013},
+      {"id":"REQ-4.5.1","title":"Save Shelf Edits","duration_ms":10011},
+      {"id":"REQ-5.3.1","title":"Fill out and Save Book","duration_ms":10012},
+      {"id":"REQ-5.4.1","title":"Save Book Edits","duration_ms":10014},
+      {"id":"REQ-5.6.1","title":"Fill out and Save Book with Shelf","duration_ms":10011},
+      {"id":"REQ-6.1.2","title":"Save Draft","duration_ms":10014},
+      {"id":"REQ-6.1.3","title":"Delete Draft","duration_ms":10013},
+      {"id":"REQ-7.1","title":"Add to Recently Viewed","duration_ms":10013},
+      {"id":"REQ-7.2","title":"Quick Navigation from Recently Viewed","duration_ms":10014},
+      {"id":"REQ-8.2","title":"Quick Navigation from Favorites","duration_ms":10015},
+      {"id":"REQ-9.1","title":"Quick Navigation from Recently Updated","duration_ms":10013}
+    ],
+    "failure_observation_clusters": [
+      {"tests":["REQ-1.2","REQ-9.1"],"locator":"getByRole('button', { name: /^BookStack$/i }).first()","source":"failure_details"},
+      {"tests":["REQ-2.2","REQ-3.1","REQ-6.1.2","REQ-7.1","REQ-7.2","REQ-8.2"],"locator":"getByLabel(/Email\\s+address/i).first()","source":"failure_details"},
+      {"tests":["REQ-4.3.1","REQ-4.5.1"],"locator":"form.getByRole('button', { name: /^Shelf Tags$/i })","source":"failure_details"},
+      {"tests":["REQ-5.3.1","REQ-5.4.1"],"locator":"form.getByRole('button', { name: /^Book Tags$/i })","source":"failure_details"},
+      {"tests":["REQ-5.6.1"],"locator":"getByRole('button', { name: /^New Book$/i }).first()","source":"failure_details"},
+      {"tests":["REQ-6.1.3"],"locator":"getByRole('button', { name: /^Edit$/i }).first()","source":"failure_details"}
+    ]
+  },
+  "internal_acceptance": {
+    "available": true,
+    "per_node_first_attempt": {
+      "passed": 31,
+      "total": 34,
+      "percent": 91.2,
+      "source": "raw_logs acceptance entries"
+    },
+    "full_suite_round_0": {
+      "passed": 34,
+      "total": 34,
+      "failing_nodes": [],
+      "source": "raw_logs full suite round 0"
+    },
+    "repair_rounds": {
+      "REQ-5.3.1": "round 0 failed, round 1 failed, round 2 passed",
+      "REQ-6.1.1": "round 0 and round 1 infrastructure errors; no passing repair round recorded",
+      "REQ-6.1.2": "round 0 failed, round 1 failed, round 2 passed"
+    },
+    "note": "Internal acceptance is separate from the final platform Playwright result; the full-suite internal pass does not override the final 20/34 result"
+  },
+  "metering": {
+    "platform_token_count": 50940534,
+    "provider_totals": {
+      "requests": 1549,
+      "prompt_tokens": 49874031,
+      "completion_tokens": 1066391,
+      "reasoning_tokens": 706789,
+      "prompt_cache_hit_tokens": 45957632,
+      "total_tokens": 50940422
+    },
+    "cost": {
+      "amount": 25.942949,
+      "currency": "CNY",
+      "source_field": "token_cost_usd + currency"
+    },
+    "note": "Platform token_count and provider total_tokens are retained as distinct accounting scopes"
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": null,
+    "reasoning": "low",
+    "time_budget_seconds": 51000,
+    "agent_acceptance_workers": 2,
+    "test_workers": 1,
+    "sources": {
+      "model": "raw_logs env MODEL",
+      "reasoning_and_time_budget": "raw_logs",
+      "workers": "raw_logs acceptance and Playwright report",
+      "visual_model": "not_found"
+    }
+  },
+  "generation_identity": {
+    "build_id": "arc-agent-v1-e8f8b92bcae1da56d185f259",
+    "commit_sha": "fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7",
+    "managed_file_count": 494,
+    "package_contract": "arc_agent_bundle_v1",
+    "payload_tree_sha256": "7B9DF0D9B602369EF4ACB7187383487CAC73DD7FBCDFBA312B5302972E67FFD7",
+    "schema_version": 1
+  },
+  "platform_validation": {
+    "entrypoint": {"value":"main.py","raw_log_verified":true},
+    "tests_directory": {"value":"/workspace/tests","raw_log_verified":true},
+    "official_test_mapping": {"value":"/workspace/submission/public-tests/arc-bench-web--bookstack","raw_log_verified":true,"spec_count":34},
+    "bundled_fallback_hits": 0,
+    "plaintext_api_key_hits": 0,
+    "probe": "raw chat/completions HTTP 200",
+    "playwright_report": {"workers":1,"timeout_ms":10000,"version":"1.57.0","root_dir":"/workspace/tests"}
+  },
+  "agent_logs": {
+    "events_count": 0,
+    "stdout_pages": 2,
+    "raw_log_chars": 187760,
+    "raw_log_sha256": "11157BA706B776B816EB1FFE4088668BBC6E24EC7361C2B960B7248321697A4B",
+    "checks": {"main_py_seen":true,"workspace_tests_seen":true,"bundled_seen":false,"api_key_plaintext_seen":false}
+  },
+  "conflicts": [
+    {
+      "field": "internal_acceptance_vs_platform_final",
+      "description": "internal full-suite round 0 is 34/34, while final platform execution is 20/34",
+      "resolution": "retain both; platform_final is authoritative for the Run result"
+    },
+    {
+      "field": "submission_zip_binding",
+      "description": "the submission ZIP hash is locally verified but the platform run object does not expose a direct uploaded-package SHA binding",
+      "resolution": "record local hash as candidate artifact identity, not platform-proven binding"
+    }
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "visual_model",
+    "raw error-context.md bodies; supplied failure details report the referenced paths as unavailable",
+    "platform-upload SHA binding for submission ZIP",
+    "structured events are empty in logs JSON"
+  ],
+  "source_precedence": [
+    "platform run JSON for final status, score and test counts",
+    "raw logs, failure details and Playwright report for execution evidence",
+    "snapshots and template ZIP for later Stage 4 diagnosis",
+    "summary markdown for navigation only"
+  ],
+  "security": {"plaintext_api_key_found":false,"log_scan_scope":"raw logs and supplied artifacts"}
+}

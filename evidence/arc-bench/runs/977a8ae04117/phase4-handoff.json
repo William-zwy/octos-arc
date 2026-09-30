@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "handoff_id": "977a8ae04117-D3DB5DC43E18",
+  "run_id": "977a8ae04117",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "thread_title": "06 项目阶段4 + arc-bench-lite--bookstack",
+  "manifest": "evidence/arc-bench/runs/977a8ae04117/manifest.json",
+  "manifest_sha256": "D3DB5DC43E18EB4EB9A938BE2D122C73F061307DF3BE03FA033D00A50B3FF599",
+  "scope": "phase4_read_only_single_run_diagnosis",
+  "source_precedence": [
+    "run.json final status and lifecycle steps",
+    "raw logs for generation failure",
+    "failure details for test-stage evidence",
+    "summary markdown navigation only"
+  ],
+  "card": {
+    "platform_final": {
+      "status": "FAILED",
+      "score": 0,
+      "pass_total": "0/0",
+      "failure_stage": "generation_agent",
+      "tests_reached": false,
+      "failure": "AttributeError: 'dict' object has no attribute 'parent'"
+    },
+    "internal_acceptance": {
+      "available": false,
+      "rounds": [],
+      "note": "Generation aborted before acceptance"
+    },
+    "metering": {
+      "requests": null,
+      "provider_total_tokens": null,
+      "platform_token_count": 102,
+      "cost_cny": 0.00039,
+      "duration_seconds": 4
+    },
+    "platform_validation": {
+      "entrypoint": "main.py",
+      "tests_dir": null,
+      "bundled_fallback_hits": 0,
+      "plaintext_api_key_hits": 0,
+      "time_budget_seconds": 51000,
+      "package_shape_missing": ["frontend/", "backend/"]
+    },
+    "conflicts": ["summary claims /workspace/tests, but raw logs show no /workspace/tests and tests were not reached"]
+  },
+  "required_ack": {
+    "path": "evidence/arc-bench/runs/977a8ae04117/phase4-ack.json",
+    "must_match": ["handoff_id", "run_id", "task_key", "thread_id"]
+  },
+  "required_result": {
+    "json_path": "evidence/arc-bench/runs/977a8ae04117/phase4-result.json",
+    "markdown_path": "evidence/arc-bench/runs/977a8ae04117/phase4-result.md",
+    "must_match": ["handoff_id", "run_id", "task_key", "thread_id", "manifest_sha256"],
+    "required_marker": "PHASE4_RESULT: complete|incomplete"
+  },
+  "instructions": [
+    "Write phase4-ack.json before reading evidence.",
+    "Analyze only this Run; ignore 78c6fbe6e804, d9a97cb4c92d and all other Runs.",
+    "Do not create a platform run, rerun tests, upload, modify code/tests/assets/configuration, or implement Stage 5.",
+    "Distinguish confirmed generation failure from any root-cause hypothesis; do not claim a business test failure because tests were not reached.",
+    "Write the final diagnosis to phase4-result.json and phase4-result.md with confirmed, strong_candidate and unknown evidence levels."
+  ]
+}

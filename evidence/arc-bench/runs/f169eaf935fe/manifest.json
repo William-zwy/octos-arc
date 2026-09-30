@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "purpose": "ARC-Bench phase 3 normalized evidence intake",
+  "intake_label": "stage3-f169eaf935fe",
+  "status": "normalized_intake_complete_pending_phase4",
+  "routing": {
+    "phase4_auto_dispatch": "allowed",
+    "registered_thread_id": "01a0b48b-b24d-7550-835c-6f8110aebfbd",
+    "registered_thread_title": "03 项目阶段4 + smoke-evolution--counter",
+    "registered_thread_status": "verified",
+    "next_stage": "phase4_read_only_diagnosis",
+    "boundary": "Stage 3 records normalized facts and routes; root-cause judgment remains in Stage 4."
+  },
+  "run": {
+    "run_id": "f169eaf935fe",
+    "submission_id": "ed02fe7db14b",
+    "original_filename": "octos-arc-agent-p5-017-integrated-unverified-fcfaa5f0093f-b4a732592c14.zip",
+    "catalog": "competition",
+    "competition_id": "smoke-evolution",
+    "task_id": "smoke-evolution--counter",
+    "task_snapshot_id": null,
+    "runtime": "python",
+    "agent_source": "upload",
+    "created_at": "2026-09-25T08:45:39.489786",
+    "started_at": "2026-09-25T08:45:41.258163",
+    "finished_at": "2026-09-25T08:45:44.713067",
+    "status": "FAILED",
+    "score": 0,
+    "passed_count": 0,
+    "failed_count": 0,
+    "total_count": 0,
+    "feature_implementation_rate": 0,
+    "run_duration_seconds": 0,
+    "failure_reason": "Command ['python3', '/workspace/submission/main.py', '/tmp/arcbench/requirements-source', '--output-dir', '/workspace/template'] returned non-zero exit status 2."
+  },
+  "generation_identity": {
+    "build_id": "arc-agent-v1-e8f8b92bcae1da56d185f259",
+    "commit_sha": "fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7",
+    "payload_tree_sha256": "7B9DF0D9B602369EF4ACB7187383487CAC73DD7FBCDFBA312B5302972E67FFD7",
+    "managed_file_count": 494,
+    "package_contract": "arc_agent_bundle_v1",
+    "schema_version": 1,
+    "source": "raw logs ARC_AGENT_IDENTITY",
+    "platform_upload_package_sha256": null,
+    "candidate_submission_sha256": "B4A732592C146FEB8EA76A65B1920C64FC8EE5100C73D3F2E240D84BD0FBA10B",
+    "candidate_submission_binding": "unbound"
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": null,
+    "reasoning": null,
+    "time_budget_seconds": null,
+    "agent_acceptance_workers": null,
+    "test_workers": null,
+    "missing_reason": "The raw logs contain generation output only; visual model, reasoning, flow budget, worker settings and provider totals are absent."
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 0,
+    "passed": 0,
+    "total": 0,
+    "failure_stage": "generation",
+    "tests_reached": false,
+    "failure_observation": "Generation probe reported permanent authentication failure and HTTP 401 before generation; main.py exited with status 2.",
+    "test_failures": []
+  },
+  "internal_acceptance": {
+    "available": false,
+    "rounds": null,
+    "note": "No application was generated and no acceptance/test round was reached."
+  },
+  "metering": {
+    "platform_token_count": null,
+    "provider_total_tokens": null,
+    "prompt_tokens": null,
+    "completion_tokens": null,
+    "cache_tokens": null,
+    "requests": null,
+    "cost": null,
+    "currency": null,
+    "run_duration_seconds": 0,
+    "timestamp_derived_wall_clock_seconds": 3.454
+  },
+  "platform_validation": {
+    "entrypoint": {
+      "value": "main.py",
+      "source": "run JSON failure command",
+      "raw_log_verified": false
+    },
+    "tests_dir": {
+      "value": "/workspace/tests",
+      "source": "human summary",
+      "raw_log_verified": false
+    },
+    "bundled_fallback_hits": {
+      "value": 0,
+      "source": "human summary",
+      "raw_log_verified": false
+    },
+    "api_key_plaintext_hits": {
+      "value": 0,
+      "source": "raw logs masked env status and scan",
+      "raw_log_verified": true
+    },
+    "log_payload": {
+      "events_count": 0,
+      "stdout_entries": 2,
+      "stdout_chars": 1992,
+      "pages_count": 2,
+      "raw_log_sha256": "31F441FE2CF3182C9C2A2D0FB99DD75507C9D0FD60EA57168F6952887B1E01DD"
+    }
+  },
+  "source_precedence": [
+    "run JSON for final status, score, tests, metrics and identifiers",
+    "raw logs stdout for runtime identity and authentication observation",
+    "failure details and summary for navigation only",
+    "no Playwright report, template ZIP or snapshots were supplied for this Run"
+  ],
+  "conflicts": [
+    "The supplied summary calls this 0/0 and reports no token/configuration fields; the run JSON and raw logs agree on generation exit 2, while raw logs do not independently verify tests_dir or bundled fallback.",
+    "The platform original filename is not SHA-bound to the separately supplied candidate submission ZIP."
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "platform upload-package SHA binding",
+    "Playwright report, generated template ZIP and snapshots",
+    "provider token totals, request count and cost",
+    "visual model, reasoning level, time budget and concurrency",
+    "acceptance rounds and business test failures"
+  ],
+  "artifacts": [
+    {
+      "name": "arcbench-run-f169eaf935fe.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-f169eaf935fe.json",
+      "role": "raw_run_object",
+      "bytes": 3215,
+      "sha256": "396A9C578E7176F454D2801B034907A9F325624C60915D140026DFF48143E7FF",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-f169eaf935fe-logs.json",
+      "source_path": "C:/Users/dayuruozhi/Downloads/arcbench-run-f169eaf935fe-logs.json",
+      "role": "raw_run_logs",
+      "bytes": 2093,
+      "sha256": "31F441FE2CF3182C9C2A2D0FB99DD75507C9D0FD60EA57168F6952887B1E01DD",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-run-f169eaf935fe-summary.md",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-smoke-evolution/arcbench-run-f169eaf935fe-summary.md",
+      "role": "human_normalized_summary",
+      "bytes": 2555,
+      "sha256": "677771D21048F746FB4F00FCDBBDCCC3C938D3BFA2137A69086609F4440C36C1",
+      "stored_in_repository": false
+    },
+    {
+      "name": "arcbench-f169eaf935fe-failure-details.md",
+      "source_path": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-smoke-evolution/arcbench-f169eaf935fe-failure-details.md",
+      "role": "human_readable_failure_details",
+      "bytes": 502,
+      "sha256": "6AC9603B2A11FCF9721FDDEC47E1A33C10AA3EFEAF33A77D4C8591B1BEDF8AA2",
+      "stored_in_repository": false
+    },
+    {
+      "name": "submission-ed02fe7db14b-agent.zip",
+      "source_path": "C:/Users/dayuruozhi/Downloads/submission-ed02fe7db14b-agent.zip",
+      "role": "candidate_submission_zip_not_platform_bound",
+      "bytes": 347937,
+      "sha256": "B4A732592C146FEB8EA76A65B1920C64FC8EE5100C73D3F2E240D84BD0FBA10B",
+      "stored_in_repository": false
+    }
+  ],
+  "excluded_runs": [
+    "13f1df96c0bf",
+    "f513ec603524",
+    "6281f4f26d5f"
+  ],
+  "security": {
+    "api_key_value_stored": false,
+    "plaintext_key_hits_in_logs": 0,
+    "masked_key_status_only": true
+  }
+}

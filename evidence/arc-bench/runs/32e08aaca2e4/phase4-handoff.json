@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "handoff_id": "32e08aaca2e4-750C96456665",
+  "run_id": "32e08aaca2e4",
+  "task_key": "arc-bench-lite--keep",
+  "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
+  "thread_title": "05 项目阶段4 + arc-bench-lite--keep",
+  "manifest_path": "evidence/arc-bench/runs/32e08aaca2e4/manifest.json",
+  "manifest_sha256": "750C964566657B3126A6B40CE5AA4ACABD6839FEFD98DEEB5D6F543B05AD6996",
+  "ack_path": "evidence/arc-bench/runs/32e08aaca2e4/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/32e08aaca2e4/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/32e08aaca2e4/phase4-result.md",
+  "source": "platform_run_attachments",
+  "analysis_scope": "read_only_single_run",
+  "created_at": "2026-09-24T00:00:00Z",
+  "mapping_note": "Existing Keep thread was previously quarantined because an older result lacked required top-level identity fields. A read-only mapping probe confirmed the thread identity and its ability to produce complete future result fields; the older result remains immutable history and is not reused for this Run.",
+  "run_card": {
+    "submission_id": "0faa01c52d4a",
+    "platform_final": {
+      "status": "FAILED",
+      "score": 84.4,
+      "passed": 27,
+      "total": 32,
+      "failures": [
+        "REQ-2.4 Update Note",
+        "REQ-2.7.1 Assign label to a note",
+        "REQ-2.7.2 Remove label from a note",
+        "REQ-2.7.5 Edit labels",
+        "REQ-2.7.6.3 View Reminders"
+      ]
+    },
+    "internal_acceptance": "unavailable; raw logs have no acceptance records",
+    "metering": {
+      "platform_token_count": 42677341,
+      "provider_total_tokens": null,
+      "requests": null,
+      "cost_cny": 23.569978,
+      "run_duration_seconds": 8842
+    },
+    "platform_validation": {
+      "entrypoint": "main.py; raw log lifecycle not independently available",
+      "tests_dir": "/workspace/tests; summary-only",
+      "bundled_fallback_hits": 0,
+      "api_key_plaintext_hits": 0
+    }
+  },
+  "required_reads": [
+    "evidence/arc-bench/runs/32e08aaca2e4/manifest.json",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-run-32e08aaca2e4.json",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-32e08aaca2e4-pw-report.json",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-32e08aaca2e4-failure-details.md",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/arcbench-32e08aaca2e4-snapshots.json",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-keep-lite/32e08aaca2e4-template.zip"
+  ],
+  "allowed_actions": [
+    "write phase4-ack.json with matching handoff_id, run_id, task_key and thread_id before diagnosis",
+    "perform read-only diagnosis of this Run only",
+    "write phase4-result.json and phase4-result.md with top-level manifest_sha256 and PHASE4_RESULT marker",
+    "classify confirmed facts, strong candidates, excluded causes and evidence gaps"
+  ],
+  "forbidden_actions": [
+    "analyze d9a97cb4c92d or any other Run",
+    "create, upload or rerun a platform/local Run",
+    "modify Agent code, official tests, task snapshots, ZIPs or runtime configuration",
+    "trigger or write Stage 5 decisions",
+    "treat the platform token count as a provider total",
+    "treat the human summary as stronger than structured raw artifacts"
+  ],
+  "completion_contract": [
+    "phase4-ack.json exists before analysis",
+    "phase4-result.json top-level fields include PHASE4_RESULT, manifest_sha256, run_id, task_key, handoff_id and thread_id",
+    "phase4-result.json status is complete or incomplete and matches the actual evidence",
+    "phase4-result.md contains exact text PHASE4_RESULT: complete or PHASE4_RESULT: incomplete",
+    "result identity fields match this handoff and manifest SHA",
+    "no Stage 5 dispatch is performed by the Phase 4 session"
+  ]
+}

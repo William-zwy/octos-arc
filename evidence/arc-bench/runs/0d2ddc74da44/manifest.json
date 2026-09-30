@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "intake_label": "stage3-0d2ddc74da44",
+  "status": "normalized_intake_complete_pending_phase4",
+  "run_id": "0d2ddc74da44",
+  "submission_id": "94ab0a3a6f96",
+  "identity": {
+    "competition_id": "hackathon",
+    "task_id": "sheet",
+    "task_key": "hackathon--sheet",
+    "catalog": "competition",
+    "task_snapshot_id": null,
+    "runtime": "python",
+    "agent_source": "upload",
+    "platform_original_filename": "octos-arc-agent-0917-hkt-cleaned-exploratory-93189c5c150c-e907f0fe3b3e.zip",
+    "platform_submission_sha256_binding": null,
+    "display_name": "luyun18029839909@163.com"
+  },
+  "intake_routing": {
+    "source_folder": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-hackathon-sheet",
+    "phase3_scope": "facts_manifest_and_routing_only",
+    "phase4_auto_dispatch": "reuse_verified_thread_or_fork_once_if_none",
+    "next_stage": "phase4_read_only_single_run_diagnosis",
+    "stage5_triggered": false,
+    "prior_runs_merged": [],
+    "same_folder_prior_run_excluded": "002c882794af"
+  },
+  "run_timing": {
+    "created_at": "2026-09-25T09:42:50.542166",
+    "started_at": "2026-09-25T09:42:51.912199",
+    "finished_at": "2026-09-25T14:48:51.502114",
+    "run_duration_seconds": 17255
+  },
+  "platform_final": {
+    "status": "FAILED",
+    "score": 0.0,
+    "score_unit": "percent",
+    "passed_count": 0,
+    "failed_count": 100,
+    "total_count": 100,
+    "test_pass_rate": 0.0,
+    "feature_implementation_rate": {
+      "implemented": 0,
+      "total": 24,
+      "percent": 0.0
+    },
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "failure_stage": "final_evaluation",
+    "tests_reached": true,
+    "tests_detail_available": false,
+    "note": "The run object reports 0/100 and tests[] is empty; this does not identify a specific product failure."
+  },
+  "internal_acceptance": {
+    "available": false,
+    "rounds": [],
+    "node_states_available": true,
+    "node_states_summary": "The run object marks traceability nodes test-failed; no structured acceptance round records are present.",
+    "note": "Generation log smoke/build messages and traceability node states are not official benchmark test results."
+  },
+  "generation_progress": {
+    "atomic_nodes_total": 24,
+    "flow_declared": true,
+    "flow_declared_time_budget_seconds": 36000,
+    "agent_finished_message": true,
+    "turn_timeout_evidence": true,
+    "turn_timeout_detail": "The raw log contains a turn timeout/forced-finish boundary; it does not provide a complete per-node acceptance table.",
+    "implementation_counts": {
+      "reliably_counted": false,
+      "reason": "logs.json events is empty and stdout/stderr are page-shaped rather than a structured node event stream"
+    }
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": null,
+    "reasoning": "low",
+    "time_budget_seconds": 36000,
+    "sources": {
+      "model": "run JSON and raw logs",
+      "reasoning_and_time_budget": "raw logs",
+      "worker_counts": "not found"
+    }
+  },
+  "metering": {
+    "platform_token_count": 47582889,
+    "provider_totals": {
+      "requests": 1266,
+      "prompt_tokens": 46123451,
+      "completion_tokens": 1459334,
+      "reasoning_tokens": 1156827,
+      "prompt_cache_hit_tokens": 42733568,
+      "total_tokens": 47582785,
+      "request_bytes": 170640676,
+      "response_bytes": 6609205,
+      "sse_chunks": 0
+    },
+    "cost": {
+      "amount": 27.577432,
+      "currency": "CNY",
+      "source": "run JSON token_cost_usd/token_cost_currency"
+    },
+    "accounting_note": "run JSON token_count and provider total_tokens are separate scopes and must not be added."
+  },
+  "platform_validation": {
+    "entrypoint": {
+      "value": "main.py",
+      "raw_log_verified": true,
+      "source": "raw log invocation"
+    },
+    "tests_directory": {
+      "value": "/workspace/tests",
+      "raw_log_verified": true,
+      "note": "No *.spec.ts files were found; this is a non-Playwright sheet task."
+    },
+    "bundled_fallback_hits": 0,
+    "plaintext_api_key_hits": 0,
+    "masked_api_key_marker_observed": true,
+    "probe": "raw chat/completions HTTP 200",
+    "postflight": {
+      "frontend_backend_present": true,
+      "frontend_build_logged": true,
+      "backend_start_logged": true,
+      "backend_health_url": "http://127.0.0.1:3000"
+    },
+    "package_shape": {
+      "template_zip_entry_count": 28,
+      "template_zip_has_frontend": true,
+      "template_zip_has_backend": true,
+      "template_zip_has_arc_metadata": false,
+      "template_zip_has_playwright_report": false
+    }
+  },
+  "artifacts": [
+    {
+      "role": "run_json",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-hackathon-sheet\\arcbench-run-0d2ddc74da44.json",
+      "bytes": 4027,
+      "sha256": "5D71D474E547E348DAC8F23271F18B77029FDEBEF0912188A8CB74F950B7564F"
+    },
+    {
+      "role": "logs_json",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-hackathon-sheet\\arcbench-run-0d2ddc74da44-logs.json",
+      "bytes": 178468,
+      "sha256": "CC74EA7D0132CDC9702C8E001E540BA1B800B8A3544CAAAFFD01E1D3068510F5"
+    },
+    {
+      "role": "summary_navigation_only",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-hackathon-sheet\\arcbench-run-0d2ddc74da44-summary.md",
+      "bytes": 3074,
+      "sha256": "8C45D2D1FE9DAE019F825C177ECE28B8DAEBCD9D5DA691C94BEA7778C9E3C81B"
+    },
+    {
+      "role": "failure_details_navigation_only",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-hackathon-sheet\\arcbench-0d2ddc74da44-failure-details.md",
+      "bytes": 502,
+      "sha256": "7C3399BC91588C8657A7D10703DB83A232CCC640885B8A08E40F60F863414C76"
+    },
+    {
+      "role": "agent_submission_zip",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-hackathon-sheet\\submission-94ab0a3a6f96-agent.zip",
+      "bytes": 324195,
+      "sha256": "E907F0FE3B3ECB0C9BAE7E1ED231F0E3AC9FC713B2DDD6E9097BE46225BC138D"
+    },
+    {
+      "role": "platform_generated_template_snapshot",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-hackathon-sheet\\0d2ddc74da44-template.zip",
+      "bytes": 678641,
+      "sha256": "A645C791DEC07C886BC9050D5D9909AAF1DB0EFA647098367A26F308222A9C25",
+      "is_agent_submission": false
+    }
+  ],
+  "missing": [
+    "task_snapshot_id",
+    "agent build ID",
+    "agent code SHA",
+    "platform upload ZIP SHA binding",
+    "structured tests[] detail",
+    "platform .arc sidecars",
+    "Playwright report and error-context files",
+    "independent acceptance round records",
+    "complete structured per-node timeout/verification table"
+  ],
+  "conflicts": [
+    {
+      "field": "node_states_vs_platform_final",
+      "description": "run JSON exposes traceability node states but no structured test details; platform final remains the benchmark authority.",
+      "resolution": "Use platform final 0/100 for benchmark result; use logs only for lifecycle and generation evidence."
+    },
+    {
+      "field": "run_json_token_count_vs_provider_total",
+      "description": "run JSON token_count is 47582889 while provider total_tokens is 47582785.",
+      "resolution": "Retain separate accounting scopes; do not add them."
+    },
+    {
+      "field": "same_folder_prior_run",
+      "description": "The source folder also contains 002c882794af artifacts.",
+      "resolution": "Exclude 002c882794af from this manifest; no cross-run diagnosis is performed."
+    }
+  ],
+  "source_precedence": [
+    "run JSON for final status, score, counts, IDs and run-level metering",
+    "raw logs for lifecycle, entrypoint, tests path, provider totals and masked-secret scan",
+    "template ZIP for generated snapshot shape and hash only",
+    "summary/failure markdown for navigation; they cannot override structured fields"
+  ],
+  "security": {
+    "plaintext_api_key_found": false,
+    "log_scan_scope": "supplied run JSON and logs JSON",
+    "api_key_status": "masked marker only"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "handoff_id": "8ea6503bfa95-437048B007EC",
+  "run_id": "8ea6503bfa95",
+  "task_key": "arc-bench-lite--keep",
+  "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
+  "manifest_sha256": "437048B007EC797D83F8A6784CEEE261F6F01FEF46206FCB92716C054A0CCBCA",
+  "status": "received",
+  "received_at": "2026-09-30T04:00:00+08:00",
+  "scope": "read_only_phase4_single_run_diagnosis",
+  "routing_note": "The mapped Keep thread remains needs_reconciliation; this ACK records the user-confirmed direct diagnosis in the current conversation and does not alter the registry."
+}

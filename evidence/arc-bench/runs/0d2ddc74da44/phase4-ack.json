@@ -1,0 +1,17 @@
+{
+  "PHASE4_RESULT": "ACK",
+  "phase": 4,
+  "mode": "read_only_single_run_diagnosis",
+  "run_id": "0d2ddc74da44",
+  "task_key": "hackathon--sheet",
+  "submission_id": "94ab0a3a6f96",
+  "manifest_sha256": "6FCFCB402E80C3D77C19BFCDC67FBB059D43F6094ACB831CB854A4FAA8A016AE",
+  "scope": {
+    "manifest_path": "evidence/arc-bench/runs/0d2ddc74da44/manifest.json",
+    "excluded_run_ids": ["002c882794af"],
+    "stage5_triggered": false,
+    "writes_performed": [
+      "evidence/arc-bench/runs/0d2ddc74da44/phase4-ack.json"
+    ]
+  }
+}

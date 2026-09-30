@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "handoff_id": "d9a97cb4c92d-955B36FF6BA4",
+  "run_id": "d9a97cb4c92d",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "thread_title": "06 项目阶段4 + arc-bench-lite--bookstack",
+  "manifest_path": "evidence/arc-bench/runs/d9a97cb4c92d/manifest.json",
+  "manifest_sha256": "955B36FF6BA46192010C247652D41D345D6669EF38D30AAD96C20D1A0BCA21CA",
+  "ack_path": "evidence/arc-bench/runs/d9a97cb4c92d/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/d9a97cb4c92d/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/d9a97cb4c92d/phase4-result.md",
+  "source": "platform_run_attachments",
+  "analysis_scope": "read_only_single_run",
+  "created_at": "2026-09-24T00:00:00Z",
+  "allowed_actions": [
+    "read the manifest and d9a97cb4c92d attachments",
+    "classify confirmed facts, candidates, exclusions and evidence gaps",
+    "write the matching phase4 ACK and result files"
+  ],
+  "forbidden_actions": [
+    "analyze run 32e08aaca2e4",
+    "merge d9a97cb4c92d with prior BookStack runs",
+    "create or rerun a platform/local run",
+    "modify Agent code, official tests, task snapshots, ZIPs or runtime configuration",
+    "trigger or write Stage 5 decisions"
+  ]
+}

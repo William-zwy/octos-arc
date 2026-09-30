@@ -1,0 +1,141 @@
+{
+  "PHASE4_RESULT": "complete",
+  "status": "complete",
+  "schema_version": 1,
+  "manifest_sha256": "044A34A0682C248CE5F76B0A45FDF716D75942E7728C7E5662234404DFF039C7",
+  "handoff_id": "f169eaf935fe-044A34A0682C",
+  "run_id": "f169eaf935fe",
+  "task_key": "smoke-evolution--counter",
+  "thread_id": "01a0b48b-b24d-7550-835c-6f8110aebfbd",
+  "analysis_scope": "read_only_single_run",
+  "completed_at": "2026-09-25T09:34:07.4969152Z",
+  "scope_controls": {
+    "other_runs_analyzed": false,
+    "new_run_created": false,
+    "rerun_performed": false,
+    "upload_performed": false,
+    "code_modified": false,
+    "tests_modified": false,
+    "stage5_written": false
+  },
+  "run_identity": {
+    "submission_id": "ed02fe7db14b",
+    "catalog": "competition",
+    "competition_id": "smoke-evolution",
+    "task_id": "smoke-evolution--counter",
+    "model": "deepseek-v4-flash",
+    "agent_build_id": "arc-agent-v1-e8f8b92bcae1da56d185f259",
+    "commit_sha": "fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7",
+    "payload_tree_sha256": "7B9DF0D9B602369EF4ACB7187383487CAC73DD7FBCDFBA312B5302972E67FFD7",
+    "candidate_submission_sha256": "B4A732592C146FEB8EA76A65B1920C64FC8EE5100C73D3F2E240D84BD0FBA10B",
+    "candidate_submission_binding": "unbound",
+    "task_snapshot_id": null
+  },
+  "platform_result": {
+    "status": "FAILED",
+    "score": 0,
+    "passed_count": 0,
+    "failed_count": 0,
+    "total_count": 0,
+    "feature_implementation_rate": null,
+    "business_tests_reached": false,
+    "business_functional_result": "not_evaluable"
+  },
+  "failure_classification": {
+    "class": "platform_authentication_block_before_generation",
+    "confirmed": true,
+    "failure_stage": "generation_probe",
+    "http_status": 401,
+    "exit_code": 2,
+    "failure_reason": "main.py returned non-zero exit status 2 after a permanent authentication failure.",
+    "business_test_failure": false,
+    "platform_failure": true,
+    "application_generated": false,
+    "acceptance_started": false,
+    "playwright_started": false
+  },
+  "platform_validation": {
+    "entrypoint": {
+      "value": "main.py",
+      "observed_invocation": "/workspace/submission/main.py",
+      "source": "run JSON failure command",
+      "successful_execution_verified": false
+    },
+    "tests_dir": {
+      "value": "/workspace/tests",
+      "source": "normalized summary",
+      "raw_log_independent_verification": false,
+      "tests_reached": false
+    },
+    "bundled_fallback_hits": {
+      "value": 0,
+      "source": "normalized summary",
+      "raw_log_independent_verification": false,
+      "tests_reached": false
+    },
+    "api_key_plaintext_hits": {
+      "value": 0,
+      "source": "raw log scan and masked environment output",
+      "raw_log_verified": true
+    }
+  },
+  "timing_observation": {
+    "created_at": "2026-09-25T08:45:39.489786",
+    "started_at": "2026-09-25T08:45:41.258163",
+    "finished_at": "2026-09-25T08:45:44.713067",
+    "platform_run_duration_seconds": 0,
+    "started_to_finished_seconds": 3.454904,
+    "interpretation": "This is authentication-failure latency, not application or test runtime."
+  },
+  "token_observation": {
+    "platform_token_count": null,
+    "provider_total_tokens": null,
+    "prompt_tokens": null,
+    "completion_tokens": null,
+    "requests": null,
+    "cost": null,
+    "currency": null,
+    "interpretation": "Generation stopped before a metered model request was recorded."
+  },
+  "evidence_gaps": [
+    "No task_snapshot_id was bound to the Run.",
+    "The platform upload-package SHA-256 is null; the separately supplied candidate ZIP is not platform-bound.",
+    "No acceptance rounds, generated application, Playwright report or business test result exists.",
+    "Raw logs do not independently verify tests_dir or bundled fallback because the test stage was never reached.",
+    "Visual model, reasoning level, time budget and concurrency settings are unavailable."
+  ],
+  "evidence_integrity": {
+    "manifest_conflicts_preserved": true,
+    "raw_attachment_hashes_verified": true,
+    "manifest_sha256_matches_handoff": true,
+    "plaintext_secret_values_stored": false,
+    "artifacts": [
+      {
+        "name": "arcbench-run-f169eaf935fe.json",
+        "bytes": 3215,
+        "sha256": "396A9C578E7176F454D2801B034907A9F325624C60915D140026DFF48143E7FF"
+      },
+      {
+        "name": "arcbench-run-f169eaf935fe-logs.json",
+        "bytes": 2093,
+        "sha256": "31F441FE2CF3182C9C2A2D0FB99DD75507C9D0FD60EA57168F6952887B1E01DD"
+      },
+      {
+        "name": "arcbench-run-f169eaf935fe-summary.md",
+        "bytes": 2555,
+        "sha256": "677771D21048F746FB4F00FCDBBDCCC3C938D3BFA2137A69086609F4440C36C1"
+      },
+      {
+        "name": "arcbench-f169eaf935fe-failure-details.md",
+        "bytes": 502,
+        "sha256": "6AC9603B2A11FCF9721FDDEC47E1A33C10AA3EFEAF33A77D4C8591B1BEDF8AA2"
+      },
+      {
+        "name": "submission-ed02fe7db14b-agent.zip",
+        "bytes": 347937,
+        "sha256": "B4A732592C146FEB8EA76A65B1920C64FC8EE5100C73D3F2E240D84BD0FBA10B"
+      }
+    ]
+  },
+  "conclusion": "阶段 4 分析完成。本 Run 的确定性根因是生成前的 API 认证失败（HTTP 401）；0/0 表示测试未到达，不是业务功能率，也不能据此判断 Evolution、Token 或应用代码质量。"
+}

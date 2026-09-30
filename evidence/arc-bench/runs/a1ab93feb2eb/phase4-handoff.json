@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "handoff_id": "a1ab93feb2eb-1B42A59740DC",
+  "run_id": "a1ab93feb2eb",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "thread_title": "06 项目阶段4 + arc-bench-lite--bookstack",
+  "manifest_path": "evidence/arc-bench/runs/a1ab93feb2eb/manifest.json",
+  "manifest_sha256": "1B42A59740DC1F00E499C0579F3980A3D878F3661E9FDD69785A84B2E04C822B",
+  "ack_path": "evidence/arc-bench/runs/a1ab93feb2eb/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/a1ab93feb2eb/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/a1ab93feb2eb/phase4-result.md",
+  "source": "platform_run_attachments",
+  "analysis_scope": "read_only_single_run",
+  "created_at": "2026-09-28T12:00:00+08:00",
+  "run_state_boundary": "PAUSED before official tests; diagnose the pause-state evidence and generation progress only",
+  "allowed_actions": [
+    "read the manifest and a1ab93feb2eb attachments",
+    "classify observed generation progress, confirmed lifecycle facts, evidence gaps and root-cause candidates",
+    "write the matching phase4 ACK and result files"
+  ],
+  "forbidden_actions": [
+    "analyze another Run or merge this Run with prior BookStack Runs",
+    "treat 17 internal implement-ok nodes as official benchmark passes",
+    "create, resume, rerun, upload or modify a platform/local run",
+    "modify Agent code, official tests, task snapshots, ZIPs or runtime configuration",
+    "trigger or write Stage 5 decisions"
+  ],
+  "phase4_input_contract": {
+    "run_status": "PAUSED",
+    "active_node_at_pause": "REQ-5.3.2",
+    "completed_generation_nodes": 17,
+    "official_tests_reached": false,
+    "final_score_available": false,
+    "usage_settled": false
+  }
+}

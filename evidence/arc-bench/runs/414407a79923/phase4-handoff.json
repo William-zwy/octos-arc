@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "purpose": "User-confirmed local phase 4 read-only diagnosis after phase 3 routing reconciliation block",
+  "handoff_id": "414407a79923-C7FA8EA330F3",
+  "run_id": "414407a79923",
+  "task_key": "arc-bench-lite--keep",
+  "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
+  "manifest": "evidence/arc-bench/runs/414407a79923/manifest.json",
+  "manifest_sha256": "C7FA8EA330F356B56E23E5B6AF3D07D1C144A977B08D1E16DA6D771EBAEA03DD",
+  "ack_path": "evidence/arc-bench/runs/414407a79923/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/414407a79923/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/414407a79923/phase4-result.md",
+  "scope": "read_only_phase4_diagnosis",
+  "created_at": "2026-09-29T10:09:09.8138067Z",
+  "status": "handoff_sent",
+  "routing_note": "User explicitly confirmed diagnosis in the existing Keep phase 4 thread; registry remains needs_reconciliation and is not modified by this run."
+}

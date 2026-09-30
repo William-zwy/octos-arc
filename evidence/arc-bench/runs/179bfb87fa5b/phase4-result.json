@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "PHASE4_RESULT": "complete",
+  "run_id": "179bfb87fa5b",
+  "task_key": "arc-bench-lite--bookstack",
+  "handoff_id": "179bfb87fa5b-BFF495520B79",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "manifest_sha256": "BFF495520B7954A7076A6183FF9A26D00C4D3EAF63BA5FB627D09D4A57722E7C",
+  "source": "platform_run_attachments",
+  "analysis_scope": "read_only_single_run_only",
+  "read_only": true,
+  "prior_runs_merged": [],
+  "other_runs_analyzed": [],
+  "stage5_executed": false,
+  "stage5_decision_executed": false,
+  "confirmed": {
+    "final_result": {
+      "status": "FAILED",
+      "score": 0,
+      "passed_count": 0,
+      "failed_count": 0,
+      "total_count": 0,
+      "tests_reached": false,
+      "failure_stage": "generation_agent",
+      "platform_command_exit_code": 1,
+      "run_duration_seconds": 94,
+      "observed_lifecycle_seconds": 100.455706,
+      "platform_token_count": 118,
+      "token_cost": 0.000534,
+      "token_cost_currency": "CNY",
+      "failure_reason": "Command ['python3', '/workspace/submission/main.py', '/tmp/arcbench/requirements-source', '--output-dir', '/workspace/template'] returned non-zero exit status 1."
+    },
+    "lifecycle": [
+      "deploy_agent completed and environment preflight passed",
+      "start_agent failed after transient probe timeout retries and acceptance identity resolution",
+      "run_tests remained pending and was not reached"
+    ],
+    "failure_chain": [
+      "Agent identity and masked runtime environment were emitted",
+      "The raw chat/completions probe first recorded a transient TimeoutError and later returned HTTP 200",
+      "Flow enumerated 34 atomic nodes with a 51000 second time budget",
+      "Acceptance identity resolution classified the input as identity_unverified: no task key, no task snapshot input, canonical requirements fingerprint 5DD4F3C4..., and matching_suites=[]",
+      "The agent aborted with AcceptanceIdentityError('identity_unverified: expected one provenance-backed exact fingerprint, found 0')",
+      "Postflight recorded an incomplete workspace; package shape was missing frontend/ and backend/"
+    ],
+    "acceptance_identity": {
+      "status": "identity_unverified",
+      "requirements_fingerprint": "5DD4F3C4226EE6E7426E9FF95526291F4663F2C1720BF411F33A0C8A54476F34",
+      "requirements_file": "requirements.yaml",
+      "requirements_file_sha256": "C460A49A0F33698A759232C6A0DB7E23548845B372DFEEBE209DE02DE2C53ABC",
+      "task_key": null,
+      "task_key_input": null,
+      "task_key_source": null,
+      "task_key_observations": [
+        {"source":"requirements.task_key","present":false},
+        {"source":"requirements.taskKey","present":false},
+        {"source":"requirement_path_component","present":false,"observed":"requirements"}
+      ],
+      "task_snapshot_input": null,
+      "manifest_sha256": "39835E80D640DB54E78DE1CB92C22E0856582AEB90CA43284EDFF703E086AE0B",
+      "manifest_entry": null,
+      "matching_suites": [],
+      "selected_suite": null,
+      "selected_path": null,
+      "bookstack_manifest_entry": {
+        "suite_path": "arc-bench-lite--bookstack",
+        "task_key": "arc-bench-lite--bookstack",
+        "requirements_fingerprint": "4DC5389CD22A2340D32F771277C802267902721527BD811AE6B4A0D5CAC36F40",
+        "snapshot": "official-snapshot:20260917-150121Z"
+      }
+    },
+    "output_state": {
+      "package_shape_entries": 44,
+      "entries_sha256": "8D2EADE7B8C66F4A2E5765C754597FF56FD922F4DCDE6832DB0C8D430C44FA1D",
+      "missing_directories": ["frontend/", "backend/"],
+      "unsafe_entries": 0,
+      "duplicate_entries": 0,
+      "forbidden_entries": 0,
+      "secret_entries": 0
+    },
+    "log_checks": {
+      "main_py_seen_in_raw_logs": true,
+      "workspace_tests_seen_in_raw_logs": false,
+      "tests_directory": null,
+      "official_tests_executed": false,
+      "bundled_fallback_hits": 0,
+      "plaintext_api_key_hits": 0,
+      "raw_log_events": 0,
+      "raw_log_stdout_pages": 2,
+      "internal_acceptance_available": false,
+      "node_states_are_not_test_results": true
+    },
+    "identity": {
+      "agent_build_id": "arc-agent-v1-28a60ce10cd6f9fe289342dc",
+      "commit_sha": "d3529b8f85925724408de2cd52f6b9b0230123d3",
+      "payload_tree_sha256": "A09D2F401123C1EE4D67445CCB455887B95105FCA964F62E6145E6A8290A97CF",
+      "managed_file_count": 531,
+      "package_contract": "arc_agent_bundle_v1",
+      "submission_zip_sha256": "714980CD64B75DBB4F6ECA50A839AF02008AC8410601ED24A63E4085FABD1D11",
+      "platform_submission_sha256_binding": null
+    },
+    "attachment_boundaries": {
+      "template_zip": null,
+      "playwright_report": null,
+      "snapshots": null,
+      "error_context_body": null,
+      "requirements_tree_attachment": null
+    }
+  },
+  "strong_candidate": [
+    {
+      "id": "SC-ID-01-provenance-backed-suite-unavailable",
+      "statement": "The runtime requirements input could not be tied to exactly one provenance-backed official acceptance suite.",
+      "evidence": [
+        "Raw logs classify the event as identity_unverified and report matching_suites=[] and manifest_entry=null.",
+        "No task_key, task snapshot input, or usable requirement-path task component was observed.",
+        "The runtime fingerprint 5DD4F3C4... differs from the bundled BookStack entry 4DC5389C... under official-snapshot:20260917-150121Z."
+      ],
+      "confidence": "strong_candidate",
+      "limitation": "The supplied evidence does not include the requirements tree contents or its producer, so it cannot establish why the fingerprint and provenance fields differ."
+    },
+    {
+      "id": "SC-ID-02-input-metadata-or-snapshot-drift",
+      "statement": "Missing task identity metadata or a requirements snapshot/content mismatch likely caused the fail-closed identity gate.",
+      "evidence": [
+        "The resolver recorded all three task-key observations as absent.",
+        "The requirements file has a concrete SHA but no matching suite fingerprint.",
+        "The bundled manifest contains the expected BookStack suite, so the failure is at input-to-suite provenance resolution rather than absence of the bundled suite."
+      ],
+      "confidence": "strong_candidate",
+      "limitation": "No task snapshot or requirements artifact is available to distinguish metadata loss from content drift."
+    },
+    {
+      "id": "SC-GEN-03-output-contract-consequence",
+      "statement": "Identity resolution failure prevented complete application generation and left an output shape that cannot proceed to testing.",
+      "evidence": [
+        "Package shape reports missing frontend/ and backend/.",
+        "The tests array is empty and run_tests is pending.",
+        "No generated template ZIP is available."
+      ],
+      "confidence": "strong_candidate",
+      "limitation": "This is a downstream consequence, not the underlying cause of identity_unverified."
+    }
+  ],
+  "unknown": [
+    "The exact requirements tree content and producer are unavailable.",
+    "Whether the failure came from missing metadata, a wrong requirements snapshot, content transformation, or a mismatch between task input and bundled manifest provenance.",
+    "Why the run spent approximately 60 seconds retrying a transient probe timeout before receiving HTTP 200; this is not identified as the causal failure.",
+    "Provider token breakdown, provider request count, visual model, reasoning level, worker counts, and acceptance rounds.",
+    "Any BookStack business functionality, DOM, locator, API, or Playwright behavior; business tests were not reached.",
+    "The summary's claim that /workspace/tests was used; raw logs and lifecycle contradict it.",
+    "A platform binding between the supplied submission ZIP and the uploaded artifact."
+  ],
+  "excluded_hypotheses": [
+    {
+      "hypothesis": "BookStack business features failed official tests",
+      "reason": "No business tests ran; tests is empty and run_tests is pending."
+    },
+    {
+      "hypothesis": "node_states=test-failed proves executed requirement failures",
+      "reason": "The lifecycle says tests were not reached; node_states are platform metadata and are not counted as test results."
+    },
+    {
+      "hypothesis": "Model/API outage was the final causal failure",
+      "reason": "The probe ultimately returned HTTP 200; the later explicit failure was identity_unverified."
+    },
+    {
+      "hypothesis": "OOM or resource exhaustion",
+      "reason": "The logs show low memory usage and zero OOM events; cleanup only removed two stray Chrome processes."
+    },
+    {
+      "hypothesis": "Bundled test fallback or plaintext API-key exposure",
+      "reason": "Bundled fallback hits and plaintext API-key hits are both zero."
+    }
+  ],
+  "evidence_gaps": [
+    "No requirements tree, task snapshot, template ZIP, Playwright report, snapshots, or error-context body was supplied.",
+    "No provider totals or request-count line was present in raw logs.",
+    "No independent acceptance record exists because suite identity resolution aborted before business acceptance."
+  ],
+  "stage5_recommendation": {
+    "status": "not_ready",
+    "reason": "This run failed before application generation at the provenance-backed acceptance identity gate; UI or business-logic changes would be premature.",
+    "recommended_boundary": [
+      "First obtain the exact requirements tree and task snapshot provenance in a separately authorized diagnostic context.",
+      "Recompute the canonical fingerprint and verify task_key=arc-bench-lite--bookstack or an exact official manifest match; do not weaken or bypass the fail-closed identity check.",
+      "Only after exact suite selection, output shape, and main.py preflight succeed should a new authorized platform run be considered."
+    ],
+    "not_executed": true,
+    "prohibited_in_this_result": [
+      "No Agent code modification",
+      "No official-test, manifest, asset, task-snapshot, ZIP, or configuration modification",
+      "No platform rerun or upload",
+      "No Stage 5 implementation or completion claim"
+    ]
+  },
+  "impact_estimate": {
+    "current_completion": "0/0; no meaningful feature completion rate can be inferred",
+    "current_score": 0,
+    "run_duration_seconds": 94,
+    "observed_lifecycle_seconds": 100.455706,
+    "platform_token_count": 118,
+    "cost": "0.000534 CNY",
+    "provider_tokens_and_requests": "unknown",
+    "potential_gain": "Not estimable from this run; identity provenance must be repaired or clarified before an independent run can measure feature, token, or time metrics.",
+    "note": "No pass-rate, token-saving, or runtime improvement claim is made from an unexecuted test suite."
+  },
+  "validation_contract": {
+    "required_marker": "PHASE4_RESULT: complete",
+    "remote_push": false,
+    "result_files": [
+      "evidence/arc-bench/runs/179bfb87fa5b/phase4-ack.json",
+      "evidence/arc-bench/runs/179bfb87fa5b/phase4-result.json",
+      "evidence/arc-bench/runs/179bfb87fa5b/phase4-result.md"
+    ]
+  }
+}

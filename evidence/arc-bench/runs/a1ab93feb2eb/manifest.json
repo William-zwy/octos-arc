@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "intake_label": "stage3-a1ab93feb2eb",
+  "status": "normalized_intake_complete_pending_phase4",
+  "run_id": "a1ab93feb2eb",
+  "submission_id": "9d7e9395c677",
+  "identity": {
+    "competition_id": "arc-bench-lite",
+    "task_id": "bookstack",
+    "task_key": "arc-bench-lite--bookstack",
+    "catalog": "competition",
+    "task_snapshot_id": null,
+    "runtime": "python",
+    "agent_source": "upload",
+    "platform_original_filename": "octos-arc-bundle_v2_3.zip",
+    "platform_submission_sha256_binding": null
+  },
+  "intake_routing": {
+    "source_folder": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite",
+    "phase3_scope": "facts_manifest_and_routing_only",
+    "phase4_auto_dispatch": "reuse_verified_task_thread",
+    "next_stage": "phase4_read_only_single_run_diagnosis",
+    "stage5_triggered": false,
+    "prior_runs_merged": []
+  },
+  "run_timing": {
+    "created_at": "2026-09-28T10:07:37.396403",
+    "started_at": "2026-09-28T10:07:48.969672",
+    "finished_at": null,
+    "run_duration_seconds": null,
+    "status": "PAUSED",
+    "pause_reason": "Execution paused by user request",
+    "can_resume": true
+  },
+  "platform_final": {
+    "status": "PAUSED",
+    "score": null,
+    "passed_count": null,
+    "failed_count": null,
+    "total_count": null,
+    "test_pass_rate": null,
+    "failure_stage": "generation_in_progress",
+    "tests_reached": false,
+    "official_test_result_available": false,
+    "note": "The platform run was paused while the generation agent was executing REQ-5.3.2. No final template result, Playwright report, score, or business pass/fail result exists."
+  },
+  "generation_progress": {
+    "requirement_order_total": 34,
+    "completed_implement_nodes_observed": 17,
+    "completed_nodes": [
+      "REQ-1.1",
+      "REQ-1.2",
+      "REQ-2.1",
+      "REQ-2.2",
+      "REQ-3.1",
+      "REQ-4.1",
+      "REQ-4.2.1",
+      "REQ-4.3.1",
+      "REQ-4.3.2",
+      "REQ-4.4.1",
+      "REQ-4.4.2",
+      "REQ-4.5.1",
+      "REQ-4.5.2",
+      "REQ-5.1",
+      "REQ-5.2.1",
+      "REQ-5.2.2",
+      "REQ-5.3.1"
+    ],
+    "active_node_at_pause": "REQ-5.3.2",
+    "active_node_status": "design_and_implement_running",
+    "evidence_basis": "arcbench-a1ab93feb2eb-octos-events.jsonl and arcbench-run-a1ab93feb2eb-logs.json",
+    "interpretation_boundary": "Internal implement ok and verified messages are generation progress only; they are not official benchmark results."
+  },
+  "internal_acceptance": {
+    "available": false,
+    "rounds": [],
+    "note": "The raw lifecycle evidence shows requirement implementation activity, but no completed official or independently verifiable acceptance round."
+  },
+  "platform_configuration": {
+    "model": "deepseek-v4-flash",
+    "visual_model": null,
+    "reasoning": "low",
+    "time_budget_seconds": 51000,
+    "agent_acceptance_workers": null,
+    "test_workers": null,
+    "sources": {
+      "model_and_time_budget": "raw logs",
+      "reasoning": "raw logs",
+      "worker_counts": "not found"
+    }
+  },
+  "metering": {
+    "platform_token_count": null,
+    "provider_totals": null,
+    "requests": null,
+    "cost": null,
+    "currency": null,
+    "run_duration_seconds": null,
+    "note": "The run was paused before settlement; null usage is unavailable, not zero."
+  },
+  "platform_validation": {
+    "entrypoint": {
+      "value": "main.py",
+      "raw_log_verified": true,
+      "source": "runner lifecycle and stdout evidence"
+    },
+    "tests_directory": {
+      "value": "/workspace/tests",
+      "raw_log_verified": false,
+      "note": "The generation log reports no acceptance specs in the candidate path; official run_tests was not reached."
+    },
+    "preflight": {
+      "passed": true,
+      "browser_check": "chromium-ready",
+      "node_version": "v20.19.3",
+      "runner_playwright_version": "1.57.0"
+    },
+    "bundled_fallback_hits": 0,
+    "plaintext_api_key_hits": 0,
+    "probe": "raw chat/completions HTTP 200 after transient timeout retries",
+    "runner_image_digest": "sha256:3538e4b982d43bb73c4f57c79e445f679abcaeb4ffe619c3148fb9f69498c296"
+  },
+  "artifacts": [
+    {
+      "role": "run_json",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-run-a1ab93feb2eb.json",
+      "bytes": 3057,
+      "sha256": "2B91215BF1751A63E6DB4826F100FC9104AD8619C67D2C11194DBC3D5688DC5D"
+    },
+    {
+      "role": "logs_json",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-run-a1ab93feb2eb-logs.json",
+      "bytes": 46395,
+      "sha256": "4CA018F07E38EAA757AD3CBF382E349DC726B2056F23293244942D7BC1610D29"
+    },
+    {
+      "role": "octos_events",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-a1ab93feb2eb-octos-events.jsonl",
+      "bytes": 3742160,
+      "sha256": "C23A473A4645A24C20FF07A8418B0424BC81AF03828BE938D4FF38DA4610FAD1"
+    },
+    {
+      "role": "runner_events",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-a1ab93feb2eb-runner-events.jsonl",
+      "bytes": 91952,
+      "sha256": "C6B465EFAC4180D8A64D38621495556F7F90C79FECA8923E7E267DA3DF136194"
+    },
+    {
+      "role": "stdout_log",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-a1ab93feb2eb-stdout.log",
+      "bytes": 45729,
+      "sha256": "32F825D514A7EBF4C5A229798E4F2E34408D7225ADA414002D5A1CF06E8C4791"
+    },
+    {
+      "role": "preflight",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-a1ab93feb2eb-preflight.json",
+      "bytes": 202,
+      "sha256": "DE2497630BAF9683DF1D49F70B8411A9B55BBAE12091902A34BB9CACDD1A395C"
+    },
+    {
+      "role": "runner_image",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-a1ab93feb2eb-runner-image.json",
+      "bytes": 357,
+      "sha256": "5B159208AB0C57A474BECFC3975C86371CD539F97CFA910E882149D8F16B8332"
+    },
+    {
+      "role": "template_interim_zip",
+      "path": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\a1ab93feb2eb-template-interim.zip",
+      "bytes": 9781984,
+      "sha256": "AEB08E20128E4ACB9D31D40A081C59C62E7FF8FBAA89BC50974026FB04D83134"
+    }
+  ],
+  "missing": [
+    "final template ZIP",
+    "Playwright report",
+    "snapshots from a completed run",
+    "final score and test counts",
+    "provider token totals and cost",
+    "task snapshot ID",
+    "platform upload SHA binding",
+    "completed REQ-5.3.2 and subsequent requirement results"
+  ],
+  "conflicts": [
+    {
+      "field": "interim_template_name",
+      "description": "The available template is named interim and the run was paused; it must not be treated as the final generated application.",
+      "resolution": "retain as interim artifact only"
+    },
+    {
+      "field": "run_json_node_states",
+      "description": "The run JSON exposes node_states through REQ-5.3.2 but does not prove those nodes completed; raw lifecycle logs show the pause at REQ-5.3.2.",
+      "resolution": "use raw lifecycle evidence for the active-node boundary"
+    }
+  ],
+  "source_precedence": [
+    "run JSON for run identity, pause status, lifecycle and resume capability",
+    "raw octos events and stdout for generation progress",
+    "preflight and runner image for environment identity",
+    "interim template ZIP as a non-final artifact",
+    "no summary, failure details, Playwright report or completed-test artifact was supplied"
+  ],
+  "security": {
+    "plaintext_api_key_found": false,
+    "log_scan_scope": "supplied raw logs and sidecars",
+    "api_key_status": "masked presence only"
+  }
+}

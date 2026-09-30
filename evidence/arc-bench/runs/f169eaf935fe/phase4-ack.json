@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "PHASE4_ACK": "received",
+  "status": "received",
+  "handoff_id": "f169eaf935fe-044A34A0682C",
+  "manifest_sha256": "044A34A0682C248CE5F76B0A45FDF716D75942E7728C7E5662234404DFF039C7",
+  "run_id": "f169eaf935fe",
+  "task_key": "smoke-evolution--counter",
+  "thread_id": "01a0b48b-b24d-7550-835c-6f8110aebfbd",
+  "received_at": "2026-09-25T09:32:55.6692287Z"
+}

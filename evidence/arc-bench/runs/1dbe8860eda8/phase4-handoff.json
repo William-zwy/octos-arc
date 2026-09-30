@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "handoff_id": "1dbe8860eda8-E8A76BAD453A",
+  "run_id": "1dbe8860eda8",
+  "task_key": "arc-bench-lite-evolution--bookstack",
+  "thread_id": "01a0d8b1-76fb-7261-8d0e-a3fb69a57115",
+  "thread_title": "10 项目阶段4 + arc-bench-lite-evolution--bookstack",
+  "manifest": "evidence/arc-bench/runs/1dbe8860eda8/manifest.json",
+  "manifest_sha256": "E8A76BAD453AF7DAB8014E5F7D2E055B91585E92C4F6F291F149B99008BAB099",
+  "scope": "phase4_read_only_single_run_diagnosis",
+  "source_precedence": [
+    "run.json final platform status and tests[]",
+    "raw logs, failure details and Playwright report",
+    "snapshots and template ZIP",
+    "summary markdown navigation only"
+  ],
+  "card": {
+    "platform_final": {
+      "status": "FAILED",
+      "score": 50,
+      "pass_total": "3/6",
+      "failures": ["REQ-10.2", "REQ-11.1", "REQ-12.1"]
+    },
+    "internal_acceptance": {
+      "available": false,
+      "rounds": []
+    },
+    "metering": {
+      "requests": 378,
+      "provider_total_tokens": 15047894,
+      "platform_token_count": 15048005,
+      "cost_cny": 7.208864,
+      "duration_seconds": 4099
+    },
+    "platform_validation": {
+      "entrypoint": "main.py",
+      "tests_dir": "/workspace/tests",
+      "bundled_fallback_hits": 0,
+      "plaintext_api_key_hits": 0,
+      "reasoning": "low",
+      "time_budget_seconds": 9000
+    }
+  },
+  "required_ack": {
+    "path": "evidence/arc-bench/runs/1dbe8860eda8/phase4-ack.json",
+    "must_match": ["handoff_id", "run_id", "task_key", "thread_id"]
+  },
+  "required_result": {
+    "json_path": "evidence/arc-bench/runs/1dbe8860eda8/phase4-result.json",
+    "markdown_path": "evidence/arc-bench/runs/1dbe8860eda8/phase4-result.md",
+    "must_match": ["handoff_id", "run_id", "task_key", "thread_id", "manifest_sha256"],
+    "required_marker": "PHASE4_RESULT: complete|incomplete"
+  },
+  "instructions": [
+    "Write phase4-ack.json before reading evidence.",
+    "Analyze only this run; ignore unrelated history and other runs.",
+    "Do not create a platform run, rerun tests, modify code/tests/assets, or implement Stage 5.",
+    "Write the final diagnosis to phase4-result.json and phase4-result.md.",
+    "Mark confirmed, strong_candidate, and unknown evidence levels explicitly."
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "handoff_id": "dbf1f727a3dc-DFE713A53AFC",
+  "run_id": "dbf1f727a3dc",
+  "task_key": "arc-bench-lite--bookstack",
+  "thread_id": "01a0b582-3586-7bc1-875e-d4670592d5ba",
+  "thread_title": "06 项目阶段4 + arc-bench-lite--bookstack",
+  "manifest": "evidence/arc-bench/runs/dbf1f727a3dc/manifest.json",
+  "manifest_sha256": "DFE713A53AFC67C63C56FC1935B70572E6304660AFCA0BBCB9716F2B54B84DDB",
+  "scope": "phase4_read_only_single_run_diagnosis",
+  "source_precedence": ["run.json final status and lifecycle steps","raw logs for authentication failure and execution checks","failure details for test-stage evidence","summary markdown navigation only"],
+  "card": {
+    "platform_final": {"status":"FAILED","score":0,"pass_total":"0/0","failure_stage":"generation_agent","tests_reached":false,"failure":"platform start_agent exit 2; raw agent log reports permanent authentication failure (HTTP 401) before generation"},
+    "internal_acceptance": {"available":false,"rounds":[],"note":"Authentication failed before generation, acceptance, or business tests"},
+    "metering": {"requests":null,"provider_total_tokens":null,"platform_token_count":null,"cost_cny":null,"duration_seconds":0},
+    "platform_validation": {"entrypoint":"main.py (run command)","tests_dir":null,"bundled_fallback_hits":0,"plaintext_api_key_hits":0,"probe":"permanent authentication failure, HTTP 401","time_budget_seconds":null},
+    "conflicts": ["summary claims /workspace/tests, but raw logs show no such path and authentication aborts before generation/tests","run JSON duration is 0 while lifecycle timestamps span 3.191009 seconds","platform command exit 2 and raw log HTTP 401 are both retained"]
+  },
+  "required_ack": {"path":"evidence/arc-bench/runs/dbf1f727a3dc/phase4-ack.json","must_match":["handoff_id","run_id","task_key","thread_id"]},
+  "required_result": {"json_path":"evidence/arc-bench/runs/dbf1f727a3dc/phase4-result.json","markdown_path":"evidence/arc-bench/runs/dbf1f727a3dc/phase4-result.md","must_match":["handoff_id","run_id","task_key","thread_id","manifest_sha256"],"required_marker":"PHASE4_RESULT: complete|incomplete"},
+  "instructions": [
+    "Write phase4-ack.json before reading evidence.",
+    "Analyze only Run dbf1f727a3dc; ignore b985ae04f3cd, 8d6925802b44, 977a8ae04117 and all other Runs.",
+    "Do not create a platform run, rerun tests, upload, modify code/tests/assets/configuration, or implement Stage 5.",
+    "Distinguish the confirmed HTTP 401 generation/preflight failure from root-cause hypotheses; do not claim a BookStack business test failure because tests were not reached.",
+    "Write the final diagnosis to phase4-result.json and phase4-result.md with confirmed, strong_candidate and unknown evidence levels."
+  ]
+}

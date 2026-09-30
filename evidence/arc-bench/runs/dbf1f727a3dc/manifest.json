@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "intake_label": "stage3-dbf1f727a3dc",
+  "status": "normalized_intake_complete_pending_phase4",
+  "run_id": "dbf1f727a3dc",
+  "submission_id": "2687fb7998ed",
+  "identity": {
+    "competition_id": "arc-bench-lite",
+    "task_id": "bookstack",
+    "task_key": "arc-bench-lite--bookstack",
+    "catalog": "competition",
+    "task_snapshot_id": null,
+    "catalog_label": "competition",
+    "runtime": "python",
+    "agent_source": "upload",
+    "platform_original_filename": "octos-arc-agent-p5-021-identity-contract-unverified-d3529b8f8592.zip",
+    "platform_submission_sha256_binding": null
+  },
+  "intake_routing": {
+    "source_folder": "C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite",
+    "phase3_scope": "facts_manifest_and_routing_only",
+    "phase4_auto_dispatch": "reuse_verified_task_thread",
+    "next_stage": "phase4_read_only_single_run_diagnosis",
+    "stage5_triggered": false,
+    "prior_runs_merged": []
+  },
+  "artifacts": [
+    {"role":"run_json","path":"C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-run-dbf1f727a3dc.json","bytes":3211,"sha256":"69215D4D261D52A012901713768D54BEDF78B84E3A0CA1D5A8400F5E39020D15"},
+    {"role":"logs_json","path":"C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-run-dbf1f727a3dc-logs.json","bytes":2083,"sha256":"7D554B1217A9FB3E5B1AC795BC2038CF2BBEC82D720B1FF58C6FA14B0CF25333"},
+    {"role":"summary_navigation_only","path":"C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-run-dbf1f727a3dc-summary.md","bytes":2554,"sha256":"E88D08C7421D9A41076E499F07D958B5359E279E5C28C931F95B314174FDBBDE"},
+    {"role":"failure_details","path":"C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\arcbench-dbf1f727a3dc-failure-details.md","bytes":501,"sha256":"02FDB19DB89A3AA9189BED0386021C2AC49AFB18DB7430836E00CFFD4F1509B2"},
+    {"role":"submission_agent_zip","path":"C:\\Users\\dayuruozhi\\Downloads\\闻悦源代码-首轮测试-BookStack-lite\\submission-2687fb7998ed-agent.zip","bytes":371970,"sha256":"714980CD64B75DBB4F6ECA50A839AF02008AC8410601ED24A63E4085FABD1D11"},
+    {"role":"submission_agent_zip_alias","path":"C:\\Users\\dayuruozhi\\Downloads\\submission-2687fb7998ed-agent.zip","bytes":371970,"sha256":"714980CD64B75DBB4F6ECA50A839AF02008AC8410601ED24A63E4085FABD1D11"}
+  ],
+  "missing_artifacts": ["template ZIP","Playwright report","snapshots","error-context.md body","requirements tree attachment"],
+  "run_timing": {"created_at":"2026-09-25T20:56:53.647839","started_at":"2026-09-25T20:56:55.512899","finished_at":"2026-09-25T20:56:58.703908","run_duration_seconds":0,"observed_lifecycle_seconds":3.191009},
+  "platform_final": {
+    "status":"FAILED","score":0,"passed_count":0,"failed_count":0,"total_count":0,"test_pass_rate":0,
+    "feature_implementation_rate":{"implemented":0,"total":0,"percent":0},
+    "failure_reason":"Command ['python3', '/workspace/submission/main.py', '/tmp/arcbench/requirements-source', '--output-dir', '/workspace/template'] returned non-zero exit status 2.",
+    "failure_stage":"generation_agent","tests_reached":false,"tests":null,
+    "steps":{"deploy_agent":"completed; environment preflight passed","start_agent":"failed","run_tests":"pending; not reached"},
+    "generation_observation":"raw logs record permanent authentication failure; aborting before generation (HTTP 401)"
+  },
+  "internal_acceptance": {"available":false,"rounds":[],"note":"Generation aborted during preflight authentication; no acceptance or business test result exists"},
+  "metering": {"platform_token_count":null,"provider_totals":null,"requests":null,"cost":{"amount":null,"currency":null,"source_field":"run JSON fields are null"},"duration_seconds":0,"note":"Raw logs contain no provider totals or request count"},
+  "platform_configuration": {"model":"deepseek-v4-flash","visual_model":null,"reasoning":null,"time_budget_seconds":null,"agent_acceptance_workers":null,"test_workers":null,"sources":{"model":"run_json and raw_logs MODEL","time_budget":"not_found","visual_model_reasoning_workers":"not_found"}},
+  "generation_identity": {"build_id":"arc-agent-v1-28a60ce10cd6f9fe289342dc","commit_sha":"d3529b8f85925724408de2cd52f6b9b0230123d3","managed_file_count":531,"package_contract":"arc_agent_bundle_v1","payload_tree_sha256":"A09D2F401123C1EE4D67445CCB455887B95105FCA964F62E6145E6A8290A97CF","schema_version":1},
+  "platform_validation": {
+    "entrypoint":{"value":"main.py","raw_log_verified":false,"note":"main.py is verified by the platform start_agent command; raw stdout only records the generation context"},
+    "tests_directory":{"value":null,"raw_log_verified":false,"note":"Summary claims /workspace/tests, but raw logs contain no occurrence and tests were not reached"},
+    "official_tests":{"value":null,"raw_log_verified":false,"note":"run_tests not reached"},
+    "bundled_fallback_hits":0,"plaintext_api_key_hits":0,"probe":{"status":"permanent authentication failure","http_status":401},
+    "package_shape":null
+  },
+  "agent_logs": {"events_count":0,"stdout_pages":2,"raw_log_chars":2083,"raw_log_sha256":"7D554B1217A9FB3E5B1AC795BC2038CF2BBEC82D720B1FF58C6FA14B0CF25333","checks":{"main_py_seen":false,"workspace_tests_seen":false,"bundled_seen":false,"api_key_plaintext_seen":false},"generation_failure":"permanent authentication failure; aborting before generation (HTTP 401)"},
+  "conflicts": [
+    {"field":"summary_tests_dir_vs_raw_logs","description":"summary claims /workspace/tests and marks the check passed, but raw logs contain no /workspace/tests and show authentication abort before generation/tests","resolution":"retain the conflict; platform lifecycle and raw logs take precedence"},
+    {"field":"run_duration_summary_vs_run_json","description":"summary normalizes duration as 0s while lifecycle timestamps span 3.191009s","resolution":"retain run_duration_seconds=0 from run JSON and record observed lifecycle span separately"},
+    {"field":"platform_failure_exit_vs_log_failure","description":"platform command exits 2 while the raw agent log reports HTTP 401 before generation","resolution":"record both; exit code is platform lifecycle fact and HTTP 401 is the observed agent failure"}
+  ],
+  "missing": ["task_snapshot_id","visual_model","reasoning level","time budget","worker counts","platform token count","provider totals and request count","platform-upload SHA binding","template ZIP, Playwright report and snapshots","raw executor error-context body","requirements tree and acceptance suite identity record"],
+  "source_precedence": ["platform run JSON for final status, score, lifecycle steps, exit code and IDs","raw logs for authentication failure and execution checks","failure details for test-stage evidence; none exists because tests were not reached","summary markdown for navigation only"],
+  "security": {"plaintext_api_key_found":false,"log_scan_scope":"raw logs and supplied artifacts"}
+}

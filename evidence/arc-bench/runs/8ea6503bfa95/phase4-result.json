@@ -1,0 +1,218 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "PHASE4_RESULT": "complete",
+  "handoff_id": "8ea6503bfa95-437048B007EC",
+  "run_id": "8ea6503bfa95",
+  "task_key": "arc-bench-lite--keep",
+  "thread_id": "01a0b57a-7a65-77d0-a08a-e202167e4f70",
+  "manifest_sha256": "437048B007EC797D83F8A6784CEEE261F6F01FEF46206FCB92716C054A0CCBCA",
+  "submission_id": "6be3ce5a778e",
+  "scope": "read_only_phase4_single_run_diagnosis",
+  "routing_status": "needs_reconciliation",
+  "routing_note": "The registered arc-bench-lite--keep mapping remains needs_reconciliation because an older late result is missing required identity fields. This direct diagnosis was performed only after the user's explicit trigger; the registry was not modified.",
+  "identity_verification": {
+    "manifest_path": "evidence/arc-bench/runs/8ea6503bfa95/manifest.json",
+    "manifest_sha256_expected": "437048B007EC797D83F8A6784CEEE261F6F01FEF46206FCB92716C054A0CCBCA",
+    "manifest_sha256_observed": "437048B007EC797D83F8A6784CEEE261F6F01FEF46206FCB92716C054A0CCBCA",
+    "manifest_sha256_match": true,
+    "handoff_ack_result_identity_match": true,
+    "ack_path": "evidence/arc-bench/runs/8ea6503bfa95/phase4-ack.json",
+    "result_path": "evidence/arc-bench/runs/8ea6503bfa95/phase4-result.json",
+    "result_md_path": "evidence/arc-bench/runs/8ea6503bfa95/phase4-result.md"
+  },
+  "run_summary": {
+    "competition": "arc-bench-lite",
+    "task": "arc-bench-lite--keep",
+    "status": "FAILED",
+    "score": 56.2,
+    "passed": 18,
+    "total": 32,
+    "failed_tests": 14,
+    "failure_stage": "final_playwright_execution",
+    "failure_status_counts": {
+      "timedOut": 14,
+      "failed": 0
+    },
+    "run_duration_seconds": 20611,
+    "final_playwright_duration_ms": 164503.032,
+    "model": "deepseek-v4-flash",
+    "reasoning": "low",
+    "platform_token_count": 432984489,
+    "provider_total_tokens": 34526353,
+    "requests": 1180,
+    "cost_cny": 215.543912
+  },
+  "confirmed_facts": [
+    "平台最终结果为 FAILED、score 56.2、18/32；14 个最终测试全部 timedOut，0 个 failed assertion 状态。",
+    "失败用例为 REQ-2.3.1、REQ-2.5.1、REQ-2.5.2、REQ-2.5.3、REQ-2.5.4、REQ-2.6.1、REQ-2.7.1、REQ-2.7.2、REQ-2.7.4、REQ-2.8.1、REQ-2.8.3、REQ-3.1、REQ-4.1、REQ-4.2。",
+    "Agent 内部验收在 /workspace/tests 未找到 spec 后错误选择了 /workspace/submission/public-tests/arc-bench-web--keep；该 suite 身份与本 Run 的 arc-bench-lite--keep 不匹配。",
+    "错误 Web suite 的内部 round 0 和 round 1 都为 29/32，失败节点为 REQ-2.6.1、REQ-2.7.4、REQ-2.7.5；该结果不能预测 Lite Keep 的最终 18/32。",
+    "5 个 implement turn 命中 900 秒上限；REQ-2.7.1 与 REQ-2.7.4 的 repair turn 分别在 584 秒和 599 秒中断；REQ-2.6.2 另有一次 upstream unexpected EOF proxy_error。",
+    "最终应用已生成，frontend build、backend startup 和最终 Playwright 执行均到达；日志没有 OOM/cgroup kill 或全局 time budget 耗尽证据。",
+    "最终模板 db.json 中 Meeting agenda 2.8.1 已 pinned=true，Meeting agenda created 已预存在且 pinned=true；两者与相关创建/置顶测试前置条件不一致。",
+    "最终模板 app.js 的卡片操作可访问名称为 Archive note、Background options；最终失败 locator 分别要求精确的 Archive、Change color。",
+    "最终模板 app.js 的 settings 顶层按钮可访问名称为 Settings menu，而最终测试要求精确的 Settings；搜索建议渲染为 role=option，而最终测试要求 listbox 内的 button。",
+    "最终模板 label editor 的对话框可访问名称为 Label editor，checkbox 位于该对话框；REQ-2.7.1/2.7.2 的最终 locator 在 Note editor 内寻找 Work checkbox。",
+    "最终模板保存了 Call dentist created 的 Reminders 标签，但 noteCard 只渲染 title、content 和 actions，没有把 labels 渲染到卡片文本；这解释了 REQ-2.7.4 的卡片文本断言失败。",
+    "入口为 main.py；日志核验了 /workspace/tests；没有证据表明 bundled tests fallback 是最终失败原因，但测试来源与 suite 身份仍未完全闭合；日志没有明文 API Key。"
+  ],
+  "failure_chain": [
+    {
+      "cluster": "suite_identity_and_agent_validation",
+      "req_ids": ["all 32 requirements"],
+      "diagnosis_status": "confirmed_harness_orchestration_defect",
+      "diagnosis": "Run task is arc-bench-lite--keep, but internal acceptance selected arc-bench-web--keep after finding no spec files in /workspace/tests. The 29/32 internal result therefore validated a different contract and allowed the final Lite package to proceed without matching self-acceptance.",
+      "evidence": ["manifest.json", "phase3-analysis.md", "arcbench-run-8ea6503bfa95-stdout.log", "arcbench-run-8ea6503bfa95-runner-events.jsonl"]
+    },
+    {
+      "cluster": "delete_status_contract",
+      "req_ids": ["REQ-2.3.1"],
+      "diagnosis_status": "confirmed_ui_contract_mismatch",
+      "observed": "The final test waited for button Note trashed and timed out.",
+      "diagnosis": "The template performs DELETE /api/notes/:id and calls showStatus('Note deleted', undoDelete); the status is a role=status container with an Undo button, not a button named Note trashed. The mutation path exists, but the rendered accessible status does not match the executed test contract.",
+      "evidence": ["failure-details.md", "template/frontend/src/app.js", "template/frontend/src/index.html", "template/backend/server.js"]
+    },
+    {
+      "cluster": "archive_and_color_action_names",
+      "req_ids": ["REQ-2.5.1", "REQ-2.5.2", "REQ-2.5.3", "REQ-2.5.4", "REQ-2.6.1"],
+      "diagnosis_status": "confirmed_ui_contract_mismatch",
+      "observed": "Archive tests could not find a per-note button named exactly Archive; Change note color could not find a per-note button named exactly Change color.",
+      "diagnosis": "noteCard renders the existing-note controls as Archive note and Background options. The backend archive/color PATCH handlers and the composer Change color control exist, but the final per-note accessible names do not match the final locators. The archive failures are therefore not evidence that the PATCH implementation itself is absent.",
+      "evidence": ["failure-details.md", "template/frontend/src/app.js lines 133-156", "template/backend/server.js lines 380-390"]
+    },
+    {
+      "cluster": "label_dialog_and_label_visibility",
+      "req_ids": ["REQ-2.7.1", "REQ-2.7.2", "REQ-2.7.4"],
+      "diagnosis_status": "confirmed_mixed_contract_and_rendering_defects",
+      "observed": "REQ-2.7.1/2.7.2 timed out while looking for Work in Note editor; REQ-2.7.4 found Call dentist created but its text did not contain Reminders.",
+      "diagnosis": "For existing notes, the template opens a separate dialog labelled Label editor and places the checkboxes there, while the executed locators scope them to Note editor. This is a direct test/template contract mismatch. Separately, the final db seed contains Reminders on Call dentist created, but noteCard does not render note.labels, so the REQ-2.7.4 visible-card assertion cannot pass even when persistence succeeds.",
+      "evidence": ["failure-details.md", "template/frontend/src/index.html lines 111-148", "template/frontend/src/app.js lines 225-260 and 108-187", "template/backend/data/db.json"]
+    },
+    {
+      "cluster": "pin_seed_and_duplicate_title",
+      "req_ids": ["REQ-2.8.1", "REQ-2.8.3"],
+      "diagnosis_status": "strong_candidate_seed_contract_mismatch",
+      "observed": "Both tests timed out while checking title Pinned on the matching article.",
+      "diagnosis": "The design precondition for REQ-2.8.1 requires Meeting agenda 2.8.1 to start unpinned, but final db.json has it pinned=true. The create scenario title Meeting agenda created also already exists and is pinned=true, so first-match selection can resolve the seed note rather than the newly created note. The package-state mismatch is confirmed; the exact browser selection sequence is unavailable, so the individual timeout attribution remains a strong candidate.",
+      "evidence": ["failure-details.md", "template/backend/data/db.json", "template/frontend/src/app.js lines 108-114 and 158-173", "requirements/requirements.yaml"]
+    },
+    {
+      "cluster": "search_suggestion_role",
+      "req_ids": ["REQ-3.1"],
+      "diagnosis_status": "confirmed_ui_contract_mismatch",
+      "observed": "The final test waited for a button named Reminders inside the listbox.",
+      "diagnosis": "The template creates each search suggestion with role=option, not a button role. The listbox and label filtering handler exist, but the accessible role does not match the executed locator.",
+      "evidence": ["failure-details.md", "template/frontend/src/app.js lines 846-871", "template/frontend/src/index.html lines 15-19", "requirements/requirements.yaml"]
+    },
+    {
+      "cluster": "settings_button_accessible_name",
+      "req_ids": ["REQ-4.1", "REQ-4.2"],
+      "diagnosis_status": "confirmed_ui_contract_mismatch",
+      "observed": "The final tests could not find a button named exactly Settings.",
+      "diagnosis": "The template top-level settings button has aria-label Settings menu, while the settings menuitem is named Settings. Consequently the final test cannot open the menu through the required button, and the detailed-settings test cannot reach its menuitem step.",
+      "evidence": ["failure-details.md", "template/frontend/src/index.html lines 20-30", "template/frontend/src/app.js lines 568-581 and 772-774", "requirements/requirements.yaml"]
+    }
+  ],
+  "generation_process_findings": [
+    {
+      "id": "GEN-1",
+      "status": "confirmed",
+      "finding": "Task suite routing was not fail-closed: an arc-bench-web suite was selected for an arc-bench-lite run after no specs were found in /workspace/tests."
+    },
+    {
+      "id": "GEN-2",
+      "status": "confirmed",
+      "finding": "The generation flow spent 5 implementation turns at the 900-second cap and used 13 request-budget guards; late repairs did not converge before the final package was produced."
+    },
+    {
+      "id": "GEN-3",
+      "status": "confirmed_local_runtime_signal_not_final_cause",
+      "finding": "One proxy unexpected EOF and 402 postflight stray processes were recorded. They are runtime hygiene risks, but no evidence proves they independently caused the 14 final UI timeouts."
+    }
+  ],
+  "excluded_causes": [
+    "Not an entrypoint or application-start failure: main.py ran, frontend build passed, backend listened on port 3000, and the final suite reached the application.",
+    "Not a global platform time-budget exhaustion: the run ended after 20611 seconds against a 48000-second agent budget.",
+    "Not an OOM/cgroup failure: no OOM kill or cgroup termination was evidenced.",
+    "Not sufficient evidence for 14 independent backend defects: several failures are direct accessible-name/role mismatches, and the pin failures have seed-state contamination.",
+    "Not a plaintext API key leak: the evidence contains only masked/set environment status."
+  ],
+  "evidence_gaps": [
+    "The authoritative final /workspace/tests spec/helper source or suite fingerprint is not stored in the supplied evidence; the executed locator strings are available only through failure details.",
+    "Platform-native screenshots, traces, HAR and error-context bodies are unavailable, so exact initial DOM and browser selection order cannot be reconstructed.",
+    "No task_snapshot_id, build_id, commit SHA or platform upload ZIP binding is available.",
+    "No clean-seed before/after hash proves whether the final browser run started from the intended deterministic database.",
+    "The platform token_count and provider total tokens are different accounting scopes and must not be added.",
+    "The summary mentions bundled-related log text; the normalized evidence does not establish a bundled fallback as the final test source."
+  ],
+  "minimal_read_only_reproduction_experiments": [
+    {
+      "id": "EXP-1",
+      "purpose": "Close suite identity before comparing this Run with other Keep Runs.",
+      "steps": ["Obtain the final /workspace/tests spec/helper or an authoritative suite fingerprint.", "Verify that the final suite is arc-bench-lite--keep and not arc-bench-web--keep.", "Run the exact final locators against the template DOM without changing the package."],
+      "success_criterion": "The final score can be attributed to a known Lite Keep test contract."
+    },
+    {
+      "id": "EXP-2",
+      "purpose": "Separate seed contamination from interaction defects.",
+      "steps": ["Start a fresh read-only copy of the final template.", "Capture /api/notes before browser actions.", "Verify the two pin preconditions and the absence of Meeting agenda created before creation."],
+      "success_criterion": "Initial data matches the relevant requirements or each mismatch is classified as package contamination."
+    },
+    {
+      "id": "EXP-3",
+      "purpose": "Confirm accessible contract gaps without editing code.",
+      "steps": ["Inspect accessible roles/names for card archive/color/delete status, label dialog, search suggestion and settings controls.", "Compare exact observed names with the failure locators and requirements."],
+      "success_criterion": "Each timeout is attributed to a locator contract, state precondition, or an unresolved test-source identity."
+    }
+  ],
+  "stage5_recommendation": {
+    "handoff": true,
+    "priority": "high",
+    "classification": "confirmed harness suite-routing gap plus confirmed UI accessibility/rendering gaps plus strong seed-state candidates",
+    "actions": [
+      "先将内部 acceptance 改为 task-key 严格匹配；找不到 arc-bench-lite--keep spec 时 fail closed，禁止选择 arc-bench-web--keep。",
+      "在同一 Lite suite 上修正并验证精确 accessible names/roles：Archive、Change color、Note trashed、Settings 和 search suggestion button。",
+      "确认 label editor 的官方契约后，保持对话框结构与 locator 一致；补齐 note card 的 label 可见呈现。",
+      "清理并固定 pin 场景 seed：Meeting agenda 2.8.1 初始不置顶，Meeting agenda created 不预置。",
+      "缩短单节点 inspect -> patch -> targeted test 闭环，为 repair 保留硬预算；不要用错误 Web suite 的 29/32 绿灯作 Lite 结论。",
+      "阶段 5 不修改官方测试；完成隔离复现和同快照 A/B 后才考虑新平台 Run。"
+    ],
+    "not_implemented_in_phase4": true,
+    "direct_stage5_message_sent": false
+  },
+  "metric_impact": {
+    "completion_rate_current": "18/32 = 56.2%",
+    "potential_if_all_14_pass": "32/32 = 100%, +43.8 percentage points; this is not a promise until suite identity and clean seed are closed.",
+    "token": "platform token_count 432984489; provider total 34526353; 1180 requests; cost 215.543912 CNY. These scopes are not additive.",
+    "runtime": "Run total 20611s (about 5.73h); final Playwright 164.503s. The 14 ten-second waits explain most final test latency, but generation/repair dominated total Run time."
+  },
+  "evidence_hashes": {
+    "manifest_sha256": "437048B007EC797D83F8A6784CEEE261F6F01FEF46206FCB92716C054A0CCBCA",
+    "run_json_sha256": "CBF32468D59666E43DAE8AF2F0BB83E5DA2F888833616769571E1038C86D6F97",
+    "logs_json_sha256": "DC2F3FE2BC844A4AE2C1B1B7278D04AF05E1EBC8BFD39A6A04320A54E08B8CFA",
+    "summary_sha256": "ADC62C5C3B4F0263A0DFA51389348E5636284A3B71DF19A8474D247C00612786",
+    "failure_details_sha256": "034150D6F7C1CD645EE8FC461C0FEA97BB640377D747EE6B370542FE38CF64E0",
+    "playwright_report_sha256": "C586C7C20A445C3E73F0C9E576897C92EA68D63E4D238E835776D900E88B1371",
+    "snapshots_sha256": "41BE24E9E45FE2192B0A4D07B69FA343A0A6B03B5F9B1CEED42CC3034A2699F8",
+    "design_midrun_sha256": "6861A46D4D6B3F501DEC8FF1E2159593A340FA77FFAC954EE03CC4765A6481F8",
+    "arc_extra_sha256": "A3E9FB7EF74158F1670867AC324C9880C3128A375BE8014221B2896D3BDD0B86",
+    "octos_events_sha256": "0FAAE19101397E4DDF107AC97A68A869E749A83507D78C3E84F5BC4E5A440FDB",
+    "runner_events_sha256": "CD06E4DDD9B6415579417CC21A4E79C995366A8F4985F4E380C55511A925EE55",
+    "stdout_sha256": "17A734DC49B17F2A21D8B1A95B34045C73565714EE2CE92B513D4FFD1FDB904A",
+    "submission_zip_sha256": "9F8EE636363A5BCA75EA9E15E4403C83401965443EB0BC0941BBE6E09ADD890E",
+    "template_zip_sha256": "6B4520DA91B0DE3AD0529E4F056B5343B55043CC87C54DF3B2B5053BA7868EA6"
+  },
+  "write_policy": {
+    "code_changed": false,
+    "tests_changed": false,
+    "runtime_configuration_changed": false,
+    "registry_changed": false,
+    "stage5_files_changed": false,
+    "new_run_created": false,
+    "rerun_performed": false,
+    "upload_performed": false,
+    "external_sync_performed": false,
+    "api_key_value_written": false
+  }
+}

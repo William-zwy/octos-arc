@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "handoff_id": "f169eaf935fe-044A34A0682C",
+  "run_id": "f169eaf935fe",
+  "task_key": "smoke-evolution--counter",
+  "thread_id": "01a0b48b-b24d-7550-835c-6f8110aebfbd",
+  "thread_title": "03 项目阶段4 + smoke-evolution--counter",
+  "manifest_path": "evidence/arc-bench/runs/f169eaf935fe/manifest.json",
+  "manifest_sha256": "044A34A0682C248CE5F76B0A45FDF716D75942E7728C7E5662234404DFF039C7",
+  "ack_path": "evidence/arc-bench/runs/f169eaf935fe/phase4-ack.json",
+  "result_path": "evidence/arc-bench/runs/f169eaf935fe/phase4-result.json",
+  "result_md_path": "evidence/arc-bench/runs/f169eaf935fe/phase4-result.md",
+  "source": "platform_run_attachments",
+  "analysis_scope": "read_only_single_run",
+  "created_at": "2026-09-25T00:00:00Z",
+  "run_card": {
+    "submission_id": "ed02fe7db14b",
+    "platform_final": "FAILED, score 0, 0/0; generation probe HTTP 401; tests not reached",
+    "generation_identity": "build=arc-agent-v1-e8f8b92bcae1da56d185f259; commit=fcfaa5f0093fd0af98560e5016d2d1fd4132f7e7; payload=7B9DF0D9...",
+    "metering": "platform token, provider totals, requests and cost unavailable; run object duration 0s"
+  },
+  "required_reads": [
+    "evidence/arc-bench/runs/f169eaf935fe/manifest.json",
+    "C:/Users/dayuruozhi/Downloads/arcbench-run-f169eaf935fe.json",
+    "C:/Users/dayuruozhi/Downloads/arcbench-run-f169eaf935fe-logs.json",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-smoke-evolution/arcbench-f169eaf935fe-failure-details.md",
+    "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-smoke-evolution/arcbench-run-f169eaf935fe-summary.md"
+  ],
+  "allowed_actions": [
+    "write phase4-ack.json before diagnosis",
+    "perform read-only diagnosis of f169eaf935fe only",
+    "write phase4-result.json and phase4-result.md with top-level PHASE4_RESULT and manifest_sha256",
+    "classify confirmed observations, candidates, exclusions and evidence gaps"
+  ],
+  "forbidden_actions": [
+    "analyze 13f1df96c0bf, f513ec603524, 6281f4f26d5f or any other Run",
+    "create, upload or rerun a platform/local Run",
+    "modify Agent code, official tests, task snapshots, ZIPs or runtime configuration",
+    "trigger or write Stage 5 decisions",
+    "treat 0/0 as a business feature rate"
+  ],
+  "completion_contract": [
+    "phase4-ack.json exists before analysis",
+    "phase4-result.json top-level fields include PHASE4_RESULT, manifest_sha256, run_id, task_key, handoff_id and thread_id",
+    "phase4-result.md contains exact text PHASE4_RESULT: complete or PHASE4_RESULT: incomplete",
+    "all identity fields match this handoff and no Stage 5 dispatch is performed"
+  ]
+}
