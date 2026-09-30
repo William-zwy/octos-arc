@@ -326,3 +326,11 @@ Sheet 更适合作为第一主探针：原子节点较少，先验证 workbook/w
 1. 先用 Sheet 作为短探针；候选包必须重新绑定当前 Agent commit、ZIP SHA、requirements SHA 和 task/suite 身份。
 2. 平台若仍返回 `tests[]=[]`、无 Playwright/report 和无 build identity，只记录 exploratory，不进入业务定点修复 A/B。
 3. 只有出现可复核的真实 test ID/DOM/trace 失败，且身份闭合，才允许进入 GitHub 或第二轮平台 Run；单个候选 Run 触发 quota/余额中断立即 hard-stop，并保留 final reserve。
+
+### 10.5 新增 Run 证据与运行时修复门禁（2026-09-30）
+
+- `09599b312591`（`hackathon--sheet`）在 skeleton 阶段失败：四次尝试均未形成完整 frontend/backend，随后部署因缺少 `backend/package.json` 以 ENOENT 终止；中间态有 `request budget 8 hit`。该 Run 只能证明生成/部署前置失败，不能解释业务测试完成率。
+- `451174abe760`（`hackathon--github`）形成可部署模板并达到 `2/100`，但日志出现 `Flow.checkpoint() got multiple values for argument 'reason'`，同时 skeleton 与首个 implement turn 均触发 request budget 截断；该 TypeError 会提前中止 Agent flow，平台结果保留为 exploratory。
+- `enter_quota_gate()` 将 provider 详情写入 `quota_reason`，避免与 checkpoint 事件名参数冲突；quota hard-stop 的行为和字段由回归测试锁定。
+- skeleton 的 deterministic fallback 只填充缺失或空的 deploy-critical 文件（manifest、入口和静态构建器），不覆盖任何非空业务文件；不完整的既有 manifest 仍由 `has_app()` fail-closed，不能被泛化 scaffold 静默替换。
+- 新增门禁：quota checkpoint 不得抛 `TypeError`；空 workspace fallback 必须通过 `has_app()`，且非空业务文件内容在 fallback 前后完全一致。该门禁不绑定 Sheet/GitHub 或任何旧题名称。

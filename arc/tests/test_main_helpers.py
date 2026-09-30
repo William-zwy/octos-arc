@@ -576,6 +576,108 @@ class CodegenManifestTests(unittest.TestCase):
         self.assertEqual(be["type"], "commonjs")
 
 
+class RecoveryScaffoldTests(unittest.TestCase):
+    def _flow(self, root):
+        import argparse
+        return m.Flow(argparse.Namespace(web_port=3000), root, root / "requirements")
+
+    def test_quota_checkpoint_keeps_provider_reason_without_argument_collision(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            flow = self._flow(root)
+            flow.enter_quota_gate("HTTP 402: billing quota exhausted")
+            self.assertTrue(flow.quota_gated)
+            checkpoints = list((root / ".arc" / "checkpoints").glob("cp-*.json"))
+            self.assertTrue(checkpoints)
+            payload = json.loads(checkpoints[-1].read_text(encoding="utf-8"))
+            self.assertEqual(payload["reason"], "quota_gated")
+            self.assertEqual(payload["quota_reason"], "HTTP 402: billing quota exhausted")
+
+    def test_node_state_reason_is_diagnostic_and_does_not_replace_event(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            flow = self._flow(root)
+            flow.set_node_state("REQ-1", "inconclusive", reason="implement_timeout")
+            checkpoints = list((root / ".arc" / "checkpoints").glob("cp-*.json"))
+            self.assertTrue(checkpoints)
+            payload = json.loads(checkpoints[-1].read_text(encoding="utf-8"))
+            self.assertEqual(payload["reason"], "node_state")
+            self.assertEqual(payload["state_reason"], "implement_timeout")
+
+    def test_fallback_fills_missing_scaffold_and_is_buildable(self):
+        import json
+        import os
+        import shutil
+        import subprocess
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            nested = root / "frontend/src/components"
+            nested.mkdir(parents=True)
+            (nested / "placeholder.txt").write_text("nested", encoding="utf-8")
+            flow = self._flow(root)
+            self.assertTrue(flow.ensure_minimal_scaffold())
+            self.assertTrue(flow.has_app())
+            frontend = json.loads((root / "frontend/package.json").read_text(encoding="utf-8"))
+            backend = json.loads((root / "backend/package.json").read_text(encoding="utf-8"))
+            self.assertEqual(frontend["scripts"]["build"], "node copy.js")
+            self.assertEqual(backend["scripts"]["start"], "node server.js")
+            self.assertTrue((root / "frontend/src/index.html").is_file())
+            self.assertTrue((root / "backend/server.js").is_file())
+            node = shutil.which("node")
+            if not node:
+                self.skipTest("node is required for scaffold build/start smoke")
+            subprocess.run([node, "copy.js"], cwd=root / "frontend", check=True,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            self.assertTrue((root / "frontend/dist/index.html").is_file())
+            self.assertEqual((root / "frontend/dist/components/placeholder.txt").read_text(encoding="utf-8"), "nested")
+            import socket
+            import time
+            import urllib.request
+            with socket.socket() as sock:
+                sock.bind(("127.0.0.1", 0))
+                port = sock.getsockname()[1]
+            env = dict(os.environ, PORT=str(port))
+            server = subprocess.Popen([node, "server.js"], cwd=root / "backend", env=env,
+                                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            try:
+                for _ in range(30):
+                    try:
+                        with urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=0.2) as response:
+                            self.assertEqual(response.status, 200)
+                            break
+                    except Exception:
+                        time.sleep(0.05)
+                else:
+                    self.fail("minimal backend did not become ready")
+            finally:
+                server.terminate()
+                server.wait(timeout=5)
+
+    def test_fallback_never_overwrites_nonempty_business_files(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "frontend").mkdir(parents=True)
+            (root / "backend").mkdir(parents=True)
+            frontend_manifest = root / "frontend/package.json"
+            backend_server = root / "backend/server.js"
+            frontend_manifest.write_text('{"custom":"business"}', encoding="utf-8")
+            backend_server.write_text("// business implementation", encoding="utf-8")
+            flow = self._flow(root)
+            self.assertFalse(flow.ensure_minimal_scaffold())
+            self.assertEqual(frontend_manifest.read_text(encoding="utf-8"), '{"custom":"business"}')
+            self.assertEqual(backend_server.read_text(encoding="utf-8"), "// business implementation")
+
+
 class ExtraPortsBoundTests(unittest.TestCase):
     def test_should_report_unbound_spec_ports_in_grader_like_mode(self):
         import tempfile

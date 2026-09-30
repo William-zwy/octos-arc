@@ -1112,6 +1112,32 @@ NUDGE_PROMPT = """\
 You ended your last turn before creating any files. Stop analysing. In your very next actions CREATE the project files with your file-writing tools: frontend/package.json (build script), the frontend page sources, backend/package.json (start script) and the backend server with the JSON store and seed data. Do not describe the plan — write the files now.\
 """
 
+# Domain-neutral last-resort files keep a budget-truncated generation deployable.
+# Existing files are preserved; the fallback only fills missing or empty entries.
+MINIMAL_FRONTEND_PACKAGE = '{"name":"arc-minimal-frontend","private":true,"scripts":{"build":"node copy.js"}}\n'
+MINIMAL_FRONTEND_COPY = """const fs=require('fs');const path=require('path');
+const src=path.join(__dirname,'src'), out=path.join(__dirname,'dist');
+fs.cpSync(src,out,{recursive:true,force:true});
+console.log('minimal frontend build complete');
+"""
+MINIMAL_FRONTEND_HTML = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Application</title><link rel="stylesheet" href="/styles.css"></head><body><main><h1>Application</h1><p>Ready for feature implementation.</p></main></body></html>\n"""
+MINIMAL_FRONTEND_CSS = """*{box-sizing:border-box}body{margin:0;font:16px system-ui,sans-serif;color:#1f2937;background:#f8fafc}main{max-width:960px;margin:4rem auto;padding:2rem;background:#fff;border:1px solid #e5e7eb}h1{margin-top:0}\n"""
+MINIMAL_BACKEND_PACKAGE = '{"name":"arc-minimal-backend","private":true,"scripts":{"start":"node server.js"}}\n'
+MINIMAL_BACKEND_SERVER = r'''const http=require('http');
+const fs=require('fs');const path=require('path');
+const root=path.join(__dirname,'..','frontend','dist');const port=Number(process.env.PORT||3000);
+function send(res,status,body,type){res.writeHead(status,{'content-type':type||'text/plain; charset=utf-8'});res.end(body)}
+function serve(req,res){const url=new URL(req.url||'/', 'http://127.0.0.1');
+  if(url.pathname==='/health'||url.pathname==='/api/health')return send(res,200,JSON.stringify({ok:true}),'application/json; charset=utf-8');
+  const rel=url.pathname==='/'?'index.html':url.pathname.replace(/^\/+/,''), file=path.resolve(root,rel);
+  if(!file.startsWith(path.resolve(root)+path.sep))return send(res,404,'Not found');
+  try{const body=fs.readFileSync(file);const type=file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'application/octet-stream';send(res,200,body,type)}catch(_){send(res,404,'Not found')}
+}
+const server=http.createServer((req,res)=>{try{serve(req,res)}catch(_){send(res,500,'Internal error')}});
+process.on('uncaughtException',err=>console.error(err));process.on('unhandledRejection',err=>console.error(err));
+server.listen(port,'0.0.0.0',()=>console.log(`listening ${port}`));
+'''
+
 DESIGN_PROMPT = """\
 Design — do NOT implement yet — requirement node {node_id} of the web application in the current directory.
 
@@ -1391,6 +1417,13 @@ class Flow:
 
     def set_node_state(self, node_id: str, state: str, **extra) -> None:
         self.node_states[str(node_id)] = state
+        # ``checkpoint.reason`` is reserved for the event name.  Node-state
+        # callers historically supplied ``reason=...`` as diagnostic detail;
+        # keep that detail under a distinct key so it cannot collide with the
+        # positional event argument.
+        if "reason" in extra:
+            extra = dict(extra)
+            extra["state_reason"] = extra.pop("reason")
         self.checkpoint("node_state", node_id=str(node_id), state=state, **extra)
 
     def enter_quota_gate(self, reason: str) -> None:
@@ -1399,7 +1432,9 @@ class Flow:
         self.quota_gated = True
         log(f"[quota] HARD STOP: {reason[:240]}")
         self.current_phase = "quota_gated"
-        self.checkpoint("quota_gated", reason=reason[:500])
+        # `reason` names the checkpoint event; keep provider detail separate
+        # so a billing stop cannot crash the whole flow via duplicate kwargs.
+        self.checkpoint("quota_gated", quota_reason=reason[:500])
 
     def write_run_identity(self, tree: dict) -> None:
         """Persist enough identity to reject a misleading suite/result pairing."""
@@ -2529,6 +2564,36 @@ class Flow:
                 return
             self.commit(f"fix: full-suite repair {attempt + 1}")
 
+    def ensure_minimal_scaffold(self) -> bool:
+        """Fill missing deploy-critical files after a truncated model turn.
+
+        This is deliberately additive: a non-empty file belongs to the model's
+        output and is never replaced by the generic scaffold.  That keeps the
+        recovery path domain-neutral without erasing partial business work.
+        """
+        root = self.output_dir
+        files = {
+            "frontend/package.json": MINIMAL_FRONTEND_PACKAGE,
+            "frontend/copy.js": MINIMAL_FRONTEND_COPY,
+            "frontend/src/index.html": MINIMAL_FRONTEND_HTML,
+            "frontend/src/styles.css": MINIMAL_FRONTEND_CSS,
+            "backend/package.json": MINIMAL_BACKEND_PACKAGE,
+            "backend/server.js": MINIMAL_BACKEND_SERVER,
+        }
+        for relative, content in files.items():
+            path = root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            # Never replace a non-empty model-generated file.  A malformed or
+            # incomplete manifest remains visible to the normal scaffold gate,
+            # which can report the failure instead of silently losing work.
+            try:
+                if path.exists() and (not path.is_file() or path.stat().st_size):
+                    continue
+            except OSError:
+                continue
+            path.write_text(content, encoding="utf-8")
+        return self.has_app()
+
     # -- skeleton ---------------------------------------------------------
     def skeleton(self, tree: dict) -> None:
         log("[flow] skeleton turn starting")
@@ -2547,6 +2612,8 @@ class Flow:
                     self.turn(NUDGE_PROMPT, 600, f"nudge {nudge}/2")
                     if self.has_app():
                         break
+            if not self.has_app() and self.ensure_minimal_scaffold():
+                log("[flow] deterministic minimal scaffold filled missing deploy files")
             if self.has_app():
                 self.queue_structural_corrections(enqueue=False)
                 self.commit("chore: scaffold web application skeleton")
