@@ -274,4 +274,5 @@
 - 在 `ARC_BENCH_ROUND345_FINAL_PLAN_20260930.md` 追加两次 requirement-only Run 的阶段 3纠错、跨 Run 成绩/成本波动、Agent/Skill 分层候选和单探针 Go/No-Go。
 - 纠正 stdout/stderr 镜像造成的重复计数：Sheet request-budget hit 为 29 个逻辑事件、rehearsal 独立失败 2 次；GitHub 分别为 51 和 1。两次最终 rehearsal、平台部署和官方 evaluation 均已到达。
 - 记录所有 24/47 节点均命中 cap 8、`.arc/design` 写入会污染 `wrote=True`、当前 implementation 状态缺少 product-source delta 证据，以及 `arc-project-context` 尚未进入上传 ZIP/运行工具链的事实。
+- 后续复核收窄 verification regime 的因果表述，拆分 `candidate_identity_closed` 与 `platform_identity_inconclusive`，并标记未镜像原始附件时本节仅为 analysis-only、不能作为阶段 5最终裁决。
 - 本次只修改协作文档，没有修改 Agent、Skill、ZIP、requirements 或官方测试，也没有启动平台 Run。

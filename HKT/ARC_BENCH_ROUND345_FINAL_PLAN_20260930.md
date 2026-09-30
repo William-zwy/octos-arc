@@ -337,7 +337,7 @@ Sheet 更适合作为第一主探针：原子节点较少，先验证 workbook/w
 
 ## 11. 修复候选 `1821c3f5` 双 Run 只读复盘（2026-09-30）
 
-本节归并 `2b6a1f545c37`（Sheet）与 `0564f5955f16`（GitHub）的阶段 3只读审计。原始附件仍位于用户侧归档目录，尚未镜像进仓库；本节只记录可由 Run JSON、logs、traceability、发布 sidecar 和当前源码相互核验的事实。本轮只更新计划和变更日志，不修改 Agent、Skill、ZIP、requirements 或官方测试，也不启动平台 Run。
+本节归并 `2b6a1f545c37`（Sheet）与 `0564f5955f16`（GitHub）的阶段 3只读审计。原始附件仍位于用户侧归档目录，尚未镜像进仓库；本节只记录可由 Run JSON、logs、traceability、发布 sidecar 和当前源码相互核验的事实。由于仓库中没有这些原始附件，本节属于 `analysis_only / evidence_not_independently_reproducible`，不能单独作为阶段 5最终裁决或修改授权；后续裁决仍须先镜像并校验原始证据。本轮只更新计划和变更日志，不修改 Agent、Skill、ZIP、requirements 或官方测试，也不启动平台 Run。
 
 ### 11.1 终态和证据边界
 
@@ -366,7 +366,7 @@ Agent 的 `log()` 同时写 stdout 和 stderr，平台聚合日志又保留两�
 - 两次 favicon reset 都在后续 rehearsal 中恢复，最终平台服务也成功监听。它是通用 unknown-path/连接生命周期风险，不是本轮 `0/100` 的已确认根因；历史 `34/34` BookStack Run 也曾出现并恢复同类中间噪声。
 - 发布 ZIP 的 SHA-256 `9b7b39d38efde6cf75f4129a70dbcf421faff9f7a0e34b536737ed3b8cd51f1e` 与 sidecar 可绑定源码提交 `1821c3f5e99836765d23c0f0b7b49d5155e150ab`。运行日志却将生成 workspace 的 Git HEAD 分别打印为 Sheet `d5b777...`、GitHub `00fdb8...`，原因是 `OCTOS_AGENT_COMMIT` 未注入时 `write_run_identity()` 回退到 `self.head()`；这些值不是 Agent 源码提交。平台 Run 对象仍没有 generation identity。
 - 日志计算出了 requirements 内容哈希（Sheet `b3f5f6...`、GitHub `64e8a0...`），它与整个 requirements ZIP 的 SHA-256 属于不同口径，不能互相替代或判为冲突。
-- 当前发布 sidecar 明确绑定 `hackathon--sheet`。同一个通用 Agent ZIP 被用于 GitHub 可以执行，但该 sidecar 不能为 GitHub Run 提供严格 task/suite/requirements 身份闭环；GitHub 后续候选必须单独生成正确 binding。
+- 当前发布 sidecar 明确绑定 `hackathon--sheet`。同一个通用 Agent ZIP 被用于 GitHub 可以执行，但该 sidecar 不能为 GitHub Run 提供严格 task/suite/requirements 身份闭环；GitHub 后续候选必须单独生成正确 binding。即使候选侧 embedded build、ZIP SHA 和专用 binding 全部一致，也只表示 `candidate_identity_closed`；只要平台仍不回传 generation identity、task snapshot 或可核验的 submission/ZIP 绑定，平台侧仍是 `platform_identity_inconclusive`，该 Run 仍不能升级为严格 A/B。
 
 ### 11.3 “流程跑完但仍为 0 分”的机制解释
 
@@ -397,7 +397,7 @@ Agent 的 `log()` 同时写 stdout 和 stderr，平台聚合日志又保留两�
 | Sheet | `39626bbcf702`：`0/100`，约 `3.61 CNY`；`09599b312591`：skeleton 失败、`0/0`，约 `1.00 CNY` | 无稳定业务分 | `2b6a1f545c37`：`0/100`，约 `5.68 CNY` | 新候选把 skeleton/deploy 前置失败推进到完整测试，但没有分数收益；相对 `396...` 成本和耗时上升，仍是系统性 requirement-only 收敛问题 |
 | GitHub | `1c498c860d81`：`0/100`，约 `9.68 CNY`；`451174abe760`：checkpoint 崩溃后仍为 `2/100`，约 `0.88 CNY` | `451...` 只实现到首节点，不能作完整基线 | `0564f5955f16`：`0/100`，约 `10.56 CNY` | checkpoint/fallback 修复让请求、token、耗时和费用大幅增加并跑完 47 节点，但观察分数 `2→0`；这是非严格、单样本的 score regression，不能证明修复导致回归 |
 
-新旧 ZIP、生成随机性、缺失 task snapshot/官方测试明细和不完整身份链使这些 Run 不是严格 A/B。最重要的经验不是“继续把 8 调大”：历史 Sheet 大预算 Run 也长期接近零分；相反，Web BookStack `34/34`、Stack Overflow `60/66` 等可见 acceptance 反馈任务证明，Agent 在有具体失败证据时能够收敛。当前差异主要是 verification regime，而不是可据单次结果断言模型整体退化。
+新旧 ZIP、生成随机性、缺失 task snapshot/官方测试明细和不完整身份链使这些 Run 不是严格 A/B。最重要的经验不是“继续把 8 调大”：历史 Sheet 大预算 Run 也长期接近零分；相反，Web BookStack `34/34`、Stack Overflow `60/66` 等可见 acceptance 反馈任务证明，Agent 在有具体失败证据时能够收敛。verification regime 是当前最显著且可确认的流程差异之一，也是强候选优化方向；由于没有因果 A/B，不能据此断言它是分数差异的唯一原因，也不能据单次结果断言模型整体退化。
 
 ### 11.5 Agent 层候选方案
 
@@ -407,7 +407,7 @@ Agent 的 `log()` 同时写 stdout 和 stderr，平台聚合日志又保留两�
 | P0 | deterministic scaffold 前置：空 workspace 先由 harness 写最小可部署骨架，再开始业务 turn，不再先消耗 skeleton+nudge 三个 LLM turn | 每 Run 直接省去 3 个已证实无产出的 cap-8 turn，降低部署前失败率 | 通用骨架可能对模型形成架构锚定 | 同一需求下 skeleton 请求数 `3→0`、time-to-first-product-write、最终 app shape 和 build/start 结果 |
 | P0 | requirement-only vertical slice：按 requirement tree 顶层模块、共享数据模型、路由和页面聚类，先实现高扇出骨干，再实现交互/边界；不绑定 Sheet/GitHub 名称 | 减少 24/47 次冷启动和重复读取；统一共享状态、路由与页面语义 | slice 太大可能输出截断或扩大回归面 | 相同模型/需求下 requests、prompt tokens、冷启动数、product-delta 密度、模块契约覆盖和成本；平台只作后置探针 |
 | P0 | harness 外部验证：模型 turn 后由 harness 执行 build、start、health、unknown-path 404、设计中已声明 route 和最小 DOM/可访问语义检查；模型自述不计 verified | 不占 LLM request 预算；尽早发现语法、启动和共享路由回归 | requirement-derived probe 可能与隐藏测试不一致 | 清楚区分 `inferred_local` 与 `official`；保存命令、退出码、HTTP/DOM 观察值；不得生成 `test_passed` 官方结论 |
-| P0 | 运行身份读取 ZIP 内 `agent-build.json`，并为 Sheet/GitHub 分别生成 task/suite/requirements binding | 不直接提分，但使下一轮才有资格作严格 A/B | 平台仍可能不回传 submission/task snapshot | 日志中的 full Agent commit/build id 与 sidecar 完全一致；Run、ZIP、task、suite、requirements 五元组闭合 |
+| P0 | 运行身份读取 ZIP 内 `agent-build.json`，并为 Sheet/GitHub 分别生成 task/suite/requirements binding | 不直接提分；先闭合候选侧身份，为后续可比性提供必要条件，但不自动形成严格 A/B | 平台仍可能不回传 submission/task snapshot；专用 binding 不能替代平台五元组 | 日志中的 full Agent commit/build id 与 sidecar 完全一致，标记 `candidate_identity_closed`；只有平台也回传并匹配 Run、submission/ZIP、task、suite、requirements 才标记 `platform_identity_closed`，否则保持 exploratory |
 | P1 | phase-aware request budget：不全局盲升 8；预注入相关上下文，要求前 2–4 requests 出现产品写入；只读到阈值则中止、压缩上下文并允许一次续跑；为外部验证预留预算 | 同时降低重复读取与强制结束；预算随实际工作阶段分配 | 首写阈值过紧会截断复杂 legacy 分析 | time-to-first-write、重复 read 次数、cap-hit 率、productive request 比例、单 slice 成本；与固定 8 做成对本地试验 |
 | P1 | best checkpoint + 单调回归：每个通过本地 contract 的 slice 建快照；后续变更至少回归既有核心 route/role/name/持久化读回，失败则恢复 best state | 防止“节点越多、完成率越低”的破坏性积累 | inferred contract 不完整；回滚可能丢失部分有价值改动 | 每次回归的受影响文件、通过/失败 contract、恢复 SHA；不以无测试的 source diff 作为 best |
 | P1 | favicon/startup 固化为确定性 runtime contract，在每个 slice 边界运行；失败时只给一次带 server tail 和相关源片段的聚焦 repair | 提前捕获两次 Run 都出现的 unknown-path 风险，避免终局大修 | 自动改写业务 server 风险高，因此只允许验证和聚焦 repair，不做字符串式盲补丁 | `/favicon.ico`、未知页面、未知 API 均返回 HTTP 响应且进程存活；连续相同失败停止 |
@@ -433,7 +433,7 @@ Agent 的 `log()` 同时写 stdout 和 stderr，平台聚合日志又保留两�
 
 仅在以下门禁全部满足后，允许一次新的 Sheet 单探针：
 
-1. Agent 日志读取 embedded build identity，候选包、task、suite、requirements binding 完整且一致；
+1. Agent 日志读取 embedded build identity，候选包、task、suite、requirements binding 完整且一致，先达到 `candidate_identity_closed`；这不代表平台身份已闭合；
 2. project-map/source-cache 已在真实解包运行时可调用，或等价的 harness 预计算路径有明确日志和测试；
 3. `.arc` 写入与 frontend/backend product delta 分离，无 product delta 的节点绝不记 implemented；
 4. 空 workspace 不再消耗三轮 skeleton/nudge；本地 fixture 中首个业务 slice 在 2–4 requests 内产生 product delta；
@@ -441,4 +441,4 @@ Agent 的 `log()` 同时写 stdout 和 stderr，平台聚合日志又保留两�
 6. 本地固定需求试验相较当前路径显著降低 cap-hit、重复读取和 prompt tokens，且无已知旧高分 fixture 回归；
 7. 单次 Sheet 平台预算设硬上限并保留总预算至少 25%（`50–75 CNY`）作为终版 reserve。
 
-该 Sheet 探针仍只标记 exploratory。满足以下任一条件才讨论 GitHub：Sheet 平台出现可复核的非零改善；或平台虽继续隐藏测试明细，但 product-delta、inferred contract、部署和身份链全部闭合且成本低于预设上限。若仍为 `tests=[]` 且本地证据未改善，停止平台消耗，不用单次分数驱动业务猜测或全局抬高 request budget。
+该 Sheet 探针仍只标记 exploratory。专用 binding 和候选侧闭合不等于平台五元组闭合；平台没有回传并匹配 generation identity、submission/ZIP、task snapshot、suite 和 requirements 时，必须继续标记 `platform_identity_inconclusive`。满足以下任一条件才讨论 GitHub：Sheet 平台出现可复核的非零改善；或平台虽继续隐藏测试明细，但 product-delta、inferred contract、部署和候选侧身份链全部闭合且成本低于预设上限。即便进入 GitHub，也不能把该条件描述成严格 A/B。若仍为 `tests=[]` 且本地证据未改善，停止平台消耗，不用单次分数驱动业务猜测或全局抬高 request budget。
