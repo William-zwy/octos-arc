@@ -281,13 +281,12 @@ Sheet 更适合作为第一主探针：原子节点较少，先验证 workbook/w
 
 ### 8.8 远程发布产物
 
-- [Sheet Agent ZIP（直接上传）](https://github.com/William-zwy/octos-p/raw/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-0512b15a.zip)
-- [ZIP binding](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-0512b15a.binding.json)
-- [ZIP shape manifest](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-0512b15a.shape.json)
-- [ZIP validation report](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-0512b15a.validated.json)
-- [ZIP checksum](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-0512b15a.zip.sha256)
+- [Sheet Agent ZIP（当前修复候选）](https://github.com/William-zwy/octos-p/raw/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-c0976cc2.zip)
+- [ZIP binding](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-c0976cc2.binding.json)
+- [ZIP shape manifest](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-c0976cc2.shape.json)
+- [ZIP checksum](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-c0976cc2.zip.sha256)
 
-上述包绑定 task/suite `hackathon--sheet`、需求 ZIP SHA `9884F23EA10C3DFEEE170D1EED57966C8FCE9A5CE18A0AC43B3D7942EBA8C414` 和 Agent commit `0512b15ad64341ad30a499026bae77fdb01d5d32`。平台若返回不同的 suite key，必须重新打包，不得直接复用该 ZIP。
+上述包绑定 task/suite `hackathon--sheet`、需求 ZIP SHA `9884F23EA10C3DFEEE170D1EED57966C8FCE9A5CE18A0AC43B3D7942EBA8C414` 和 Agent commit `c0976cc289f22a5f5f14cc1e9493a48296d70177`。平台若返回不同的 suite key，必须重新打包，不得直接复用该 ZIP。
 
 ## 9. 协作门禁
 
