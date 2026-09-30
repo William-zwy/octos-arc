@@ -55,10 +55,10 @@ Round 3/4/5 的运行时保护只有在交付包不丢文件、身份不漂移�
 - `arc/pack.ps1` 与 `arc/pack.sh` 都纳入 `run_controls.py`、构建身份和包形状门禁；Windows 使用 Python ZIP 写入，Git Bash 通过 `cygpath` 将 Python 参数转换为原生路径。
 - `agent-build.json` 绑定源提交、payload tree SHA 和 build id；sidecar 绑定 task key、suite key、需求包 SHA 与最终 ZIP SHA。
 - 离线解包后执行 `import main` smoke，并拒绝危险/重复/禁止条目、缺失身份和 placeholder identity。
-- 当前需求包 `E:\飞书下载\arcbench-hackathon-requirements (3).zip` 的 SHA-256 为 `9884F23EA10C3DFEEE170D1EED57966C8FCE9A5CE18A0AC43B3D7942EBA8C414`。它同时包含 `hackathon--sheet` 和 `hackathon--github`；正式上传前必须使用平台实际分配的 suite key，不能用本地猜测值冒充官方绑定。
+- 当前 [需求包远程镜像](https://github.com/William-zwy/octos-p/raw/codex/hkt-round345-integration/evidence/arc-bench/inputs/arcbench-hackathon-requirements-3.zip) 的 SHA-256 为 `9884F23EA10C3DFEEE170D1EED57966C8FCE9A5CE18A0AC43B3D7942EBA8C414`。它同时包含 `hackathon--sheet` 和 `hackathon--github`；正式上传前必须使用平台实际分配的 suite key，不能用本地猜测值冒充官方绑定。
 - 当前 ZIP 仍包含 `public-tests` 作为本地回归夹具；它不是新题私有官方 suite，也不能作为官方成绩证据。若发布流程要求最小包，应在平台契约明确后再单独裁剪并重新计算所有 SHA。
 
-门禁验证：从 `arc/` 运行定向测试共 `60`（`OK, skipped=1`；唯一跳过项是本机没有独立 `sh` 命令的语法测试）；递归 `py_compile`、`git diff --check`、`node skills/arc-project-context/test.js`（8 assertions）通过。PowerShell 和 `E:\Program Files\Git\bin\bash.exe` 两条打包链路均使用真实需求包 SHA 完成结构/离线导入检查；Git Bash 自动跳过无 PyYAML 的 Windows Store `python3` shim，选择可用解释器。修复提交为 `a77443c0c960adf23eb0a01f5e87f4c31453e2e5`，已由 Integrator 接入。
+门禁验证：从 `arc/` 运行定向测试共 `60`（`OK, skipped=1`；唯一跳过项是本机没有独立 `sh` 命令的语法测试）；递归 `py_compile`、`git diff --check`、`node skills/arc-project-context/test.js`（8 assertions）通过。PowerShell 和 Windows Git Bash 两条打包链路均使用真实需求包 SHA 完成结构/离线导入检查；Git Bash 自动跳过无 PyYAML 的 Windows Store `python3` shim，选择可用解释器。修复提交为 `a77443c0c960adf23eb0a01f5e87f4c31453e2e5`，已由 Integrator 接入。
 
 ### 2B. 通用上下文 Skill 已落地
 
@@ -72,7 +72,7 @@ Round 3/4/5 的运行时保护只有在交付包不丢文件、身份不漂移�
 验证记录：
 
 - `node skills/arc-project-context/test.js`：退出码 `0`，8 项行为断言通过。
-- `python D:/DataMove/codex/skills/.system/skill-creator/scripts/quick_validate.py skills/arc-project-context`：退出码 `0`。
+- `skill-creator quick_validate.py skills/arc-project-context`：退出码 `0`（脚本属于用户级技能环境，不纳入项目仓库）。
 - 尚未进行平台 Run；本 Skill 的缓存命中率和最终比赛完成率仍需在后续探索性 Run 中观察，不能预先宣称因果收益。
 
 开源复用审查：仓库已有 `arc/acceptance.py` 的 SHA-256 文件指纹逻辑、Rust `globset`/`walkdir`/`sha2` 依赖，以及 Agent 内部 `file_state_cache`；这些组件分别服务于 Python 验收、Rust 工具层和进程内文件状态，不能直接作为独立 Skill 的 stdin/stdout 入口。当前 Skill 因需零安装、跨 Windows/Linux 直接运行，使用 Node.js 标准库实现协议适配和原子缓存，不新增重复第三方依赖；其路径边界、SHA 指纹和忽略目录规则与现有实现保持一致。后续若宿主暴露 `file_state_cache` 或稳定的 `walkdir` Skill API，应优先替换此适配层，而不是继续扩展本地实现。
@@ -216,48 +216,48 @@ Sheet 更适合作为第一主探针：原子节点较少，先验证 workbook/w
 
 ### 8.1 项目权威记录
 
-- `D:/DataMove/codex/worktrees/2c74/AI智能体软件工厂黑客松/HKT/ARC_BENCH_HACKATHON_PROJECT_MEMORY.md`
-- `D:/DataMove/codex/worktrees/2c74/AI智能体软件工厂黑客松/HKT/ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md`
-- `D:/DataMove/codex/worktrees/2c74/AI智能体软件工厂黑客松/HKT/ARC_BENCH_HACKATHON_EXECUTION_PLAN.md`
-- `D:/DataMove/codex/worktrees/2c74/AI智能体软件工厂黑客松/HKT/ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md`
-- `D:/DataMove/codex/worktrees/2c74/AI智能体软件工厂黑客松/HKT/ARC_BENCH_HACKATHON_PHASE5_CONTEXT_HANDOFF.md`
-- `D:/DataMove/codex/worktrees/2c74/AI智能体软件工厂黑客松/HKT/SUMMARY.md`
-- `D:/DataMove/codex/worktrees/2c74/AI智能体软件工厂黑客松/HKT/CHANGELOG_20260924.md`
+- [项目记忆](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/ARC_BENCH_HACKATHON_PROJECT_MEMORY.md)
+- [阶段 5 决策台账](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/ARC_BENCH_HACKATHON_PHASE5_DECISION_REGISTER.md)
+- [执行计划](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/ARC_BENCH_HACKATHON_EXECUTION_PLAN.md)
+- [阶段 5 协作工作流](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/ARC_BENCH_HACKATHON_PHASE5_COLLABORATION_WORKFLOW.md)
+- [阶段 5 上下文交接](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/ARC_BENCH_HACKATHON_PHASE5_CONTEXT_HANDOFF.md)
+- [项目摘要](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/SUMMARY.md)
+- [变更日志](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/CHANGELOG_20260924.md)
 
 ### 8.2 Round 3/4/5 方案记录
 
-- `.../HKT/optimization-round-3-agent-runtime-plan-0927.md`
-- `.../HKT/optimization-round-4-rewrite-budget-0927.md`
-- `.../HKT/optimization-round-5-core-regression-0927.md`
-- `.../HKT/optimization-round-2-application-contract-0927.md`
-- `.../HKT/optimization-round-1-0926.md`
-- `.../HKT/optimization-round-1-v2-0926.md`
+- [Round 3 runtime plan](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/optimization-round-3-agent-runtime-plan-0927.md)
+- [Round 4 rewrite budget](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/optimization-round-4-rewrite-budget-0927.md)
+- [Round 5 core regression](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/optimization-round-5-core-regression-0927.md)
+- [Round 2 application contract](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/optimization-round-2-application-contract-0927.md)
+- [Round 1](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/optimization-round-1-0926.md)
+- [Round 1 v2](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/optimization-round-1-v2-0926.md)
 
 ### 8.3 最近 Run 与 Evolution 证据
 
-- `.../HKT/ARC_BENCH_EVOLUTION_RUN_PAIR_HANDOFF_20260930.md`
-- `.../evidence/arc-bench/evolution-run-pair-20260930.json`
-- `.../HKT/ARC_BENCH_WEB_BOOKSTACK_RUN_53A102F3EE96_HANDOFF_20260930.md`
-- `.../HKT/ARC_BENCH_WEB_KEEP_RUN_C68BEF1A6343_HANDOFF_20260930.md`
-- `.../HKT/ARC_BENCH_LITE_KEEP_RUN_8EA6503BFA95_HANDOFF_20260930.md`
-- `.../HKT/ARC_BENCH_WEB_STACKOVERFLOW_RUN_CA67B1D8EE97_HANDOFF_20260930.md`
-- `.../evidence/arc-bench/web-stackoverflow-run-ca67b1d8ee97.json`
-- `.../evidence/arc-bench/runs/ca67b1d8ee97/phase3-analysis.md`
-- `.../evidence/arc-bench/runs/ca67b1d8ee97/phase4-handoff.json`
-- `.../evidence/arc-bench/phase5-coordination.json`
-- `.../evidence/arc-bench/phase4-thread-registry.json`
+- [Evolution 配对交接](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/ARC_BENCH_EVOLUTION_RUN_PAIR_HANDOFF_20260930.md)
+- [Evolution 配对索引](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/evolution-run-pair-20260930.json)
+- [Web BookStack Run 交接](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/ARC_BENCH_WEB_BOOKSTACK_RUN_53A102F3EE96_HANDOFF_20260930.md)
+- [Web Keep Run 交接](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/ARC_BENCH_WEB_KEEP_RUN_C68BEF1A6343_HANDOFF_20260930.md)
+- [Lite Keep Run 交接](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/ARC_BENCH_LITE_KEEP_RUN_8EA6503BFA95_HANDOFF_20260930.md)
+- [Web StackOverflow Run 交接](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/HKT/ARC_BENCH_WEB_STACKOVERFLOW_RUN_CA67B1D8EE97_HANDOFF_20260930.md)
+- [Web StackOverflow 机器记录](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/web-stackoverflow-run-ca67b1d8ee97.json)
+- [阶段 3 分析](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/runs/ca67b1d8ee97/phase3-analysis.md)
+- [阶段 4 handoff](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/runs/ca67b1d8ee97/phase4-handoff.json)
+- [阶段 5 协同索引](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/phase5-coordination.json)
+- [阶段 4 线程注册表](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/phase4-thread-registry.json)
 
 ### 8.4 额度中断记录
 
-- `D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松/docs/ARC_BENCH_RUN_E5CB3CA21874_QUOTA_INTERRUPTION_ANALYSIS.md`
-- `D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松/docs/ARC_BENCH_RUN_06612411282D_QUOTA_INTERRUPTION_ANALYSIS.md`
-- `D:/DataMove/codex/worktrees/9015/AI智能体软件工厂黑客松/docs/ARC_BENCH_RUN_FB4903ECEF12_QUOTA_INTERRUPTION_ANALYSIS.md`
+- [Run E5CB3CA21874 quota 分析](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/quota/ARC_BENCH_RUN_E5CB3CA21874_QUOTA_INTERRUPTION_ANALYSIS.md)
+- [Run 06612411282D quota 分析](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/quota/ARC_BENCH_RUN_06612411282D_QUOTA_INTERRUPTION_ANALYSIS.md)
+- [Run FB4903ECEF12 quota 分析](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/quota/ARC_BENCH_RUN_FB4903ECEF12_QUOTA_INTERRUPTION_ANALYSIS.md)
 
 记录摘要：三次额度中断均出现 timeout/proxy/repair guard 后仍继续计费；项目归纳分别报告约 `71/86`、`32/117`、`83/125`，并确认没有 OOM 作为主因。具体金额、请求数和哈希在最终 Run 前应重新从原文核验。
 
 ### 8.5 新题 requirements ZIP
 
-- `E:/飞书下载/arcbench-hackathon-requirements (3).zip`
+- [新题 requirements ZIP（远程镜像）](https://github.com/William-zwy/octos-p/raw/codex/hkt-round345-integration/evidence/arc-bench/inputs/arcbench-hackathon-requirements-3.zip)
 - `hackathon--sheet/requirements.yaml`：Workbook、Worksheet、Grid、Formula、CSV、排序/过滤、验证、Pivot 等能力。
 - `hackathon--sheet/reference/`：9 张界面参考图。
 - `hackathon--github/requirements.yaml`：Identity、Organization、Repository、Version Control、Issue、Pull Request、Review、Merge、权限等能力。
@@ -265,20 +265,29 @@ Sheet 更适合作为第一主探针：原子节点较少，先验证 workbook/w
 
 ### 8.6 Agent 源码与运行时材料
 
-- `D:/DataMove/codex/worktrees/aeb0/AI智能体软件工厂黑客松/arc/main.py`
-- `D:/DataMove/codex/worktrees/aeb0/AI智能体软件工厂黑客松/arc/llm_proxy.py`
-- `D:/DataMove/codex/worktrees/aeb0/AI智能体软件工厂黑客松/arc/guard.py`
-- `D:/DataMove/codex/worktrees/aeb0/AI智能体软件工厂黑客松/arc/acceptance.py`
-- `D:/DataMove/codex/worktrees/aeb0/AI智能体软件工厂黑客松/arc/metrics.py`
-- `D:/DataMove/codex/worktrees/aeb0/AI智能体软件工厂黑客松/skills/arc-run-log-collector/SKILL.md`
-- `D:/DataMove/codex/worktrees/aeb0/AI智能体软件工厂黑客松/docs/app-skill-dev-guide-zh.md`
-- `C:/Users/dayuruozhi/.agents/skills/reliable-git-sync/SKILL.md`
-- `C:/Users/dayuruozhi/.agents/skills/reliable-git-sync/references/workflow.md`
+- [Agent 主流程](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/arc/main.py)
+- [LLM proxy](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/arc/llm_proxy.py)
+- [Guard](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/arc/guard.py)
+- [Acceptance](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/arc/acceptance.py)
+- [Metrics](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/arc/metrics.py)
+- [Run log collector Skill](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/skills/arc-run-log-collector/SKILL.md)
+- [App Skill 开发指南](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/docs/app-skill-dev-guide-zh.md)
+- `reliable-git-sync` 是用户级技能，不属于项目仓库；队友需在自己的 Codex 环境安装同名技能。
 
 ### 8.7 子智能体只读评估
 
 - `budget_plan`：核算 36 小时/200–300 CNY 下的动态 Run 矩阵、止损线和交付排程。
 - `r345_scope`：评估 Round 3/4/5 最小高收益并入范围、失败分类、checkpoint、rewrite 和 capped regression。
+
+### 8.8 远程发布产物
+
+- [Sheet Agent ZIP（直接上传）](https://github.com/William-zwy/octos-p/raw/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-0512b15a.zip)
+- [ZIP binding](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-0512b15a.binding.json)
+- [ZIP shape manifest](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-0512b15a.shape.json)
+- [ZIP validation report](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-0512b15a.validated.json)
+- [ZIP checksum](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-0512b15a.zip.sha256)
+
+上述包绑定 task/suite `hackathon--sheet`、需求 ZIP SHA `9884F23EA10C3DFEEE170D1EED57966C8FCE9A5CE18A0AC43B3D7942EBA8C414` 和 Agent commit `0512b15ad64341ad30a499026bae77fdb01d5d32`。平台若返回不同的 suite key，必须重新打包，不得直接复用该 ZIP。
 
 ## 9. 协作门禁
 
@@ -288,3 +297,4 @@ Sheet 更适合作为第一主探针：原子节点较少，先验证 workbook/w
 - 平台结果必须绑定 task、suite、requirements、Agent build/commit、ZIP/submission 和 Run 配置；缺字段只能作为 exploratory。
 - 终版前必须完成 `git diff --check`、本地测试/静态检查、打包身份检查和工作树清洁验证。
 - 当前首次打包状态：PowerShell/Git Bash 本地 fixture 包均通过形状、身份和离线导入门禁；正式平台上传保持 `NO-GO`，直到平台提供与需求包精确对应的 suite key、task snapshot（以及可记录的 submission/ZIP SHA）。
+- 远程协作规则：提交到远程后，协作文档只引用当前分支的 GitHub `blob`/`raw` 地址；本机绝对路径只能保留在“来源 provenance/不可远程读取”说明中，不能作为队友唯一入口。新增证据、输入镜像和发布包必须在同一同步周期内提交并验证远程存在。
