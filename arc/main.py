@@ -43,7 +43,8 @@ Environment (all optional):
     OCTOS_ARC_DESTREAM        "0" lets streaming requests reach the platform as SSE (default: one JSON response upstream)
     OCTOS_ARC_TRIM_PROMPT     "0" keeps the kernel system prompt and all tool schemas (default: drop ARC-irrelevant sections/tools)
     OCTOS_ARC_DROP_SHELL      "0" leaves bash/shell available in minimal-verification turns (default: removed)
-    OCTOS_ARC_IMPLEMENT_REQUESTS / OCTOS_ARC_REPAIR_REQUESTS  hard per-turn request caps enforced at the proxy (20 for small tasks / 10; 0 = off)
+    OCTOS_ARC_IMPLEMENT_REQUESTS / OCTOS_ARC_REPAIR_REQUESTS  hard per-turn request caps enforced at the proxy (20 small / 16 multi-node implement, 10 repair; 0 = off)
+    OCTOS_ARC_SKELETON_REQUESTS  per-turn request cap for the scaffold turn (default max(20, implement budget))
     OCTOS_ARC_REWRITE_ON_ZERO "0" disables the single full-rewrite turn when round 0 passes nothing
     OCTOS_ARC_INLINE_SOURCE_CHARS  budget for quoting the app's sources into repair/rewrite prompts (40000; 0 = off)
     OCTOS_ARC_MAX_TOKENS      minimum max_tokens the proxy enforces on chat requests (32768; kernel arc.11 sends 4096)
@@ -1717,9 +1718,24 @@ class Flow:
         return out
 
     def implement_request_budget(self) -> int:
-        """Return a finite default; zero/unbounded requests caused quota tails."""
+        """Requests one implement turn may spend before the proxy forces it to
+        finish. Finite (zero/unbounded requests caused quota tails), but not so
+        small the turn is cut before it writes code: platform runs 2b6a1f545c37
+        (sheet 0/24) and 0564f5955f16 (github 0/47) hit "request budget 8 hit"
+        on every node and ended wrote=False verified=False, feature 0%. A
+        multi-node node still needs to read context, write files, and verify,
+        so the multi-node default is 16, not 8."""
         return int(os.environ.get("OCTOS_ARC_IMPLEMENT_REQUESTS",
-                                  "20" if self.minimal_mode(getattr(self, "n_nodes", 99)) else "8"))
+                                  "20" if self.minimal_mode(getattr(self, "n_nodes", 99)) else "16"))
+
+    def skeleton_request_budget(self) -> int:
+        """The skeleton turn scaffolds a whole app shell (both package.json
+        files, entrypoints, build/start scripts) in one turn; on the two runs
+        above the first "request budget 8 hit" fired during skeleton attempt 1,
+        so neither end got scaffolded. Give it at least the implement budget,
+        and never below 20."""
+        default = max(20, self.implement_request_budget())
+        return int(os.environ.get("OCTOS_ARC_SKELETON_REQUESTS", str(default)))
 
     def rewrite_request_budget(self) -> int:
         """One bounded rewrite, preserving a request reserve for final checks."""
@@ -2605,7 +2621,8 @@ class Flow:
         for attempt in range(1, 5):
             if self.time_up():
                 raise RuntimeError("time budget exhausted before the skeleton existed")
-            ok, text = self.turn(prompt, self.node_timeout, f"skeleton attempt {attempt}")
+            ok, text = self.turn(prompt, self.node_timeout, f"skeleton attempt {attempt}",
+                                 request_budget=self.skeleton_request_budget())
             if ok and not self.has_app():
                 log("[flow] skeleton turn wrote no frontend/backend; nudging")
                 for nudge in range(1, 3):

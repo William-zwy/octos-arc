@@ -203,6 +203,32 @@ class RewriteBudgetTests(unittest.TestCase):
         self.assertEqual(flow.implement_request_budget(), 20)
         self.assertLessEqual(flow.rewrite_request_budget(), 8)
 
+    def test_should_give_multi_node_implement_enough_requests_to_write_code(self):
+        """Platform runs 2b6a1f545c37 (sheet 0/24) and 0564f5955f16 (github
+        0/47) hit "request budget 8 hit" on every node — turns were forced to
+        finish before code was written (wrote=False verified=False, feature
+        0%). A multi-node implement turn needs enough requests to read, write,
+        and verify one node, not the starvation cap of 8."""
+        import os
+        flow = self._flow()
+        flow.n_nodes = 32
+        os.environ.pop("OCTOS_ARC_IMPLEMENT_REQUESTS", None)
+        self.assertGreaterEqual(flow.implement_request_budget(), 16)
+
+    def test_should_give_skeleton_room_to_scaffold_both_ends(self):
+        """The skeleton turn writes a whole app shell (frontend + backend
+        package.json, entrypoints, build/start scripts). On the same two runs
+        the very first "request budget 8 hit" fired during "skeleton attempt
+        1", so the scaffold could not finish either end. It must get a larger
+        budget than a single implement node."""
+        import os
+        flow = self._flow()
+        flow.n_nodes = 32
+        os.environ.pop("OCTOS_ARC_SKELETON_REQUESTS", None)
+        os.environ.pop("OCTOS_ARC_IMPLEMENT_REQUESTS", None)
+        self.assertGreaterEqual(flow.skeleton_request_budget(), flow.implement_request_budget())
+        self.assertGreaterEqual(flow.skeleton_request_budget(), 20)
+
 
 class CodegenPromptTests(unittest.TestCase):
     def test_should_format_without_placeholder_errors_and_keep_build_command(self):
