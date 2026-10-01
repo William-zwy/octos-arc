@@ -294,3 +294,36 @@
 - 明确历史 `002c882794af` 已是 `1/100`；本轮只构成弱正向探索信号，不能称首次得分或严格 A/B，也不能据此继续全局提高 request cap。
 - 更新 Agent/Skill 建议：产品 delta 与外部验证门禁、vertical slice、分阶段预算和止损；Skill 必须真实打包、可见调用且实际减少 provider 读取后才能评价。
 - 本次只修改证据与协作文档，未修改 Agent、Skill、ZIP、requirements 或官方测试，未打包、发布或启动平台 Run。
+
+## 2026-10-01：归档 Sheet Run `f1ff68f69dac`（证据同步）
+
+- 最初以 local-only 方式新增 `evidence/arc-bench/runs/f1ff68f69dac/manifest.json` 和 `phase3-analysis.md`；用户于 2026-10-01 授权将分析与归一化证据同步到协作分支，仍不授权 Agent/Skill 修改、打包或发布。
+- 记录 7 件本地附件的 provenance、大小和 SHA-256，不复制大型原始附件；平台官方测试已完成，但逐测试明细和 timeout 类型仍为 unknown。
+- 纠正 stdout/stderr 镜像和语义口径：24 次内部 `implement ok` 标签不等于全部实现；27 个独立 cap 包括 skeleton、nudge、24 个业务节点和 rehearsal repair；至少 11 个 ok 摘要明确自述未完成。
+- 记录 skeleton/业务节点的 wrote/verified 假阳性、空 traceability、无写入 repair 后重试恢复，以及 `1/100 → 0/100` 只能作为 observed regression、不能归因为新包。
+- 更新只读建议优先级：product delta 与 harness 外部验证、vertical slice、分预算槽、requirement-derived probes；Skill 未打包且无调用证据，不能评价收益。
+- 未修改 Agent、Skill、ZIP、requirements 或官方测试，未重新打包、发布或启动平台 Run。
+
+## 2026-10-01：归档 GitHub Run `877ac3bb19e7`（证据同步）
+
+- 最初以 local-only 方式新增 `evidence/arc-bench/runs/877ac3bb19e7/manifest.json` 和 `phase3-analysis.md`；用户于 2026-10-01 授权与 `f1ff68f69dac`、`b4e114e9c001` 的分析一并同步，仍不授权 Agent/Skill 修改、打包或发布。
+- 记录 9 个物理附件的 provenance、大小和 SHA-256，不复制大型原始附件；midrun/final logs 字节相同，实际只有 8 份唯一内容，且缺少 final traceability。
+- 确认平台聚合结果 `13/100`、feature `3/47`、三个 step completed；该分数是当前已归档 GitHub Run 中最高观测值，但测试 ID、断言、timeout、hidden suite identity 与平台 Agent binding 均不可得，因此不构成严格 A/B。
+- 纠正 rehearsal 口径：三次均因 favicon ConnectionReset 失败，两个 repair 均未证明有效产品修复，最终 submitting as-is；runner 后续独立 build/start 并进入测试，部署成功不能归因于 repair。
+- 去重后为 47 次 implement-ok、33 wrote、11 verified、49 个独立 cap；至少 17 个摘要自述未完成，至少 8/11 verified 仍有实质缺口，继续确认内部完成状态假收敛。
+- 记录 single-origin canonical entrypoint 是相对 b4e 部署恢复的强关联候选机制，以及相对 effd 通过项/成本显著改善；保留生成随机性与隐藏测试身份造成的因果边界。
+- Skill 未打包、未调用；内联读取缓存与 provider cache hit 不得冒充 Skill 收益。
+- 未修改 Agent、Skill、ZIP、requirements 或官方测试，未重新打包、发布或启动平台 Run。
+- 拉取协作分支 `3d6713b1` 后复核身份链：`7fc46206`、`9ff7e750`、`3d6713b1` 均已可解析；对应 ZIP 的 `main.py` 与提交 Git blob 逐字节一致，`9ff7e750` release ZIP 还与下载包 SHA-256 完全一致。
+- 纠正机制表述：`3d6713b1` 修改的是三处 prompt/architecture contract 与测试，没有新增 runtime harness 强制门禁；因此 single-origin 只作为更强的 prompt-level 关联机制，不升级为严格因果。
+- 保留平台边界：候选源码提交可达不等于平台 generation identity、task snapshot、suite 或 submission binding 已闭合，相关 Run 仍为 `platform_identity_inconclusive`。
+
+## 2026-10-01：归档 GitHub Run `b4e114e9c001`（证据同步）
+
+- 最初以 local-only 方式新增 `evidence/arc-bench/runs/b4e114e9c001/manifest.json` 和 `phase3-analysis.md`；用户于 2026-10-01 授权将分析与归一化证据同步到协作分支，仍不授权 Agent/Skill 修改、打包或发布。
+- 记录 7 件本地附件的 provenance、大小和 SHA-256，不复制大型原始附件；平台在 start_agent readiness gate 失败，官方测试未执行。
+- 纠正口径：65 个 node-state 不是 65 atomic nodes；Agent 实际遍历 47 个叶子。47 次内部 ok 标签不等于全部实现；11 verified / 36 unverified、44 wrote / 3 no-write，人工保守确认至少 19 个摘要自我否定。
+- 记录 48 个独立 cap（skeleton 1、nudge 1、feature 46/47）、空 traceability、无 Agent turn timeout/BrokenPipe/402/500/OOM，以及官方测试 timeout 应记 not reached。
+- 将部署最强候选收窄为最终产物 canonical entrypoint/HTTP readiness contract 漂移：实际 `npm start` 的 API-only 入口不服务 `/` 或 frontend，另一个可服务根页面的入口未被启动；平台 probe 细节缺失，故不把候选写成已证实探针路径。
+- 更新只读建议：唯一启动入口、runner-equivalent rehearsal、product-delta/外部验证门禁、分槽预算/vertical slice、task-correct identity；Skill 未打包且无调用证据，不能评价收益。
+- 未修改 Agent、Skill、ZIP、requirements 或官方测试，未重新打包、发布或启动平台 Run。

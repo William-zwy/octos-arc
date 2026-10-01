@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "run_id": "f1ff68f69dac",
+  "task_id": "hackathon--sheet",
+  "competition_id": "hackathon",
+  "status": "FAILED",
+  "score": 0.0,
+  "pass_total": "0/100",
+  "feature_total": "0/24",
+  "normalized_status": "phase3_complete_phase4_pending_archive_source_commit_resolved_platform_identity_inconclusive",
+  "local_artifact_state": {
+    "scope": "analysis_and_evidence_only",
+    "storage": "repository",
+    "remote_sync_authorized": true,
+    "agent_or_release_change_authorized": false
+  },
+  "platform": {
+    "run_url": "https://arc-bench.com/runs/f1ff68f69dac",
+    "display_name": "submission",
+    "model": "deepseek-v4-flash",
+    "created_at": "2026-10-01T02:33:00.833368",
+    "started_at": "2026-10-01T02:33:01.902215",
+    "finished_at": "2026-10-01T05:15:57.611014",
+    "run_duration_seconds": 8670,
+    "wall_clock_seconds": 9775.709,
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "run_tests_status": "completed",
+    "run_tests_description": "Evaluation completed"
+  },
+  "submission": {
+    "submission_id": "0c13f59053b0",
+    "original_filename": "arc-agent-hackathon-sheet-7fc46206.zip",
+    "zip_size": 358147,
+    "zip_sha256": "9E4484F788B40BD6CC04BA2E4BFF841305E7E7969D92B76B5E8DF60C3624BADB",
+    "archive_derived_identity": {
+      "build_id": "arc-agent-v1-41b572af40cbfc7982254a32",
+      "commit_sha": "7fc462066c29908ac23c18c0c58805d5e664a0cb",
+      "payload_tree_sha256": "3707AD5C10EECDD56F7372E13AB71553AD68F53ADDF66627213F7994A515CEAA",
+      "managed_file_count": 495,
+      "source_reproducibility": "embedded_commit_resolved_archive_main_exact_git_blob_match_full_payload_rebuild_unverified_platform_binding_open"
+    },
+    "runtime_reported_identity": {
+      "agent_commit": "524c39fc3a209628dddd02cb0f2f232ccb950fb8",
+      "requirements_content_hash": "b3f5f6a681f47085757dfd7309a8c535a0a431ddc9366b6e80d36bc5681987d9",
+      "submission_sha256": null,
+      "suite_key": null,
+      "task_key": null
+    },
+    "identity_resolution": [
+      "platform generation_identity and build_id are absent",
+      "runtime agent_commit differs from the ZIP-embedded commit and is not accepted as Agent source identity",
+      "runtime requirements_content_hash is not a requirements archive SHA or platform task snapshot identity",
+      "archive-derived identity is evidence about the downloaded ZIP, not a platform binding",
+      "commit 7fc462066c29908ac23c18c0c58805d5e664a0cb is now reachable from the synchronized collaboration branch"
+    ],
+    "source_resolution": {
+      "resolved_at": "2026-10-01",
+      "remote_url": "git@github.com:William-zwy/octos-p.git",
+      "branch": "codex/hkt-round345-integration",
+      "commit_reachable": true,
+      "archive_main_exact_git_blob_match": true,
+      "windows_worktree_copy_byte_difference": "checkout_line_endings_only",
+      "full_payload_rebuild_verified": false,
+      "platform_generation_identity_closed": false
+    }
+  },
+  "verification_regime": {
+    "bundled_acceptance_specs": false,
+    "mode": "requirement_text_only",
+    "platform_generated_scenarios": 100,
+    "official_test_execution_reached": true,
+    "official_test_details_available": false,
+    "official_test_ids_available": false,
+    "official_test_timeouts": "unknown"
+  },
+  "metrics": {
+    "atomic_nodes": 24,
+    "implement_ok_labels": 24,
+    "implement_failed_labels": 0,
+    "node_wrote_verified": 11,
+    "node_wrote_unverified": 12,
+    "node_no_write_unverified": 1,
+    "feature_nodes_at_cap": "24/24",
+    "unique_budget_hits": 27,
+    "budget_hit_breakdown": {
+      "skeleton_cap_28": 1,
+      "nudge_cap_18": 1,
+      "feature_cap_18": 24,
+      "rehearsal_repair_cap_10": 1
+    },
+    "implement_ok_self_negating_summaries_at_least": 11,
+    "wrote_true_with_no_write_summary_at_least": 4,
+    "verified_true_with_validation_or_behavior_gap": [
+      "REQ-1-2-1",
+      "REQ-3-1-2"
+    ],
+    "skeleton": {
+      "initial_attempts": 1,
+      "nudges": 2,
+      "attempt_1_seconds": 355,
+      "attempt_1_wrote_label": true,
+      "attempt_1_verified_label": true,
+      "attempt_1_product_scaffold_present": false,
+      "nudge_1_wrote_label": true,
+      "nudge_1_summary_reports_no_write": true,
+      "deterministic_fallback_filled_missing_deploy_files": true,
+      "interpretation": "internal wrote/verified labels conflict with the observed frontend/backend gate and model summaries"
+    },
+    "rehearsal": {
+      "attempts": 2,
+      "unique_failures": 1,
+      "failure": "GET /favicon.ico got no HTTP response (ConnectionResetError); backend still running",
+      "repair_turn_seconds": 191,
+      "repair_turn_wrote": false,
+      "repair_turn_verified_label": true,
+      "repair_turn_hit_request_cap": true,
+      "final_rehearsal_success": true,
+      "causal_interpretation": "recovery observed after a no-write repair turn; code-fix causality is not established"
+    },
+    "agent_turn_timeouts": 0,
+    "local_proxy_broken_pipe_events": 0,
+    "upstream_http_402_or_500_events": 0,
+    "oom_events": 0
+  },
+  "usage": {
+    "provider_requests": 528,
+    "provider_prompt_tokens": 10447784,
+    "provider_completion_tokens": 377976,
+    "provider_reasoning_tokens": 282218,
+    "provider_prompt_cache_hit_tokens": 8819968,
+    "provider_total_tokens": 10825760,
+    "platform_token_count": 10825873,
+    "platform_provider_token_difference": 113,
+    "prompt_cache_hit_share_of_prompt": 0.8442,
+    "prompt_cache_hit_share_of_total": 0.8147,
+    "cost_cny": 9.167743,
+    "cache_interpretation": "shared-prefix reuse signal only; not proof of wasted or full-price tokens"
+  },
+  "traceability": {
+    "initialized_requirements_log": 42,
+    "initialized_scenarios_log": 100,
+    "final_interface_records": 0,
+    "final_test_records": 0,
+    "interpretation": "final structured traceability is empty and does not support coverage or implementation claims"
+  },
+  "skill_runtime_evidence": {
+    "arc_project_context_packaged": false,
+    "project_map_calls": 0,
+    "source_read_calls": 0,
+    "source_cache_calls": 0,
+    "conclusion": "no evidence that the project-context Skill entered this Run's execution chain"
+  },
+  "cross_run_comparability": {
+    "requirements_yaml_sha256": "9CDDF67BE50748106289ED158648629A6C50C30A490D0EDA5BD570C557440B96",
+    "same_as_run_12b3dea74607_requirements_yaml": true,
+    "hidden_scenario_identity_known": false,
+    "strict_ab": false,
+    "classification": "observed_regression_only"
+  },
+  "evidence_provenance": {
+    "archive_root": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-hackathon-sheet",
+    "storage": "local_only",
+    "raw_attachments_copied_to_repository": false,
+    "playwright_report_404": "derived_from_user_collected_summary; no raw HTTP response artifact in the seven-file archive"
+  },
+  "evidence": [
+    {
+      "filename": "arcbench-f1ff68f69dac-failure-details.md",
+      "size": 2382,
+      "sha256": "8BAA78BB362E48A77042FC6F78FF9E12F8266CFBEF012BD5AF27840FA1A32089",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-f1ff68f69dac-summary.md",
+      "size": 4592,
+      "sha256": "DC00BE64666F52FDBFF1026F496AF313DF6604FA11105D7A9B6884B3324859F6",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-f1ff68f69dac-traceability.json",
+      "size": 28,
+      "sha256": "43F9FAE5D46C0F20838B28CA238E3C14B2059066946DB4242CB8CC5E233739C6",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-f1ff68f69dac-logs.json",
+      "size": 111448,
+      "sha256": "19DDB411F8E8D4AFE4D493DA6A69704AF46F5E3F4F29E0BBE163A67053936065",
+      "local_only": true
+    },
+    {
+      "filename": "f1ff68f69dac-template.zip",
+      "size": 735328,
+      "sha256": "293C542A5DFAC8F94B87BD33DAD8B7824AAC8F07F8D263E986F17A36F4065DAA",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-f1ff68f69dac.json",
+      "size": 3160,
+      "sha256": "228C1256A2564A2E154A1E923FAF4B6BDD4A9C04EE841A9ACB67FDDA57F65328",
+      "local_only": true
+    },
+    {
+      "filename": "submission-0c13f59053b0-agent.zip",
+      "size": 358147,
+      "sha256": "9E4484F788B40BD6CC04BA2E4BFF841305E7E7969D92B76B5E8DF60C3624BADB",
+      "local_only": true
+    }
+  ],
+  "missing_evidence": [
+    "platform_agent_commit",
+    "platform_build_id",
+    "platform_generation_identity",
+    "task_snapshot_id",
+    "requirements_archive_sha256",
+    "suite_key_and_official_spec_identity",
+    "official_test_ids_results_and_timeout_types",
+    "playwright_report_trace_and_screenshots",
+    "result_path",
+    "phase4_ack",
+    "phase4_result"
+  ],
+  "phase4": {
+    "status": "pending",
+    "allowed_action": "read_only_diagnosis",
+    "blockers": [
+      "platform identity is not closed",
+      "official per-test evidence is unavailable",
+      "archive-derived Agent source commit is not reproducible from the current object store or checked remote heads",
+      "internal wrote/verified labels are contradicted by model summaries and structural gates"
+    ]
+  }
+}

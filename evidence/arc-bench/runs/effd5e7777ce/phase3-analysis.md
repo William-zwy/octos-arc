@@ -32,7 +32,7 @@
 - 平台 token count 为 `23,111,524`，provider totals 为 `23,111,409`，相差 115，两者按不同口径并列，不互相替代。
 - `run_duration_seconds=12,904`；`started_at` 到 `finished_at` 的 wall-clock 差为 14,005s。两者同样并列。
 - traceability 包含 42 条 interface record，但仅覆盖 8 个 unique requirement ID，全部 `implemented=false`、无 file path、无 tests。这是结构探测结果，不能单独证明产品代码完全未实现。
-- 包内 commit `9ff7e750...` 在当前本地对象库和已检查远程 ref 中不可达，源码可复现性未闭合。
+- 同步协作分支后，包内 commit `9ff7e750657a1d5c1ba67f71651ed9fe0d56c5c5` 已可解析；仓库中的 release ZIP SHA-256 与本 Run 下载包一致，ZIP 内 `main.py` 与该提交 Git blob 逐字节一致。候选源码和下载归档的对应关系已补强，但现有 binding 是 Sheet 口径，平台也未回传 generation identity，因此 GitHub Run 的平台身份仍未闭合。
 - ZIP 未包含与 GitHub task 对应的 binding；Sheet 命名的文件名本身不是失败因果，但不能替代 task-correct binding。
 - 因此本 Run 只能保持 `platform_identity_inconclusive`，不能与历史 Run 构成严格 A/B。
 

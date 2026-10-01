@@ -7,7 +7,7 @@
   "score": 2.0,
   "pass_total": "2/100",
   "feature_total": "0/47",
-  "normalized_status": "phase3_complete_phase4_pending_platform_identity_inconclusive",
+  "normalized_status": "phase3_complete_phase4_pending_archive_source_resolved_platform_identity_inconclusive",
   "platform": {
     "run_url": "https://arc-bench.com/runs/effd5e7777ce",
     "display_name": "0930-night",
@@ -31,7 +31,7 @@
       "commit_sha": "9ff7e750657a1d5c1ba67f71651ed9fe0d56c5c5",
       "payload_tree_sha256": "E022098B6B9B4647D2EA6E5D4C2754845AA161A91DF10D16550A1DD969312DBF",
       "managed_file_count": 495,
-      "source_reproducibility": "not_closed_commit_not_reachable_from_checked_remotes"
+      "source_reproducibility": "archive_source_commit_resolved_remote_release_zip_present_task_binding_mismatch_platform_binding_open"
     },
     "runtime_reported_identity": {
       "agent_commit": "eea9ce99043fa1dd1a56afe14aea35d90f594cba",
@@ -44,8 +44,19 @@
       "platform generation_identity and build_id are absent",
       "runtime agent_commit differs from the ZIP-embedded commit and is not accepted as Agent source identity",
       "ZIP filename is Sheet-labelled and no task-correct GitHub binding is present",
-      "archive-derived identity is evidence about the downloaded ZIP, not a platform binding"
-    ]
+      "archive-derived identity is evidence about the downloaded ZIP, not a platform binding",
+      "commit 9ff7e750657a1d5c1ba67f71651ed9fe0d56c5c5 is now reachable from the synchronized collaboration branch"
+    ],
+    "source_resolution": {
+      "resolved_at": "2026-10-01",
+      "remote_url": "git@github.com:William-zwy/octos-p.git",
+      "branch": "codex/hkt-round345-integration",
+      "commit_reachable": true,
+      "remote_release_zip_sha256_match": true,
+      "archive_main_exact_git_blob_match": true,
+      "candidate_scope": "source_and_downloaded_archive_resolved_but_sheet_binding_used_for_github",
+      "platform_generation_identity_closed": false
+    }
   },
   "verification_regime": {
     "bundled_acceptance_specs": false,
