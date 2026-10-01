@@ -213,7 +213,7 @@ class RewriteBudgetTests(unittest.TestCase):
         flow = self._flow()
         flow.n_nodes = 32
         os.environ.pop("OCTOS_ARC_IMPLEMENT_REQUESTS", None)
-        self.assertGreaterEqual(flow.implement_request_budget(), 16)
+        self.assertGreaterEqual(flow.implement_request_budget(), 18)
 
     def test_should_give_skeleton_room_to_scaffold_both_ends(self):
         """The skeleton turn writes a whole app shell (frontend + backend
@@ -227,7 +227,44 @@ class RewriteBudgetTests(unittest.TestCase):
         os.environ.pop("OCTOS_ARC_SKELETON_REQUESTS", None)
         os.environ.pop("OCTOS_ARC_IMPLEMENT_REQUESTS", None)
         self.assertGreaterEqual(flow.skeleton_request_budget(), flow.implement_request_budget())
-        self.assertGreaterEqual(flow.skeleton_request_budget(), 20)
+        # The skeleton now lays the whole shared foundation (router table, a
+        # seeded collection per entity, page shell) in one turn, so it needs
+        # more room than a single feature node, not just 20.
+        self.assertGreaterEqual(flow.skeleton_request_budget(), 28)
+
+
+class SharedFoundationTests(unittest.TestCase):
+    """Github run arc-agent-...-9ff7e750 (0/47): budget reached code, but 94
+    of 98 turns ended verified=False because every node rebuilt shared
+    infrastructure from scratch ("does not exist and must be built from
+    scratch", "No files were changed this turn"). The skeleton must lay the
+    shared router/seed foundation once, and extend turns must be told it
+    already exists so they do not re-discover it."""
+
+    def test_skeleton_prompt_asks_for_shared_router_and_seed_foundation(self):
+        text = m.SKELETON_PROMPT.format(req_dir="/r", port=3000, smoke=3001, tests="")
+        lowered = text.lower()
+        self.assertIn("router", lowered)
+        self.assertIn("seed", lowered)
+
+    def test_extend_preamble_states_foundation_exists_so_nodes_do_not_rebuild(self):
+        text = m.NODE_PREAMBLE_EXTEND.format(node_id="REQ-1")
+        lowered = text.lower()
+        self.assertIn("exist", lowered)
+        # It must steer away from rebuilding, not just say "extend".
+        self.assertTrue("do not" in lowered or "don't" in lowered or "reuse" in lowered)
+
+    def test_inline_design_note_does_not_force_a_separate_design_file_write(self):
+        """The old note made every implement turn write .arc/design/<id>.json
+        to disk before any code — a write_file round trip spent before the
+        feature. Planning stays; the mandatory design-file write goes (the note
+        may still name the path to tell the model NOT to spend a call on it)."""
+        text = m.INLINE_DESIGN_NOTE.format(node_id="REQ-1").lower()
+        # No imperative to write/save the design JSON to disk.
+        self.assertNotIn("write your design", text)
+        self.assertNotIn("write one json object", text)
+        # Planning intent is retained.
+        self.assertTrue("implement" in text and ("route" in text or "plan" in text or "name the" in text))
 
 
 class CodegenPromptTests(unittest.TestCase):

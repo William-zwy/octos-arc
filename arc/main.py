@@ -1102,11 +1102,16 @@ Ports: run your own smoke servers ONLY with `ARC_EXTRA_PORTS=0 PORT={smoke} npm 
 """
 
 SKELETON_PROMPT = """\
-Build the skeleton of a full-stack web application in the current working directory. The requirement tree is at {req_dir} (skim it; individual features come in later turns).
+Build the skeleton of a full-stack web application in the current working directory. The requirement tree is at {req_dir} (skim ALL of it now; individual features come in later turns, but you must lay down the shared foundation they will all extend).
 
 """ + ARCHITECTURE_CONTRACT + """
 {tests}
-Steps: create frontend/ and backend/ as specified with a home page and a health endpoint, seed the JSON store, run `npm run build` in frontend/, start the backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, `curl http://127.0.0.1:{smoke}/` to confirm the page is served, then stop it.
+This skeleton is the SHARED FOUNDATION every later feature turn extends; later turns have a small per-turn tool budget and cannot afford to rediscover or rebuild it. So in THIS turn, from your skim of the whole requirement tree, lay down:
+- A central request router/dispatcher in backend/server.js that is trivial to extend: a route table (method+path -> handler) or equivalent, so a later turn adds one entry and one handler, never rewrites routing.
+- The core data model in the JSON store: one seeded collection (even if near-empty) for EVERY top-level entity the requirements mention (e.g. users/sessions, and the main domain objects), with realistic seed rows the tests can read. Later turns add fields/rows, not whole collections.
+- A page shell / layout the feature pages slot into (shared header, nav, server-side-rendered-from-cookie if the app has sessions), plus a home page and a health endpoint.
+Keep it minimal but STRUCTURALLY COMPLETE: no feature logic yet, but the router, every entity collection, and the page shell must already exist so later turns only fill in behaviour.
+Steps: create frontend/ and backend/ as specified, build the router + seed every entity collection + the page shell + health endpoint, run `npm run build` in frontend/, start the backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, `curl http://127.0.0.1:{smoke}/` and `curl http://127.0.0.1:{smoke}/api/health` to confirm, then stop it.
 """ + PORT_RULES
 
 NUDGE_PROMPT = """\
@@ -1176,6 +1181,7 @@ While implementing:
 
 NODE_PREAMBLE_EXTEND = """\
 Implement requirement node {node_id} in the existing application (frontend/ built by `npm run build` into frontend/dist/; zero-dependency Node backend in backend/, `npm start`, PORT env var). Extend the app; do not rewrite or break existing features.
+The skeleton turn already built the SHARED FOUNDATION: a central router/dispatcher in backend/server.js, a seeded JSON collection for every top-level entity, and the page shell/layout. ASSUME IT EXISTS — add your route to the existing router table and your rows/fields to the existing collection; do NOT rebuild routing, re-seed collections from scratch, or re-scaffold the app. Your budget is small: read only the one backend handler area and the one page you extend (the file listing above is authoritative — do not grep the whole tree or replay git log), then spend the rest of the turn WRITING the feature code so the turn ends with working, verified behaviour, not a design note.
 """
 
 NODE_PREAMBLE_CREATE = """\
@@ -1187,7 +1193,7 @@ Mandatory files (all in this turn): frontend/package.json (with the `build` scri
 
 
 INLINE_DESIGN_NOTE = """\
-Before writing code, write your design for this node as ONE JSON object to .arc/design/{node_id}.json ({{"routes": [...], "pages": [{{"path", "elements": [{{"role", "name"}}]}}], "data_model": {{}}, "files": [...], "notes": ""}}; accessible names copied verbatim from the specs), then implement it.
+First, in one short paragraph, name the routes, pages (with the accessible element names copied verbatim from the specs) and data fields this node needs — then implement them straight away in the SAME turn. Do NOT spend a write_file call on a separate .arc/design/{node_id}.json file; your request budget is for the application code, not a design document.
 """
 
 EVOLUTION_NOTE = """\
@@ -1726,15 +1732,18 @@ class Flow:
         multi-node node still needs to read context, write files, and verify,
         so the multi-node default is 16, not 8."""
         return int(os.environ.get("OCTOS_ARC_IMPLEMENT_REQUESTS",
-                                  "20" if self.minimal_mode(getattr(self, "n_nodes", 99)) else "16"))
+                                  "20" if self.minimal_mode(getattr(self, "n_nodes", 99)) else "18"))
 
     def skeleton_request_budget(self) -> int:
         """The skeleton turn scaffolds a whole app shell (both package.json
         files, entrypoints, build/start scripts) in one turn; on the two runs
         above the first "request budget 8 hit" fired during skeleton attempt 1,
-        so neither end got scaffolded. Give it at least the implement budget,
-        and never below 20."""
-        default = max(20, self.implement_request_budget())
+        so neither end got scaffolded. It now also lays the shared foundation
+        every later node extends (central router table, a seeded collection per
+        top-level entity, the page shell), so it needs more room than a single
+        feature node — give it the implement budget plus headroom, never below
+        28."""
+        default = max(28, self.implement_request_budget() + 8)
         return int(os.environ.get("OCTOS_ARC_SKELETON_REQUESTS", str(default)))
 
     def rewrite_request_budget(self) -> int:
