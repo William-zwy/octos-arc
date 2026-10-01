@@ -27,6 +27,7 @@ class PackScriptTests(unittest.TestCase):
             self.assertIn("index.js", script)
             self.assertIn("main", script)
             self.assertIn("dirty", script.lower())
+            self.assertIn("sha256", script.lower())
 
 
 if __name__ == "__main__":

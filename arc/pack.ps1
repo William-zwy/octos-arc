@@ -212,10 +212,17 @@ try {
 
     $hash = (& $pythonCommand -c "import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],'rb').read()).hexdigest().upper())" $OutputPath).Trim()
     $size = (Get-Item -LiteralPath $OutputPath).Length
+    $checksumPath = $OutputPath + ".sha256"
+    [System.IO.File]::WriteAllText(
+        $checksumPath,
+        ($hash.ToLowerInvariant() + "  " + (Split-Path -Leaf $OutputPath) + "`n"),
+        [System.Text.UTF8Encoding]::new($false)
+    )
     Write-Host "Packaging complete: $OutputPath"
     Write-Host ("Entries: {0}" -f $entryNames.Count)
     Write-Host ("Bytes:   {0}" -f $size)
     Write-Host ("SHA256:  {0}" -f $hash)
+    Write-Host ("Checksum: {0}" -f $checksumPath)
 } finally {
     if (Test-Path -LiteralPath $temporaryZip) {
         Remove-Item -LiteralPath $temporaryZip -Force -ErrorAction SilentlyContinue
