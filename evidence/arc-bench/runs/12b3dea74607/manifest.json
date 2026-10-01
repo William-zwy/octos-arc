@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "run_id": "12b3dea74607",
+  "task_id": "hackathon--sheet",
+  "competition_id": "hackathon",
+  "status": "FAILED",
+  "score": 1.0,
+  "pass_total": "1/100",
+  "feature_total": "0/24",
+  "normalized_status": "phase3_complete_phase4_pending_platform_identity_inconclusive",
+  "platform": {
+    "run_url": "https://arc-bench.com/runs/12b3dea74607",
+    "display_name": "0930-night",
+    "model": "deepseek-v4-flash",
+    "created_at": "2026-09-30T13:57:13.492262",
+    "started_at": "2026-09-30T13:57:16.946543",
+    "finished_at": "2026-09-30T16:37:45.726929",
+    "run_duration_seconds": 8518,
+    "wall_clock_seconds": 9629,
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "run_tests_status": "completed",
+    "run_tests_description": "Evaluation completed"
+  },
+  "submission": {
+    "submission_id": "019c8cb3d590",
+    "original_filename": "arc-agent-hackathon-sheet-9ff7e750.zip",
+    "zip_size": 357314,
+    "zip_sha256": "0E98E7E0DFCF4F893A5CFCE0B8CD8D40168E7EC1FFE505A744E1097FE18FB7C5",
+    "archive_derived_identity": {
+      "build_id": "arc-agent-v1-747e10178d68748225a086dd",
+      "commit_sha": "9ff7e750657a1d5c1ba67f71651ed9fe0d56c5c5",
+      "payload_tree_sha256": "E022098B6B9B4647D2EA6E5D4C2754845AA161A91DF10D16550A1DD969312DBF",
+      "managed_file_count": 495,
+      "source_reproducibility": "not_closed_commit_not_reachable_from_checked_remotes"
+    },
+    "runtime_reported_identity": {
+      "agent_commit": "39107edc96d09d30b504cd67382e068ecd83d8ae",
+      "requirements_content_hash": "b3f5f6a681f47085757dfd7309a8c535a0a431ddc9366b6e80d36bc5681987d9",
+      "submission_sha256": null,
+      "suite_key": null,
+      "task_key": null
+    },
+    "identity_resolution": [
+      "platform generation_identity and build_id are absent",
+      "runtime agent_commit differs from the ZIP-embedded commit and is not accepted as Agent source identity",
+      "runtime requirements_content_hash is not a requirements archive SHA or platform task snapshot identity",
+      "archive-derived identity is evidence about the downloaded ZIP, not a platform binding"
+    ]
+  },
+  "verification_regime": {
+    "bundled_acceptance_specs": false,
+    "mode": "requirement_text_only",
+    "platform_generated_scenarios": 100,
+    "official_test_details_available": false,
+    "official_test_ids_available": false,
+    "official_test_timeouts": "unknown"
+  },
+  "metrics": {
+    "atomic_nodes": 24,
+    "implement_ok_labels": 23,
+    "implement_failed_labels": 1,
+    "failed_node": "REQ-3-1-1",
+    "failed_node_seconds": 900,
+    "failed_node_reason": "octos turn timed out",
+    "node_wrote_verified": 3,
+    "node_wrote_unverified": 21,
+    "node_no_write": 0,
+    "implement_ok_self_negating_summaries_at_least": 10,
+    "verified_label_with_failure_summary": "REQ-1-3-2",
+    "feature_nodes_at_cap": "23/24",
+    "unique_budget_hits": 24,
+    "budget_hit_breakdown": {
+      "skeleton_cap_20": 1,
+      "feature_cap_16": 23
+    },
+    "skeleton": {
+      "attempts": 1,
+      "seconds": 236,
+      "wrote": true,
+      "verified": true,
+      "hit_request_cap": true
+    },
+    "rehearsal": {
+      "attempts": 1,
+      "unique_failures": 0,
+      "final_rehearsal_success": true
+    },
+    "local_proxy_broken_pipe_events": 1,
+    "upstream_http_status_errors_observed": 0,
+    "oom_events": 0
+  },
+  "usage": {
+    "provider_requests": 429,
+    "provider_prompt_tokens": 9286973,
+    "provider_completion_tokens": 455469,
+    "provider_reasoning_tokens": 371695,
+    "provider_prompt_cache_hit_tokens": 7771904,
+    "provider_total_tokens": 9742442,
+    "platform_token_count": 9742554,
+    "platform_provider_token_difference": 112,
+    "cost_cny": 9.422114
+  },
+  "traceability": {
+    "interface_records": 9,
+    "unique_requirement_ids": 2,
+    "implemented_true": 0,
+    "implemented_false": 9,
+    "file_paths_present": 0,
+    "tests_present": 0,
+    "interpretation": "structural detector output only; not proof that all product behavior is absent"
+  },
+  "skill_runtime_evidence": {
+    "arc_project_context_packaged": false,
+    "project_map_calls": 0,
+    "source_read_calls": 0,
+    "source_cache_calls": 0,
+    "conclusion": "no evidence that the project-context Skill entered this Run's execution chain"
+  },
+  "evidence_provenance": {
+    "archive_root": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-hackathon-sheet",
+    "storage": "local_only",
+    "raw_attachments_copied_to_repository": false
+  },
+  "evidence": [
+    {
+      "filename": "arcbench-12b3dea74607-failure-details.md",
+      "size": 1681,
+      "sha256": "EA24D3094DAAE89E27E5A1E1D10B39EB6FF0065EB62185B29934520C762FCC8C",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-12b3dea74607-summary.md",
+      "size": 4129,
+      "sha256": "B3AB393A98F2BA0EB33549CEF08466B74AADC51397EB998FAA2D44AA4E85A29E",
+      "local_only": true
+    },
+    {
+      "filename": "12b3dea74607-template.zip",
+      "size": 650467,
+      "sha256": "669815DD5C85B7ABCBB3292F5C18B4FBF2F3E46DB580BE07380CD16661A52E23",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-12b3dea74607-traceability.json",
+      "size": 1675,
+      "sha256": "F0ABB63D13D823B4A7EB828CAE4B337B7B3F7EADDEEBE7CD829C2A4297ABF8B3",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-12b3dea74607-logs.json",
+      "size": 115055,
+      "sha256": "A5C8431EBF4AB221EBF4A1A774C519E97468B1816F5A547EA510736E8FF7F2CB",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-12b3dea74607.json",
+      "size": 3169,
+      "sha256": "A504900014BFE7619C6594CCD2A4E7F654979C8D81257311BD054D85F1C9608B",
+      "local_only": true
+    },
+    {
+      "filename": "submission-019c8cb3d590-agent.zip",
+      "size": 357314,
+      "sha256": "0E98E7E0DFCF4F893A5CFCE0B8CD8D40168E7EC1FFE505A744E1097FE18FB7C5",
+      "local_only": true
+    }
+  ],
+  "missing_evidence": [
+    "platform_agent_commit",
+    "platform_build_id",
+    "platform_generation_identity",
+    "task_snapshot_id",
+    "requirements_archive_sha256",
+    "suite_key_and_official_spec_identity",
+    "official_test_ids_results_and_timeout_types",
+    "playwright_report_trace_and_screenshots",
+    "result_path",
+    "phase4_ack",
+    "phase4_result"
+  ],
+  "phase4": {
+    "status": "pending",
+    "allowed_action": "read_only_diagnosis",
+    "blockers": [
+      "platform identity is not closed",
+      "official per-test evidence is unavailable",
+      "archive-derived Agent source commit is not reproducible from checked remotes"
+    ]
+  }
+}

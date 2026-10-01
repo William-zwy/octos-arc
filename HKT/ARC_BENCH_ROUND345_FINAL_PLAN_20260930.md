@@ -334,3 +334,167 @@ Sheet 更适合作为第一主探针：原子节点较少，先验证 workbook/w
 - `enter_quota_gate()` 将 provider 详情写入 `quota_reason`，避免与 checkpoint 事件名参数冲突；quota hard-stop 的行为和字段由回归测试锁定。
 - skeleton 的 deterministic fallback 只填充缺失或空的 deploy-critical 文件（manifest、入口和静态构建器），不覆盖任何非空业务文件；不完整的既有 manifest 仍由 `has_app()` fail-closed，不能被泛化 scaffold 静默替换。
 - 新增门禁：quota checkpoint 不得抛 `TypeError`；空 workspace fallback 必须通过 `has_app()`，且非空业务文件内容在 fallback 前后完全一致。该门禁不绑定 Sheet/GitHub 或任何旧题名称。
+
+## 11. 修复候选 `1821c3f5` 双 Run 只读复盘（2026-09-30）
+
+本节归并 `2b6a1f545c37`（Sheet）与 `0564f5955f16`（GitHub）的阶段 3只读审计。原始附件仍位于用户侧归档目录，尚未镜像进仓库；本节只记录可由 Run JSON、logs、traceability、发布 sidecar 和当前源码相互核验的事实。由于仓库中没有这些原始附件，本节属于 `analysis_only / evidence_not_independently_reproducible`，不能单独作为阶段 5最终裁决或修改授权；后续裁决仍须先镜像并校验原始证据。本轮只更新计划和变更日志，不修改 Agent、Skill、ZIP、requirements 或官方测试，也不启动平台 Run。
+
+归档入口：[Sheet manifest](../evidence/arc-bench/runs/2b6a1f545c37/manifest.json)、[Sheet Phase 3 analysis](../evidence/arc-bench/runs/2b6a1f545c37/phase3-analysis.md)、[GitHub manifest](../evidence/arc-bench/runs/0564f5955f16/manifest.json)、[GitHub Phase 3 analysis](../evidence/arc-bench/runs/0564f5955f16/phase3-analysis.md)。上述 manifest 只登记本地原始附件的大小与 SHA-256；原始附件仍为 `local_only`，未复制进仓库。
+
+### 11.1 终态和证据边界
+
+| Run | 平台终态 | Agent 过程 | 最终部署 | 官方测试可见性 |
+|---|---|---|---|---|
+| `2b6a1f545c37` / `hackathon--sheet` | `FAILED`，`0/100`，feature `0/24`，约 `5.677578 CNY` | deterministic fallback 后跑完 `24/24` 节点；provider `269` requests、约 `4.28M` tokens | rehearsal 第三轮通过，随后 `template-app` listening `3000` | `run_tests=completed`、`Evaluation completed`；`tests=[]`、无 Playwright report/locator/trace |
+| `0564f5955f16` / `hackathon--github` | `FAILED`，`0/100`，feature `0/47`，约 `10.559866 CNY` | deterministic fallback 后跑完 `47/47` 节点；provider `465` requests、约 `8.51M` tokens | rehearsal 第二轮通过，随后 frontend build 和 backend listening `3000` | `run_tests=completed`、`Evaluation completed`；`tests=[]`、无 Playwright report/locator/trace |
+
+因此两次官方测试都已执行，不能写成“未执行”；但 `0/100` 不能进一步拆成 100 个断言失败、100 个 timeout 或某个统一前置失败。测试级 timeout 数量应记为“未知/平台未提供”，不能记为 `0`。平台测试后的 repair 是否存在也未知；Agent 内部 startup rehearsal repair 则有明确日志证据。
+
+### 11.2 对原始汇总的必要纠错
+
+Agent 的 `log()` 同时写 stdout 和 stderr，平台聚合日志又保留两条带通道标签的镜像行。统计事件必须按时间戳和消息体去重：
+
+| 指标 | 原始行数口径 | 去重后的逻辑事件 |
+|---|---:|---:|
+| Sheet request-budget hit | 58 | 29：cap 8 共 27（skeleton、两次 nudge、24 个节点），cap 10 共 2（两次 rehearsal repair） |
+| GitHub request-budget hit | 102 | 51：cap 8 共 50（skeleton、两次 nudge、47 个节点），cap 10 共 1（一次 rehearsal repair） |
+| Sheet rehearsal FAILED | 4 行 | 2 次：favicon `ConnectionResetError`；下一轮 `npm start rc=1` |
+| GitHub rehearsal FAILED | 2 行 | 1 次：favicon `ConnectionResetError` |
+
+其他口径修正：
+
+- Agent 自报时间预算并非缺失：Sheet 为 `36000s`，GitHub 为 `70500s`；平台自身 timeout 配置仍未提供。
+- Sheet 的两次、GitHub 的一次 rehearsal repair 均真实执行。虽然 repair turn 触及 cap 10，后续 rehearsal 最终通过，不能写成“repair 不适用”或“被预算掐断所以没有修复”。
+- 两次 favicon reset 都在后续 rehearsal 中恢复，最终平台服务也成功监听。它是通用 unknown-path/连接生命周期风险，不是本轮 `0/100` 的已确认根因；历史 `34/34` BookStack Run 也曾出现并恢复同类中间噪声。
+- 发布 ZIP 的 SHA-256 `9b7b39d38efde6cf75f4129a70dbcf421faff9f7a0e34b536737ed3b8cd51f1e` 与 sidecar 可绑定源码提交 `1821c3f5e99836765d23c0f0b7b49d5155e150ab`。运行日志却将生成 workspace 的 Git HEAD 分别打印为 Sheet `d5b777...`、GitHub `00fdb8...`，原因是 `OCTOS_AGENT_COMMIT` 未注入时 `write_run_identity()` 回退到 `self.head()`；这些值不是 Agent 源码提交。平台 Run 对象仍没有 generation identity。
+- 日志计算出了 requirements 内容哈希（Sheet `b3f5f6...`、GitHub `64e8a0...`），它与整个 requirements ZIP 的 SHA-256 属于不同口径，不能互相替代或判为冲突。
+- 当前发布 sidecar 明确绑定 `hackathon--sheet`。同一个通用 Agent ZIP 被用于 GitHub 可以执行，但该 sidecar 不能为 GitHub Run 提供严格 task/suite/requirements 身份闭环；GitHub 后续候选必须单独生成正确 binding。即使候选侧 embedded build、ZIP SHA 和专用 binding 全部一致，也只表示 `candidate_identity_closed`；只要平台仍不回传 generation identity、task snapshot 或可核验的 submission/ZIP 绑定，平台侧仍是 `platform_identity_inconclusive`，该 Run 仍不能升级为严格 A/B。
+
+### 11.3 “流程跑完但仍为 0 分”的机制解释
+
+两个 Run 都证明 checkpoint TypeError 和空骨架部署失败已被修复：没有 `[flow] aborted`，fallback 产出了可部署布局，并完成全部节点和最终 startup rehearsal。这是确定的运行机制收益，但不是业务完成率收益。
+
+节点证据揭示了新的主瓶颈：
+
+| Run | 节点 turn | `wrote=True, verified=True` | `wrote=True, verified=False` | `wrote=False, verified=False` | 每节点命中 cap 8 |
+|---|---:|---:|---:|---:|---:|
+| Sheet | 24 | 2 | 19 | 3 | 24/24 |
+| GitHub | 47 | 1 | 43 | 3 | 47/47 |
+
+这里的 `wrote=True` 不是产品源码证据。`TurnMonitor` 会把成功写入 `.arc/design` 等元数据也计为 write；多条模型摘要同时承认“仍在分析”“未修改代码”或“尚未实现”。当前 `node_cycle()` 在已有可部署 app 且未发现 scaffold hard finding 时，即使没有 frontend/backend 内容变化、没有外部验证，也会发出 `implementation_done` 并把节点加入 `implemented_nodes`。最终 traceability 进一步印证状态过宽：Sheet 仅 11 个 interface、GitHub 仅 25 个 interface，全部 `implemented=false`、`file_path` 为空、`tests=[]`。
+
+高置信度结论是：
+
+1. cap 8 不是偶发事件，而是两个 Run 的每一个业务节点都触发；
+2. 无 bundled acceptance spec 时，Agent 没有逐节点的真实失败反馈，节点循环会把“turn 正常结束”和“已有 app 骨架”误当成可以前进；
+3. 24/47 个冷启动式节点 turn 反复读取不断增长的共享文件，造成大量上下文与请求空耗；
+4. 后续节点缺少可观察的跨节点回归门禁，可能覆盖或破坏早期功能。
+
+官方 100 项的精确失败机制、模型随机性占比以及后续节点是否实际破坏早期功能仍为 unknown。不得从当前证据猜测隐藏 locator、测试源码或专用业务修补。
+
+### 11.4 跨 Run 成绩和成本波动
+
+| 任务 | 历史候选 | 结果 | 新候选 `1821c3f5` | 可作出的判断 |
+|---|---|---:|---:|---|
+| Sheet | `39626bbcf702`：`0/100`，约 `3.61 CNY`；`09599b312591`：skeleton 失败、`0/0`，约 `1.00 CNY` | 无稳定业务分 | `2b6a1f545c37`：`0/100`，约 `5.68 CNY` | 新候选把 skeleton/deploy 前置失败推进到完整测试，但没有分数收益；相对 `396...` 成本和耗时上升，仍是系统性 requirement-only 收敛问题 |
+| GitHub | `1c498c860d81`：`0/100`，约 `9.68 CNY`；`451174abe760`：checkpoint 崩溃后仍为 `2/100`，约 `0.88 CNY` | `451...` 只实现到首节点，不能作完整基线 | `0564f5955f16`：`0/100`，约 `10.56 CNY` | checkpoint/fallback 修复让请求、token、耗时和费用大幅增加并跑完 47 节点，但观察分数 `2→0`；这是非严格、单样本的 score regression，不能证明修复导致回归 |
+
+新旧 ZIP、生成随机性、缺失 task snapshot/官方测试明细和不完整身份链使这些 Run 不是严格 A/B。最重要的经验不是“继续把 8 调大”：历史 Sheet 大预算 Run 也长期接近零分；相反，Web BookStack `34/34`、Stack Overflow `60/66` 等可见 acceptance 反馈任务证明，Agent 在有具体失败证据时能够收敛。verification regime 是当前最显著且可确认的流程差异之一，也是强候选优化方向；由于没有因果 A/B，不能据此断言它是分数差异的唯一原因，也不能据单次结果断言模型整体退化。
+
+### 11.5 Agent 层候选方案
+
+| 优先级 | 候选 | 预期收益 | 主要风险 | 必须取得的 A/B 证据 |
+|---|---|---|---|---|
+| P0 | 产品源码 delta 门禁：turn 前后独立计算 `frontend/`、`backend/` fingerprint；`.arc/design` 不计产品写入。无产品 delta 不得 `implementation_done`，只记 `inconclusive/no_product_delta` | 消除假完成；把预算集中到真正产出业务代码的节点 | evolution 中需求可能已被既有代码满足；不能因 no-delta 自动覆盖已有功能 | 每节点 product-delta、首个产品写入请求序号、no-op 节点率、外部 build/start/route probe；状态与 diff 一一对应 |
+| P0 | deterministic scaffold 前置：空 workspace 先由 harness 写最小可部署骨架，再开始业务 turn，不再先消耗 skeleton+nudge 三个 LLM turn | 每 Run 直接省去 3 个已证实无产出的 cap-8 turn，降低部署前失败率 | 通用骨架可能对模型形成架构锚定 | 同一需求下 skeleton 请求数 `3→0`、time-to-first-product-write、最终 app shape 和 build/start 结果 |
+| P0 | requirement-only vertical slice：按 requirement tree 顶层模块、共享数据模型、路由和页面聚类，先实现高扇出骨干，再实现交互/边界；不绑定 Sheet/GitHub 名称 | 减少 24/47 次冷启动和重复读取；统一共享状态、路由与页面语义 | slice 太大可能输出截断或扩大回归面 | 相同模型/需求下 requests、prompt tokens、冷启动数、product-delta 密度、模块契约覆盖和成本；平台只作后置探针 |
+| P0 | harness 外部验证：模型 turn 后由 harness 执行 build、start、health、unknown-path 404、设计中已声明 route 和最小 DOM/可访问语义检查；模型自述不计 verified | 不占 LLM request 预算；尽早发现语法、启动和共享路由回归 | requirement-derived probe 可能与隐藏测试不一致 | 清楚区分 `inferred_local` 与 `official`；保存命令、退出码、HTTP/DOM 观察值；不得生成 `test_passed` 官方结论 |
+| P0 | 运行身份读取 ZIP 内 `agent-build.json`，并为 Sheet/GitHub 分别生成 task/suite/requirements binding | 不直接提分；先闭合候选侧身份，为后续可比性提供必要条件，但不自动形成严格 A/B | 平台仍可能不回传 submission/task snapshot；专用 binding 不能替代平台五元组 | 日志中的 full Agent commit/build id 与 sidecar 完全一致，标记 `candidate_identity_closed`；只有平台也回传并匹配 Run、submission/ZIP、task、suite、requirements 才标记 `platform_identity_closed`，否则保持 exploratory |
+| P1 | phase-aware request budget：不全局盲升 8；预注入相关上下文，要求前 2–4 requests 出现产品写入；只读到阈值则中止、压缩上下文并允许一次续跑；为外部验证预留预算 | 同时降低重复读取与强制结束；预算随实际工作阶段分配 | 首写阈值过紧会截断复杂 legacy 分析 | time-to-first-write、重复 read 次数、cap-hit 率、productive request 比例、单 slice 成本；与固定 8 做成对本地试验 |
+| P1 | best checkpoint + 单调回归：每个通过本地 contract 的 slice 建快照；后续变更至少回归既有核心 route/role/name/持久化读回，失败则恢复 best state | 防止“节点越多、完成率越低”的破坏性积累 | inferred contract 不完整；回滚可能丢失部分有价值改动 | 每次回归的受影响文件、通过/失败 contract、恢复 SHA；不以无测试的 source diff 作为 best |
+| P1 | favicon/startup 固化为确定性 runtime contract，在每个 slice 边界运行；失败时只给一次带 server tail 和相关源片段的聚焦 repair | 提前捕获两次 Run 都出现的 unknown-path 风险，避免终局大修 | 自动改写业务 server 风险高，因此只允许验证和聚焦 repair，不做字符串式盲补丁 | `/favicon.ico`、未知页面、未知 API 均返回 HTTP 响应且进程存活；连续相同失败停止 |
+| P2 | 扩展通用语义契约：成功后原地更新、实体动作留在实体可访问作用域、`data-*` 读写一致、mutation 后读回/刷新保持状态 | 吸收历史 BookStack/Keep/Stack Overflow 已确认机制，形成长期领域架构 | 提示过长、误用于不相关任务会增加 token 或改变正确行为 | 条件触发命中记录、locator-level 合成回归、旧高分 fixture 无回归；不能以提示存在宣称平台已修 |
+
+### 11.6 Skill 层候选方案与当前事实
+
+`skills/arc-project-context/` 的源码、`project_map`、`source_read` 和 8 项本地断言已存在，但本次上传 ZIP 的 shape 不含该目录，`main.py` 也没有为下载的 Octos 运行时安装或设置 `OCTOS_SKILLS_PATH`；两次日志没有 `project_map`/`source_read` 调用。因此该 Skill 在这两个 Run 中没有生效，不能把任何缓存收益归因给它。
+
+| 优先级 | Skill 方案 | 收益 | 风险 | 验证门禁 |
+|---|---|---|---|---|
+| P0 | 复用 Octos 现有 Skill/plugin loader，把 `arc-project-context` 真正纳入候选包并注册；或把同等能力作为 harness 预计算上下文，不另造加载器 | 让 project map/source cache 从“仓库文件”变成真实运行能力 | manifest/entrypoint 不兼容会增加启动失败；新增 tool schema 也增加提示长度 | 解包后实际 `octos` tool registry 可见两工具，各调用一次成功；shape、offline import、路径逃逸和 SHA 失效测试通过；平台日志出现受控调用 |
+| P0 | project map 由 harness 在 turn 前生成并直接注入；source excerpt 按 change-impact 选择。Skill 调用仅用于模型主动补读 | 少一次 LLM 工具往返；避免每个节点重新 list/read 整个 server/page | 自动影响面可能漏文件 | prompt 中记录 map hash、source SHA/range/omitted；比较重复读取字节、请求数、prompt tokens 和漏读后的修复率 |
+| P1 | write-first vertical-slice Skill：需求读取一次后产出接口/状态/可访问语义图、共享文件聚类、首写截止和证据清单 | 把通用工作流复用到未来题目，不写死实体或 REQ | 仅靠 SKILL.md 指令无法强制模型遵循，硬门禁仍必须在 Agent | Skill 被实际加载；前 2–4 requests 产品写入率、slice 完成率、无重复全文件读取；与无 Skill 路径成对比较 |
+| P1 | requirement-only contract Skill：生成 happy/error/persistence/reload/404 等本地 probe，输出明确 `inferred_non_official` 类型 | 在隐藏测试环境提供最小可执行反馈 | 推导错误会形成代理目标，不能冒充官方 suite | 输出带来源 requirement hash、probe 类型和观察值；官方字段始终为空；旧 fixture 的 false-positive/false-negative 率可测 |
+| P2 | 缓存指标与去重策略：缓存 key 使用 path+SHA+range；同一 turn 对相同 key 直接复用，文件变化后失效；只传变化区段 | 为长期上下文架构提供可量化基础 | 文件系统 cache 命中本身不减少 provider token；若仍把同样 excerpt 回传模型，收益有限 | 同时记录 cache hit、LLM tool request、返回字符和 prompt token；只有请求/字符/token 实际下降才判为收益 |
+
+优先复用现有 Octos loader、Git 内容指纹/差异、Playwright 与当前 `arc/acceptance.py`，不为 project map、diff 或浏览器 probe另造平行框架。Skill 负责可复用工作流和有界读取，runtime 负责 quota、状态、预算、checkpoint 和验收真实性。
+
+### 11.7 下一次单探针 Go/No-Go
+
+当前结论：**对现有 `1821c3f5` 包继续运行 Sheet/GitHub 均为 NO-GO**。它已充分证明部署链恢复，同时也证明 requirement-only 的逐节点 `8 requests` 路径无法产生有效完成率；重复运行只会继续消耗时间与预算。
+
+仅在以下门禁全部满足后，允许一次新的 Sheet 单探针：
+
+1. Agent 日志读取 embedded build identity，候选包、task、suite、requirements binding 完整且一致，先达到 `candidate_identity_closed`；这不代表平台身份已闭合；
+2. project-map/source-cache 已在真实解包运行时可调用，或等价的 harness 预计算路径有明确日志和测试；
+3. `.arc` 写入与 frontend/backend product delta 分离，无 product delta 的节点绝不记 implemented；
+4. 空 workspace 不再消耗三轮 skeleton/nudge；本地 fixture 中首个业务 slice 在 2–4 requests 内产生 product delta；
+5. 每个 slice 有 harness 外部 build/start/404/route/DOM contract 证据，且所有证据标记为 `inferred_non_official`；
+6. 本地固定需求试验相较当前路径显著降低 cap-hit、重复读取和 prompt tokens，且无已知旧高分 fixture 回归；
+7. 单次 Sheet 平台预算设硬上限并保留总预算至少 25%（`50–75 CNY`）作为终版 reserve。
+
+该 Sheet 探针仍只标记 exploratory。专用 binding 和候选侧闭合不等于平台五元组闭合；平台没有回传并匹配 generation identity、submission/ZIP、task snapshot、suite 和 requirements 时，必须继续标记 `platform_identity_inconclusive`。满足以下任一条件才讨论 GitHub：Sheet 平台出现可复核的非零改善；或平台虽继续隐藏测试明细，但 product-delta、inferred contract、部署和候选侧身份链全部闭合且成本低于预设上限。即便进入 GitHub，也不能把该条件描述成严格 A/B。若仍为 `tests=[]` 且本地证据未改善，停止平台消耗，不用单次分数驱动业务猜测或全局抬高 request budget。
+
+## 12. `effd5e7777ce` 只读归档与阶段 3结论（2026-10-01）
+
+远程归档入口：[manifest](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/runs/effd5e7777ce/manifest.json) · [Phase 3 analysis](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/runs/effd5e7777ce/phase3-analysis.md)。原始 7 件附件仍仅在用户本地归档，远程 manifest 保存大小、SHA-256 和 provenance，不复制大型原始附件。
+
+### 12.1 本轮已确认的运行结论
+
+- `hackathon--github` 平台结果为 `2/100`、feature `0/47`；官方 evaluation 已到达，但 `tests=[]`，98 项失败的 ID、类型和 timeout 仍为 unknown。
+- Agent 遍历 47 个节点，去重后为 46 次内部 ok 标签和 `REQ-1-1-3` 一次 900s timeout；47/47 节点都是 `wrote=True, verified=False`。
+- stdout/stderr 镜像去重后，request-budget 为 49 个逻辑事件，而不是原汇总的 98：skeleton cap 20 × 1、节点 cap 16 × 47、rehearsal repair cap 10 × 1。
+- rehearsal 只有 1 次独立 favicon connection-reset 失败，repair 后恢复，最终 build、install 和 port 3000 监听成功。该中间失败不是官方 98 项失败的已证因果。
+- 没有上游 402/500 或 OOM 证据；存在 2 次本地 proxy BrokenPipe，不得笼统记为“Proxy/API 错误为无”。
+
+### 12.2 历史比较和非因果边界
+
+`effd5e7777ce` 并非 GitHub 系列首个非零 Run：`451174abe760` 已经为 `2/100`。相对 `0564f5955f16`，本 Run 从 `0/100` 变为 `2/100`，但 requests/tokens/成本/耗时分别约为 1.80×/2.72×/1.72×/2.31×；相对 `451174abe760`，得分相同而成本约为 20.70×。因为 requirements/test snapshot 无 SHA、官方失败明细不可见、候选与平台身份链都未闭合，这只是 observed fluctuation，不是严格 A/B，也不能证明提高 request cap 带来稳定收益。
+
+ZIP 内 `agent-build.json` 可定位归档候选的 build/commit/payload tree，但该 commit 在当前已检查远程 ref 中不可达；且 ZIP 没有 GitHub task-correct binding。包内身份不能冒充平台 generation identity，状态保持 `platform_identity_inconclusive`。
+
+### 12.3 对 Agent / Skill 方案的更新（仅建议）
+
+- Agent P0 优先级不变：产品源码 fingerprint 门禁、harness 外部 build/start/route/DOM 验证、vertical-slice 聚类、inspect/implement/verify 分预算、连续无 verified slice 止损。本 Run 新增证据表明，将节点 cap 从 8 抬高到 16 仍然使 47/47 节点全部触顶且 0/47 verified，不应继续全局抬高 cap。
+- Skill 在本 Run 中仍未进入运行链：ZIP 不含 `skills/`/project-context 文件，日志也无 `project_map`、`source_read`或 `source_cache` 调用。`prompt_cache_hit_tokens` 不是 Skill 启用证据，因此本 Run 不能评价 Skill 收益。
+- 后续只能在真实打包、tool registry 可见、日志可证调用后验收 Skill；project map 应主动注入，source cache 必须实际降低 provider read requests/字符/token。
+- evidence-normalizer 需将 stdout/stderr 镜像去重、ZIP/runtime/workspace/platform 身份分类与 unknown 保留变成硬规则，防止错误统计继续影响修复决策。
+
+本节不授权任何 Agent/Skill 修改、重新打包、发布或平台 Run。Phase 4 仍为 pending，只允许只读诊断。
+
+## 13. `12b3dea74607` 只读归档与阶段 3结论（2026-10-01）
+
+远程归档入口：[manifest](../evidence/arc-bench/runs/12b3dea74607/manifest.json) · [Phase 3 analysis](../evidence/arc-bench/runs/12b3dea74607/phase3-analysis.md)。原始 7 件附件仍仅在用户本地归档，远程 manifest 保存大小、SHA-256 和 provenance，不复制大型原始附件。
+
+### 13.1 已确认结论与口径纠错
+
+- `hackathon--sheet` 平台结果为 `1/100`、feature `0/24`；官方 evaluation 已到达，但 `tests=[]`，99 项失败的 ID、类型和 timeout 为 unknown。
+- stdout/stderr 镜像去重后，Agent 为 23 次 `implement ok` 和 `REQ-3-1-1` 一次 900s timeout，不是 46 次 ok。独立 budget-cap 为 24 个，不是 48 行：skeleton cap 20 × 1、节点 cap 16 × 23。
+- 24 个业务节点全部 `wrote=True`，但只有 3 个 `verified=True`；23 个完成节点全部触及 cap。skeleton verified，startup rehearsal 一次即通过，最终 build、install 和 port 3000 监听成功。
+- 无上游 HTTP 402/500 或 OOM 证据；存在 1 次本地 proxy BrokenPipe，不能笼统记为“Proxy/API 错误为无”。
+- traceability 只有 9 条 interface record、覆盖 2 个 requirement ID，全部未映射文件或 tests；这是探测器输出，不是业务完成度真值。
+- 23 个 `implement ok` 摘要中至少 10 个自述未实现/部分完成/仍需预算；`REQ-1-3-2` 即使标成 verified 仍报告 404。内部 `ok`/`verified` 存在假收敛，不能把剩余差距集中归因于唯一 timeout。
+
+### 13.2 历史边界与计划更新
+
+相对 `2b6a1f545c37`，本 Run 的 requests/tokens/成本/耗时约为 `1.59×/2.27×/1.66×/3.02×`，业务 verified 节点仅从 2 增至 3，官方结果从 0 变为 1。历史 `002c882794af` 已经为 `1/100`，因此本 Run 不是 Sheet 首次得分；它只能形成弱正向、探索性信号。相对历史同分 Run，单位同分成本较低，但候选包和隐藏测试 snapshot 不同且平台身份链缺失，不能形成因果 A/B。
+
+新包的生成/部署路径更稳定，但“将 cap 从 8 提升到 16”仍让所有可完成节点触顶，没有形成普遍外部验证。计划优先级保持：产品源码 delta 门禁、harness 外部验证、vertical slice、inspect/implement/verify 分预算、连续无 verified slice 止损；不得根据单个 `1/100` 继续全局抬高 cap。
+
+ZIP 内 `agent-build.json` 可定位归档候选，但平台没有 generation identity/build ID/task snapshot；runtime workspace commit 与 embedded commit 不一致。状态继续为 `platform_identity_inconclusive`。post-run template 的需求文本与部分历史模板内容一致，不代表隐藏 100 scenarios 一致。
+
+### 13.3 Skill 证据与限制
+
+本 Run 的 ZIP 不含 `skills/`/project-context 文件，日志也没有 `project_map`、`source_read`、`source_cache` 调用；不能把 provider prompt cache 命中解释为 Skill 生效。后续只有在 Skill 真实打包、tool registry 可见、日志可证调用，并实际降低 provider read request/字符/token 时才能验收收益。
+
+本节不授权 Agent/Skill 修改、重新打包、发布或平台 Run。Phase 4 仍为 pending，只允许只读诊断。
