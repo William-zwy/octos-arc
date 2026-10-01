@@ -34,6 +34,10 @@ AGENT_REQUIRED_FILES = (
     "run_controls.py",
     "agent-build.json",
     "requirements.txt",
+    "skills/arc-project-context/SKILL.md",
+    "skills/arc-project-context/manifest.json",
+    "skills/arc-project-context/index.js",
+    "skills/arc-project-context/main",
 )
 AGENT_REQUIRED_DIRS = ("arcbench_agent_runtime", "hooks", "public-tests")
 

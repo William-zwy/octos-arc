@@ -6,7 +6,7 @@ script_dir=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
 repo_root=$(git -C "$script_dir" rev-parse --show-toplevel)
 cd "$script_dir"
 
-if ! git -C "$repo_root" diff --quiet || ! git -C "$repo_root" diff --cached --quiet; then
+if [ -n "$(git -C "$repo_root" status --porcelain=v1 --untracked-files=all -- arc skills/arc-project-context)" ]; then
   echo "error: refusing to package a dirty source tree; commit the release first" >&2
   exit 2
 fi
@@ -58,6 +58,14 @@ to_python_path() {
     printf '%s\n' "$1"
   fi
 }
+skill_archive="$temp_dir/skill.zip"
+git -c core.autocrlf=false -C "$repo_root" archive --format=zip \
+  --prefix=skills/arc-project-context/ --output="$skill_archive" \
+  HEAD:skills/arc-project-context -- SKILL.md manifest.json index.js main
+temp_archive_native=$(to_python_path "$temp_archive")
+skill_archive_native=$(to_python_path "$skill_archive")
+"$python_cmd" -c 'import sys,zipfile; dst=zipfile.ZipFile(sys.argv[1],"a"); src=zipfile.ZipFile(sys.argv[2]); [(dst.writestr(i,src.read(i.filename))) for i in src.infolist() if not i.is_dir()]; src.close(); dst.close()' \
+  "$temp_archive_native" "$skill_archive_native"
 identity_script_native=$(to_python_path "$identity_script")
 gate_script_native=$(to_python_path "$gate_script")
 temp_archive_native=$(to_python_path "$temp_archive")

@@ -528,6 +528,22 @@ submission ZIP 不含 `skills/`/`arc-project-context`，日志无 `project_map`�
 
 本节不授权任何 Agent/Skill 修改、重新打包、发布或平台 Run。Phase 4 仍为 pending，只允许只读诊断；本次授权仅覆盖分析与归一化证据的仓库同步。
 
+## 17. 下一轮平台候选的三层联动实现（2026-10-02）
+
+> **IMPLEMENTATION AUTHORIZED / PLATFORM RUN USER-OPERATED**：用户随后明确要求“根据建议修改一版，由用户提交平台测试”。本节取代前述各 Run 归档段落中的 analysis-only 限制，但授权仅覆盖 Agent 源码、回归测试、候选 ZIP 和协作记录；本会话不代替用户启动平台 Run。
+
+本次切片坚持 `Runtime/Harness 强制控制 + 通用 Skill 结构化摘要 + Prompt 短规则`，不把六个候选 Skill 一次性重构为系统依赖：
+
+- Runtime 状态真实性：节点前后计算 frontend/backend 产品指纹；无 product delta 不得发出 `implementation_done`。命中 request cap 或没有成功写工具证据时，即使源文件有变化，也只保留并提交 partial source，节点状态为 inconclusive。
+- 无 spec 收敛：Harness 将已解析需求树压缩为有界 skeleton outline；requirement-only 节点禁止寻找不存在的 tests/report/history，并要求在第三个工具调用前产生产品写入。此路径保留 build/start/curl 所需 shell，避免 Prompt 与工具策略自相矛盾。
+- 部署契约：rehearsal 先验证 canonical `GET /` 和严格 2xx 的 `GET /api/health`，再做未知路径健壮性检查。仅存活进程上的 favicon connection reset 可降级为 advisory；未知页面/API、timeout 或进程退出仍失败。
+- 通用 Skill：复用仓库已有 `arc-project-context`，不新造缓存框架。候选 ZIP 强制携带 `SKILL.md`、manifest、实现和 Linux launcher；运行时复制到一次性 profile 的 `skills/` 并 `chmod`，设置 `OCTOS_SKILLS_PATH` 到父目录。Skill 失败不影响 quota/checkpoint/readiness 等硬约束。
+- 打包身份：PowerShell 与 POSIX 打包链均拒绝 dirty Agent 源码；package shape 强制要求 Skill 四件套，offline gate 实际执行 `project_map`，防止再次出现“ZIP gate 通过但 Skill 未入包”。
+
+明确不在本切片内：`change-impact` 强阻断、完整 repair strategy switch、跨 Run resume 重构、隐藏测试猜测、题目专用 locator/实体名。Skill 不会被逐节点强制调用；首轮只验证工具真实注册和可调用，收益仍需以后用 `project_map/source_read` 调用次数、返回字符、provider prompt tokens 与重复读取量衡量。
+
+协作分支在实现期间出现远程提交 `65c381d2`，把多节点 implement request cap 从 18 提至 50。该变更必须通过正常合并保留其历史，不得覆盖；同时本切片把任何 cap-hit 明确传导为 inconclusive，且继续保留时间型 final reserve。平台 Run 需单独记录成本与 cap-hit，不能仅因分数上涨就认定全局抬高 cap 正确。
+
 ## 16. `877ac3bb19e7` 本地只读归档与阶段 3 结论（2026-10-01）
 
 > **ANALYSIS-ONLY / REPOSITORY-SYNC AUTHORIZED（2026-10-01）**：用户已授权将本节及对应归一化证据同步到协作分支，并与 `f1ff68f69dac`、`b4e114e9c001` 的分析一并提交。

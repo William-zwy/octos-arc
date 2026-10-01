@@ -472,3 +472,19 @@ Remaining first-pass misses are model sampling (invented validation rules, messa
 twice server-side, cookie/redirect details). With the leaderboard scoring the MOST RECENT run and the current
 TB entry at ¥0.251 (a 3-request run), a rerun has negative expected value (median 3 requests ≈ ¥0.3, tail
 ¥0.6+): recommendation — do not rerun TB; keep the entry. Cloud: 未评测 for round 28.
+
+## Round 29 — truthful product delta, canonical readiness, bundled context skill
+
+Requirement-only hackathon runs exposed three generic control failures: cap-forced summaries could still be
+recorded as implemented, model-side smoke data could look like source progress, and favicon resets consumed
+repair turns even when the platform-facing root server later started successfully. The harness now records a
+bounded requirement outline, distinguishes deployable source delta from mutable backend JSON, keeps cap-hit
+turns inconclusive, and checks `/` plus `/api/health` before treating favicon reset as advisory.
+
+The existing `arc-project-context` plugin is now bundled instead of reimplemented. It is staged into the
+disposable profile with a portable launcher; both packers and package shape require its four runtime files,
+and the offline package gate executes `project_map`. Skill failure remains non-critical: quota, checkpoint,
+process and acceptance truth stay in the harness.
+
+Local targeted gate: 78 passed, 1 skipped, 3 known Windows-baseline tests deselected; context skill 8
+assertions passed. Platform: pending user-operated probe.

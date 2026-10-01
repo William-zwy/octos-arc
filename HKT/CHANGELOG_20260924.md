@@ -304,6 +304,15 @@
 - 更新只读建议优先级：product delta 与 harness 外部验证、vertical slice、分预算槽、requirement-derived probes；Skill 未打包且无调用证据，不能评价收益。
 - 未修改 Agent、Skill、ZIP、requirements 或官方测试，未重新打包、发布或启动平台 Run。
 
+## 2026-10-02：下一轮平台候选的 Runtime / Skill / Prompt 联动
+
+- 依据 `877ac3bb19e7` 等 requirement-only Run 的假完成、重复探索和 rehearsal 信号，增加产品源码 delta 门禁；无 delta、request cap-hit 或缺少成功写工具证据均不得记录为实现完成。
+- requirement-only 路径改用 Harness 解析的有界需求摘要，禁止搜索不存在的测试和历史，并修正小任务 shell 被移除却要求 npm/curl 的契约冲突。
+- rehearsal 增加 `/` 与 `/api/health` readiness；仅 favicon reset 可在核心路径健康且进程存活时降级，其他连接错误仍失败。
+- 将现成 `skills/arc-project-context` 真正纳入 ZIP 和运行时 profile，增加 Linux launcher、父级 `OCTOS_SKILLS_PATH`、shape 强制项与行为烟测；不把 Skill 作为正确性前提。
+- PowerShell 打包链新增 dirty-source 拒绝，与 POSIX 打包链共同防止工作树字节伪绑定旧 HEAD。
+- 子 Agent 分别完成代码风险、测试覆盖和打包门禁的只读审查；本会话保持唯一写入者。
+
 ## 2026-10-01：归档 GitHub Run `877ac3bb19e7`（证据同步）
 
 - 最初以 local-only 方式新增 `evidence/arc-bench/runs/877ac3bb19e7/manifest.json` 和 `phase3-analysis.md`；用户于 2026-10-01 授权与 `f1ff68f69dac`、`b4e114e9c001` 的分析一并同步，仍不授权 Agent/Skill 修改、打包或发布。

@@ -309,6 +309,40 @@ def describe_node(node: dict) -> str:
     return "\n".join(lines)
 
 
+def requirement_outline(tree: dict, max_chars: int = 12000) -> str:
+    """Compact harness-parsed requirement context for the skeleton turn.
+
+    Requirement-only hackathon runs have no acceptance files.  Asking the
+    model to rediscover the YAML tree through tools consumed most of the
+    skeleton request budget in recent runs.  The harness has already parsed
+    the tree, so provide a bounded outline and make the first model actions
+    product writes instead of repeated filesystem reads.
+    """
+    lines: list[str] = []
+    used = 0
+    marker = "- ... remaining nodes omitted; exact node details are supplied in later turns"
+    for node in topo_order(tree):
+        node_id = str(node.get("id") or "")
+        name = " ".join(str(node.get("name") or "").split())
+        description = " ".join(str(node.get("description") or "").split())
+        scenarios = [" ".join(str(sc.get("name") or "scenario").split())
+                     for sc in (node.get("scenarios") or []) if isinstance(sc, dict)]
+        item = f"- {node_id}: {name}"
+        if description:
+            item += f" — {description[:320]}"
+        if scenarios:
+            item += " | scenarios: " + "; ".join(scenarios[:4])
+        separator = 1 if lines else 0
+        if used + separator + len(item) > max_chars:
+            remaining = max(0, max_chars - used - separator)
+            if remaining:
+                lines.append(marker[:remaining])
+            break
+        lines.append(item)
+        used += separator + len(item)
+    return "\n".join(lines)[:max_chars]
+
+
 def folder_descendants(tree: dict) -> dict[str, list[str]]:
     """Non-atomic node id -> ids of its ATOMIC descendants (document order)."""
     out: dict[str, list[str]] = {}
@@ -437,6 +471,55 @@ def source_fingerprint(output_dir: Path) -> str:
         digest.update(rel)
         digest.update(hashlib.sha256(payload).digest())
     return digest.hexdigest()
+
+
+def product_fingerprint(output_dir: Path) -> str:
+    """Fingerprint deployable product inputs, excluding build/cache output.
+
+    This is deliberately broader than ``source_fingerprint``: frontend assets,
+    manifests and common source types are legitimate product changes. Mutable
+    backend JSON, package locks, node_modules, dist and harness-owned ``.arc``
+    state are not completion evidence.
+    """
+    digest = hashlib.sha256()
+    paths: list[Path] = []
+    for part in ("frontend", "backend"):
+        base = output_dir / part
+        if not base.is_dir():
+            continue
+        for path in sorted(base.rglob("*")):
+            if not path.is_file():
+                continue
+            rel = path.relative_to(output_dir)
+            if any(seg in ("node_modules", "dist", ".git") for seg in rel.parts):
+                continue
+            if path.name in ("package-lock.json", "npm-shrinkwrap.json"):
+                continue
+            # Backend JSON is normally mutable runtime state. A model-side
+            # curl smoke must not turn db.json into evidence that source code
+            # changed. package.json remains part of the deployable contract.
+            if part == "backend" and path.suffix.lower() == ".json" and path.name != "package.json":
+                continue
+            paths.append(path)
+    for path in sorted(set(paths)):
+        try:
+            rel = path.relative_to(output_dir).as_posix().encode("utf-8")
+            payload = path.read_bytes()
+        except OSError:
+            continue
+        digest.update(len(rel).to_bytes(4, "big"))
+        digest.update(rel)
+        digest.update(hashlib.sha256(payload).digest())
+    return digest.hexdigest()
+
+
+def product_turn_incomplete_reason(wrote: bool, budget_exhausted: bool) -> str | None:
+    """Return the truthful non-completion reason after a real product delta."""
+    if budget_exhausted:
+        return "request_budget_exhausted"
+    if not wrote:
+        return "untracked_product_write"
+    return None
 
 
 class _StaticUiParser(HTMLParser):
@@ -751,7 +834,35 @@ def write_profile_defaults(data_dir: Path, config_dir: Path, hooks: list[dict]) 
             pass
 
 
-def build_octos_env(config_dir: Path, protected_dirs: list[Path] | None = None) -> dict:
+def stage_bundled_skills(data_dir: Path, bundle_dir: Path | None = None) -> Path | None:
+    """Install the bundled read-only context skill into this disposable run.
+
+    ZIP extractors do not reliably preserve executable bits. Stage the skill
+    into the per-run profile and assert its launcher is executable on Unix.
+    The skill is only an optimisation: staging failure never weakens runtime
+    quota, checkpoint, or acceptance enforcement.
+    """
+    source_root = (bundle_dir or BUNDLE_DIR) / "skills" / "arc-project-context"
+    required = ("SKILL.md", "manifest.json", "index.js", "main")
+    if not source_root.is_dir() or any(not (source_root / name).is_file() for name in required):
+        return None
+    target_root = data_dir / "skills"
+    target = target_root / "arc-project-context"
+    try:
+        target.mkdir(parents=True, exist_ok=True)
+        for name in required:
+            shutil.copy2(source_root / name, target / name)
+        launcher = target / "main"
+        launcher.chmod(launcher.stat().st_mode | 0o111)
+        log(f"[skills] staged arc-project-context at {target}")
+        return target_root
+    except OSError as exc:
+        log(f"[skills] arc-project-context unavailable: {exc}")
+        return None
+
+
+def build_octos_env(config_dir: Path, protected_dirs: list[Path] | None = None,
+                    data_dir: Path | None = None) -> dict:
     """Prepare env + minimal config.json for non-interactive octos.
 
     `protected_dirs` (official tests, requirements) get a before_tool_call
@@ -792,6 +903,13 @@ def build_octos_env(config_dir: Path, protected_dirs: list[Path] | None = None) 
     config_dir.mkdir(parents=True, exist_ok=True)
     (config_dir / "config.json").write_text(json.dumps(config, indent=2), encoding="utf-8")
     env["OCTOS_CONFIG_DIR"] = str(config_dir)
+    if data_dir is not None:
+        skills_root = stage_bundled_skills(data_dir)
+        if skills_root is not None:
+            current = env.get("OCTOS_SKILLS_PATH", "").strip()
+            env["OCTOS_SKILLS_PATH"] = (
+                str(skills_root) if not current else str(skills_root) + os.pathsep + current
+            )
     env.setdefault("OCTOS_DISABLE_STREAMING", "1")   # platform proxies reject SSE
     env.setdefault("OCTOS_DANGER_FULL_ACCESS", "1")  # the container is the sandbox
     env.setdefault("npm_config_registry", "https://registry.npmmirror.com")
@@ -1098,12 +1216,17 @@ VERIFY_MINIMAL = """\
 You have no shell in this turn — the harness runs `npm run build`, starts the backend and runs the official Playwright spec right after your turn and hands you any failure. Tool budget for this turn: at most 8 write_file/edit_file calls (one backend file backend/server.js plus at most 4 frontend files; write each file once, complete) and at most 2 read_file calls. Group the write_file calls into as few responses as possible — small files together, but a large file (more than ~150 lines) alone in its own response — then finish with a one-line summary; every extra round trip resends the whole context and is billed, and an oversized response gets truncated and loses everything in it. Do not list directories or re-read files you just wrote; the file listing above is authoritative. Double-check syntax mentally before writing: a build or start failure costs a repair round.
 """
 
+VERIFY_REQUIREMENT_ONLY = """\
+No official/local acceptance spec is available for this task. Do NOT search for hidden tests, Playwright files, reports, git history or extra requirement files: they are unavailable and repeated searching only burns the turn. Treat the supplied requirement node as the contract. After writing the smallest complete vertical slice, run only harness-aligned checks: `npm run build`, start the canonical backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, verify `GET /`, `GET /api/health`, and one success plus one error request for the new route, then stop. These are inferred local probes, not an official test verdict. Finish immediately after they pass.
+"""
+
 PORT_RULES = """\
 Ports: run your own smoke servers ONLY with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start` (port {smoke}). NEVER bind port {port} — the runner watches it and terminates the run. Stop every server you started before you finish. Do not run git; the harness commits.
 """
 
 SKELETON_PROMPT = """\
-Build the skeleton of a full-stack web application in the current working directory. The requirement tree is at {req_dir} (skim ALL of it now; individual features come in later turns, but you must lay down the shared foundation they will all extend).
+Build the skeleton of a full-stack web application in the current working directory. The harness already parsed the requirement tree at {req_dir}. Do NOT spend tool calls listing or rereading requirement files. Use this bounded outline as the complete planning input for the shared foundation:
+{requirements_outline}
 
 """ + ARCHITECTURE_CONTRACT + """
 {tests}
@@ -1166,19 +1289,19 @@ NODE_PROMPT = """\
 {design}{ancestors}
 {tests}
 
-CRITICAL - Before writing any code:
-1. Read and analyze the test helper functions (like renameLabel, clickNamed, etc.) to understand the EXACT DOM structure and accessibility labels expected
-2. List all required HTML elements with their roles, names, and ARIA labels that the test will query
-3. Verify your understanding: describe what UI the test expects to see
-
-While implementing:
-- Test every major component immediately after writing it (every 5-10 minutes of work)
-- If a test fails, read the error message carefully and adjust your implementation strategy
-- Do not write large amounts of code without verification
+{execution}
 
 {ui}{performance}
 {verify}
 """ + PORT_RULES
+
+SPEC_EXECUTION_GUIDANCE = """\
+CRITICAL — the quoted acceptance specs are ground truth. Before writing, extract the exact routes, roles, accessible names, option labels and error text they query. Do not reread quoted specs through tools. Implement the complete vertical slice in the same turn, then run the smallest relevant build/start/request check; if a test fails, change the implementation rather than repeatedly inspecting unchanged files.
+"""
+
+REQUIREMENT_ONLY_EXECUTION_GUIDANCE = """\
+CRITICAL — no acceptance specs exist in the workspace. Do not search for tests, reports, snapshots, git history or additional requirement files. The requirement node above and the harness-maintained application contract are the complete input. Use at most the first two tool calls to read the exact backend/page regions you will edit; by tool call 3 make the first product write. Implement one complete vertical slice now: persistence/data, API route, page/controls and visible success/error state. Preserve existing routes and labels. Do not end with a plan, TODO or description, and do not reread files you just wrote.
+"""
 
 NODE_PREAMBLE_EXTEND = """\
 Implement requirement node {node_id} in the existing application (frontend/ built by `npm run build` into frontend/dist/; zero-dependency Node backend in backend/, `npm start`, PORT env var). Extend the app; do not rewrite or break existing features.
@@ -1232,7 +1355,7 @@ The app failed the pre-grading startup rehearsal. The runner executes exactly:
 2. cd backend && npm install && npm start        (must bind PORT and stay up)
 Rehearsal error:
 {error}
-Fix the project so this sequence works (typical causes: a require() path that does not match a real file, a file referenced but never written, a startup syntax error, a dependency missing from package.json). Verify: build the frontend, start the backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, confirm it binds, stop it. Never bind {port}. Write the fix now.\
+Fix the project so this sequence works (typical causes: a require() path that does not match a real file, a file referenced but never written, a startup syntax error, a dependency missing from package.json). Verify with the canonical command: build the frontend, start the backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, confirm `GET /` returns the app and `GET /api/health` returns 2xx from that same process, then stop it. A transient reset on `/favicon.ico` is not a reason to rewrite product code if `/`, health and the process remain healthy. Never bind {port}. Write only a product-source fix supported by the error; if no product delta is needed, say so and finish.\
 """
 
 ACCEPTANCE_TESTS_PROMPT = """\
@@ -1392,6 +1515,7 @@ class Flow:
         self.quota_gated = False
         self.last_turn_wrote = False
         self.last_turn_verified = False
+        self.last_turn_budget_exhausted = False
         self.run_id = f"run-{os.getpid()}-{int(self.t_start * 1000)}"
         self.requirements_hash: str | None = None
         self.checkpoints = CheckpointStore(output_dir)
@@ -1775,15 +1899,18 @@ class Flow:
         ok, text = self.driver.run(prompt, max(60, int(timeout)), monitor)
         self.last_turn_wrote = bool(monitor.wrote_files)
         self.last_turn_verified = bool(monitor.verified and ok)
+        self.last_turn_budget_exhausted = bool(
+            proxy is not None and proxy.turn_budget and proxy.turn_requests > proxy.turn_budget)
         log(f"[flow] {label} {'ok' if ok else 'FAILED'} in {time.time()-t0:.0f}s "
             f"(tools={monitor.tool_calls} wrote={monitor.wrote_files} verified={monitor.verified}): {text[-240:]!r}")
-        if proxy is not None and proxy.turn_budget and proxy.turn_requests > proxy.turn_budget:
+        if self.last_turn_budget_exhausted:
             log(f"[guard] {label}: request budget {proxy.turn_budget} hit; turn forced to finish")
         if proxy is not None and proxy.quota_gated:
             self.enter_quota_gate(proxy.quota_reason or f"{label}: upstream billing limit")
         self.current_phase = "turn_end"
         self.checkpoint("turn_end", label=label, ok=ok, tool_calls=monitor.tool_calls,
-                        wrote=monitor.wrote_files, verified=monitor.verified)
+                        wrote=monitor.wrote_files, verified=monitor.verified,
+                        request_budget_exhausted=self.last_turn_budget_exhausted)
         for c in monitor.corrections():
             log(f"[guard] {label}: {c[:160]}")
             if self.guard_enabled:
@@ -1823,12 +1950,18 @@ class Flow:
         mode = os.environ.get("OCTOS_VERIFY_MODE", "auto")
         return mode == "minimal" or (mode != "full" and total_nodes <= self.small_task_nodes)
 
-    def verify_text(self, total_nodes: int) -> str:
+    def verify_text(self, total_nodes: int, has_specs: bool = True) -> str:
         minimal = self.minimal_mode(total_nodes)
         # Prompt budgets alone are ignored often enough (v9-tb-a: 41 tool calls
         # incl. servers in a "no shell" repair turn); in minimal mode the proxy
         # removes the shell tools so commands are impossible, the harness builds.
         proxy = getattr(self, "llm_proxy", None)
+        if not has_specs:
+            # Requirement-only verification explicitly asks for build/start/
+            # request probes. Do not simultaneously hide the shell tools.
+            if proxy is not None:
+                proxy.extra_drop_tools = set()
+            return VERIFY_REQUIREMENT_ONLY.format(smoke=self.smoke_port)
         if proxy is not None and os.environ.get("OCTOS_ARC_DROP_SHELL", "1") != "0":
             proxy.extra_drop_tools = set(self.SHELL_TOOLS) if minimal else set()
         return VERIFY_MINIMAL if minimal else VERIFY_FULL.format(smoke=self.smoke_port)
@@ -2318,13 +2451,16 @@ class Flow:
         elif time_left < 900:
             time_pressure_hint = f"\n⏱️ TIME AWARENESS: You have {time_left:.0f}s for this node. Work efficiently and test frequently.\n"
 
+        execution = SPEC_EXECUTION_GUIDANCE if specs else REQUIREMENT_ONLY_EXECUTION_GUIDANCE
         prompt = self.application_context_text(node_id) + NODE_PROMPT.format(node_id=node_id, node_spec=describe_node(node), design=design_text,
                                     preamble=preamble, ancestors=self.ancestors_text(node_id, ordered),
                                     tests=self.tests_prompt_for(node_id), smoke=self.smoke_port, port=self.web_port,
-                                    performance=self.perf_text(), ui=self.ui_contract(), verify=self.verify_text(total))
+                                    performance=self.perf_text(), ui=self.ui_contract(), execution=execution,
+                                    verify=self.verify_text(total, has_specs=bool(specs)))
         prompt = self.corrections_text() + time_pressure_hint + prompt
         codegen_prompt = None
         implement_timeout = min(self.node_timeout, self.implement_fraction * node_budget, deadline - time.time())
+        product_before = product_fingerprint(self.output_dir)
         if self.codegen_mode():
             compact = CODEGEN_PROMPT.format(node_id=node_id, description=str(node.get("description") or "").strip(),
                                             spec=self.spec_bodies(node_id), port=self.web_port, ports=self.codegen_ports_clause(),
@@ -2400,9 +2536,42 @@ class Flow:
             self.impl_failed.append(node_id)
             self.set_node_state(node_id, "inconclusive", reason="scaffold_gate", findings=list(hard_findings))
             return
-        self.mark("implementation_done", node_id, (text[-500:] or None) if ok else "implement turn timed out; partial code")
+        product_after = product_fingerprint(self.output_dir)
+        product_delta = product_after != product_before
+        self.checkpoint("product_delta", node_id=node_id, changed=product_delta,
+                        before=product_before, after=product_after,
+                        request_budget_exhausted=self.last_turn_budget_exhausted)
+        if not product_delta:
+            # A successful model reply, write-tool label, package-lock update or
+            # design note is not a feature implementation.  Do not let it enter
+            # the application contract as completed and mislead later turns.
+            log(f"[flow] {node_id}: no frontend/backend product delta; node remains inconclusive")
+            self.mark("implementation_failed", node_id, "no deployable product source changed")
+            self.impl_failed.append(node_id)
+            self.set_node_state(node_id, "inconclusive", reason="no_product_delta",
+                                request_budget_exhausted=self.last_turn_budget_exhausted)
+            return
+        incomplete_reason = product_turn_incomplete_reason(
+            self.last_turn_wrote, self.last_turn_budget_exhausted)
+        if incomplete_reason:
+            # A forced summary can return ok=True even though the model ran out
+            # of requests mid-feature. Keep and commit useful partial source,
+            # but never report the requirement as implemented.
+            reason = incomplete_reason
+            log(f"[flow] {node_id}: product changed but turn is incomplete ({reason})")
+            self.mark("implementation_failed", node_id, f"partial product delta retained: {reason}")
+            self.impl_failed.append(node_id)
+            self.set_node_state(node_id, "inconclusive", reason=reason, product_delta=True,
+                                wrote=self.last_turn_wrote,
+                                request_budget_exhausted=self.last_turn_budget_exhausted)
+            self.update_application_contract()
+            self.commit(f"{node_id} (partial): {node.get('name', '')}")
+            return
+        self.mark("implementation_done", node_id, (text[-500:] or None) if ok else "product delta retained")
         self.implemented_nodes.add(node_id)
         self.set_node_state(node_id, "implemented", wrote=self.last_turn_wrote, turn_ok=ok,
+                            product_delta=True, model_verified_label=self.last_turn_verified,
+                            request_budget_exhausted=self.last_turn_budget_exhausted,
                             verification="pending_acceptance")
         self.update_application_contract()
         self.commit(f"{node_id} (implement): {node.get('name', '')}")
@@ -2625,6 +2794,7 @@ class Flow:
     def skeleton(self, tree: dict) -> None:
         log("[flow] skeleton turn starting")
         prompt = SKELETON_PROMPT.format(req_dir=self.req_dir, port=self.web_port, smoke=self.smoke_port,
+                                        requirements_outline=requirement_outline(tree),
                                         tests=self.tests_prompt_for(None, skeleton=True))
         # No application_context_text here: at skeleton time the contract holds no
         # implemented nodes, designs, or routes, so it is empty overhead. The
@@ -2761,7 +2931,7 @@ class Flow:
             protected = [p for p in (self.tests_dir, self.req_dir) if p and p.is_dir()]
             config_dir = Path(tempfile.mkdtemp(prefix="octos-config-"))
             self.start_llm_proxy()
-            env = build_octos_env(config_dir, protected)
+            env = build_octos_env(config_dir, protected, data_dir=data_dir)
             write_profile_defaults(data_dir, config_dir, protected_hooks(protected))
             self.snapshot_protected()
             env["PORT"] = str(self.smoke_port)  # a bare `npm start` inside a turn must not hit the grading port

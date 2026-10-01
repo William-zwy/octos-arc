@@ -19,6 +19,14 @@ if (-not (Test-Path -LiteralPath $OutputParent -PathType Container)) {
     New-Item -ItemType Directory -Path $OutputParent -Force | Out-Null
 }
 
+$sourceChanges = @(& git -C $RepoRoot status --porcelain=v1 --untracked-files=all -- arc skills/arc-project-context)
+if ($LASTEXITCODE -ne 0) {
+    throw "Package gate could not inspect the source tree"
+}
+if ($sourceChanges.Count -gt 0) {
+    throw "Refusing to package dirty Agent sources; commit arc/ and skills/arc-project-context first"
+}
+
 $Inputs = @(
     "main.py",
     "octos_stdio.py",
@@ -92,6 +100,16 @@ try {
     foreach ($input in $Inputs) {
         Copy-InputToStaging -RelativePath $input -StagingRoot $stagingRoot
     }
+    $skillRoot = Join-Path $RepoRoot "skills/arc-project-context"
+    foreach ($skillFile in @("SKILL.md", "manifest.json", "index.js", "main")) {
+        $source = Join-Path $skillRoot $skillFile
+        if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
+            throw "Required bundled skill input is missing: skills/arc-project-context/$skillFile"
+        }
+        $destination = Join-Path $stagingRoot ("skills/arc-project-context/" + $skillFile)
+        New-Item -ItemType Directory -Path (Split-Path -Parent $destination) -Force | Out-Null
+        Copy-Item -LiteralPath $source -Destination $destination -Force
+    }
 
     $pythonCommand = (Get-Command python -ErrorAction SilentlyContinue).Source
     if ([string]::IsNullOrWhiteSpace($pythonCommand)) {
@@ -124,7 +142,11 @@ try {
         "guard.py",
         "llm_proxy.py",
         "codegen.py",
-        "requirements.txt"
+        "requirements.txt",
+        "skills/arc-project-context/SKILL.md",
+        "skills/arc-project-context/manifest.json",
+        "skills/arc-project-context/index.js",
+        "skills/arc-project-context/main"
     )
     foreach ($required in $requiredRootFiles) {
         if ($entryNames -notcontains $required) {
