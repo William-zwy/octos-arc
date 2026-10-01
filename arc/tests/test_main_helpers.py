@@ -267,6 +267,32 @@ class SharedFoundationTests(unittest.TestCase):
         self.assertTrue("implement" in text and ("route" in text or "plan" in text or "name the" in text))
 
 
+class SingleOriginContractTests(unittest.TestCase):
+    """Github run arc-agent-...-7fc46206 (0/100 despite 31 verified=True): the
+    skeleton built a SPLIT model — API-only backend plus a frontend that calls
+    `http://127.0.0.1:3001` through a hardcoded API_BASE. The agent's own curl
+    smoke used that port so it self-reported verified=True, but the grader loads
+    the page from its own host/port where 3001 has no server, so every API
+    request failed and every test failed. The architecture contract and the
+    skeleton must forbid absolute origins and mandate same-origin relative
+    paths; extend turns must not reintroduce a host:port constant."""
+
+    def test_architecture_contract_forbids_hardcoded_absolute_origin(self):
+        text = m.ARCHITECTURE_CONTRACT.format(port=3000).lower()
+        self.assertIn("same-origin", text)
+        self.assertIn("127.0.0.1", text)  # named as the thing NOT to hardcode
+        self.assertTrue("never hardcode" in text or "never" in text and "api_base" in text)
+
+    def test_skeleton_prompt_mandates_single_port_relative_fetch(self):
+        text = m.SKELETON_PROMPT.format(req_dir="/r", port=3000, smoke=3001, tests="").lower()
+        self.assertIn("same-origin", text)
+        self.assertIn("/api/", text)
+
+    def test_extend_preamble_warns_against_absolute_origin(self):
+        text = m.NODE_PREAMBLE_EXTEND.format(node_id="REQ-1").lower()
+        self.assertTrue("relative" in text or "same-origin" in text)
+
+
 class CodegenPromptTests(unittest.TestCase):
     def test_should_format_without_placeholder_errors_and_keep_build_command(self):
         import main as m
