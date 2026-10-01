@@ -4,6 +4,20 @@
 
 ---
 
+## 2026-10-02：截止前下一版 Agent 有效性最大化计划
+
+- 基于 `a7964e4411af` 只读审计，裁决 cap `18 → 50` 仅改善过程吞吐，未证明完成率收益；相对历史同分 Run 成本约扩大四倍，不再作为全局默认提分策略。
+- 纠正 `65c381d2` 提交依据中的计数口径：`92` 是 stdout/stderr 重复行，去重后为 49 个 cap 事件，不是 92 个节点。
+- 将下一版 P0 收敛为：高置信 requirement contract、capability vertical slice、自适应预算与 continuation、seed 隔离、requirements-derived browser smoke。
+- 明确现有 `0d580c74` 解决状态真实性/readiness/Skill 入包，但仍保留 cap 50 且未闭合 seed 与语义浏览器门禁；`c01437c9` 发布物保留为可追溯基线，不作为下一次最终提交的默认推荐包。
+- 新增截止前代码修改地图、8 小时相对计划、go/no-go 门禁和降级顺序；完整六 Skill、跨 Run resume、全量 AST 和大规模模块化明确延期。
+- 将硬截止固定为北京时间 `2026-10-03 23:59`，增加 D-18h 代码冻结、D-16h 包门禁、Sheet-first 探针、唯一一次证据驱动补丁、D-3h 停止新 Run 和 D-1h 最终上传缓冲。
+- 增加平台软/硬成本止损和三条只读子 Agent 审查 lane；子 Agent quota/usage-limit 失败不得阻塞 Integrator，不能把多 Agent 可用性作为系统正确性的前提。
+- 两个恢复额度后的子 Agent 完成截止倒排与源码可实施性复核：将完整 capability executor、双文件 seed 强协议和任意动作测试生成器裁为 A-lite/C/D-lite/E-surface/B-lite；默认预算改为 22 + 单次续作 12、上限 36，并增加 feature flags 与回退边界。
+- 第一轮 Sheet 前移至 `2026-10-02 19:00` 前，唯一第二探针前移至 `2026-10-03 06:00` 前；`12:30` 停止探索、`15:00` 冻结最终包、`20:59` 完成最终上传，保留 3 小时灾备。
+- seed 隔离首版改为 disposable workspace/data copy 与前后 hash，生成应用的 `seed.json/runtime.json + ARC_DATA_FILE` 强协议延期；semantic smoke 首版只做高置信只读 surface，完整动作/失败/refresh 生成延期。
+- 本次只修改协作计划与变更日志，不修改 Agent、Skill、ZIP 或平台测试；远程推送继续暂停。
+
 ## 2026-09-30
 
 - 归档 Web Keep Run `c68bef1a6343` 的阶段 3输入、终态/中间态指标、原始证据 SHA-256 和阶段 4待闭合状态。
