@@ -285,3 +285,12 @@
 - 将该 Run 与 `451174abe760` 和 `0564f5955f16` 对比，明确 score `2/100` 并非系列首次非零，成本和耗时大幅增加仍不构成严格 A/B 收益。
 - 更新 Agent/Skill 建议：产品 delta 与外部验证门禁、vertical slice、分阶段预算和止损；Skill 必须真实打包、可见调用且实际减少 provider 读取后才能评价。
 - 本次只修改证据与协作文档，未修改 Agent、Skill、ZIP、requirements 或官方测试，未打包、发布或启动平台 Run。
+
+## 2026-10-01：归档 Sheet Run `12b3dea74607`
+
+- 新增 `evidence/arc-bench/runs/12b3dea74607/manifest.json` 和 `phase3-analysis.md`，记录 7 件本地附件的 provenance、大小、SHA-256、平台结果、ZIP 内归档身份、missing evidence 与 Phase 4 pending 门禁。
+- 纠正 stdout/stderr 镜像口径：46 条 implement-ok 日志为 23 次，48 条 request-budget 日志为 24 个逻辑事件；24 个业务节点全部有写入，但只有 3 个 verified，`REQ-3-1-1` 一次 900s timeout。
+- 记录 startup rehearsal 一次通过、官方 `1/100`、1 次本地 proxy BrokenPipe，并保留官方 99 项失败类型与 timeout 为 unknown。
+- 明确历史 `002c882794af` 已是 `1/100`；本轮只构成弱正向探索信号，不能称首次得分或严格 A/B，也不能据此继续全局提高 request cap。
+- 更新 Agent/Skill 建议：产品 delta 与外部验证门禁、vertical slice、分阶段预算和止损；Skill 必须真实打包、可见调用且实际减少 provider 读取后才能评价。
+- 本次只修改证据与协作文档，未修改 Agent、Skill、ZIP、requirements 或官方测试，未打包、发布或启动平台 Run。

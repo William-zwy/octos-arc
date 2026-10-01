@@ -471,3 +471,30 @@ ZIP 内 `agent-build.json` 可定位归档候选的 build/commit/payload tree，
 - evidence-normalizer 需将 stdout/stderr 镜像去重、ZIP/runtime/workspace/platform 身份分类与 unknown 保留变成硬规则，防止错误统计继续影响修复决策。
 
 本节不授权任何 Agent/Skill 修改、重新打包、发布或平台 Run。Phase 4 仍为 pending，只允许只读诊断。
+
+## 13. `12b3dea74607` 只读归档与阶段 3结论（2026-10-01）
+
+远程归档入口：[manifest](../evidence/arc-bench/runs/12b3dea74607/manifest.json) · [Phase 3 analysis](../evidence/arc-bench/runs/12b3dea74607/phase3-analysis.md)。原始 7 件附件仍仅在用户本地归档，远程 manifest 保存大小、SHA-256 和 provenance，不复制大型原始附件。
+
+### 13.1 已确认结论与口径纠错
+
+- `hackathon--sheet` 平台结果为 `1/100`、feature `0/24`；官方 evaluation 已到达，但 `tests=[]`，99 项失败的 ID、类型和 timeout 为 unknown。
+- stdout/stderr 镜像去重后，Agent 为 23 次 `implement ok` 和 `REQ-3-1-1` 一次 900s timeout，不是 46 次 ok。独立 budget-cap 为 24 个，不是 48 行：skeleton cap 20 × 1、节点 cap 16 × 23。
+- 24 个业务节点全部 `wrote=True`，但只有 3 个 `verified=True`；23 个完成节点全部触及 cap。skeleton verified，startup rehearsal 一次即通过，最终 build、install 和 port 3000 监听成功。
+- 无上游 HTTP 402/500 或 OOM 证据；存在 1 次本地 proxy BrokenPipe，不能笼统记为“Proxy/API 错误为无”。
+- traceability 只有 9 条 interface record、覆盖 2 个 requirement ID，全部未映射文件或 tests；这是探测器输出，不是业务完成度真值。
+- 23 个 `implement ok` 摘要中至少 10 个自述未实现/部分完成/仍需预算；`REQ-1-3-2` 即使标成 verified 仍报告 404。内部 `ok`/`verified` 存在假收敛，不能把剩余差距集中归因于唯一 timeout。
+
+### 13.2 历史边界与计划更新
+
+相对 `2b6a1f545c37`，本 Run 的 requests/tokens/成本/耗时约为 `1.59×/2.27×/1.66×/3.02×`，业务 verified 节点仅从 2 增至 3，官方结果从 0 变为 1。历史 `002c882794af` 已经为 `1/100`，因此本 Run 不是 Sheet 首次得分；它只能形成弱正向、探索性信号。相对历史同分 Run，单位同分成本较低，但候选包和隐藏测试 snapshot 不同且平台身份链缺失，不能形成因果 A/B。
+
+新包的生成/部署路径更稳定，但“将 cap 从 8 提升到 16”仍让所有可完成节点触顶，没有形成普遍外部验证。计划优先级保持：产品源码 delta 门禁、harness 外部验证、vertical slice、inspect/implement/verify 分预算、连续无 verified slice 止损；不得根据单个 `1/100` 继续全局抬高 cap。
+
+ZIP 内 `agent-build.json` 可定位归档候选，但平台没有 generation identity/build ID/task snapshot；runtime workspace commit 与 embedded commit 不一致。状态继续为 `platform_identity_inconclusive`。post-run template 的需求文本与部分历史模板内容一致，不代表隐藏 100 scenarios 一致。
+
+### 13.3 Skill 证据与限制
+
+本 Run 的 ZIP 不含 `skills/`/project-context 文件，日志也没有 `project_map`、`source_read`、`source_cache` 调用；不能把 provider prompt cache 命中解释为 Skill 生效。后续只有在 Skill 真实打包、tool registry 可见、日志可证调用，并实际降低 provider read request/字符/token 时才能验收收益。
+
+本节不授权 Agent/Skill 修改、重新打包、发布或平台 Run。Phase 4 仍为 pending，只允许只读诊断。
