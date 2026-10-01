@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "run_id": "effd5e7777ce",
+  "task_id": "hackathon--github",
+  "competition_id": "hackathon",
+  "status": "FAILED",
+  "score": 2.0,
+  "pass_total": "2/100",
+  "feature_total": "0/47",
+  "normalized_status": "phase3_complete_phase4_pending_platform_identity_inconclusive",
+  "platform": {
+    "run_url": "https://arc-bench.com/runs/effd5e7777ce",
+    "display_name": "0930-night",
+    "model": "deepseek-v4-flash",
+    "created_at": "2026-09-30T13:57:12.530972",
+    "started_at": "2026-09-30T13:57:15.101500",
+    "finished_at": "2026-09-30T17:50:40.730957",
+    "run_duration_seconds": 12904,
+    "wall_clock_seconds": 14005,
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "run_tests_status": "completed",
+    "run_tests_description": "Evaluation completed"
+  },
+  "submission": {
+    "submission_id": "019c8cb3d590",
+    "original_filename": "arc-agent-hackathon-sheet-9ff7e750.zip",
+    "zip_size": 357314,
+    "zip_sha256": "0E98E7E0DFCF4F893A5CFCE0B8CD8D40168E7EC1FFE505A744E1097FE18FB7C5",
+    "archive_derived_identity": {
+      "build_id": "arc-agent-v1-747e10178d68748225a086dd",
+      "commit_sha": "9ff7e750657a1d5c1ba67f71651ed9fe0d56c5c5",
+      "payload_tree_sha256": "E022098B6B9B4647D2EA6E5D4C2754845AA161A91DF10D16550A1DD969312DBF",
+      "managed_file_count": 495,
+      "source_reproducibility": "not_closed_commit_not_reachable_from_checked_remotes"
+    },
+    "runtime_reported_identity": {
+      "agent_commit": "eea9ce99043fa1dd1a56afe14aea35d90f594cba",
+      "requirements_content_hash": "64e8a09ab842f5112e0cb1afc1f3215517788850be8a72852c4042af3762caca",
+      "submission_sha256": null,
+      "suite_key": null,
+      "task_key": null
+    },
+    "identity_resolution": [
+      "platform generation_identity and build_id are absent",
+      "runtime agent_commit differs from the ZIP-embedded commit and is not accepted as Agent source identity",
+      "ZIP filename is Sheet-labelled and no task-correct GitHub binding is present",
+      "archive-derived identity is evidence about the downloaded ZIP, not a platform binding"
+    ]
+  },
+  "verification_regime": {
+    "bundled_acceptance_specs": false,
+    "mode": "requirement_text_only",
+    "platform_generated_scenarios": 100,
+    "official_test_details_available": false,
+    "official_test_ids_available": false,
+    "official_test_timeouts": "unknown"
+  },
+  "metrics": {
+    "atomic_nodes": 47,
+    "implement_ok_labels": 46,
+    "implement_failed_labels": 1,
+    "failed_node": "REQ-1-1-3",
+    "failed_node_seconds": 900,
+    "failed_node_reason": "octos turn timed out",
+    "node_wrote_unverified": 47,
+    "node_wrote_verified": 0,
+    "node_no_write": 0,
+    "all_feature_nodes_hit_cap": true,
+    "feature_nodes_at_cap": "47/47",
+    "unique_budget_hits": 49,
+    "budget_hit_breakdown": {
+      "skeleton_cap_20": 1,
+      "feature_cap_16": 47,
+      "rehearsal_repair_cap_10": 1
+    },
+    "skeleton": {
+      "attempts": 1,
+      "seconds": 226,
+      "wrote": true,
+      "verified": true
+    },
+    "rehearsal": {
+      "unique_failures": 1,
+      "failure": "GET /favicon.ico produced ConnectionResetError while backend remained running",
+      "repair_seconds": 47,
+      "repair_wrote": true,
+      "repair_verified": true,
+      "final_rehearsal_success": true
+    },
+    "local_proxy_broken_pipe_events": 2,
+    "upstream_http_status_errors_observed": 0,
+    "oom_events": 0
+  },
+  "usage": {
+    "provider_requests": 838,
+    "provider_prompt_tokens": 22397931,
+    "provider_completion_tokens": 713478,
+    "provider_reasoning_tokens": 578323,
+    "provider_prompt_cache_hit_tokens": 19114240,
+    "provider_total_tokens": 23111409,
+    "platform_token_count": 23111524,
+    "platform_provider_token_difference": 115,
+    "cost_cny": 18.184308
+  },
+  "traceability": {
+    "interface_records": 42,
+    "unique_requirement_ids": 8,
+    "implemented_true": 0,
+    "implemented_false": 42,
+    "file_paths_present": 0,
+    "tests_present": 0,
+    "interpretation": "structural detector output only; not proof that all product behavior is absent"
+  },
+  "skill_runtime_evidence": {
+    "arc_project_context_packaged": false,
+    "project_map_calls": 0,
+    "source_read_calls": 0,
+    "source_cache_calls": 0,
+    "conclusion": "no evidence that the project-context Skill entered this Run's execution chain"
+  },
+  "evidence_provenance": {
+    "archive_root": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-hackathon-github",
+    "storage": "local_only",
+    "raw_attachments_copied_to_repository": false
+  },
+  "evidence": [
+    {
+      "filename": "arcbench-effd5e7777ce-failure-details.md",
+      "size": 1694,
+      "sha256": "7884D38C2E429D2017C8A89522F7F096B46164567BEB2370DB8AFEEB02100831",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-effd5e7777ce-summary.md",
+      "size": 4205,
+      "sha256": "6013CD47BCDDAC1E066719BB9EB43DBEC6CAEC469E77AF26AF300E806CBB3DCB",
+      "local_only": true
+    },
+    {
+      "filename": "effd5e7777ce-template.zip",
+      "size": 3318751,
+      "sha256": "53096D2DAC4535D3D13602CB0733FAB353157B060B24D8CB321B21DB69E31DB1",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-effd5e7777ce-traceability.json",
+      "size": 7908,
+      "sha256": "7171FC225F1F822998691455C38755FA3C360EFC9E1B21CD2AC42149B96EE16B",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-effd5e7777ce-logs.json",
+      "size": 189213,
+      "sha256": "CF0728FA8CB8CB8D205E40A5A25A6064941A0982B91EAA13B2C8DF06D355E9EA",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-effd5e7777ce.json",
+      "size": 3697,
+      "sha256": "B98173CE896F3CB1053832637A4EF4D77FCD7EA51B6D5D51909EFB75FF50EE16",
+      "local_only": true
+    },
+    {
+      "filename": "submission-019c8cb3d590-agent.zip",
+      "size": 357314,
+      "sha256": "0E98E7E0DFCF4F893A5CFCE0B8CD8D40168E7EC1FFE505A744E1097FE18FB7C5",
+      "local_only": true
+    }
+  ],
+  "missing_evidence": [
+    "platform_agent_commit",
+    "platform_build_id",
+    "platform_generation_identity",
+    "task_snapshot_id",
+    "requirements_archive_sha256",
+    "suite_key_and_official_spec_identity",
+    "task_correct_github_binding",
+    "official_test_ids_results_and_timeout_types",
+    "playwright_report_trace_and_screenshots",
+    "result_path",
+    "phase4_ack",
+    "phase4_result"
+  ],
+  "phase4": {
+    "status": "pending",
+    "allowed_action": "read_only_diagnosis",
+    "blockers": [
+      "platform identity is not closed",
+      "official per-test evidence is unavailable",
+      "archive-derived Agent source commit is not reproducible from checked remotes"
+    ]
+  }
+}

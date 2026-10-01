@@ -444,3 +444,30 @@ Agent 的 `log()` 同时写 stdout 和 stderr，平台聚合日志又保留两�
 7. 单次 Sheet 平台预算设硬上限并保留总预算至少 25%（`50–75 CNY`）作为终版 reserve。
 
 该 Sheet 探针仍只标记 exploratory。专用 binding 和候选侧闭合不等于平台五元组闭合；平台没有回传并匹配 generation identity、submission/ZIP、task snapshot、suite 和 requirements 时，必须继续标记 `platform_identity_inconclusive`。满足以下任一条件才讨论 GitHub：Sheet 平台出现可复核的非零改善；或平台虽继续隐藏测试明细，但 product-delta、inferred contract、部署和候选侧身份链全部闭合且成本低于预设上限。即便进入 GitHub，也不能把该条件描述成严格 A/B。若仍为 `tests=[]` 且本地证据未改善，停止平台消耗，不用单次分数驱动业务猜测或全局抬高 request budget。
+
+## 12. `effd5e7777ce` 只读归档与阶段 3结论（2026-10-01）
+
+远程归档入口：[manifest](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/runs/effd5e7777ce/manifest.json) · [Phase 3 analysis](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/runs/effd5e7777ce/phase3-analysis.md)。原始 7 件附件仍仅在用户本地归档，远程 manifest 保存大小、SHA-256 和 provenance，不复制大型原始附件。
+
+### 12.1 本轮已确认的运行结论
+
+- `hackathon--github` 平台结果为 `2/100`、feature `0/47`；官方 evaluation 已到达，但 `tests=[]`，98 项失败的 ID、类型和 timeout 仍为 unknown。
+- Agent 遍历 47 个节点，去重后为 46 次内部 ok 标签和 `REQ-1-1-3` 一次 900s timeout；47/47 节点都是 `wrote=True, verified=False`。
+- stdout/stderr 镜像去重后，request-budget 为 49 个逻辑事件，而不是原汇总的 98：skeleton cap 20 × 1、节点 cap 16 × 47、rehearsal repair cap 10 × 1。
+- rehearsal 只有 1 次独立 favicon connection-reset 失败，repair 后恢复，最终 build、install 和 port 3000 监听成功。该中间失败不是官方 98 项失败的已证因果。
+- 没有上游 402/500 或 OOM 证据；存在 2 次本地 proxy BrokenPipe，不得笼统记为“Proxy/API 错误为无”。
+
+### 12.2 历史比较和非因果边界
+
+`effd5e7777ce` 并非 GitHub 系列首个非零 Run：`451174abe760` 已经为 `2/100`。相对 `0564f5955f16`，本 Run 从 `0/100` 变为 `2/100`，但 requests/tokens/成本/耗时分别约为 1.80×/2.72×/1.72×/2.31×；相对 `451174abe760`，得分相同而成本约为 20.70×。因为 requirements/test snapshot 无 SHA、官方失败明细不可见、候选与平台身份链都未闭合，这只是 observed fluctuation，不是严格 A/B，也不能证明提高 request cap 带来稳定收益。
+
+ZIP 内 `agent-build.json` 可定位归档候选的 build/commit/payload tree，但该 commit 在当前已检查远程 ref 中不可达；且 ZIP 没有 GitHub task-correct binding。包内身份不能冒充平台 generation identity，状态保持 `platform_identity_inconclusive`。
+
+### 12.3 对 Agent / Skill 方案的更新（仅建议）
+
+- Agent P0 优先级不变：产品源码 fingerprint 门禁、harness 外部 build/start/route/DOM 验证、vertical-slice 聚类、inspect/implement/verify 分预算、连续无 verified slice 止损。本 Run 新增证据表明，将节点 cap 从 8 抬高到 16 仍然使 47/47 节点全部触顶且 0/47 verified，不应继续全局抬高 cap。
+- Skill 在本 Run 中仍未进入运行链：ZIP 不含 `skills/`/project-context 文件，日志也无 `project_map`、`source_read`或 `source_cache` 调用。`prompt_cache_hit_tokens` 不是 Skill 启用证据，因此本 Run 不能评价 Skill 收益。
+- 后续只能在真实打包、tool registry 可见、日志可证调用后验收 Skill；project map 应主动注入，source cache 必须实际降低 provider read requests/字符/token。
+- evidence-normalizer 需将 stdout/stderr 镜像去重、ZIP/runtime/workspace/platform 身份分类与 unknown 保留变成硬规则，防止错误统计继续影响修复决策。
+
+本节不授权任何 Agent/Skill 修改、重新打包、发布或平台 Run。Phase 4 仍为 pending，只允许只读诊断。

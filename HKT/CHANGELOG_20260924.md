@@ -276,3 +276,12 @@
 - 记录所有 24/47 节点均命中 cap 8、`.arc/design` 写入会污染 `wrote=True`、当前 implementation 状态缺少 product-source delta 证据，以及 `arc-project-context` 尚未进入上传 ZIP/运行工具链的事实。
 - 后续复核收窄 verification regime 的因果表述，拆分 `candidate_identity_closed` 与 `platform_identity_inconclusive`，并标记未镜像原始附件时本节仅为 analysis-only、不能作为阶段 5最终裁决。
 - 本次只修改协作文档，没有修改 Agent、Skill、ZIP、requirements 或官方测试，也没有启动平台 Run。
+
+## 2026-10-01：归档 GitHub Run `effd5e7777ce`
+
+- 新增 `evidence/arc-bench/runs/effd5e7777ce/manifest.json` 和 `phase3-analysis.md`，记录 7 件本地附件的 provenance、大小、SHA-256、平台结果、ZIP 内归档身份、missing evidence 与 Phase 4 pending 门禁。
+- 纠正 stdout/stderr 镜像口径：98 条 request-budget 日志为 49 个逻辑事件，92 条 implement-ok 为 46 次，rehearsal 失败为 1 次并在 repair 后恢复。
+- 记录 `2/100`、47/47 节点 cap 16、0/47 verified、`REQ-1-1-3` 一次 900s timeout、2 次本地 proxy BrokenPipe，并保留官方 98 项失败类型与 timeout 为 unknown。
+- 将该 Run 与 `451174abe760` 和 `0564f5955f16` 对比，明确 score `2/100` 并非系列首次非零，成本和耗时大幅增加仍不构成严格 A/B 收益。
+- 更新 Agent/Skill 建议：产品 delta 与外部验证门禁、vertical slice、分阶段预算和止损；Skill 必须真实打包、可见调用且实际减少 provider 读取后才能评价。
+- 本次只修改证据与协作文档，未修改 Agent、Skill、ZIP、requirements 或官方测试，未打包、发布或启动平台 Run。
