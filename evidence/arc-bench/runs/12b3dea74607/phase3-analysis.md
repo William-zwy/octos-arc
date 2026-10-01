@@ -31,7 +31,7 @@
 - 平台 token count 为 `9,742,554`，provider totals 为 `9,742,442`，相差 112；`run_duration_seconds=8,518`，而 started/finished wall-clock 差约 9,628 秒。不同口径并列，不互相替代。
 - traceability 只有 9 条 interface record，覆盖 2 个 unique requirement ID，全部 `implemented=false`、无 file path、无 tests。这是结构探测结果，不能单独证明产品代码完全未实现。
 - 日志中的 runtime `agent_commit=39107edc...` 与包内 commit 不一致，不接受为 Agent 源码身份；平台仍未提供 generation identity、build ID 和 task snapshot。
-- 包内 commit `9ff7e750...` 在当前本地对象库和已检查远程 ref 中不可达，源码可复现性未闭合。
+- 同步协作分支后，包内 commit `9ff7e750657a1d5c1ba67f71651ed9fe0d56c5c5` 已可从 `codex/hkt-round345-integration` 解析；仓库中的 release ZIP SHA-256 与本 Run 下载包一致，ZIP 内 `main.py` 与该提交 Git blob 逐字节一致。候选源码和下载归档的对应关系已补强，但平台仍未回传 generation identity，不能把候选侧解析升级为平台绑定。
 - post-run template 中的 `requirements.yaml` 与若干历史 Sheet template 内容哈希一致，只能支持需求文本一致；它不能替代平台 requirements SHA，也不能证明隐藏生成的 100 scenarios 相同。
 - 因此本 Run 只能保持 `platform_identity_inconclusive`，不能与历史 Run 构成严格 A/B。
 

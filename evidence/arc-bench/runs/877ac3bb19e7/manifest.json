@@ -1,0 +1,300 @@
+{
+  "schema_version": 1,
+  "run_id": "877ac3bb19e7",
+  "task_id": "hackathon--github",
+  "competition_id": "hackathon",
+  "status": "FAILED",
+  "score": 13.0,
+  "pass_total": "13/100",
+  "feature_total": "3/47",
+  "normalized_status": "phase3_complete_phase4_pending_archive_source_commit_resolved_platform_identity_inconclusive_observed_improvement",
+  "local_artifact_state": {
+    "scope": "analysis_and_evidence_only",
+    "storage": "repository",
+    "remote_sync_authorized": true,
+    "agent_or_release_change_authorized": false
+  },
+  "platform": {
+    "run_url": "https://arc-bench.com/runs/877ac3bb19e7",
+    "display_name": "submission",
+    "model": "deepseek-v4-flash",
+    "created_at": "2026-10-01T08:47:13.983522",
+    "started_at": "2026-10-01T08:47:15.161313",
+    "finished_at": "2026-10-01T11:48:05.402663",
+    "run_duration_seconds": 9871,
+    "started_to_finished_wall_clock_seconds": 10850.241,
+    "failure_reason": "Runner exited with test failures or runtime errors",
+    "deploy_agent_status": "completed",
+    "start_agent_status": "completed",
+    "run_tests_status": "completed",
+    "run_tests_description": "Evaluation completed",
+    "official_test_execution_reached": true
+  },
+  "submission": {
+    "submission_id": "175968e103e9",
+    "original_filename": "arc-agent-hackathon-sheet-3d6713b1.zip",
+    "zip_size": 358648,
+    "zip_sha256": "7649D9E925D6F29C9FF1CA009DFC134BD1283AD57FD44B76C871CAE028DD5649",
+    "archive_derived_identity": {
+      "build_id": "arc-agent-v1-0a4644eeb9d2538950716257",
+      "commit_sha": "3d6713b1378af074600223865b40beb91c5957fc",
+      "payload_tree_sha256": "0BE08F6621C987C0053EFAD4DCBCB4B33266EDAC44BBACA55E3B9F4EDEA220A2",
+      "managed_file_count": 495,
+      "source_reproducibility": "embedded_commit_resolved_archive_main_exact_git_blob_match_full_payload_rebuild_unverified_platform_binding_open"
+    },
+    "runtime_reported_identity": {
+      "agent_commit": "d98f8d3eee96dd78d976c5b6dbc42e857f597ea9",
+      "requirements_content_hash": "64e8a09ab842f5112e0cb1afc1f3215517788850be8a72852c4042af3762caca",
+      "submission_sha256": null,
+      "suite_key": null,
+      "task_key": null
+    },
+    "identity_resolution": [
+      "platform generation_identity and build_id are absent",
+      "runtime agent_commit is the generated workspace identity and is not accepted as uploaded Agent source identity",
+      "ZIP filename is Sheet-labelled and no task-correct GitHub binding is present; the filename itself is not a runtime root cause",
+      "archive-derived identity is artifact-local partial binding, not a platform-confirmed binding",
+      "commit 3d6713b1378af074600223865b40beb91c5957fc is now reachable from the synchronized collaboration branch"
+    ],
+    "source_resolution": {
+      "resolved_at": "2026-10-01",
+      "remote_url": "git@github.com:William-zwy/octos-p.git",
+      "branch": "codex/hkt-round345-integration",
+      "commit_reachable": true,
+      "commit_parent": "7fc462066c29908ac23c18c0c58805d5e664a0cb",
+      "commit_subject": "fix(arc): mandate single-origin serving in skeleton and extend prompts",
+      "archive_main_exact_git_blob_match": true,
+      "windows_worktree_copy_byte_difference": "checkout_line_endings_only",
+      "full_payload_rebuild_verified": false,
+      "platform_generation_identity_closed": false
+    }
+  },
+  "verification_regime": {
+    "bundled_acceptance_specs": false,
+    "mode": "requirement_text_only",
+    "platform_generated_scenarios": 100,
+    "official_test_execution_reached": true,
+    "official_aggregate_result_available": true,
+    "official_test_details_available": false,
+    "official_test_ids_available": false,
+    "official_test_timeouts": "unknown"
+  },
+  "metrics": {
+    "platform_node_state_records_including_root": 65,
+    "design_state_records_including_root": 18,
+    "implement_leaf_nodes": 47,
+    "agent_reported_atomic_nodes": 47,
+    "implement_ok_labels": 47,
+    "implement_failed_labels": 0,
+    "node_wrote_verified": 9,
+    "node_wrote_unverified": 24,
+    "node_no_write_verified": 2,
+    "node_no_write_unverified": 12,
+    "feature_nodes_at_cap": "46/47",
+    "feature_node_without_cap": "REQ-1-1-2",
+    "unique_budget_hits": 49,
+    "budget_hit_breakdown": {
+      "skeleton_cap_28": 1,
+      "feature_cap_18": 46,
+      "rehearsal_repair_cap_10": 2
+    },
+    "implement_ok_self_negating_summaries_at_least": 17,
+    "verified_true_conflicting_or_materially_incomplete_summaries_at_least": 8,
+    "representative_false_convergence": [
+      "REQ-4-3-2 is wrote=False and verified=True while its summary says no verified feature was delivered and it must not claim completion",
+      "REQ-3-2-1 is verified=True while its smoke tests were interrupted and no clean rerun completed",
+      "REQ-3-1 is verified=True while the smoke server failed to start and verification was deferred to the harness",
+      "rehearsal repair 2 is wrote=True and verified=True while its summary says the proposed change was not written"
+    ],
+    "skeleton": {
+      "attempts": 1,
+      "attempt_1_seconds": 181,
+      "attempt_1_wrote_label": true,
+      "attempt_1_verified_label": true,
+      "attempt_1_hit_request_cap": true
+    },
+    "rehearsal": {
+      "attempts": 3,
+      "unique_failures": 3,
+      "failure": "GET /favicon.ico got no HTTP response (ConnectionResetError); backend still running",
+      "repair_turns": 2,
+      "repair_1_seconds": 110,
+      "repair_1_label_wrote_verified": true,
+      "repair_1_effective_product_fix_supported": false,
+      "repair_1_summary": "only package-lock artifacts were added and the defect was not reproduced",
+      "repair_2_seconds": 118,
+      "repair_2_label_wrote_verified": true,
+      "repair_2_effective_product_fix_supported": false,
+      "repair_2_summary": "the proposed backend/server.js change was not written before the request cap",
+      "final_rehearsal_success": false,
+      "final_result": "giving up; submitting as-is",
+      "platform_postflight_start_later_succeeded": true,
+      "interpretation": "platform deployment succeeded after all internal rehearsal attempts failed; success cannot be attributed to either rehearsal repair"
+    },
+    "agent_turn_timeouts": 0,
+    "local_proxy_broken_pipe_events": 1,
+    "upstream_http_402_or_500_events": 0,
+    "oom_events": 0,
+    "cgroup_memory_current_bytes": 403144704,
+    "cgroup_memory_peak_bytes": 494792704,
+    "cgroup_memory_max_bytes": 2147483648
+  },
+  "deployment_evidence": {
+    "postflight_frontend_backend_present": true,
+    "frontend_build_completed": true,
+    "backend_install_completed": true,
+    "template_start_command": "node server.js",
+    "listen_at": "2026-10-01T11:31:50Z",
+    "listen_log": "Serving single-origin on http://127.0.0.1:3000",
+    "canonical_entrypoint_contract_by_static_inspection": {
+      "root_route": true,
+      "api_health_route": true,
+      "serves_frontend_dist": true,
+      "uses_relative_same_origin_api_paths": true
+    },
+    "cross_run_mechanism": "relative to b4e114e9c001, the uploaded bundles differ only in main.py and agent-build.json; the now-resolved source diff shows the main.py change is prompt-level single-origin guidance in ARCHITECTURE_CONTRACT, SKELETON_PROMPT and NODE_PREAMBLE_EXTEND, plus tests, not a runtime harness enforcement change. The generated product then changed from an API-only canonical start entrypoint to a single-origin root-plus-API entrypoint. This strengthens the prompt-contract mechanism as an association but is not unique causal proof because generation is stochastic and platform readiness probes are hidden"
+  },
+  "usage": {
+    "provider_requests": 941,
+    "provider_prompt_tokens": 21331117,
+    "provider_completion_tokens": 639432,
+    "provider_reasoning_tokens": 488333,
+    "provider_prompt_cache_hit_tokens": 18382080,
+    "provider_total_tokens": 21970549,
+    "platform_token_count": 21970646,
+    "platform_provider_token_difference": 97,
+    "prompt_cache_hit_share_of_prompt": 0.86175,
+    "prompt_cache_hit_share_of_total": 0.836669,
+    "cost_cny": 16.440548,
+    "cost_per_passed_scenario_cny": 1.264658,
+    "tokens_per_passed_scenario": 1689996,
+    "score_per_cny": 0.790728,
+    "cache_interpretation": "shared-prefix reuse signal only; not proof of Skill use, wasted tokens or full-price tokens"
+  },
+  "traceability": {
+    "initialized_requirements_log": 65,
+    "initialized_scenarios_log": 100,
+    "final_traceability_file_present": false,
+    "midrun_interface_records": 0,
+    "midrun_test_records": 0,
+    "interpretation": "only an empty midrun traceability file is present; no final structured mapping supports coverage or implementation claims"
+  },
+  "skill_runtime_evidence": {
+    "arc_project_context_packaged": false,
+    "project_map_calls": 0,
+    "source_read_calls": 0,
+    "source_cache_calls": 0,
+    "inline_read_cache_present": true,
+    "conclusion": "the bundle contains partial cache/context capability inline, but no packaged or invoked project-context Skill; provider cache hits are not Skill evidence"
+  },
+  "cross_run_comparability": {
+    "requirements_yaml_sha256": "BDC17D23265A6B1948AEC150E69D0B2ACCFA37DB4C569305C97BE7FF7F3B0B8F",
+    "runtime_requirements_hash_same_as_runs": [
+      "0564f5955f16",
+      "effd5e7777ce",
+      "b4e114e9c001"
+    ],
+    "currently_archived_github_score_rank": "highest_observed_at_13",
+    "hidden_scenario_identity_known": false,
+    "strict_ab": false,
+    "classification": "strongest_positive_observed_signal_not_strict_causal_ab",
+    "resource_comparison_to_effd5e7777ce": {
+      "passed_scenarios_ratio": 6.5,
+      "token_ratio": 0.951,
+      "cost_ratio": 0.904,
+      "duration_ratio": 0.765,
+      "cost_per_pass_improvement_ratio": 7.19
+    }
+  },
+  "evidence_provenance": {
+    "archive_root": "C:/Users/dayuruozhi/Downloads/闻悦源代码-首轮测试-hackathon-github",
+    "storage": "local_only",
+    "physical_file_count": 9,
+    "unique_content_count": 8,
+    "raw_attachments_copied_to_repository": false,
+    "duplicate_content": "midrun logs and final logs are byte-identical",
+    "playwright_report_404": "derived_from_user_collected_summary; no raw HTTP response artifact is present in the nine-file archive"
+  },
+  "evidence": [
+    {
+      "filename": "arcbench-877ac3bb19e7-failure-details.md",
+      "size": 1940,
+      "sha256": "B87142069C1EA08ABA77A7C8E4871D5EEAF35F600DADE3C5CD02CDC9E66E00C1",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-877ac3bb19e7-summary.md",
+      "size": 6430,
+      "sha256": "7D9D7C0D79468A7F6DCF00B7CD3ECB9CF380C1F545D1AD70DE9E81053EBA5866",
+      "local_only": true
+    },
+    {
+      "filename": "877ac3bb19e7-template.zip",
+      "size": 3321604,
+      "sha256": "AC6674AAFF9474D8B74A410708000A57FAB2F508A5F1C058B4FA9088A16A83D7",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-877ac3bb19e7-logs.json",
+      "size": 153569,
+      "sha256": "A9CFB58C3177DDF3FB7758CC9B07FEFA02B731B76E53E0B82498122D73F933C3",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-877ac3bb19e7.json",
+      "size": 3688,
+      "sha256": "6BD87D56BCD1FA5C84F7313C7A5553BAD89855E9E2C17E2E8E11466E2767AE48",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-877ac3bb19e7-midrun-traceability.json",
+      "size": 28,
+      "sha256": "43F9FAE5D46C0F20838B28CA238E3C14B2059066946DB4242CB8CC5E233739C6",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-877ac3bb19e7-midrun-logs.json",
+      "size": 153569,
+      "sha256": "A9CFB58C3177DDF3FB7758CC9B07FEFA02B731B76E53E0B82498122D73F933C3",
+      "local_only": true
+    },
+    {
+      "filename": "arcbench-run-877ac3bb19e7-midrun.json",
+      "size": 3478,
+      "sha256": "B374C09A6D52301E76BE2532367A2B87457B2AC28A7F945D5E65BF26C1E30997",
+      "local_only": true
+    },
+    {
+      "filename": "submission-175968e103e9-agent.zip",
+      "size": 358648,
+      "sha256": "7649D9E925D6F29C9FF1CA009DFC134BD1283AD57FD44B76C871CAE028DD5649",
+      "local_only": true
+    }
+  ],
+  "missing_evidence": [
+    "platform_agent_commit",
+    "platform_build_id",
+    "platform_generation_identity",
+    "task_snapshot_id",
+    "requirements_archive_sha256",
+    "suite_key_and_official_spec_identity",
+    "task_correct_github_binding",
+    "official_test_ids_results_assertions_and_timeout_types",
+    "playwright_report_trace_and_screenshots",
+    "final_traceability_file",
+    "result_path",
+    "phase4_ack",
+    "phase4_result"
+  ],
+  "phase4": {
+    "status": "pending",
+    "allowed_action": "read_only_diagnosis",
+    "blockers": [
+      "platform identity is not closed",
+      "hidden test identity and per-test evidence are unavailable",
+      "archive-derived Agent source commit is not reproducible from the current object store",
+      "internal ok/wrote/verified labels conflict with model summaries and all internal rehearsals failed",
+      "the observed 13/100 improvement is not yet replicated under a controlled snapshot"
+    ]
+  }
+}

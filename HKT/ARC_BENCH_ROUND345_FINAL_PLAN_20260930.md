@@ -461,7 +461,7 @@ Agent 的 `log()` 同时写 stdout 和 stderr，平台聚合日志又保留两�
 
 `effd5e7777ce` 并非 GitHub 系列首个非零 Run：`451174abe760` 已经为 `2/100`。相对 `0564f5955f16`，本 Run 从 `0/100` 变为 `2/100`，但 requests/tokens/成本/耗时分别约为 1.80×/2.72×/1.72×/2.31×；相对 `451174abe760`，得分相同而成本约为 20.70×。因为 requirements/test snapshot 无 SHA、官方失败明细不可见、候选与平台身份链都未闭合，这只是 observed fluctuation，不是严格 A/B，也不能证明提高 request cap 带来稳定收益。
 
-ZIP 内 `agent-build.json` 可定位归档候选的 build/commit/payload tree，但该 commit 在当前已检查远程 ref 中不可达；且 ZIP 没有 GitHub task-correct binding。包内身份不能冒充平台 generation identity，状态保持 `platform_identity_inconclusive`。
+同步协作分支后，ZIP 内 commit `9ff7e750...` 已可解析，仓库 release ZIP 与 Run 下载包 SHA-256 一致，且 ZIP `main.py` 与提交 Git blob 逐字节一致；候选源码/归档对应关系已补强。但 ZIP 没有 GitHub task-correct binding，平台也未回传 generation identity，因此候选侧解析不能冒充平台绑定，状态仍为 `platform_identity_inconclusive`。
 
 ### 12.3 对 Agent / Skill 方案的更新（仅建议）
 
@@ -498,3 +498,92 @@ ZIP 内 `agent-build.json` 可定位归档候选，但平台没有 generation id
 本 Run 的 ZIP 不含 `skills/`/project-context 文件，日志也没有 `project_map`、`source_read`、`source_cache` 调用；不能把 provider prompt cache 命中解释为 Skill 生效。后续只有在 Skill 真实打包、tool registry 可见、日志可证调用，并实际降低 provider read request/字符/token 时才能验收收益。
 
 本节不授权 Agent/Skill 修改、重新打包、发布或平台 Run。Phase 4 仍为 pending，只允许只读诊断。
+
+## 14. `f1ff68f69dac` 本地只读归档与阶段 3 结论（2026-10-01）
+
+> **ANALYSIS-ONLY / REPOSITORY-SYNC AUTHORIZED（2026-10-01）**：用户已授权将本节及对应归一化证据同步到协作分支；原始 7 件附件仍仅位于用户本地归档，仓库只保存大小、SHA-256 和 provenance。
+
+### 14.1 对外部终态分析的纠错
+
+- `hackathon--sheet` 平台结果为 `0/100`、feature `0/24`；官方 evaluation 已到达，但 `tests=[]`，100 项失败的 ID、断言、类型与 timeout 均为 unknown。Agent 侧没有 turn timeout，不能把它扩展成“官方超时为 0”。
+- stdout/stderr 镜像去重后是 24 次内部 `implement ok` 标签，不能写成“24 节点全部实现”；11 个 `verified=True` 也只能称内部标签，不能称“11 个自验通过”。至少 11 个 ok 摘要明确自述未完成或仍需后续，至少 4 个 `wrote=True` 节点反称没有写入。
+- skeleton attempt 1 标记 `wrote=True, verified=True`，但摘要和结构门禁均确认没有 frontend/backend；nudge 1 同样标记 wrote 却自述 no writes。nudge 2 后才出现骨架，并由 deterministic fallback 补齐缺失部署文件。这是比“隐藏测试不对齐”更直接的假收敛证据。
+- 独立 request-budget hit 为 27：skeleton cap 28 × 1、nudge cap 18 × 1、24 个业务节点 cap 18 × 24、rehearsal repair cap 10 × 1。24/24 业务节点全部触顶成立，但不能把每个 turn 一概描述为“文件写了一半”；更准确的是没有业务节点自然结束，cap 后仍产生 ok 标签，且没有可靠区分完整、部分和无实现。
+- startup rehearsal 第一次出现 favicon ConnectionResetError；repair turn 为 `wrote=False, verified=True` 并触 cap，随后第二次通过。因此只确认“重试后恢复”，不确认产品代码修复生效，也不能把该中间告警作为官方 0 分根因。
+- 最终 traceability 文件为 0 interfaces、0 tests。deploy_agent 的“initialized 42 requirements and 100 scenarios”不能替代最终结构化映射，也不能证明需求覆盖。
+
+### 14.2 历史比较和因果边界
+
+本 Run 与 `12b3dea74607` 的 post-run template 内 `requirements.yaml` SHA-256 相同，runtime requirements content hash 也一致，支持需求文本相同；但平台仍未提供 hidden suite/scenario snapshot、generation identity、build binding 或逐测试明细，最终生成产品也不同，因此只记录 observed regression `1/100 → 0/100`，不归因为新包导致回退。
+
+相对 `12b3dea74607`，本 Run 的 requests/tokens/成本/耗时约为 `1.231× / 1.111× / 0.973× / 1.018×`；内部 verified 标签从 3 增至 11，却没有官方收益。这否定 verified 标签作为完成率代理，不构成新包质量的严格 A/B。相对 `2b6a1f545c37`，requests/tokens/成本/耗时约为 `1.963× / 2.527× / 1.615× / 3.072×`，官方结果仍为 0，继续全局提高 cap 没有可观测收益。
+
+同步协作分支后，ZIP embedded commit `7fc46206...` 已可解析，且下载 ZIP 的 `main.py` 与该提交 Git blob 逐字节一致；原先“commit 不可达”的不确定性已消除。但平台没有回传绑定，runtime workspace commit 又与 embedded commit 不同，完整 payload 也未重建，状态仍为 `platform_identity_inconclusive`。模板基线分仍只是候选假说，需要同 snapshot 下 deterministic scaffold 与 scaffold+Agent 配对 probe 才能验证。
+
+### 14.3 Agent / Skill 建议更新（仅建议，不实施）
+
+优先级调整为：P0 修复 `ok/wrote/verified` 真实性（product delta + harness build/start/route/DOM/持久化门禁）；P0 用 vertical slice 取代逐 atomic node 冷启动；P0 将 inspect/write/verify 分预算槽并规定 cap 后为 inconclusive；P0 补 requirement-derived、明确标注 `inferred_non_official` 的契约 probe。P1 再补 traceability、候选/平台身份链、Skill 真实接入和成本测量。favicon 属于 P2 运行信号。
+
+submission ZIP 不含 `skills/`/`arc-project-context`，日志无 `project_map`、`source_read`、`source_cache` 调用，因此本 Run 不能评价 Skill 收益。provider prompt cache hit 占 prompt 约 84.42% 只说明共享前缀复用，不能冒充 Skill 命中、无效 Token 或全价成本。后续必须真实打包注册 Skill，并以 provider read requests、返回字符和 prompt tokens 的实际下降验收。
+
+本节不授权任何 Agent/Skill 修改、重新打包、发布或平台 Run。Phase 4 仍为 pending，只允许只读诊断；本次授权仅覆盖分析与归一化证据的仓库同步。
+
+## 16. `877ac3bb19e7` 本地只读归档与阶段 3 结论（2026-10-01）
+
+> **ANALYSIS-ONLY / REPOSITORY-SYNC AUTHORIZED（2026-10-01）**：用户已授权将本节及对应归一化证据同步到协作分支，并与 `f1ff68f69dac`、`b4e114e9c001` 的分析一并提交。
+
+### 16.1 聚合得分与外部分析纠错
+
+- 平台明确报告 `13/100`、feature `3/47`，三个 step 均 completed；这是当前已归档 GitHub Run 集合中的最高观测分和最强正向信号，但 tests 为空、hidden suite identity 缺失，不能外推为平台全部历史最高或严格归因于新包。
+- 47 次 `implement ok` 不是 47 个实现完成：33 wrote / 14 no-write、11 verified / 36 unverified；至少 17 个摘要自述未完成，至少 8/11 verified 摘要仍有实质缺口。业务节点 46/47 命中 cap 18，系统性假收敛仍存在。
+- rehearsal 不是 repair 后成功：三次均因 favicon ConnectionReset 失败，两个 repair 的摘要都不能证明有效产品修复，最终 giving up/submitting as-is。runner 后续独立 postflight build/start 成功并进入测试，部署成功不可归因于 rehearsal repair。
+- Agent turn timeout 为 0；官方测试级 timeout unknown。有 1 次非致命 BrokenPipe，无 402/500 或 OOM。
+- 本地物理附件 9 件但只有 8 份唯一内容：midrun logs 与 final logs 完全相同；仅有空的 midrun traceability，没有 final traceability。
+
+### 16.2 横向比较和机制边界
+
+相对 `effd5e7777ce`，本 Run 用约 `0.951×` Token、`0.904×` 成本和 `0.765×` run duration 获得 `6.5×` 通过项，成本/通过项从约 9.092 CNY 降至 1.265 CNY，构成显著观测改善。但早期 `451174abe760` 的绝对资源消耗更低，因此不能宣称全历史效率最佳。
+
+相对部署失败的 `b4e114e9c001`，新拉取的提交差异证明本包强化的是 `ARCHITECTURE_CONTRACT`、`SKELETON_PROMPT` 与 `NODE_PREAMBLE_EXTEND` 中的 single-origin prompt 约束，而非 runtime harness 强制逻辑。最终产物 canonical `node server.js` 同时提供根页面、静态前端和 `/api`，而 b4e 的 canonical start 是不服务根页面的 API-only 入口。这是部署恢复的强关联候选机制；由于生成随机性和平台 readiness probe 不公开，仍不是唯一因果证明。
+
+候选源码身份得到部分闭合：ZIP embedded commit `3d6713b1...` 已可从协作分支解析，父提交为 `7fc46206...`，下载 ZIP 的 `main.py` 与提交 Git blob 逐字节一致。完整 payload 未重建，且 platform generation identity/build ID/task snapshot/suite key 仍缺失，runtime workspace commit 也不能替代上传 Agent 身份。因此运行状态仍保持 `platform_identity_inconclusive`、`strict_ab=false`。
+
+### 16.3 与远程源码合并后的结论更新
+
+- `7fc46206`、`9ff7e750`、`3d6713b1` 三个历史包内提交现均可由 `codex/hkt-round345-integration` 解析；相关 Run manifest 已从“commit 不可达”更正为“archive source commit resolved”。
+- `9ff7e750` 的仓库 release ZIP 与 `019c8cb3d590` 下载包 SHA-256 完全一致；`7fc46206`、`9ff7e750` 与 `3d6713b1` 的 ZIP `main.py` 均与对应提交 Git blob 逐字节一致。后两者尚未进行完整 payload 重建，不能宣称完全可复现。
+- `3d6713b1` 的产品机制变化来自 prompt-level single-origin 契约，而不是新增 runtime harness；这提高了对“为什么 b4e 部署失败而 877 进入测试”的机制解释力，但仍不足以把 `13/100` 严格归因于该提交。
+- 候选源码提交可达不等于平台身份闭合：平台仍未返回 generation identity、task snapshot、suite identity、逐测试明细或可核验的 submission binding。
+
+### 16.4 优先级更新（仅建议，不实施）
+
+P0 保留 single-origin canonical start；P0 让 runner-equivalent harness 外部验证取代模型 verified；P0 将三次 rehearsal 失败正确传导为 failure/inconclusive，并禁止无 product delta 的 repair 标完成；P0 延续 vertical slice、分预算槽和无进展止损。P1 闭合 task-correct binding，并在同一 snapshot 下重复短探针验证 13 分稳定性。P1 之后才正式打包/注册 Skill 并以 provider read requests、返回字符和 prompt token 下降验收。P2 持续降低 Token/通过项。
+
+本节不授权任何 Agent/Skill 修改、重新打包、发布或平台 Run。Phase 4 仍为 pending，只允许只读诊断；本次授权仅覆盖分析与归一化证据的仓库同步。
+
+## 15. `b4e114e9c001` 本地只读归档与阶段 3 结论（2026-10-01）
+
+> **ANALYSIS-ONLY / REPOSITORY-SYNC AUTHORIZED（2026-10-01）**：用户已授权将本节及对应归一化证据同步到协作分支；原始 7 件附件仍仅位于用户本地归档。
+
+### 15.1 对外部终态分析的纠错
+
+- 平台不是“65 atomic nodes”：node-state 共 65 条，其中 18 design（含 ROOT）和 47 implement；Agent flow 明确遍历 47 个 atomic leaf nodes。
+- 47 次 `implement ok` 不能称为“47 个节点全部实现”或“代码全部生成完毕”：11 verified / 36 unverified、44 wrote / 3 no-write；人工保守确认至少 19 个摘要自述未完成，至少 3 个 `verified=True` 节点直接承认未实现/无代码，另有 3 个 verified 节点保留启动、交互或验证缺口。最终 traceability 为空。
+- 独立 request cap 为 48：skeleton 1、nudge 1、业务节点 46/47；唯一未命中的是 `REQ-1-1-3`。两个 same-error guard 是本地重复错误保护，不是网络故障。
+- 官方测试没有执行：`start_agent=failed`、`run_tests=pending`、passed/failed=`0/0`。官方测试 timeout 应记 not reached，而不是 0；Agent turn timeout 才可明确为 0。
+
+### 15.2 部署失败的强候选根因与边界
+
+`backend/package.json` 的 canonical start 是 `node lib/server.js`。该真实入口只让 `/api/health` 返回 200，`/` 与 `/health` 返回 404，也不服务 frontend/dist；能服务根页面及两个 health 路径的 `backend/server.js` 没有被启动。frontend 又把 API 固定到 `127.0.0.1:3001`，平台实际 backend 监听 3000。
+
+因此 `05:53:38` 的 listening callback 与平台 `05:55:39` 的 120 秒 not-ready 并不矛盾：bind 成功不等于 HTTP readiness 成功。最强候选是生成产物的启动入口漂移/HTTP readiness contract 违反，而不是“平台错误忽略已就绪服务”。但平台没有回流 probe 路径、期望状态、重试响应或进程退出状态，不能断言具体探针一定是 `/` 或只接受 200。
+
+Agent 内部 rehearsal 只记录 `app builds and starts cleanly`，没有最终启动命令下的路径/状态码证据，不能反证平台失败，反而证明本地门禁没有复现平台契约。同需求的 `451174abe760`、`effd5e7777ce` 产物启动入口均显式处理根页面并进入测试，构成旁证，但 hidden suite identity 仍未知，不构成严格 A/B。
+
+### 15.3 建议优先级更新（仅建议，不实施）
+
+P0 统一唯一 canonical start 入口，使其同时满足 SPA root、health、host/port 与 API 同源；P0 让 rehearsal 使用平台同一 `npm start` 与环境，并审计 `/`、`/health`、`/api/health`；P0 用 product delta + harness 外部验证消除 verified 假收敛；P0 将 inspect/write/verify 分预算槽，并结合 vertical slice/无进展止损。P1 再补 traceability、task-correct GitHub binding 与 readiness 证据链。
+
+本 Run 的 958 requests、26.139M tokens、18.864285 CNY 均在 deployment gate 前耗尽，没有产生官方测试信号；不能由 `0/0` 评价代码质量。Skill 未打包、未调用，prompt cache hit 不能作为 Skill 生效证据。
+
+本节不授权任何 Agent/Skill 修改、重新打包、发布或平台 Run。Phase 4 仍为 pending，只允许只读诊断；本次授权仅覆盖分析与归一化证据的仓库同步。
