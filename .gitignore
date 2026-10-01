@@ -198,6 +198,7 @@ tsconfig.tsbuildinfo
 /arc/arc-output/
 **/.arc/context-cache/
 **/.pytest_cache/
+/releases/*.recheck.shape.json
 
 .venv
 

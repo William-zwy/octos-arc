@@ -312,6 +312,7 @@
 - 将现成 `skills/arc-project-context` 真正纳入 ZIP 和运行时 profile，增加 Linux launcher、父级 `OCTOS_SKILLS_PATH`、shape 强制项与行为烟测；不把 Skill 作为正确性前提。
 - PowerShell 打包链新增 dirty-source 拒绝，与 POSIX 打包链共同防止工作树字节伪绑定旧 HEAD。
 - 子 Agent 分别完成代码风险、测试覆盖和打包门禁的只读审查；本会话保持唯一写入者。
+- 发布 Sheet-first 候选 `releases/arc-agent-hackathon-sheet-0d580c74.zip`：绑定源码 `0d580c748bf67d2425a49733e5a592ade21ebe4d`，ZIP SHA-256 `3f18da678504e147ce3748f23a829a63fc055fb61c056e53b03c1b0b2e3f79db`，Build ID `arc-agent-v1-30a08860f96969acadc74e1f`；package gate、offline import 和 Skill 行为烟测通过，平台 Run 仍由用户执行。
 
 ## 2026-10-01：归档 GitHub Run `877ac3bb19e7`（证据同步）
 

@@ -544,6 +544,15 @@ submission ZIP 不含 `skills/`/`arc-project-context`，日志无 `project_map`�
 
 协作分支在实现期间出现远程提交 `65c381d2`，把多节点 implement request cap 从 18 提至 50。该变更必须通过正常合并保留其历史，不得覆盖；同时本切片把任何 cap-hit 明确传导为 inconclusive，且继续保留时间型 final reserve。平台 Run 需单独记录成本与 cap-hit，不能仅因分数上涨就认定全局抬高 cap 正确。
 
+### 17.1 Sheet-first 候选包与身份门禁
+
+- 候选包：`releases/arc-agent-hackathon-sheet-0d580c74.zip`（359,305 bytes）。
+- Agent 源码提交：`0d580c748bf67d2425a49733e5a592ade21ebe4d`；Build ID：`arc-agent-v1-30a08860f96969acadc74e1f`。
+- ZIP SHA-256：`3f18da678504e147ce3748f23a829a63fc055fb61c056e53b03c1b0b2e3f79db`；payload tree SHA-256：`9FC208DB0ADF47977F906233FF90CF2CF23EC346EAFB015BBCE98AD3E3151793`。
+- requirements SHA-256 继续绑定现有已知值 `9884f23ea10c3dfeee170d1eed57966c8fce9a5ce18a0ac43b3d7942eba8c414`；平台未提供新 snapshot，因此此字段仅表示候选侧绑定，不能冒充平台侧 generation identity。
+- package shape、offline import、Skill 行为烟测、placeholder identity 拒绝和侧车 checksum 均已通过。候选先用于 `hackathon--sheet` 探索性 Run；平台成绩、隐藏 suite 身份和当前 task snapshot 仍需用户上传后回填，不能提前宣称收益。
+- 远程下载：`https://github.com/William-zwy/octos-p/raw/codex/hkt-round345-integration/releases/arc-agent-hackathon-sheet-0d580c74.zip`；绑定与 shape 侧车位于同一远程目录。
+
 ## 16. `877ac3bb19e7` 本地只读归档与阶段 3 结论（2026-10-01）
 
 > **ANALYSIS-ONLY / REPOSITORY-SYNC AUTHORIZED（2026-10-01）**：用户已授权将本节及对应归一化证据同步到协作分支，并与 `f1ff68f69dac`、`b4e114e9c001` 的分析一并提交。
