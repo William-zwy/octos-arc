@@ -1854,11 +1854,15 @@ class Flow:
         finish. Finite (zero/unbounded requests caused quota tails), but not so
         small the turn is cut before it writes code: platform runs 2b6a1f545c37
         (sheet 0/24) and 0564f5955f16 (github 0/47) hit "request budget 8 hit"
-        on every node and ended wrote=False verified=False, feature 0%. A
-        multi-node node still needs to read context, write files, and verify,
-        so the multi-node default is 16, not 8."""
+        on every node and ended wrote=False verified=False, feature 0%. Raising
+        it to 18 was still too tight on a large app: run 3d6713b1 (prestashop,
+        87 tests / 47 nodes) scored 13/100 with 92 nodes hitting "request
+        budget 18 hit", starving the whole second half of the tree. A feature
+        node must implement + `npm run build` + curl-verify in one turn, so the
+        multi-node default is 50. OCTOS_ARC_IMPLEMENT_REQUESTS overrides it when
+        cost (the original quota-tail concern) matters more than coverage."""
         return int(os.environ.get("OCTOS_ARC_IMPLEMENT_REQUESTS",
-                                  "20" if self.minimal_mode(getattr(self, "n_nodes", 99)) else "18"))
+                                  "20" if self.minimal_mode(getattr(self, "n_nodes", 99)) else "50"))
 
     def skeleton_request_budget(self) -> int:
         """The skeleton turn scaffolds a whole app shell (both package.json

@@ -292,6 +292,20 @@ class RewriteBudgetTests(unittest.TestCase):
         os.environ.pop("OCTOS_ARC_IMPLEMENT_REQUESTS", None)
         self.assertGreaterEqual(flow.implement_request_budget(), 18)
 
+    def test_should_give_large_tree_implement_enough_requests_to_finish_a_node(self):
+        """Platform run 3d6713b1 (prestashop, 87 tests / 47 implement nodes)
+        scored 13/100: 92 nodes hit "request budget 18 hit" and ended
+        wrote=False/verified=False across the whole second half of the tree.
+        A feature node must implement + `npm run build` + curl-verify in one
+        turn; 18 requests runs out before the node is written and verified on a
+        large app, so the multi-node default is raised to give that headroom.
+        Env OCTOS_ARC_IMPLEMENT_REQUESTS still overrides for cost control."""
+        import os
+        flow = self._flow()
+        flow.n_nodes = 47
+        os.environ.pop("OCTOS_ARC_IMPLEMENT_REQUESTS", None)
+        self.assertGreaterEqual(flow.implement_request_budget(), 50)
+
     def test_should_give_skeleton_room_to_scaffold_both_ends(self):
         """The skeleton turn writes a whole app shell (frontend + backend
         package.json, entrypoints, build/start scripts). On the same two runs
