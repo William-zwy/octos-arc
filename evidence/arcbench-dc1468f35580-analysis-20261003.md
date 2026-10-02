@@ -74,3 +74,19 @@
 - `logs`: `arcbench-run-dc1468f35580-logs.json`
 - `template`: `dc1468f35580-template.zip`
 - 平台链接：<https://arc-bench.com/runs/dc1468f35580>
+
+## 2026-10-03 新证据：template ZIP 内嵌 Playwright 报告与静态资源复现
+
+对归档文件 `dc1468f35580-template.zip` 进行本地只读解包核验：
+
+- ZIP SHA-256：`7e3979fefbc14fe1ea43ffab41e1c52ba8c825434e1a635153e30594fe42d55d`。
+- ZIP 内存在 `template/.arc/playwright-report.json`，大小 `96093` 字节，报告 SHA-256：`d612c5305e94f29778771672afe4eef44fd8f21ef92f44eaebb78ccb0bdd70df`。
+- 报告 stats：`expected=0`、`unexpected=30`、`duration=314507.402ms`；递归统计得到 `timedOut=28`、`failed=2`。
+- 两个 failed 用例均为 `REQ-2-1-1`，错误为：`Could not find a visible navigation target named "Acme Demo"`。
+- 28 个 timeout 的首层错误为 10 秒测试超时，符合页面未渲染或目标 UI 未出现的模式。
+- `template/frontend/src/index.html` 明确引用 `<script src="/app.js"></script>`。
+- 同一 ZIP 中前端脚本实际位于 `template/frontend/src/scripts/app.js`；因此需结合构建脚本确认最终产物是否为 `/app.js` 或 `/scripts/app.js`，不能仅凭源码目录推断。
+
+该证据显著提高“前端资源加载失败导致 SPA 白屏”的置信度，但要将它定为决定性根因，仍需继续核对同一 ZIP 中的构建脚本、最终 `dist` 文件树以及本地 `GET /app.js` 与 `GET /scripts/app.js` 响应。若构建确实只产生 `dist/scripts/app.js`，则 `/app.js` 404 是直接根因；若构建额外复制了根路径别名，则需继续检查导航/渲染逻辑。
+
+因此，本文件前文“平台未提供 Playwright 报告、不能提取逐例失败”的表述已被新证据修正：平台 run 对象仍未回流报告，但报告存在于 template ZIP 内嵌文件中。后续归档流程应默认检查 template ZIP 内的 `.arc/playwright-report.json`。
