@@ -843,3 +843,30 @@ P0 统一唯一 canonical start 入口，使其同时满足 SPA root、health、
 `6ad28fd0ab3d` 与 `7616a1cdbddd` 的 Stage 1 需求契约相同，但 template ZIP 与 agent commit 不同；因此两次结果不是纯 request budget A/B。应将结论写为：外层 cap 提升未带来收益，`7616` 出现 900 秒超时并从 5/30 退化到 0/30，但预算与代码版本同时变化，不能证明 cap 单变量造成退化。Sheet 的 `6e04e0ff14dc`（budget 30，0/100）与 `9fee9a825b32`（budget 12，0/100）进一步说明预算没有触及正确性瓶颈。
 
 下一实验必须固定 canonical ZIP、requirements SHA、task/suite、模型和需求契约，只改变预算策略；优先比较 `12 + 一次 8` 与固定 12，并保留 final smoke/打包 reserve。P0 仍为需求合同驱动的 browser semantic smoke、product delta + live acceptance 的 truthful completion、无进展/重复 failure stop；P1 为 capability slice 与平台身份回传门禁。平台不回传 tests[] 时，不得推断具体隐藏断言。
+
+## 18. `8fca1171db4b` 终态后的截止前收敛方案（2026-10-02）
+
+### 18.1 证据更新
+
+- `8fca1171db4b`（GitHub Stage 1）进入官方测试并取得 `5/30`、feature `1/12`，与 `6ad28fd0ab3d` 持平；这确认部署入口恢复，但未证明需求到用户旅程的转换已经解决。
+- 拆分前完整 GitHub `877ac3bb19e7` 仍以 `13/100`、feature `3/47` 作为绝对通过数基线。Stage 1 与完整题目不可简单按百分比比较，但拆分后没有超过拆分前结果，统一领域模型和共享旅程必须保留。
+- `8fca` 的 `implement ok`、无 Agent timeout、部署成功只是过程证据；官方未回传 `tests[]`、Playwright report、generation identity、task snapshot 和 suite identity，因此不能推断 25 个失败场景的具体断言，也不能声称某一 prompt 改动是唯一因果。
+- `7cc1b2ba5b1f` 的 24/24 implement、36 次 budget guard、最终 `0/100` 进一步证明：节点过程状态不能替代真实浏览器行为验收；budget guard 是强风险信号，但不是已被单独证明的全部根因。
+
+完整归一化记录见 `HKT/ARC_BENCH_RUN_8FCA_STAGE1_EVIDENCE_20261003.md`。
+
+### 18.2 截止前第一步（P0）
+
+只实施一个高收益切片，禁止同时开展大规模框架重构：
+
+1. 将完成状态拆为 `source_changed`、`build_passed`、`health_passed`、`semantic_smoke_passed`、`persistence_passed`、`official_acceptance_unknown`；`implement ok`、`wrote=True`、`continuation ok` 不得自动升级为 `verified=True`。
+2. 为 Stage 1 生成短验收合同，至少覆盖入口、session、列表/详情、创建/编辑、刷新恢复、实体作用域和错误原子性；合同字段固定为 fixture、route、role/name、action、mutation、visible result、refresh result。
+3. 用需求派生浏览器 smoke 闭合一条完整链路：入口 → 资源打开 → 核心动作 → 可见结果 → refresh/reopen → 失败不污染。
+4. 预算采用 `12 + 一次 8` 的受控 continuation；只有真实 product delta、build/start/health 和 smoke 进展同时存在时才允许继续。无文件变化、重复读取、相同 failure digest 或无 smoke 进展时停止并保存 checkpoint。
+5. 最终验证和打包保留独立 reserve，不能被实现循环耗尽。
+
+### 18.3 实验与交付门禁
+
+下一次实验固定 canonical ZIP、requirements SHA、task/suite key、模型/prompt 版本和 seed/runtime 初始状态，只改变一个明确运行时变量。提交前必须输出并校验 source SHA、requirements SHA、package identity、ZIP SHA；身份不匹配时 fail-closed。
+
+本阶段不引入完整 Spec Kit、全量工具 API 重构或多模型 Plan & Execute。`project-map`、`source-cache`、`acceptance-smoke` 可继续作为低风险辅助，但不能替代 Harness 的真实门禁。
