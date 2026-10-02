@@ -963,3 +963,23 @@ reused across task or requirements identities.
 - 运行结束分析仍由外部读取日志后完成，不在 Agent 内执行完整 capability analyst。
 - 当前未完成能力边界：requirement-only 模式尚未自动执行真实浏览器 semantic smoke；refresh/reopen 与 failure atomicity 尚未自动采集；capability plan 仍为 shadow，不接管 atomic scheduler；依赖阻塞尚未完全驱动调度。
 - 本轮风险结论：不回退需求编译/Skill 接入；仅修复 judge 的证据映射与 fail-closed 判定，避免“写入成功”再次被误报为能力完成。
+
+## 2026-10-03 错误信息获取与归档路径更新
+
+平台不一定通过 run API 的 `tests[]`、独立 `.arc/playwright-report.json` 端点或测试 stdout 回流逐例错误。错误采集必须按以下顺序执行，并在报告中注明来源和可信度：
+
+1. **run 对象**：读取 `status`、`score`、`passed_count`、`failed_count`、`feature_*`、`steps`、`node_states`、`failure_reason`。这些字段用于确认阶段结果和节点状态，不包含隐藏测试的 locator/断言时不得编造。
+2. **generation logs / stderr**：提取 `[flow]`、`[guard]`、启动/readiness、repair、proxy、quota、OOM 和异常堆栈；stdout/stderr 双写时按时间、消息和节点去重，避免把一条错误算两次。
+3. **template ZIP 内嵌产物**：对每个终态 template ZIP 计算 SHA-256 并解包检查：`.arc/playwright-report.json`、`manifest.json`、`frontend/dist`、`backend`、生成的测试报告和运行日志。平台端点 404 只能说明端点不可访问，不能推出 ZIP 内没有报告。若存在 Playwright JSON，应统计 `expected/unexpected/timedOut/failed`，提取失败用例标题、首层错误和报告 SHA。
+4. **本地构建/运行复现**：在 disposable workspace 中重建模板，执行 `npm run build`，启动真实服务后请求 `/`、`/health`、`/api/health`、HTML 中声明的每个 script/link 资源；同步记录 HTTP 状态、浏览器 console/pageerror 和进程退出情况。复现证据必须绑定 template SHA、source path 和命令。
+5. **历史对照**：将本轮错误与历史 run 的 run_id、task_key、requirements SHA、source/ZIP SHA 分开记录。不同身份同时变化时，只能描述相关性，不能声称预算、模型或某次修改的单变量因果。
+
+错误报告统一分为：
+
+- `confirmed`：run/ZIP/本地复现可直接证明；
+- `inferred`：与错误模式高度一致但缺少直接网络或断言证据；
+- `unknown`：平台没有回流，禁止补写测试 ID、locator、断言或堆栈。
+
+归档最低字段：`run_id`、`task_key`、`submission_id`、`requirements_sha`、`contract_hash`、`agent_commit_sha`、`agent_zip_sha`、`template_zip_sha`、报告 SHA、来源路径、采集时间、命令和结论等级。
+
+本轮 `dc1468f35580` 已证明：template ZIP 内嵌报告可以恢复 28 个 timeout 与 2 个 failed；后续所有 hackathon 终态分析默认执行 ZIP 内嵌报告检查，再下结论。
