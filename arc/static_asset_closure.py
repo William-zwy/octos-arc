@@ -98,4 +98,3 @@ def probe_runtime_assets(port: int, paths: list[str], timeout: float = 4.0) -> s
         if status < 200 or status >= 400:
             return f"static asset probe GET {path} returned HTTP {status}"
     return None
-\n

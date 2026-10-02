@@ -27,4 +27,3 @@ def test_static_closure_accepts_matching_assets():
         result = check_static_closure(project)
         assert result["status"] == "passed"
         assert result["local_references"] == ["/scripts/app.js"]
-\n
