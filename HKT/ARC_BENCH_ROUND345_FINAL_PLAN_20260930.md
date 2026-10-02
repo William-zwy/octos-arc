@@ -926,3 +926,29 @@ Platform-run behavior is intentionally bounded:
 The compiler now emits GWT scenarios, two examples, boundary cases, implicit
 requirements, clarification assumptions, and bidirectional traceability. The HTTP
 listener/readiness repair remains in the implementation prompt for this branch.
+
+### 2026-10-03 — current capability boundary and release status
+
+Current branch `codex/hkt-runtime-compat-3307814` now executes requirement compilation at
+Run start and writes `requirement-contract.json` plus a shadow `capability-plan.json`.
+After each slice it writes a shadow capability scorecard. The following boundaries are
+explicit:
+
+**Implemented and active:** runtime API compatibility event; requirement compilation
+(GWT, examples, boundaries, implicit requirements, assumptions, traceability);
+capability grouping; per-slice shadow judge; canonical readiness repair instructions;
+truthful completion and acceptance/runtime gates.
+
+**Active but advisory only:** capability plan ordering and capability scorecards. They
+inform prompts/checkpoints but do not replace topological atomic scheduling and cannot
+set `verified` or mutate `implemented_nodes`.
+
+**Not yet active:** full capability-based scheduler replacement; automatic browser
+smoke generation/execution for requirement-only runs; persistence/refresh evidence
+collection wired to real probes; dependency blocking of all downstream nodes after an
+inconclusive prerequisite; run-end analyst invocation inside the Agent (intentionally
+excluded by design).
+
+The releasable artifact must be built from this branch HEAD, include its embedded
+commit identity, and pass package shape/offline import checks. Old ZIPs must not be
+reused across task or requirements identities.
