@@ -277,7 +277,7 @@ class RewriteBudgetTests(unittest.TestCase):
         flow.n_nodes = 1
         os.environ.pop("OCTOS_ARC_IMPLEMENT_REQUESTS", None)
         os.environ.pop("OCTOS_ARC_REWRITE_REQUESTS", None)
-        self.assertEqual(flow.implement_request_budget(), 20)
+        self.assertEqual(flow.implement_request_budget(), 18)
         self.assertLessEqual(flow.rewrite_request_budget(), 8)
 
     def test_should_give_multi_node_implement_enough_requests_to_write_code(self):
@@ -290,7 +290,9 @@ class RewriteBudgetTests(unittest.TestCase):
         flow = self._flow()
         flow.n_nodes = 32
         os.environ.pop("OCTOS_ARC_IMPLEMENT_REQUESTS", None)
-        self.assertGreaterEqual(flow.implement_request_budget(), 18)
+        self.assertEqual(flow.implement_request_budget(), 22)
+        self.assertEqual(flow.continuation_request_budget(), 12)
+        self.assertLessEqual(flow.max_node_request_budget(), 36)
 
     def test_should_give_large_tree_implement_enough_requests_to_finish_a_node(self):
         """Platform run 3d6713b1 (prestashop, 87 tests / 47 implement nodes)
@@ -304,7 +306,8 @@ class RewriteBudgetTests(unittest.TestCase):
         flow = self._flow()
         flow.n_nodes = 47
         os.environ.pop("OCTOS_ARC_IMPLEMENT_REQUESTS", None)
-        self.assertGreaterEqual(flow.implement_request_budget(), 50)
+        self.assertEqual(flow.implement_request_budget(), 22)
+        self.assertEqual(flow.continuation_request_budget(), 12)
 
     def test_should_give_skeleton_room_to_scaffold_both_ends(self):
         """The skeleton turn writes a whole app shell (frontend + backend
@@ -334,7 +337,7 @@ class SharedFoundationTests(unittest.TestCase):
 
     def test_skeleton_prompt_asks_for_shared_router_and_seed_foundation(self):
         text = m.SKELETON_PROMPT.format(req_dir="/r", port=3000, smoke=3001, tests="",
-                                        requirements_outline="- REQ-1: base")
+                                         requirements_outline="- REQ-1: base", requirement_contract="{}")
         lowered = text.lower()
         self.assertIn("router", lowered)
         self.assertIn("seed", lowered)
@@ -377,7 +380,7 @@ class SingleOriginContractTests(unittest.TestCase):
 
     def test_skeleton_prompt_mandates_single_port_relative_fetch(self):
         text = m.SKELETON_PROMPT.format(req_dir="/r", port=3000, smoke=3001, tests="",
-                                        requirements_outline="- REQ-1: base").lower()
+                                         requirements_outline="- REQ-1: base", requirement_contract="{}").lower()
         self.assertIn("same-origin", text)
         self.assertIn("/api/", text)
 
