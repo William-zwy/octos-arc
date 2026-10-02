@@ -1,3 +1,4 @@
+- 2026-10-02：截止前修复：requirement-only 任务默认跳过独立 design turn，把调用预算留给可运行垂直切片；新增共享入口、语义角色、seed、持久化、刷新恢复和错误原子性约束，避免 `implement ok` 只代表写入而没有完整用户行为链。可通过 `OCTOS_REQUIREMENT_DESIGN=1` 显式恢复需求设计轮。
 # arc/ 适配层改动记录（工作流 A，分支 `wf-adapter`）
 
 ## 2026-10-02｜v4 需求契约与有界续作（平台未验证）
