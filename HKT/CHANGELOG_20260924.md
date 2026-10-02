@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-10-02：官方需求包 v4 归档与计划更新
+
+- 镜像用户提供的 `arcbench-hackathon-requirements (4).zip` 到 `evidence/arc-bench/inputs/arcbench-hackathon-requirements-4.zip`，SHA-256 为 `8F07E80BE1DB82F68F7AB373ACBD3AF28B735D719B83751D0A378C1043960BF9`，并新增机器可读 manifest。
+- 归一化比较确认 `hackathon--sheet` 仍为 `24/100` 且 YAML 与 v3 完全一致；`hackathon--github` 仍为 `47/100`，但 `46/47` 个 atomic 的描述或 scenario 已变化，不能复用 v3 需求身份、fixture 叙事或 contract cache。
+- 记录新增官方阶段输入：GitHub Stage 1=`12/30`、Stage 2=`14/29`、Stage 3=`21/41`；计划改为支持 stage-specific task identity、scenario fixture variant、阶段优先级和单独 exploratory 结果。
+- 更新项目记忆和 Round 3/4/5 终版计划：优先重新编译 v4 requirement contract，隔离场景 seed，先用 Stage 1 做短探针；Sheet 仅作为相同需求哈希的兼容性回归，不把阶段结果与主任务分数混算。
+- 本次只更新官方需求证据、项目记忆、计划和变更日志；未修改 Agent 源码、官方测试或平台 Run。
+
 ## 2026-10-02：截止前下一版 Agent 有效性最大化计划
 
 - 基于 `a7964e4411af` 只读审计，裁决 cap `18 → 50` 仅改善过程吞吐，未证明完成率收益；相对历史同分 Run 成本约扩大四倍，不再作为全局默认提分策略。

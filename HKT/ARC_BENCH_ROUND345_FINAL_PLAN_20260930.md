@@ -1,7 +1,7 @@
 # ARC-Bench Round 3/4/5 Agent 优化协作计划
 
 日期：2026-09-30
-状态：`READY_FOR_PLATFORM_IDENTITY`（Agent 与本协作文档改动已完成） 仅修改 Agent 与本协作文档；官方测试、需求 ZIP 和平台 Run 未修改。
+状态：`REQUIREMENTS_V4_INTEGRATED`（Agent 与官方需求输入已完成归档） 当前只更新需求证据、项目记忆和计划；未修改官方测试或平台 Run。
 目标分支：`codex/hkt-round345-integration`
 基线：`codex/urgent-bookstack-contract-fix-r2` @ `f10bd9f42429c09672c9a68b79f486c44cc41e9f`
 
@@ -55,7 +55,7 @@ Round 3/4/5 的运行时保护只有在交付包不丢文件、身份不漂移�
 - `arc/pack.ps1` 与 `arc/pack.sh` 都纳入 `run_controls.py`、构建身份和包形状门禁；Windows 使用 Python ZIP 写入，Git Bash 通过 `cygpath` 将 Python 参数转换为原生路径。
 - `agent-build.json` 绑定源提交、payload tree SHA 和 build id；sidecar 绑定 task key、suite key、需求包 SHA 与最终 ZIP SHA。
 - 离线解包后执行 `import main` smoke，并拒绝危险/重复/禁止条目、缺失身份和 placeholder identity。
-- 当前 [需求包远程镜像](https://github.com/William-zwy/octos-p/raw/codex/hkt-round345-integration/evidence/arc-bench/inputs/arcbench-hackathon-requirements-3.zip) 的 SHA-256 为 `9884F23EA10C3DFEEE170D1EED57966C8FCE9A5CE18A0AC43B3D7942EBA8C414`。它同时包含 `hackathon--sheet` 和 `hackathon--github`；正式上传前必须使用平台实际分配的 suite key，不能用本地猜测值冒充官方绑定。
+- 当前 [需求包 v4 远程镜像](https://github.com/William-zwy/octos-p/raw/codex/hkt-round345-integration/evidence/arc-bench/inputs/arcbench-hackathon-requirements-4.zip) 的 SHA-256 为 `8F07E80BE1DB82F68F7AB373ACBD3AF28B735D719B83751D0A378C1043960BF9`；完整差异见 [v4 manifest](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/inputs/arcbench-hackathon-requirements-4.manifest.json)。v3 的 SHA-256 `9884F23EA10C3DFEEE170D1EED57966C8FCE9A5CE18A0AC43B3D7942EBA8C414` 仅保留作历史输入。正式上传前必须使用平台实际分配的 suite key，不能用本地猜测值冒充官方绑定。
 - 当前 ZIP 仍包含 `public-tests` 作为本地回归夹具；它不是新题私有官方 suite，也不能作为官方成绩证据。若发布流程要求最小包，应在平台契约明确后再单独裁剪并重新计算所有 SHA。
 
 门禁验证：从 `arc/` 运行定向测试共 `60`（`OK, skipped=1`；唯一跳过项是本机没有独立 `sh` 命令的语法测试）；递归 `py_compile`、`git diff --check`、`node skills/arc-project-context/test.js`（8 assertions）通过。PowerShell 和 Windows Git Bash 两条打包链路均使用真实需求包 SHA 完成结构/离线导入检查；Git Bash 自动跳过无 PyYAML 的 Windows Store `python3` shim，选择可用解释器。修复提交为 `a77443c0c960adf23eb0a01f5e87f4c31453e2e5`，已由 Integrator 接入。
@@ -255,13 +255,26 @@ Sheet 更适合作为第一主探针：原子节点较少，先验证 workbook/w
 
 记录摘要：三次额度中断均出现 timeout/proxy/repair guard 后仍继续计费；项目归纳分别报告约 `71/86`、`32/117`、`83/125`，并确认没有 OOM 作为主因。具体金额、请求数和哈希在最终 Run 前应重新从原文核验。
 
-### 8.5 新题 requirements ZIP
+### 8.5 新题 requirements ZIP（v4 当前输入）
 
-- [新题 requirements ZIP（远程镜像）](https://github.com/William-zwy/octos-p/raw/codex/hkt-round345-integration/evidence/arc-bench/inputs/arcbench-hackathon-requirements-3.zip)
+- [新题 requirements ZIP v4（远程镜像）](https://github.com/William-zwy/octos-p/raw/codex/hkt-round345-integration/evidence/arc-bench/inputs/arcbench-hackathon-requirements-4.zip)
+- [v4 机器清单与差异摘要](https://github.com/William-zwy/octos-p/blob/codex/hkt-round345-integration/evidence/arc-bench/inputs/arcbench-hackathon-requirements-4.manifest.json)
+- ZIP SHA-256：`8F07E80BE1DB82F68F7AB373ACBD3AF28B735D719B83751D0A378C1043960BF9`
 - `hackathon--sheet/requirements.yaml`：Workbook、Worksheet、Grid、Formula、CSV、排序/过滤、验证、Pivot 等能力。
 - `hackathon--sheet/reference/`：9 张界面参考图。
-- `hackathon--github/requirements.yaml`：Identity、Organization、Repository、Version Control、Issue、Pull Request、Review、Merge、权限等能力。
-- `hackathon--github/reference/`：27 张界面参考图。
+- `hackathon--github/requirements.yaml`：Identity、Organization、Repository、Version Control、Issue、Pull Request、Review、Merge、权限等能力；`47/100` 计数不变，但 `46/47` 个 atomic 的描述或 scenario 已更新。
+- `hackathon--github-stage-1/requirements.yaml`：REQ-1/REQ-2，`12/30` atomic/scenario。
+- `hackathon--github-stage-2/requirements.yaml`：REQ-3/REQ-4，`14/29` atomic/scenario。
+- `hackathon--github-stage-3/requirements.yaml`：REQ-5/REQ-6，`21/41` atomic/scenario。
+- `hackathon--github/reference/`：27 张界面参考图；Stage 1 有 5 张，Stage 2/3 各有 27 张。
+
+#### 8.5.1 v4 对下一版 Agent 的直接约束
+
+1. **需求身份必须升级**：所有候选包和 Run 侧车必须绑定 v4 ZIP SHA、具体 task key 和 stage key；不能复用绑定 v3 的候选 ZIP。
+2. **GitHub fixture 不得共享复用**：v4 将多个场景改为独立账号/实体/权限 fixture。contract 编译器应按 scenario 提取 fixture variant，并在每次本地 smoke 前恢复对应副本。
+3. **阶段优先级应可配置**：默认先用 Stage 1 做短探针，再按预算选择 Stage 2 或 Stage 3；完整 `hackathon--github` 仅在 stage 输入和身份门禁通过后运行。
+4. **语义契约重编译**：精确 role/name、route、scope、permission、persist/reload 和 atomic mutation 必须从 v4 YAML 重新生成，不能使用 v3 缓存；Sheet 虽语义未变，也要在 sidecar 中记录其与 v4 的相同哈希。
+5. **禁止把阶段拆分当成官方 A/B**：Stage 1/2/3 是新的官方需求输入和测试边界，不代表同一应用的可直接分数分解；每个 stage 的结果单独标识为 `exploratory`，不能与主任务成绩混算。
 
 ### 8.6 Agent 源码与运行时材料
 
