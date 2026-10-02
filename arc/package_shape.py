@@ -34,6 +34,8 @@ AGENT_REQUIRED_FILES = (
     "run_controls.py",
     "seed_isolation.py",
     "requirement_contract.py",
+    "capability_plan.py",
+    "capability_judge.py",
     "agent-build.json",
     "requirements.txt",
     "skills/arc-project-context/SKILL.md",
