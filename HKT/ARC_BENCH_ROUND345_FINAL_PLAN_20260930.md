@@ -837,3 +837,9 @@ P0 统一唯一 canonical start 入口，使其同时满足 SPA root、health、
 本 Run 的 958 requests、26.139M tokens、18.864285 CNY 均在 deployment gate 前耗尽，没有产生官方测试信号；不能由 `0/0` 评价代码质量。Skill 未打包、未调用，prompt cache hit 不能作为 Skill 生效证据。
 
 本节不授权任何 Agent/Skill 修改、重新打包、发布或平台 Run。Phase 4 仍为 pending，只允许只读诊断；本次授权仅覆盖分析与归一化证据的仓库同步。
+
+## 17. 2026-10-02 两次负收益 Run 的修订结论
+
+`6ad28fd0ab3d` 与 `7616a1cdbddd` 的 Stage 1 需求契约相同，但 template ZIP 与 agent commit 不同；因此两次结果不是纯 request budget A/B。应将结论写为：外层 cap 提升未带来收益，`7616` 出现 900 秒超时并从 5/30 退化到 0/30，但预算与代码版本同时变化，不能证明 cap 单变量造成退化。Sheet 的 `6e04e0ff14dc`（budget 30，0/100）与 `9fee9a825b32`（budget 12，0/100）进一步说明预算没有触及正确性瓶颈。
+
+下一实验必须固定 canonical ZIP、requirements SHA、task/suite、模型和需求契约，只改变预算策略；优先比较 `12 + 一次 8` 与固定 12，并保留 final smoke/打包 reserve。P0 仍为需求合同驱动的 browser semantic smoke、product delta + live acceptance 的 truthful completion、无进展/重复 failure stop；P1 为 capability slice 与平台身份回传门禁。平台不回传 tests[] 时，不得推断具体隐藏断言。
