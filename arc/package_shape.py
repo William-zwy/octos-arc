@@ -32,6 +32,7 @@ AGENT_REQUIRED_FILES = (
     "build_identity.py",
     "package_shape.py",
     "run_controls.py",
+    "seed_isolation.py",
     "requirement_contract.py",
     "agent-build.json",
     "requirements.txt",

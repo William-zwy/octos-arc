@@ -678,7 +678,7 @@ cap-hit 后已保存 contract 条目、合同完成/缺失项、cap 原因和 `l
 | Budget / continuation / truthful state | ✅ 已完成基础版 | 补 run-level request ledger 与重复策略切换 |
 | Capability-priority scheduler | ⚠️ 未完成 | 在保留依赖拓扑和现有 verdict 生命周期前提下实现 B-lite |
 | Requirement-derived browser smoke | ❌ 未完成 | 新增只读高置信 surface smoke，结果标记 `inferred_non_official` |
-| Seed/runtime 隔离 | ❌ 未完成 | 先做 disposable workspace/data copy 与 baseline hash，再考虑 `ARC_DATA_FILE` |
+| Seed/runtime 隔离 | ⚠️ helper 已完成，runtime 接入未完成 | `seed_isolation.py` 已提供 disposable copy/baseline hash/restore；仍需接入 Harness 并记录每轮 seed verdict |
 | 完整 project-map/source-cache/change-impact | ⚠️ 部分已有 | Harness 主动生成 map，按 path+SHA+range 注入当前 capability |
 
 仍维持单写入者：只有 Integrator 修改代码、提交和打包；代码风险、浏览器验收、包门禁可由子 Agent 只读并行审查。

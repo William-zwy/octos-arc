@@ -15,6 +15,12 @@
 - 计划同步标明：contract/预算/truthful state 已完成基础版；能力优先调度、需求派生浏览器 smoke、seed/runtime 隔离仍未完成并保留为下一阶段。
 - 验证：需求契约/主流程/打包定向测试 63 项 `OK`；v4 五个需求 YAML 的 atomic/scenario 计数和 capability summary 均可解析为合法有界 JSON。
 
+## 2026-10-02｜D-lite seed 隔离 helper（尚未接入 Harness）
+
+- 新增领域无关 `seed_isolation.py`：对普通文件生成 SHA-256 baseline manifest，创建 disposable workspace，比较前后树并从副本恢复；路径逃逸、symlink、缺失路径和非普通文件返回 `inconclusive`。
+- 当前 helper 仅有单元测试覆盖，尚未接入 `main.py`/`acceptance.py` 的运行路径；不能据此宣称平台 Run 已具备 seed/runtime 隔离。
+- 覆盖源目录祖先作为临时复制父目录，以及恢复时删除 smoke 新增文件的边界行为。
+
 ## 2026-09-30｜Round 3/4/5 运行时与提交包门禁（平台未验证）
 
 - Integrator 分支 `codex/hkt-round345-integration` 接入 quota hard-stop、原子 checkpoint、有限 rewrite、失败摘要去循环、上下文 cache shadow，以及通用语义契约；这些规则不绑定历史题目名称、REQ 编号或 locator。

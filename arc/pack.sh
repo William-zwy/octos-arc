@@ -46,7 +46,7 @@ trap cleanup EXIT HUP INT TERM
 commit=$(git -C "$repo_root" rev-parse HEAD)
 git -c core.autocrlf=false -C "$repo_root" archive --format=zip --output="$temp_archive" HEAD:arc -- \
   main.py octos_stdio.py requirement_order.py acceptance.py guard.py llm_proxy.py codegen.py \
-  run_controls.py requirement_contract.py build_identity.py package_shape.py hooks requirements.txt \
+  run_controls.py seed_isolation.py requirement_contract.py build_identity.py package_shape.py hooks requirements.txt \
   arcbench_agent_runtime public-tests
 
 identity_script="$script_dir/build_identity.py"
