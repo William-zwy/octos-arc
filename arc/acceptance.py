@@ -23,6 +23,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
 
+from static_asset_closure import check_static_closure, probe_runtime_assets
+
 _ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 _SPEC_ID = re.compile(r"^(REQ-\d+(?:\.\d+)*)(?=[.\-_ ]|$)")
 
@@ -525,7 +527,12 @@ class AppServer:
             pass
         rc, out = self._run(["npm", "run", "build"], frontend, 600)
         if rc != 0:
-            return f"frontend `npm run build` failed:\n{out}"
+            return "frontend npm run build failed: " + out
+        closure = check_static_closure(self.project)
+        if closure["status"] == "failed":
+            return "frontend static asset closure failed: " + json.dumps(closure, ensure_ascii=False)
+        if closure["status"] == "inconclusive":
+            return "frontend static asset closure inconclusive: " + json.dumps(closure, ensure_ascii=False)
         return None
 
     def start(self, wait_seconds: int = 45) -> str | None:
@@ -550,7 +557,13 @@ class AppServer:
                 return (f"backend `npm start` exited early (rc={self.proc.returncode}):\n"
                         f"{self.log_file.read_text(errors='replace')[-1500:]}")
             if port_open(self.port):
-                err = robustness_probe(self.port, self.proc)
+                closure = check_static_closure(self.project)
+                if closure["status"] == "passed":
+                    err = probe_runtime_assets(self.port, closure["local_references"])
+                else:
+                    err = "frontend static asset closure unavailable at runtime: " + json.dumps(closure, ensure_ascii=False)
+                if not err:
+                    err = robustness_probe(self.port, self.proc)
                 if not err and self.grader_like and self.extra_ports:
                     # Cloud 3f0124e82113: the specs default to :3301, the grader sets only PORT,
                     # the backend bound PORT alone -> 10x ERR_CONNECTION_REFUSED. Same handler on both.
@@ -677,3 +690,7 @@ class AcceptanceRunner:
         self.log(f"[acceptance] {summary.passed}/{summary.total} passed in {time.time()-t0:.0f}s "
                  f"({', '.join(spec_rel_paths)})")
         return summary
+
+
+
+\n

@@ -444,3 +444,8 @@ Remaining first-pass misses are model sampling (invented validation rules, messa
 twice server-side, cookie/redirect details). With the leaderboard scoring the MOST RECENT run and the current
 TB entry at ¥0.251 (a 3-request run), a rerun has negative expected value (median 3 requests ≈ ¥0.3, tail
 ¥0.6+): recommendation — do not rerun TB; keep the entry. Cloud: 未评测 for round 28.
+
+## 2026-10-03 Static asset closure gate
+
+Added `static_asset_closure.py` and wired it into local acceptance build/start checks. After `npm run build`, the harness parses `dist/index.html` script/style/icon references and fails closed on missing local assets. Once the server binds, it probes each referenced local asset over HTTP before Playwright. This targets the dc1468f35580 failure mode where `/app.js` was referenced but the built file lived under `/scripts/app.js`, producing a white screen and all hidden UI tests failing.
+\n
