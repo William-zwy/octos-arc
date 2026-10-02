@@ -23,6 +23,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
 
+from static_asset_closure import check_static_closure, probe_runtime_assets
+
 _ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 _SPEC_ID = re.compile(r"^(REQ-\d+(?:\.\d+)*)(?=[.\-_ ]|$)")
 
@@ -766,3 +768,4 @@ class AcceptanceRunner:
         self.log(f"[acceptance] {summary.passed}/{summary.total} passed in {time.time()-t0:.0f}s "
                  f"({', '.join(spec_rel_paths)})")
         return summary
+
