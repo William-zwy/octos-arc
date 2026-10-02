@@ -2691,9 +2691,12 @@ class Flow:
             self.update_application_contract()
             self.commit(f"{node_id} (partial): {node.get('name', '')}")
             return
-        self.mark("implementation_done", node_id, (text[-500:] or None) if ok else "product delta retained")
-        self.implemented_nodes.add(node_id)
-        self.set_node_state(node_id, "implemented", wrote=self.last_turn_wrote, turn_ok=ok,
+        self.mark("implementation_ready", node_id, (text[-500:] or None) if ok else "product delta retained; awaiting acceptance")
+        # A product delta is necessary but not sufficient for implementation.
+        # Keep the node out of implemented_nodes until the local acceptance
+        # loop produces a real verdict; this prevents downstream nodes from
+        # treating an unverified half-feature as a completed dependency.
+        self.set_node_state(node_id, "implementation_pending_acceptance", wrote=self.last_turn_wrote, turn_ok=ok,
                             product_delta=True, model_smoke_hint=self.last_turn_verified,
                             request_budget_exhausted=self.last_turn_budget_exhausted,
                             verification="pending_acceptance", **self.contract_progress(node_id))
@@ -2714,6 +2717,8 @@ class Flow:
         self.test_verdict[node_id] = verdict
         self.update_application_contract()
         if verdict is True:
+            self.implemented_nodes.add(node_id)
+            self.mark("implementation_done", node_id, "accepted implementation")
             self.set_node_state(node_id, "accepted", **self.contract_progress(node_id, True))
             self.mark("test_passed", node_id, f"{len(specs)} acceptance spec file(s) pass locally")
             try:
