@@ -39,6 +39,12 @@ class RequirementContractTests(unittest.TestCase):
         self.assertTrue(contract["capabilities"])
         self.assertTrue(any(item["kind"] == "refresh_reopen" for item in contract["invariants"]))
 
+    def test_generic_quoted_prose_is_not_executable_fixture(self):
+        from requirement_contract import _facts
+        facts = _facts("Click 2Q3 Sales2 and follow the requested workflow.")
+        facts = _facts('Click "Q3 Sales" and follow "the requested workflow".')
+        self.assertIn("the requested workflow", facts["rejected_exact_values"])
+
     def test_compact_contract_is_valid_json_and_bounded(self):
         contract = compile_requirement_contract(tree(*[
             node(f"REQ-{i}", "x" * 600, [{"name": "s", "steps": [{"keyword": "THEN", "content": "y" * 500}]}])

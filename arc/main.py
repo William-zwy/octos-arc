@@ -89,7 +89,9 @@ from codegen import FORMAT_INSTRUCTIONS, dedupe_nav_links, parse_file_blocks, wr
 from guard import TurnMonitor  # noqa: E402
 from llm_proxy import LlmProxy  # noqa: E402
 from requirement_order import ancestors_of, node_fingerprint, topo_order  # noqa: E402
-from requirement_contract import compact_contract, compile_requirement_contract  # noqa: E402
+from requirement_contract import compact_contract, compile_requirement_compilation  # noqa: E402
+from capability_plan import build_capability_plan  # noqa: E402
+from capability_judge import judge_round  # noqa: E402
 from run_controls import CheckpointStore, atomic_json_write  # noqa: E402
 
 BUNDLE_DIR = Path(__file__).resolve().parent
@@ -1376,7 +1378,7 @@ The app failed the pre-grading startup rehearsal. The runner executes exactly:
 2. cd backend && npm install && npm start        (must bind PORT and stay up)
 Rehearsal error:
 {error}
-Fix the project so this sequence works (typical causes: a require() path that does not match a real file, a file referenced but never written, a startup syntax error, a dependency missing from package.json). Verify with the canonical command: build the frontend, start the backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, confirm `GET /` returns the app and `GET /api/health` returns 2xx from that same process, then stop it. A transient reset on `/favicon.ico` is not a reason to rewrite product code if `/`, health and the process remain healthy. Never bind {port}. Write only a product-source fix supported by the error; if no product delta is needed, say so and finish.\
+Fix the project so this sequence works. Inspect backend entrypoint and startup stderr/stdout first. Then run the exact same-process checks: build frontend; start with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`; curl `GET /` and `GET /api/health` with a 5-second timeout; stop that process. Do not claim repair without observed successful responses. If bindPorts is used, pass the request listener function to `http.createServer`; never pass an already-created http.Server as the handler. Keep root response non-blocking and move slow initialization out of request handling. A favicon reset is not a reason to rewrite healthy routes. Never bind {port}. Write only a product-source fix supported by observed output; if no product delta is needed, still run and report the exact commands.\
 """
 
 ACCEPTANCE_TESTS_PROMPT = """\
@@ -2719,6 +2721,20 @@ class Flow:
 
         verdict = self.acceptance_loop(node_id, specs, deadline, rebuild_prompt=rebuild_prompt)
         self.test_verdict[node_id] = verdict
+        try:
+            judgment = judge_round(
+                self.requirement_contract,
+                source_changed=bool(self.last_turn_wrote),
+                build_passed=bool(verdict is True),
+                readiness_passed=bool(verdict is True),
+                smoke_passed=bool(verdict is True),
+                persistence_passed=False,
+                acceptance_known=not self.acceptance_unavailable,
+            )
+            atomic_json_write(self.output_dir / ".arc" / "capability-judgments" / f"{node_id}.json", judgment)
+            log("[capability] slice judgment " + json.dumps({"node_id": node_id, "status": judgment["status"], "score": judgment["score"]}, ensure_ascii=False))
+        except OSError as exc:
+            log(f"[capability] could not persist slice judgment: {exc}")
         self.update_application_contract()
         if verdict is True:
             self.implemented_nodes.add(node_id)
@@ -3015,7 +3031,7 @@ class Flow:
             previous = previous_requirement_records(self.output_dir)
             tree = load_requirement_tree(self.req_dir)
             self.requirements_hash = requirements_digest(self.req_dir)
-            self.requirement_contract = compile_requirement_contract(tree)
+            self.requirement_contract = compile_requirement_compilation(tree)
             self.requirement_contract["requirements_hash"] = self.requirements_hash
             contract_payload = dict(self.requirement_contract)
             contract_payload.pop("contract_hash", None)
@@ -3033,6 +3049,13 @@ class Flow:
             except OSError as exc:
                 log(f"[contract] could not persist requirement contract: {exc}")
             self.runtime.traceability.store_requirement_tree(tree)
+            capability_plan = build_capability_plan(self.requirement_contract.get("nodes") or [])
+            self.requirement_contract["capability_plan"] = capability_plan
+            try:
+                atomic_json_write(self.output_dir / ".arc" / "capability-plan.json", capability_plan)
+                log("[capability] shadow plan compiled " + json.dumps({"capabilities": len(capability_plan.get("capabilities", [])), "mode": capability_plan.get("mode")}, ensure_ascii=False))
+            except OSError as exc:
+                log(f"[capability] could not persist shadow plan: {exc}")
             ordered = topo_order(tree)
             if not ordered:
                 raise ValueError("no ATOMIC requirement nodes found")

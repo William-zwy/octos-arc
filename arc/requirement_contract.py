@@ -29,6 +29,16 @@ SCOPE_RE = re.compile(
 )
 PERSIST_RE = re.compile(r"\b(reload|refresh|reopen|persist|persistent|saved|survive|database|store|after signing out|session)\b", re.I)
 PERMISSION_RE = re.compile(r"\b(permission|permitted|authorized|privilege|role|logged in|signed in|anonymous|owner|moderator|access)\b", re.I)
+GENERIC_EXACT_RE = re.compile(r"^(?:the|a|an|this|that|requested|workflow|item|record|thing|value|result|page|screen|feature|action|operation|data|user)$", re.I)
+
+
+def _usable_exact(value: str) -> bool:
+    """Keep concrete quoted fixtures/labels out of generic prose."""
+    value = _text(value)
+    lowered = value.lower()
+    return (bool(value) and len(value) <= 120
+            and not GENERIC_EXACT_RE.fullmatch(value)
+            and lowered not in {"the requested workflow", "the selected item", "the current page"})
 
 
 def _text(value: Any) -> str:
@@ -47,8 +57,10 @@ def _facts(text: str) -> dict[str, list[str]]:
     roles = sorted({match.group(1).lower() for match in ROLE_RE.finditer(text)})
     paths = list(dict.fromkeys(PATH_RE.findall(text)))
     scopes = list(dict.fromkeys(_text(match.group(0)) for match in SCOPE_RE.finditer(text)))
+    usable_quoted = [value for value in quoted if _usable_exact(value)]
     return {
-        "exact_values": quoted[:20],
+        "rejected_exact_values": [value for value in quoted if not _usable_exact(value)][:12],
+        "exact_values": usable_quoted[:20],
         "roles": roles[:12],
         "paths": paths[:12],
         "scope_hints": scopes[:8],
@@ -212,6 +224,48 @@ def compile_requirement_contract(tree: dict) -> dict:
     return payload
 
 
+
+def compile_requirement_compilation(tree: dict) -> dict:
+    """Compile a bounded, evidence-backed first pass before implementation."""
+    contract = compile_requirement_contract(tree)
+    vague_re = re.compile(r"\b(fast|quickly|quick|support|easy|simple|seamless|etc\.)\b", re.I)
+    implicit = [
+        {"kind": "health", "requirement": "canonical start serves /health and /api/health", "confidence": "derived"},
+        {"kind": "static", "requirement": "root and static assets remain reachable", "confidence": "derived"},
+        {"kind": "404", "requirement": "unknown routes return a controlled response without process exit", "confidence": "derived"},
+        {"kind": "transport", "requirement": "same-origin API, encoding and JSON error responses are stable", "confidence": "derived"},
+    ]
+    questions = []
+    traceability = []
+    for node in contract.get("nodes", []):
+        description = str(node.get("description") or "")
+        if vague_re.search(description):
+            questions.append({"node_id": node.get("id"), "text": description[:360], "assumption": "choose the smallest deterministic behavior that satisfies explicit examples", "confidence": "assumed", "evidence": node.get("evidence")})
+        scenarios = node.get("scenarios") or []
+        gwt = []
+        examples = []
+        boundaries = [
+            {"case": "empty input", "expected": "controlled validation error; no partial mutation", "confidence": "derived"},
+            {"case": "invalid input", "expected": "4xx or visible error; state unchanged", "confidence": "derived"},
+            {"case": "duplicate submission", "expected": "idempotent or explicit conflict; no duplicate entity", "confidence": "derived"},
+        ]
+        for scenario in scenarios[:8]:
+            facts = scenario.get("facts") or {}
+            setup = facts.get("setup") or ["Given the fixture described by the requirement"]
+            actions = facts.get("actions") or ["When the user performs the named action"]
+            expected = facts.get("expected") or ["Then the visible result matches the requirement"]
+            gwt.append({"given": setup[:3], "when": actions[:3], "then": expected[:3], "evidence": scenario.get("evidence"), "confidence": scenario.get("confidence", "derived")})
+            examples.append({"input": setup[:2] + actions[:1], "output": expected[:2], "confidence": "explicit" if scenario.get("steps") else "derived", "evidence": scenario.get("evidence")})
+        if len(examples) == 1:
+            examples.append({"input": ["Repeat the action after refresh/reopen"], "output": ["The persisted visible result remains stable"], "confidence": "derived", "evidence": node.get("evidence")})
+        node["first_pass_compilation"] = {"given_when_then": gwt[:8], "examples": examples[:2], "boundaries": boundaries, "source_refs": [node.get("evidence")] + [item.get("evidence") for item in gwt[:7] if item.get("evidence")], "confidence": "explicit" if scenarios else "derived"}
+        traceability.append({"requirement": node.get("evidence"), "node_id": node.get("id"), "plan_path": f"capabilities/{node.get('id')}", "smoke_case": f"requirements-derived/{node.get('id')}", "confidence": node.get("confidence", "derived")})
+    contract["implicit_requirements"] = implicit
+    contract["clarification_questions"] = questions[:40]
+    contract["traceability"] = traceability
+    contract["compilation_phase"] = {"write_code": False, "source": "requirements.yaml", "bounded": True}
+    return contract
+
 def compact_contract(contract: dict, node_id: str | None = None, max_chars: int = 7000) -> str:
     """Serialize either one node or a bounded summary for a prompt."""
     nodes = contract.get("nodes") or []
@@ -299,3 +353,28 @@ def compact_contract(contract: dict, node_id: str | None = None, max_chars: int 
     return text if len(text) <= max_chars else json.dumps({"schema_version": 1, "truncated": True,
                                                             "node_id": node_id, "contract_hash": contract.get("contract_hash")},
                                                            ensure_ascii=False, separators=(",", ":"))
+
+
+def requirement_smoke_gate(contract: dict, node_id: str | None = None) -> dict:
+    """Build a minimal evidence checklist for a requirement-only smoke run."""
+    nodes = contract.get("nodes") or []
+    node = next((item for item in nodes if str(item.get("id")) == str(node_id)), None) if node_id else None
+    source = (node or {}).get("acceptance_contract") or {}
+    keys = ("entry_route", "role_name", "user_action", "api_mutation", "visible_result",
+            "error_behavior", "refresh_reopen_result")
+    required = [key for key in keys if source.get(key)]
+    return {"status": "pending", "node_id": node_id,
+            "contract_hash": contract.get("contract_hash"), "required": required,
+            "evidence": {key: False for key in required}}
+
+
+def evaluate_requirement_smoke_gate(gate: dict, evidence: dict | None) -> dict:
+    """Evaluate explicit smoke evidence; malformed input is inconclusive."""
+    required = gate.get("required") if isinstance(gate, dict) else None
+    if not isinstance(required, list) or not isinstance(evidence, dict):
+        return {**(gate if isinstance(gate, dict) else {}), "status": "inconclusive",
+                "reason": "missing_evidence"}
+    observed = {key: bool(evidence.get(key)) for key in required}
+    return {**gate, "status": "passed" if all(observed.values()) else "failed",
+            "evidence": observed,
+            "missing": [key for key, value in observed.items() if not value]}

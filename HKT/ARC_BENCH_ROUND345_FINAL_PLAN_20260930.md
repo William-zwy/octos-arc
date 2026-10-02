@@ -908,3 +908,21 @@ the sole hard gate.
 Evidence-specific refinements: readiness is a first-class check after f9e8's HTTP
 hang, and persistence/semantic smoke are separate checks after the 0/100 and 5/30
 runs. This judge is shadow-only until it proves low false-positive behavior.
+
+### 2026-10-03 — runtime branch requirement compiler integration
+
+On `codex/hkt-runtime-compat-3307814`, the isolated requirement-compilation work was
+selectively integrated without replacing the runtime compatibility patch or the shadow
+capability judge.
+
+Platform-run behavior is intentionally bounded:
+
+- Run start calls `compile_requirement_compilation(tree)` and persists the contract;
+- a shadow `capability_plan.json` is persisted for capability grouping;
+- after each slice, `capability_judge` writes a scorecard only;
+- no run-end analyst is invoked inside the Agent;
+- `verified` and `implemented_nodes` remain controlled by acceptance/runtime gates.
+
+The compiler now emits GWT scenarios, two examples, boundary cases, implicit
+requirements, clarification assumptions, and bidirectional traceability. The HTTP
+listener/readiness repair remains in the implementation prompt for this branch.
