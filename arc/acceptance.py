@@ -477,7 +477,7 @@ def readiness_probe(port: int, proc: subprocess.Popen | None = None,
     Retry briefly because the socket can open before route/data initialization.
     """
     import http.client
-    for path in ("/", "/api/health"):
+    for path in ("/", "/health", "/api/health"):
         deadline = time.time() + wait_seconds
         last = "no response"
         while time.time() < deadline:

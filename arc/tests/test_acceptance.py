@@ -303,7 +303,7 @@ class ReadinessProbeTests(unittest.TestCase):
         class H(http.server.BaseHTTPRequestHandler):
             health_status = 200
             def do_GET(self):
-                self.send_response(self.health_status if self.path == "/api/health" else 302)
+                self.send_response(self.health_status if self.path in ("/health", "/api/health") else 302)
                 self.end_headers()
             def log_message(self, *a): pass
 
@@ -313,6 +313,6 @@ class ReadinessProbeTests(unittest.TestCase):
             self.assertIsNone(readiness_probe(port, timeout=1, wait_seconds=.4))
             H.health_status = 302
             err = readiness_probe(port, timeout=1, wait_seconds=.4)
-            self.assertIn("GET /api/health", err)
+            self.assertIn("GET /health", err)
         finally:
             srv.shutdown()

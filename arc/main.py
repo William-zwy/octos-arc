@@ -2605,6 +2605,10 @@ class Flow:
                 # the first-turn value in the checkpoint for diagnostics, but
                 # only the final turn controls truthful completion.
                 self.last_turn_budget_exhausted = bool(self.last_turn_budget_exhausted)
+                if self.last_turn_budget_exhausted:
+                    self.checkpoint("continuation_budget_exhausted", node_id=node_id,
+                                     initial_wrote=initial_wrote, product_delta=True,
+                                     request_budget_exhausted=True)
                 log(f"[flow] {node_id}: continuation {'ok' if resume_ok else 'FAILED'}; "
                     f"wrote_any={self.last_turn_wrote} budget_exhausted={self.last_turn_budget_exhausted}")
             else:
