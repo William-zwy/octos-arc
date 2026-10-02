@@ -952,3 +952,14 @@ excluded by design).
 The releasable artifact must be built from this branch HEAD, include its embedded
 commit identity, and pass package shape/offline import checks. Old ZIPs must not be
 reused across task or requirements identities.
+
+## 2026-10-03 本轮修复与能力边界更新
+
+- 保留 Run 开始一次需求编译：生成 `.arc/requirement-contract.json` 与 `.arc/capability-plan.json`。
+- 保留切片结束一次轻量 shadow capability judge；不修改 `implemented_nodes`、`verified` 或 acceptance 结果。
+- 将外部 Web/Playwright/accessibility Skill 内化为合同字段与有界 smoke 计划：route、role/name、action、mutation、visible result、error atomicity、refresh/reopen；不引入第二套 runner/server 生命周期。
+- 修正 judge 证据语义：`False` 才是明确失败，`None` 表示未知；只有所有必需证据均为 `True` 且 acceptance 已知时才允许 `accepted`。新增 `unknown_evidence` 与 `smoke_plan` 输出。
+- 修正主流程：acceptance verdict 不再伪造 build/readiness/semantic-smoke/persistence 证据，这些字段在没有独立真实证据时保持 unknown。
+- 运行结束分析仍由外部读取日志后完成，不在 Agent 内执行完整 capability analyst。
+- 当前未完成能力边界：requirement-only 模式尚未自动执行真实浏览器 semantic smoke；refresh/reopen 与 failure atomicity 尚未自动采集；capability plan 仍为 shadow，不接管 atomic scheduler；依赖阻塞尚未完全驱动调度。
+- 本轮风险结论：不回退需求编译/Skill 接入；仅修复 judge 的证据映射与 fail-closed 判定，避免“写入成功”再次被误报为能力完成。

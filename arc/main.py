@@ -2725,10 +2725,13 @@ class Flow:
             judgment = judge_round(
                 self.requirement_contract,
                 source_changed=bool(self.last_turn_wrote),
-                build_passed=bool(verdict is True),
-                readiness_passed=bool(verdict is True),
-                smoke_passed=bool(verdict is True),
-                persistence_passed=False,
+                # Acceptance verdict is not evidence for independent build,
+                # readiness, semantic-smoke, or persistence checks. Unknown
+                # remains unknown so the shadow judge cannot over-claim.
+                build_passed=None,
+                readiness_passed=None,
+                smoke_passed=None,
+                persistence_passed=None,
                 acceptance_known=not self.acceptance_unavailable,
             )
             atomic_json_write(self.output_dir / ".arc" / "capability-judgments" / f"{node_id}.json", judgment)

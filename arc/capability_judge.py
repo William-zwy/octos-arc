@@ -25,10 +25,10 @@ def judge_round(
     contract: dict[str, Any],
     *,
     source_changed: bool,
-    build_passed: bool,
-    readiness_passed: bool,
-    smoke_passed: bool,
-    persistence_passed: bool,
+    build_passed: bool | None,
+    readiness_passed: bool | None,
+    smoke_passed: bool | None,
+    persistence_passed: bool | None,
     acceptance_known: bool = False,
 ) -> dict[str, Any]:
     """Return a conservative, evidence-only scorecard.
@@ -45,28 +45,47 @@ def judge_round(
         "semantic_smoke": smoke_passed,
         "persistence": persistence_passed,
     }
-    hard_failures = [name for name, ok in checks.items() if not ok]
+    hard_failures = [name for name, ok in checks.items() if ok is False]
+    unknown = [name for name, ok in checks.items() if ok is None]
     missing = [name for name in ("invariants", "capabilities", "nodes") if not contract.get(name)]
     score = sum(1 for ok in checks.values() if ok) * 20
     recommendations: list[str] = []
     if not source_changed:
         recommendations.append("stop: no product delta")
-    if not readiness_passed:
+    if readiness_passed is not True:
         recommendations.append("repair canonical GET / and GET /api/health before feature work")
-    if not smoke_passed:
+    if smoke_passed is not True:
         recommendations.append("run requirement-derived semantic smoke on the shared entry surface")
-    if not persistence_passed:
+    if persistence_passed is not True:
         recommendations.append("verify refresh/reopen and failure atomicity on a disposable workspace")
     if missing:
         recommendations.append("compile requirements before implementation")
-    status = "accepted" if not hard_failures and not missing and acceptance_known else "inconclusive"
+    all_required_passed = all(ok is True for ok in checks.values())
+    status = "accepted" if all_required_passed and not missing and acceptance_known else "inconclusive"
     return {
         "schema_version": 1,
         "status": status,
         "score": score,
         "hard_failures": hard_failures,
+        "unknown_evidence": unknown,
         "missing_evidence": missing,
         "recommendations": recommendations,
         "checks": checks,
         "official_acceptance_unknown": not acceptance_known,
+        "smoke_plan": contract_smoke_plan(contract),
     }
+
+def contract_smoke_plan(contract: dict[str, Any], node_id: str | None = None) -> dict[str, Any]:
+    """Derive a bounded semantic smoke checklist from the compiled contract."""
+    nodes = contract.get("nodes") or []
+    node = next((item for item in nodes if str(item.get("id")) == str(node_id)), None) if node_id else None
+    contract_item = (node or {}).get("acceptance_contract") or {}
+    checks = []
+    for key, label in (("entry_route", "route"), ("role_name", "accessible_name"),
+                       ("user_action", "action"), ("api_mutation", "mutation"),
+                       ("visible_result", "visible_result"), ("error_behavior", "error_atomicity"),
+                       ("refresh_reopen_result", "refresh_reopen")):
+        if contract_item.get(key):
+            checks.append({"kind": label, "source": key, "required": True})
+    return {"schema_version": 1, "node_id": node_id, "checks": checks,
+            "contract_hash": contract.get("contract_hash")}
