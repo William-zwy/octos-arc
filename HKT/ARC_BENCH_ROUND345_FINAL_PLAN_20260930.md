@@ -888,3 +888,23 @@ The compatibility method records `phase=implement,status=ready` and must never m
 node `IMPLEMENTED`; only acceptance-backed `mark_implementation_done` may do that.
 The repair is isolated on `codex/hkt-runtime-compat-3307814` until validated and
 approved for the hackathon integration line. Do not infer hidden test IDs from this run.
+
+### 2026-10-03 — agent-capability-analyst 接入决策
+
+The supplied skill is useful as a diagnostic methodology, but not safe as a direct
+hard gate: it is model-facing, asks for interactive dimension selection, and cannot
+prove hidden acceptance. We retain its strongest parts (requirement compilation,
+Given/When/Then evidence, boundary cases, traceability, and behavior-oriented
+regression) and reject its weaker assumptions (full Spec Kit adoption before the
+deadline, broad tool/framework rewrites, and model-controlled blocking).
+
+A deterministic shadow module `arc/capability_judge.py` was added on the isolated
+runtime-compat branch. It scores only observed source/build/readiness/semantic-smoke/
+persistence evidence, remains fail-closed when official acceptance is unknown, and
+never emits `verified` or changes `implemented_nodes`. Integration into the main loop
+must wait for a fixture-backed evaluation; the runtime and acceptance harness remain
+the sole hard gate.
+
+Evidence-specific refinements: readiness is a first-class check after f9e8's HTTP
+hang, and persistence/semantic smoke are separate checks after the 0/100 and 5/30
+runs. This judge is shadow-only until it proves low false-positive behavior.
