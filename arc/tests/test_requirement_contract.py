@@ -35,6 +35,9 @@ class RequirementContractTests(unittest.TestCase):
         self.assertTrue(item["scenarios"][0]["facts"]["persistence_hints"])
         self.assertIn("evidence", item["scenarios"][0]["steps"][0])
         self.assertEqual(item["facts"]["paths"], [])
+        self.assertIn("refresh_reopen_result", item["acceptance_contract"])
+        self.assertTrue(contract["capabilities"])
+        self.assertTrue(any(item["kind"] == "refresh_reopen" for item in contract["invariants"]))
 
     def test_compact_contract_is_valid_json_and_bounded(self):
         contract = compile_requirement_contract(tree(*[
@@ -62,6 +65,13 @@ class RequirementContractTests(unittest.TestCase):
         self.assertEqual(payload["atomic_count"], 47)
         self.assertIn("REQ-0", text)
         self.assertIn("REQ-46", text)
+
+    def test_capability_map_groups_by_first_real_folder(self):
+        contract = compile_requirement_contract(tree(
+            {"id": "CAP-A", "type": "FOLDER", "children": [node("A-1", "a", []), node("A-2", "a", [])]},
+            {"id": "CAP-B", "type": "FOLDER", "children": [node("B-1", "b", [])]},
+        ))
+        self.assertEqual({item["id"] for item in contract["capabilities"]}, {"CAP-A", "CAP-B"})
 
 
 if __name__ == "__main__":

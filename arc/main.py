@@ -1817,6 +1817,33 @@ class Flow:
         return ("HARNESS-COMPILED REQUIREMENT CONTRACT (derived from YAML; not official test output; "
                 "facts carry evidence and confidence; do not invent missing locators):\n" + compact + "\n\n")
 
+    def contract_progress(self, node_id: str, verdict: bool | None = None) -> dict:
+        """Summarize contract coverage without treating model claims as proof."""
+        node = next((item for item in self.requirement_contract.get("nodes", [])
+                     if str(item.get("id")) == str(node_id)), {})
+        contract = node.get("acceptance_contract") or {}
+        items = [key for key in ("fixture", "entry_route", "role_name", "user_action",
+                                 "api_mutation", "visible_result", "error_behavior",
+                                 "refresh_reopen_result") if contract.get(key)]
+        if verdict is True:
+            completed = list(items)
+            missing: list[str] = []
+            verification = {"type": "acceptance", "status": "passed"}
+        elif verdict is False:
+            completed = []
+            missing = list(items)
+            verification = {"type": "acceptance", "status": "failed"}
+        else:
+            completed = []
+            missing = list(items)
+            verification = {"type": "acceptance", "status": "unknown"}
+        return {
+            "contract_items": items,
+            "completed_contract_items": completed,
+            "missing_contract_items": missing,
+            "last_real_verification": verification,
+        }
+
     def acceptance_specs_for(self, node_id: str, ordered: list[dict] | None = None) -> list[str]:
         """Run the node's own specs plus a bounded set from its dependencies."""
         current = list(self.spec_map.get(node_id) or [])
@@ -2478,7 +2505,7 @@ class Flow:
             self.mark("design_done", node_id, "design folded into the implementation prompt")
 
         self.mark("implementation_started", node_id)
-        self.set_node_state(node_id, "implementing")
+        self.set_node_state(node_id, "implementing", **self.contract_progress(node_id))
         design_text = ("Design contract for this node (follow it):\n"
                        + json.dumps(design, ensure_ascii=False)[:4000] + "\n") if design else ""
         if inline_design:
@@ -2669,7 +2696,7 @@ class Flow:
         self.set_node_state(node_id, "implemented", wrote=self.last_turn_wrote, turn_ok=ok,
                             product_delta=True, model_smoke_hint=self.last_turn_verified,
                             request_budget_exhausted=self.last_turn_budget_exhausted,
-                            verification="pending_acceptance")
+                            verification="pending_acceptance", **self.contract_progress(node_id))
         self.update_application_contract()
         self.commit(f"{node_id} (implement): {node.get('name', '')}")
 
@@ -2687,6 +2714,7 @@ class Flow:
         self.test_verdict[node_id] = verdict
         self.update_application_contract()
         if verdict is True:
+            self.set_node_state(node_id, "accepted", **self.contract_progress(node_id, True))
             self.mark("test_passed", node_id, f"{len(specs)} acceptance spec file(s) pass locally")
             try:
                 for iface in self.runtime.traceability.list_interfaces(req_id=node_id):
@@ -2694,12 +2722,14 @@ class Flow:
             except Exception:  # noqa: BLE001
                 pass
         elif verdict is False:
-            self.set_node_state(node_id, "inconclusive", reason="acceptance_failed")
+            self.set_node_state(node_id, "inconclusive", reason="acceptance_failed",
+                                **self.contract_progress(node_id, False))
             self.mark("test_failed", node_id, "acceptance specs still failing after repair rounds")
         else:
             self.set_node_state(node_id, "implementation_unverified",
                                 reason="verification_unavailable" if self.acceptance_unavailable
-                                else "no_local_acceptance_verdict")
+                                else "no_local_acceptance_verdict",
+                                **self.contract_progress(node_id, None))
 
     def snapshot_sources(self, node_id: str, attempt: int) -> Path | None:
         """Copy the app sources that the next repair will overwrite into

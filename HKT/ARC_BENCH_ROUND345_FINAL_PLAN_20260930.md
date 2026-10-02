@@ -543,7 +543,7 @@ submission ZIP 不含 `skills/`/`arc-project-context`，日志无 `project_map`�
 
 ## 18. 截止前下一版 Agent 有效性最大化方案（2026-10-02）
 
-> **PLAN UPDATED / IMPLEMENTATION NOT STARTED**：本节合并 `a7964e4411af` 产物审计、历史 Run 证据、当前 `0d580c74` 源码审查和 Agent 实现经验，只定义下一版修改与验收顺序。本次只更新计划，不修改 Agent、Skill、ZIP 或平台测试；远程推送继续暂停。
+> **PLAN STATUS UPDATED 2026-10-02**：本节合并 `a7964e4411af` 产物审计、历史 Run 证据、当前源码审查和 Agent 实现经验。P0-A 的结构化合同、P0-C 的有界预算/续作和 truthful state 已落地；本次继续补齐合同的不变量/能力聚合/验收合同证据。P0-B 的稳定优先调度、P0-D seed 隔离和 P0-E 浏览器执行器仍未完成，下面明确保留为待办。
 
 ### 18.1 决策更新
 
@@ -560,7 +560,7 @@ submission ZIP 不含 `skills/`/`arc-project-context`，日志无 `project_map`�
 - cap-hit、缺 UI、未跑浏览器 smoke 的 turn 仍被旧版本标成 `implement ok/verified=True`，内部标签不能代表完成率。
 - 日志没有官方 Playwright 用例名、断言或逐项 timeout；`requirements.yaml` 的 100 个公开 scenario 和测试后 `pw-*` 数据只能用于需求派生验收与行为推断，不能冒充官方测试明细。
 
-现有 `0d580c74` 候选已修复 cap-hit 状态真实性、product delta、readiness 和 Skill 入包，但仍保留默认 cap 50，也没有完整解决 seed 隔离、需求派生浏览器验收、垂直切片调度和高置信语义门禁。故 `c01437c9` 发布物保留为可追溯基线，不作为下一次最终提交的默认推荐包。
+现有 `0d580c74` 候选已修复 cap-hit 状态真实性、product delta、readiness 和 Skill 入包；当前 `97bf3087` 进一步将默认实现预算收敛为 `22 + 12`，并接入需求合同编译。seed 隔离、需求派生浏览器验收和能力级调度仍未完成，不能把当前版本描述为完整能力切片 Agent。
 
 ### 18.2 下一版唯一目标和三层职责
 
@@ -581,7 +581,7 @@ Skill 继续只负责减少重复读取和提供结构化摘要；quota、checkp
 
 ### 18.3 截止前必须完成的 P0 修改
 
-#### P0-A：高置信 Requirement Contract
+#### P0-A：高置信 Requirement Contract（基础版已完成，fixture variants 待完成）
 
 在 `arc/main.py` 旁新增小型、确定性的 contract 编译层（建议独立为 `arc/requirement_contract.py`），从解析后的 tree/description/scenarios 提取：
 
@@ -597,11 +597,11 @@ refresh / reopen invariant
 scenario_count
 ```
 
-截止前只处理高置信规则：显式 role/name、错误原文、GIVEN、refresh/reopen 和显式 route；每项必须保留 `evidence/source/confidence`。不能把所有引号都当 locator，也不能把 `the requested workflow` 等占位句解析成合同。合同输出短 JSON，写入 `.arc` 并注入当前能力 prompt。若存在互相冲突的 fixture（例如不同 scenario 需要不同 A1 初值），编译为 fixture variants，禁止混成一个交付数据库。
+截止前只处理高置信规则：显式 role/name、错误原文、GIVEN、refresh/reopen 和显式 route；每项必须保留 `evidence/source/confidence`。不能把所有引号都当 locator，也不能把 `the requested workflow` 等占位句解析成合同。当前已落地 `arc/requirement_contract.py`：输出短 JSON、`invariants`、folder-based `capabilities` 和逐节点 `acceptance_contract`，写入 `.arc/requirement-contract.json` 并注入当前节点 prompt；checkpoint 同步记录合同完成/缺失项。互相冲突的 fixture variants 和 seed 映射仍待完成。
 
-#### P0-B：从 atomic node 改为 capability vertical slice
+#### P0-B：从 atomic node 改为 capability vertical slice（合同聚合已完成，调度仍待完成）
 
-截止前只做 `B-lite`：保留“一 atomic node 一 turn / 一事件 / 一 verdict”，不重写 traceability 和 acceptance 生命周期；为每个 node 生成唯一 capability 标签和优先级，用稳定的“带优先级拓扑排序”替代单纯文档顺序。完整的多节点合并 capability executor 会牵动 spec owner、folder state、checkpoint 与 verdict，明确延期。Sheet 用作首个验证样本，排序规则保持领域无关：按下游依赖覆盖、scenario 数、共享 locator、实现复杂度和风险排序。
+截止前只做 `B-lite`：当前 contract 已为每个 node 生成 capability cluster，但运行时仍保留“一 atomic node 一 turn / 一事件 / 一 verdict”，尚未启用稳定优先拓扑排序。下一步只允许在不重写 traceability 和 acceptance 生命周期的前提下启用优先级；完整的多节点合并 capability executor 会牵动 spec owner、folder state、checkpoint 与 verdict，继续延期。
 
 Sheet 的首轮优先序：
 
@@ -614,7 +614,7 @@ Sheet 的首轮优先序：
 
 Prompt 仍要求每个 node 服务于所属 capability 的 `可见入口 → UI → handler → API → storage → 页面结果` 闭环，但首版不合并 turn。共享入口失败时降低高级节点优先级和预算，不硬跳过所有后续节点，以免丢失低成本可得分项。
 
-#### P0-C：自适应预算与 completion continuation
+#### P0-C：自适应预算与 completion continuation（已完成基础版）
 
 取消固定 50 默认：
 
@@ -624,15 +624,15 @@ Prompt 仍要求每个 node 服务于所属 capability 的 `可见入口 → UI 
 - cap-hit、无 delta、没有成功写证据、连续读取或相同 failure digest 使用同策略时立即停止当前 turn；
 - 全局至少保留 25% 时间给最终浏览器验收与针对性修复；本切片先真正扣除 time reserve，完整 run-level request 账本延期。
 
-cap-hit 后先保存 contract 条目 ID、`changed_files`、cap 原因和 `last_real_verification`；模型声明的 completed/missing 仅用于续作 prompt，不能充当 verdict。续作只包含未完成合同与相关源码；第二次 cap-hit 或仍未通过门禁则降级，不无限重开。`work_remaining = remaining - final_reserve`，进入 reserve 后不再启动新实现，只允许 final gates。build/start/health 由 Harness 执行，不再消耗模型请求反复验证。
+cap-hit 后已保存 contract 条目、合同完成/缺失项、cap 原因和 `last_real_verification`；模型声明不能充当 verdict。续作只包含当前合同与相关源码；第二次 cap-hit 或仍未通过门禁则降级，不无限重开。`work_remaining = remaining - final_reserve`，进入 reserve 后不再启动新实现，只允许 final gates。build/start/health 由 Harness 执行；完整 run-level request 账本仍待补齐。
 
-#### P0-D：seed 不可变与自测隔离
+#### P0-D：seed 不可变与自测隔离（未完成，保留为下一项）
 
 截止前采用 `D-lite`，不把所有生成应用立即支持 `seed.json/runtime.json/ARC_DATA_FILE` 作为硬前提。Harness 在 skeleton 后记录生成工作区和数据目录 baseline digest；build/start/smoke 在 disposable workspace/data copy 中运行，结束后比较交付目录前后 hash。已有应用若支持 `ARC_DATA_FILE`，可优先指向临时副本；忽略该环境变量时仍由工作区副本保证隔离。
 
 对新生成应用，Prompt 建议区分不可变 seed 与 runtime，并支持 `ARC_DATA_FILE`，但首版 strict 只保护明确的 `seed.json`。遗留单一 `db.json` 发生变化时，Harness 恢复 baseline 并将 turn 标为 inconclusive；不能无条件删除模型为新需求合法添加的 fixture。完整 fixture-variant 到运行数据路径的自动映射延期。
 
-#### P0-E：requirements-derived browser smoke
+#### P0-E：requirements-derived browser smoke（未完成，保留为下一项）
 
 在 `arc/acceptance.py` 或小型新模块中加入明确标记为 `requirement_smoke` 的 `E-surface` 浏览器验收；它不能冒充 official acceptance。首版只验证确定性、只读的公共 surface：canonical root/editor 可达；高置信 role/name 在可达页面唯一可见；公开 seed 值可观察；页面无启动级异常。它应捕获缺 `role="grid"` 和 `Formula bar` 名称错误，但不得从自然语言自动猜复杂 mutation 动作。
 
@@ -661,13 +661,25 @@ cap-hit 后先保存 contract 条目 ID、`changed_files`、cap 原因和 `last_
 
 | 文件/模块 | 截止前改动 | 完成证据 |
 | --- | --- | --- |
-| `arc/main.py` | priority capability plan、base 22 + continuation 12、truthful states、真实 time reserve、seed/contract gate 调度 | cap-hit 不完成；核心 node 优先；reserve 内不启动新实现 |
-| `arc/requirement_contract.py`（拟新增） | 高置信合同提取和 fixture variant 检测 | Sheet YAML 得到 24 atomic / 100 scenarios 与精确 role/name/error/invariant |
+| `arc/main.py` | base 22 + continuation 12、truthful states、真实 time reserve、合同进度 checkpoint | cap-hit 不完成；合同完成/缺失项可追溯；能力优先调度仍待接入 |
+| `arc/requirement_contract.py` | 高置信合同、不变量、能力聚合和逐节点验收合同 | Sheet/GitHub 计数、evidence/confidence、capability cluster 可解析；fixture variants 待完成 |
 | `arc/acceptance.py` / `arc/semantic_smoke.py` | disposable workspace/data copy、只读 requirement surface smoke | 缺 grid role、错误 Formula bar 时稳定失败；无浏览器为 unknown |
 | `arc/tests/test_main_helpers.py` | budget、contract、cap continuation、seed guard | 单元测试覆盖所有状态边界 |
 | `arc/tests/test_acceptance.py` | 语义 locator、持久化、失败原子性、进程清理 | 浏览器/集成回归通过 |
 | `arc/pack.sh`、`arc/pack.ps1`、`arc/package_shape.py`、`arc/package_gate.py` | 新模块入包、shape 与 smoke import | ZIP 离线 import、Skill、contract/smoke 模块可执行 |
 | 本计划与 changelog | 决策、门禁、候选身份 | 与代码在同一逻辑提交更新 |
+
+### 18.6.1 当前完成度（2026-10-02）
+
+| 项目 | 当前状态 | 后续动作 |
+| --- | --- | --- |
+| Requirement compiler | ✅ 已完成基础版 | 补 fixture variants 与冲突 fixture 的运行时映射 |
+| Invariants / capability map / acceptance contract | ✅ 已生成并落盘 | 接入稳定优先拓扑，但暂不合并多节点 turn |
+| Budget / continuation / truthful state | ✅ 已完成基础版 | 补 run-level request ledger 与重复策略切换 |
+| Capability-priority scheduler | ⚠️ 未完成 | 在保留依赖拓扑和现有 verdict 生命周期前提下实现 B-lite |
+| Requirement-derived browser smoke | ❌ 未完成 | 新增只读高置信 surface smoke，结果标记 `inferred_non_official` |
+| Seed/runtime 隔离 | ❌ 未完成 | 先做 disposable workspace/data copy 与 baseline hash，再考虑 `ARC_DATA_FILE` |
+| 完整 project-map/source-cache/change-impact | ⚠️ 部分已有 | Harness 主动生成 map，按 path+SHA+range 注入当前 capability |
 
 仍维持单写入者：只有 Integrator 修改代码、提交和打包；代码风险、浏览器验收、包门禁可由子 Agent 只读并行审查。
 

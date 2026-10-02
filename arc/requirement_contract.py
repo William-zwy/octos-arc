@@ -118,6 +118,84 @@ def compile_requirement_contract(tree: dict) -> dict:
                 walk(child, parents + ((node_id,) if node_id else ()))
 
     walk(tree)
+    capabilities_by_parent: dict[str, dict] = {}
+    for item in nodes:
+        # The first parent is normally the synthetic ROOT; use the first real
+        # folder so the map groups an app into a small set of capabilities.
+        parent_ids = item.get("parent_ids") or []
+        parent_id = parent_ids[1] if len(parent_ids) > 1 else (parent_ids[0] if parent_ids else "ROOT")
+        capability = capabilities_by_parent.setdefault(parent_id, {
+            "id": parent_id,
+            "node_ids": [],
+            "node_names": [],
+            "scenario_count": 0,
+            "evidence": [],
+            "confidence": "medium",
+        })
+        capability["node_ids"].append(item["id"])
+        capability["node_names"].append(item.get("name") or item["id"])
+        capability["scenario_count"] += item.get("scenario_count", 0)
+        capability["evidence"].append(item.get("evidence"))
+
+    invariants: list[dict] = []
+    seen_invariants: set[str] = set()
+    for item in nodes:
+        for scenario in item.get("scenarios") or []:
+            facts = scenario.get("facts") or {}
+            expected = facts.get("expected") or []
+            combined = " ".join(expected + facts.get("setup", []) + facts.get("actions", []))
+            checks: list[tuple[str, str]] = []
+            if re.search(r"\b(refresh|reload|reopen|survive|persist|saved)\b", combined, re.I):
+                checks.append(("refresh_reopen", combined[:360]))
+            if re.search(r"\b(atomic|partial|rollback|unchanged|not create|no .*created|failure)\b", combined, re.I):
+                checks.append(("failure_atomicity", combined[:360]))
+            if re.search(r"\b(initial|seed|existing|starting state|pre-populated|verified account)\b", combined, re.I):
+                checks.append(("initial_seed", combined[:360]))
+            for kind, quote in checks:
+                key = f"{kind}:{quote.lower()}"
+                if key in seen_invariants:
+                    continue
+                seen_invariants.add(key)
+                invariants.append({"kind": kind, "quote": quote,
+                                   "evidence": scenario.get("evidence"), "confidence": "high"})
+
+    for item in nodes:
+        scenarios = item.get("scenarios") or []
+        exact_values: list[str] = []
+        routes: list[str] = []
+        roles: list[str] = []
+        actions: list[str] = []
+        visible: list[str] = []
+        errors: list[str] = []
+        refresh: list[str] = []
+        evidence: list[str] = []
+        for scenario in scenarios:
+            facts = scenario.get("facts") or {}
+            for key, target in (("exact_values", exact_values), ("paths", routes), ("roles", roles),
+                                ("actions", actions), ("expected", visible)):
+                for value in facts.get(key) or []:
+                    if value not in target:
+                        target.append(value)
+            expected = facts.get("expected") or []
+            for value in expected:
+                if re.search(r"\b(error|invalid|fail|cannot|empty|not found|denied|reject)\b", value, re.I):
+                    errors.append(value)
+                if re.search(r"\b(refresh|reload|reopen|persist|survive|saved)\b", value, re.I):
+                    refresh.append(value)
+            if scenario.get("evidence"):
+                evidence.append(scenario["evidence"])
+        item["acceptance_contract"] = {
+            "fixture": exact_values[:20],
+            "entry_route": routes[:12],
+            "role_name": roles[:12] + [value for value in exact_values if value not in roles][:12],
+            "user_action": actions[:12],
+            "api_mutation": [path for path in routes if "/api" in path][:12],
+            "visible_result": visible[:12],
+            "error_behavior": errors[:12],
+            "refresh_reopen_result": refresh[:12],
+            "evidence": evidence[:12],
+            "confidence": "high" if scenarios else "medium",
+        }
     payload = {
         "schema_version": 1,
         "source": "requirements.yaml",
@@ -126,6 +204,8 @@ def compile_requirement_contract(tree: dict) -> dict:
         "atomic_count": len(nodes),
         "scenario_count": sum(item["scenario_count"] for item in nodes),
         "nodes": nodes,
+        "capabilities": list(capabilities_by_parent.values()),
+        "invariants": invariants[:80],
     }
     encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     payload["contract_hash"] = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
@@ -160,6 +240,13 @@ def compact_contract(contract: dict, node_id: str | None = None, max_chars: int 
             "atomic_count": contract.get("atomic_count", 0),
             "scenario_count": contract.get("scenario_count", 0),
             "fixture_catalog": fixture_catalog[:40],
+            "capabilities": [{"id": item.get("id"), "node_ids": item.get("node_ids"),
+                              "scenario_count": item.get("scenario_count"),
+                              "evidence": (item.get("evidence") or [])[:4]}
+                             for item in contract.get("capabilities") or []],
+            "invariants": [{"kind": item.get("kind"), "quote": str(item.get("quote") or "")[:200],
+                            "evidence": item.get("evidence")}
+                           for item in (contract.get("invariants") or [])[:20]],
             "nodes": [
                 {"id": node.get("id"), "name": node.get("name"), "dependencies": node.get("dependencies"),
                  "scenario_count": node.get("scenario_count"), "confidence": node.get("confidence")}
@@ -179,6 +266,11 @@ def compact_contract(contract: dict, node_id: str | None = None, max_chars: int 
                 facts["exact_values"] = facts.get("exact_values", [])[:10]
                 facts["scope_hints"] = facts.get("scope_hints", [])[:4]
         node["steps"] = node.get("steps", [])[:4]
+        if isinstance(node.get("acceptance_contract"), dict):
+            node["acceptance_contract"] = {
+                key: list(value)[:4] if isinstance(value, list) else value
+                for key, value in node["acceptance_contract"].items()
+            }
         text = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
     if len(text) > max_chars:
         # Keep the result valid JSON even when a requirement contains long prose.
@@ -194,7 +286,13 @@ def compact_contract(contract: dict, node_id: str | None = None, max_chars: int 
                                  "scenario_count": item.get("scenario_count"),
                                  "dependencies": item.get("dependencies") or []}
                                 for item in nodes]
-            payload["signals"] = [item for item in payload.get("signals") or [] if item.get("flags")]
+            payload["capabilities"] = [{"id": item.get("id"), "node_ids": item.get("node_ids") or [],
+                                         "scenario_count": item.get("scenario_count")}
+                                        for item in contract.get("capabilities") or []]
+            payload["invariants"] = [{"kind": item.get("kind"), "evidence": item.get("evidence")}
+                                     for item in (contract.get("invariants") or [])[:20]]
+            payload["signals"] = [{"id": item.get("id"), "flags": item.get("flags") or []}
+                                  for item in payload.get("signals") or [] if item.get("flags")]
             text = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
         payload["truncated"] = True
         text = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))

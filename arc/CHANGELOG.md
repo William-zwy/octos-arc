@@ -8,6 +8,13 @@
 - turn 日志与 checkpoint 将模型自报改为 `turn_smoke_hint`，官方/local acceptance 仍只由真实验收判定；retry 与新模块同步进入 PowerShell/Git Bash/package-shape 打包门禁。
 - 验证：`arc/` 内定向单元测试 62 项 `OK`；`python -m py_compile main.py requirement_contract.py package_shape.py` exit 0；`git diff --check` exit 0。云端平台 Run 尚未执行。
 
+## 2026-10-02｜需求合同进度证据与计划收敛（平台未验证）
+
+- Requirement contract 继续输出 folder-based capability clusters、refresh/seed/failure-atomicity invariants 和逐节点 acceptance contract（fixture、入口、动作、API、可见结果、错误、刷新结果）。
+- 节点 checkpoint 增加 `contract_items`、`completed_contract_items`、`missing_contract_items` 和 `last_real_verification`；这些字段只记录 Harness 证据，不把模型自报提升为 official verdict。
+- 计划同步标明：contract/预算/truthful state 已完成基础版；能力优先调度、需求派生浏览器 smoke、seed/runtime 隔离仍未完成并保留为下一阶段。
+- 验证：需求契约/主流程/打包定向测试 63 项 `OK`；v4 五个需求 YAML 的 atomic/scenario 计数和 capability summary 均可解析为合法有界 JSON。
+
 ## 2026-09-30｜Round 3/4/5 运行时与提交包门禁（平台未验证）
 
 - Integrator 分支 `codex/hkt-round345-integration` 接入 quota hard-stop、原子 checkpoint、有限 rewrite、失败摘要去循环、上下文 cache shadow，以及通用语义契约；这些规则不绑定历史题目名称、REQ 编号或 locator。
