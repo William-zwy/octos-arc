@@ -1051,3 +1051,14 @@ P2：更广的 requirement-only 场景生成、完整能力级调度替换、扩
 - requirement-only 流程在真实 build/start/readiness 之后执行一次 `shared_surface_smoke()`，从需求合同派生首个明确可访问名称和入口路由；结果写入 `.arc/shared-surface-smoke.json`，三态为 `passed/failed/unknown`。不把 Sheet 文案写死，不写 `verified=True`，失败时阻断后续节点，避免重复消耗预算。
 
 这两项只证明部署可用和公共入口存在，不等同于官方场景通过；完整业务链路仍需垂直切片与官方验收确认。
+
+### 2026-10-03 ff7 终态证据与调整
+
+ff7 (`hackathon--github-stage-1`) 证明：当前包已经能部署，但 skeleton/request budget 截断后仍可能产生可启动却缺少认证与组织导航公共入口的前端。30 个场景均在共享入口失败，说明“部署成功”和“skill 已加载”都不能作为完成依据。
+
+本轮计划调整：
+
+- 将 skeleton 后的 shared-surface smoke 视为进入节点循环前的必要门禁；入口由需求合同派生，不写死 `Acme Demo` 或任何题目专用文案。
+- request budget cap-hit、`wrote=False`、无命令验证不得进入 `implemented` 或 `verified`；重复 cap-hit 后写 checkpoint 并阻断依赖节点。
+- 保留 skill 作为上下文/方法建议层，完成判定仍由 Harness 的确定性证据负责。
+- 将模板 ZIP 内嵌的 `playwright-report.json`、`runner-events.jsonl`、`stdout.log` 和 checkpoints 作为终态分析的优先证据源。
