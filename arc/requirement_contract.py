@@ -30,6 +30,25 @@ SCOPE_RE = re.compile(
 PERSIST_RE = re.compile(r"\b(reload|refresh|reopen|persist|persistent|saved|survive|database|store|after signing out|session)\b", re.I)
 PERMISSION_RE = re.compile(r"\b(permission|permitted|authorized|privilege|role|logged in|signed in|anonymous|owner|moderator|access)\b", re.I)
 GENERIC_EXACT_RE = re.compile(r"^(?:the|a|an|this|that|requested|workflow|item|record|thing|value|result|page|screen|feature|action|operation|data|user)$", re.I)
+SURFACE_ROLE_RE = re.compile(
+    r"\b(button|link|textbox|heading|checkbox|radio|combobox|alert|tab|dialog|menu|row|gridcell|navigation)\b",
+    re.I,
+)
+SURFACE_ACTION_RE = re.compile(
+    r"\b(click(?:s|ed|ing)?|open(?:s|ed|ing)?|select(?:s|ed|ing)?|navigate(?:s|d|ing)?|"
+    r"switch(?:es|ed|ing)?|visit(?:s|ed|ing)?|go[- ]to|follow(?:s|ed|ing)?|"
+    r"activate(?:s|d|ing)?|press(?:es|ed|ing)?|choose(?:s|n|ing)?)\b",
+    re.I,
+)
+SURFACE_ROLE_WORDS = {
+    "button", "link", "textbox", "heading", "checkbox", "radio", "combobox",
+    "alert", "tab", "dialog", "menu", "row", "gridcell", "navigation",
+}
+SURFACE_FIXTURE_RE = re.compile(
+    r"^(?:[-+]?\d+(?:\.\d+)?|[A-Z]{1,3}\d+(?::[A-Z]{1,3}\d+)?|"
+    r"[^\s/]+(?:/[^\s/]+){1,})$",
+    re.I,
+)
 
 
 def _usable_exact(value: str) -> bool:
@@ -43,6 +62,58 @@ def _usable_exact(value: str) -> bool:
 
 def _text(value: Any) -> str:
     return " ".join(str(value or "").split())
+
+
+def _surface_candidates(text: str, evidence: str | None = None) -> list[dict[str, str | None]]:
+    """Extract likely public UI entries from action prose.
+
+    Requirement fixtures contain usernames, emails, passwords, numbers and
+    whole quoted sentences.  Only retain a quoted value when the surrounding
+    sentence describes a UI action or explicitly associates it with a role.
+    This keeps the shared smoke domain-neutral without treating every fixture
+    as a page entry.
+    """
+    source = _text(text)
+    if not SURFACE_ACTION_RE.search(source):
+        return []
+    values: list[tuple[str, int, int]] = []
+    for match in QUOTED_RE.finditer(source):
+        value = _text(next((part for part in match.groups() if part), ""))
+        if (not value or not _usable_exact(value) or EMAIL_RE.fullmatch(value)
+                or value.lower() in SURFACE_ROLE_WORDS or SURFACE_FIXTURE_RE.fullmatch(value)
+                or value.startswith("/") or PATH_RE.fullmatch(value)
+                or re.search(r"(?:password|passwd|secret|token|credential|email)", value, re.I)):
+            continue
+        if len(value) > 80:
+            continue
+        values.append((value, match.start(), match.end()))
+    candidates: list[dict[str, str | None]] = []
+    seen: set[tuple[str, str | None]] = set()
+    for value, start, end in values:
+        window_start = max(0, start - 72)
+        window_end = min(len(source), end + 72)
+        window = source[window_start:window_end]
+        input_matches = list(re.finditer(
+            r"\b(?:enter|fill|type|input|with|password|passwd|secret|token|credential|email|username|account)\b",
+            window, re.I))
+        action_matches = list(SURFACE_ACTION_RE.finditer(window))
+        nearest_input = max((window_start + match.start() for match in input_matches if window_start + match.start() < start), default=-1)
+        nearest_action = max((window_start + match.start() for match in action_matches if window_start + match.start() < start), default=-1)
+        if nearest_input >= 0 and nearest_input > nearest_action:
+            continue
+        role = None
+        role_matches = list(SURFACE_ROLE_RE.finditer(window))
+        if role_matches:
+            role_match = min(role_matches, key=lambda item: abs((window_start + item.start()) - start))
+            if abs((window_start + role_match.start()) - start) <= 32:
+                role = role_match.group(1).lower()
+        key = (value, role)
+        if key in seen:
+            continue
+        seen.add(key)
+        candidates.append({"name": value, "role": role, "action": source[:360],
+                           "source": source[:360], "evidence": evidence})
+    return candidates
 
 
 def _facts(text: str) -> dict[str, list[str]]:
@@ -392,54 +463,53 @@ def shared_surface_contract(contract: dict) -> dict:
     """
     routes: list[str] = []; labels: list[str] = []; roles: list[str] = []; actions: list[str] = []
     visible: list[str] = []; entries: list[dict] = []; fanout: dict[str, int] = {}
-    role_by_label: dict[str, str] = {}
+    candidate_by_key: dict[tuple[str, str | None], dict] = {}
+    candidate_order: list[tuple[str, str | None]] = []
     for node in contract.get("nodes") or []:
         c = node.get("acceptance_contract") or {}
         for value in c.get("entry_route") or []:
             if str(value).startswith("/") and value not in routes: routes.append(str(value))
-        node_labels: list[str] = []
-        for value in c.get("role_name") or []:
-            value = _text(value)
-            if value.lower() in {"button", "link", "tab", "textbox", "heading", "row", "gridcell"}:
-                if value.lower() not in roles: roles.append(value.lower())
-            elif _usable_exact(value) and value not in node_labels:
-                node_labels.append(value)
-        for value in node_labels:
-            if len(labels) < 8 and value not in labels: labels.append(value)
         for value in c.get("user_action") or []:
             if value and value not in actions: actions.append(str(value))
         for value in c.get("visible_result") or []:
             value = _text(value)
             if _usable_exact(value) and value not in visible:
                 visible.append(value)
-        # Recover a role/name pair only when the source scenario places them
-        # near one another (for example “the `Sign in` link”).  The aggregate
-        # contract intentionally keeps role and exact values separate, so a
-        # global first role would create false failures for mixed surfaces.
+        node_candidate_count = 0
         for scenario in node.get("scenarios") or []:
-            facts = scenario.get("facts") or {}
-            source = " ".join([str(scenario.get("name") or "")] +
-                              [str(step.get("text") or "") for step in scenario.get("steps") or []])
-            for label in facts.get("exact_values") or []:
-                label = _text(label)
-                for role in facts.get("roles") or []:
-                    role = _text(role).lower()
-                    if re.search(rf"\b{re.escape(role)}\b.{{0,100}}{re.escape(label)}", source, re.I) or \
-                            re.search(rf"{re.escape(label)}.{{0,100}}\b{re.escape(role)}\b", source, re.I):
-                        role_by_label.setdefault(label, role)
-        for label in node_labels:
-            fanout[label] = fanout.get(label, 0) + 1
-            if len(entries) < 8 and not any(item.get("name") == label for item in entries):
-                entries.append({
-                    "name": label,
-                    "role": role_by_label.get(label),
-                    "route": routes[0] if routes else "/",
-                    "action": actions[0] if actions else None,
-                    "expected": visible[:3],
-                    "evidence": node.get("evidence"),
-                })
-        if len(labels) >= 8: break
-    return {"route": routes[0] if routes else "/", "role": roles[0] if roles else None,
+            for step in scenario.get("steps") or []:
+                text = str(step.get("text") or "")
+                if not text or str(step.get("keyword") or "").upper() != "WHEN":
+                    continue
+                for candidate in _surface_candidates(text, step.get("evidence") or scenario.get("evidence")):
+                    key = (str(candidate["name"]), candidate.get("role"))
+                    if key not in candidate_by_key:
+                        candidate_by_key[key] = candidate
+                        candidate_order.append(key)
+                    node_candidate_count += 1
+                    fanout[str(candidate["name"])] = fanout.get(str(candidate["name"]), 0) + 1
+        # Do not fall back to role_name: it intentionally combines roles and
+        # fixtures, so it cannot distinguish a public entry from seed data.
+        if node_candidate_count == 0:
+            continue
+    # High-fanout entries are the best shared-surface probes.  Keep source
+    # order as the tie breaker so the first public workflow remains visible.
+    ui_route = next((route for route in routes if not route.startswith("/api/")), "/")
+    ranked = sorted(candidate_order, key=lambda key: (-fanout.get(key[0], 0),
+                                                       0 if key[1] in {"button", "link", "tab", "heading"} else 1,
+                                                       candidate_order.index(key)))[:8]
+    for key in ranked:
+        candidate = candidate_by_key[key]
+        labels.append(str(candidate["name"]))
+        if candidate.get("role") and candidate["role"] not in roles:
+            roles.append(str(candidate["role"]))
+        entries.append({
+            "name": candidate["name"], "role": candidate.get("role"),
+            "route": ui_route, "action": candidate.get("action") or (actions[0] if actions else None),
+            "expected": visible[:3], "evidence": candidate.get("evidence"),
+            "source": candidate.get("source"),
+        })
+    return {"route": ui_route, "role": roles[0] if roles else None,
             "name": labels[0] if labels else None, "names": labels,
             "action": actions[0] if actions else None, "expected": visible[:8],
             "entries": entries, "fanout": fanout,

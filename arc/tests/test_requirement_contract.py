@@ -97,6 +97,77 @@ class RequirementContractTests(unittest.TestCase):
         self.assertEqual(surface["entries"][0]["action"], "Click the `Create workspace` button.")
         self.assertEqual(surface["fanout"]["Create workspace"], 1)
 
+    def test_shared_surface_ignores_fixtures_and_results(self):
+        contract = compile_requirement_contract(tree(node(
+            "REQ-1", "A public app with authentication and navigation.", [{
+                "name": "Open workspace",
+                "steps": [
+                    {"keyword": "GIVEN", "content": "Use `nora-demo`, `nora.demo@example.test`, and `Valid-password-123!`."},
+                    {"keyword": "WHEN", "content": "Click the `Sign in` link, then open the `Acme Demo` navigation target."},
+                    {"keyword": "THEN", "content": "The `Acme Demo` navigation displays `East/1200/Open` and range `A1:C6`."},
+                ],
+            }]
+        )))
+        surface = shared_surface_contract(contract)
+        self.assertEqual(surface["names"], ["Sign in", "Acme Demo"])
+        self.assertNotIn("navigation", surface["names"])
+        self.assertNotIn("East/1200/Open", surface["names"])
+        self.assertNotIn("A1:C6", surface["names"])
+        self.assertNotIn("nora-demo", surface["names"])
+        self.assertNotIn("nora.demo@example.test", surface["names"])
+        self.assertNotIn("Valid-password-123!", surface["names"])
+
+    def test_shared_surface_keeps_short_named_tabs_and_actions(self):
+        contract = compile_requirement_contract(tree(node(
+            "REQ-1", "Spreadsheet entry actions.", [{
+                "name": "Workbook actions",
+                "steps": [{
+                    "keyword": "WHEN",
+                    "content": "Select the `Sheet1` tab, then click the `Create` button and open the `Import CSV` dialog.",
+                }],
+            }]
+        )))
+        surface = shared_surface_contract(contract)
+        self.assertEqual(surface["names"], ["Sheet1", "Create", "Import CSV"])
+        self.assertEqual([entry["role"] for entry in surface["entries"]], ["tab", "button", "dialog"])
+
+    def test_shared_surface_excludes_input_fixtures_and_prefers_ui_route(self):
+        contract = compile_requirement_contract(tree(node(
+            "REQ-1", "Authentication entry.", [{
+                "name": "Sign in",
+                "steps": [{
+                    "keyword": "WHEN",
+                    "content": "Open `/api/session`, visit `/login`, fill `nora-demo` in the username textbox, then click the `Sign in` button.",
+                }],
+            }]
+        )))
+        surface = shared_surface_contract(contract)
+        self.assertEqual(surface["route"], "/login")
+        self.assertEqual(surface["names"], ["Sign in"])
+
+    def test_shared_surface_does_not_assign_later_input_role_to_entry(self):
+        contract = compile_requirement_contract(tree(node(
+            "REQ-1", "Authentication entry.", [{
+                "name": "Sign in",
+                "steps": [{
+                    "keyword": "WHEN",
+                    "content": "Click `Sign in`, then enter `nora-demo` in the username textbox.",
+                }],
+            }]
+        )))
+        surface = shared_surface_contract(contract)
+        self.assertEqual(surface["names"], ["Sign in"])
+        self.assertIsNone(surface["entries"][0]["role"])
+
+    def test_shared_surface_does_not_fallback_to_mixed_role_name_values(self):
+        contract = compile_requirement_contract(tree(node(
+            "REQ-1", "No structured interaction steps.", []
+        )))
+        contract["nodes"][0]["acceptance_contract"]["role_name"] = ["navigation", "1200", "Seed workbook"]
+        surface = shared_surface_contract(contract)
+        self.assertEqual(surface["names"], [])
+        self.assertEqual(surface["confidence"], "unknown")
+
 
 if __name__ == "__main__":
     unittest.main()

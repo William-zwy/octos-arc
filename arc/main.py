@@ -3440,15 +3440,22 @@ for (const entry of entries) {
                         "schema_version": 1, "skill": "arc-project-context", "staged": False,
                         "loaded": False, "invocations": [], "adopted": False,
                         "adoption_verdict": "not_staged", "rejected_with_reason": "skill unavailable"})
-                foundation_failed = not bool(gate.get("official_acceptance_allowed"))
-                if foundation_failed:
-                    log("[foundation] self-test gate failed; dependent nodes will be blocked")
+                # A browser shared-surface miss is recoverable product work,
+                # not proof that the implementation loop cannot proceed.  Only
+                # a missing scaffold is a hard stop here; final acceptance
+                # remains fail-closed on the complete self-test gate.
+                foundation_hard_failed = not self.has_app()
+                surface_gate_failed = not bool(gate.get("official_acceptance_allowed"))
+                if foundation_hard_failed:
+                    log("[foundation] no deployable scaffold; implementation nodes will be blocked")
+                elif surface_gate_failed:
+                    log("[foundation] shared-surface gate failed; continuing feature implementation for repair")
                 for index, node in enumerate(ordered, 1):
                     node_id = str(node.get("id"))
-                    if foundation_failed:
-                        self.mark("implementation_failed", node_id, "blocked: shared foundation gate failed")
+                    if foundation_hard_failed:
+                        self.mark("implementation_failed", node_id, "blocked: no deployable scaffold")
                         self.impl_failed.append(node_id)
-                        self.set_node_state(node_id, "blocked_by_shared_foundation", reason="build_or_readiness_failed")
+                        self.set_node_state(node_id, "blocked_by_shared_foundation", reason="no_deployable_scaffold")
                         continue
                     if self.quota_gated:
                         log(f"[flow] quota gated; skipping remaining node {node_id}")
@@ -3470,9 +3477,29 @@ for (const entry of entries) {
                         self.node_cycle(node, ordered, index, len(ordered))
                     self.driver.end_scope("node")
 
-                if not self.time_up() and not self.quota_gated:
+                rehearsed = self.rehearsal()
+                # Rehearsal repairs can alter the app after the initial gate.
+                # Refresh both evidence files before deciding whether the
+                # grader-like full-suite acceptance may run.
+                refreshed_foundation = {"status": "inconclusive", "reason": "no_app_after_rehearsal"}
+                refreshed_surface = {"status": "unknown"}
+                refreshed_gate = gate
+                if self.has_app():
+                    refreshed_foundation = self.foundation_gate()
+                    refreshed_surface = (self.shared_surface_smoke()
+                                         if refreshed_foundation.get("status") == "passed" else {"status": "unknown"})
+                    refreshed_gate = self.write_selftest_gate(refreshed_foundation, refreshed_surface)
+                if (not self.time_up() and not self.quota_gated
+                        and refreshed_gate.get("official_acceptance_allowed")):
                     self.final_acceptance()
                     self.driver.end_scope("node")
+                    # Full-suite repairs can change the app; never leave the
+                    # self-test evidence pointing at the pre-repair state.
+                    if self.has_app():
+                        refreshed_foundation = self.foundation_gate()
+                        refreshed_surface = (self.shared_surface_smoke()
+                                             if refreshed_foundation.get("status") == "passed" else {"status": "unknown"})
+                        refreshed_gate = self.write_selftest_gate(refreshed_foundation, refreshed_surface)
                 undecided = [i for i in node_ids if self.test_verdict.get(i) is None and i not in self.impl_failed]
                 final_ok = None
                 if self.acceptance_unavailable:
@@ -3487,15 +3514,6 @@ for (const entry of entries) {
                                                                       performance=self.perf_text(), ui=self.ui_contract()),
                                             self.node_timeout, "final check")
                     self.commit("chore: final verification pass")
-                rehearsed = self.rehearsal()
-                # Rehearsal repairs can alter the app after the initial gate.
-                # Refresh both evidence files so a later successful repair does
-                # not leave a stale failed foundation record in the bundle.
-                if self.has_app():
-                    refreshed_foundation = self.foundation_gate()
-                    refreshed_surface = (self.shared_surface_smoke()
-                                         if refreshed_foundation.get("status") == "passed" else {"status": "unknown"})
-                    self.write_selftest_gate(refreshed_foundation, refreshed_surface)
                 if not self.acceptance_unavailable:
                     for node_id in undecided:
                         if rehearsed and final_ok is not False:
