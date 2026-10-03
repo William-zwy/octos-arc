@@ -107,6 +107,10 @@ class BundledSkillStagingTests(unittest.TestCase):
             staged = m.stage_bundled_skills(data, bundle)
             self.assertEqual(staged, data / "skills")
             self.assertTrue((data / "skills" / "arc-project-context" / "main").is_file())
+            adoption = json.loads((data / "skill-adoption.json").read_text())
+            self.assertTrue(adoption["staged"])
+            self.assertFalse(adoption["loaded"])
+            self.assertEqual(adoption["invocations"], [])
 
 
 if __name__ == "__main__":

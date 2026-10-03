@@ -840,7 +840,20 @@ def write_profile_defaults(data_dir: Path, config_dir: Path, hooks: list[dict]) 
             pass
 
 
-def stage_bundled_skills(data_dir: Path, bundle_dir: Path | None = None) -> Path | None:
+def _skill_adoption_path(data_dir: Path, workspace_root: Path | None = None) -> Path:
+    return (workspace_root / ".arc" / "skill-adoption.json") if workspace_root else data_dir / "skill-adoption.json"
+
+
+def _write_skill_adoption(path: Path, payload: dict) -> None:
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        atomic_json_write(path, payload)
+    except OSError as exc:
+        log(f"[skills] could not write adoption evidence: {exc}")
+
+
+def stage_bundled_skills(data_dir: Path, bundle_dir: Path | None = None,
+                         workspace_root: Path | None = None) -> Path | None:
     """Install the bundled read-only context skill into this disposable run.
 
     ZIP extractors do not reliably preserve executable bits. Stage the skill
@@ -863,10 +876,14 @@ def stage_bundled_skills(data_dir: Path, bundle_dir: Path | None = None) -> Path
         log(f"[skills] staged arc-project-context at {target}")
         try:
             manifest = (target / "manifest.json").read_bytes()
-            atomic_json_write(data_dir / "skill-adoption.json", {
+            payload = {
                 "schema_version": 1, "skill": "arc-project-context", "version": "1.0.0",
                 "manifest_sha256": hashlib.sha256(manifest).hexdigest(), "staged": True,
-                "loaded": False, "invocations": [], "adoption_verdict": "not_observed"})
+                "loaded": False, "invocations": [], "adopted": False,
+                "adoption_verdict": "not_observed", "rejected_with_reason": None}
+            _write_skill_adoption(data_dir / "skill-adoption.json", payload)
+            if workspace_root:
+                _write_skill_adoption(_skill_adoption_path(data_dir, workspace_root), payload)
         except OSError:
             pass
         return target_root
@@ -876,7 +893,7 @@ def stage_bundled_skills(data_dir: Path, bundle_dir: Path | None = None) -> Path
 
 
 def build_octos_env(config_dir: Path, protected_dirs: list[Path] | None = None,
-                    data_dir: Path | None = None) -> dict:
+                    data_dir: Path | None = None, workspace_root: Path | None = None) -> dict:
     """Prepare env + minimal config.json for non-interactive octos.
 
     `protected_dirs` (official tests, requirements) get a before_tool_call
@@ -918,12 +935,47 @@ def build_octos_env(config_dir: Path, protected_dirs: list[Path] | None = None,
     (config_dir / "config.json").write_text(json.dumps(config, indent=2), encoding="utf-8")
     env["OCTOS_CONFIG_DIR"] = str(config_dir)
     if data_dir is not None:
-        skills_root = stage_bundled_skills(data_dir)
+        skills_root = stage_bundled_skills(data_dir, workspace_root=workspace_root)
         if skills_root is not None:
             current = env.get("OCTOS_SKILLS_PATH", "").strip()
             env["OCTOS_SKILLS_PATH"] = (
                 str(skills_root) if not current else str(skills_root) + os.pathsep + current
             )
+            # Staging proves the bundle exists; this bounded read-only call
+            # proves the runtime can load and execute the skill entrypoint.
+            skill_path = skills_root / "arc-project-context" / "index.js"
+            telemetry_path = _skill_adoption_path(data_dir, workspace_root)
+            try:
+                proc = subprocess.run(
+                    ["node", str(skill_path), "project_map"],
+                    input=json.dumps({"workspace_root": str(workspace_root or Path.cwd()), "max_files": 200}),
+                    capture_output=True, text=True, timeout=30,
+                    cwd=str(workspace_root or Path.cwd()),
+                )
+                raw = (proc.stdout or "").strip().splitlines()[-1:]
+                parsed = json.loads(raw[0]) if raw else {}
+                invocation = {"tool": "project_map", "status": "passed" if proc.returncode == 0 and parsed.get("success") else "failed",
+                              "returncode": proc.returncode, "project_map_hash": parsed.get("project_map_hash")}
+                loaded = bool(proc.returncode == 0 and isinstance(parsed, dict) and parsed.get("success"))
+                payload = {
+                    "schema_version": 1, "skill": "arc-project-context", "version": "1.0.0",
+                    "manifest_sha256": hashlib.sha256((skill_path.parent / "manifest.json").read_bytes()).hexdigest(),
+                    "staged": True, "loaded": loaded, "invocations": [invocation], "adopted": False,
+                    "adoption_verdict": "loaded_invoked_not_observed" if loaded else "invocation_failed",
+                    "rejected_with_reason": None if loaded else str(parsed.get("error") or "skill invocation failed")[:300],
+                }
+                _write_skill_adoption(data_dir / "skill-adoption.json", payload)
+                if workspace_root:
+                    _write_skill_adoption(telemetry_path, payload)
+            except (OSError, subprocess.SubprocessError, json.JSONDecodeError) as exc:
+                payload = {
+                    "schema_version": 1, "skill": "arc-project-context", "staged": True,
+                    "loaded": False, "invocations": [], "adopted": False,
+                    "adoption_verdict": "load_failed", "rejected_with_reason": str(exc)[:300],
+                }
+                _write_skill_adoption(data_dir / "skill-adoption.json", payload)
+                if workspace_root:
+                    _write_skill_adoption(telemetry_path, payload)
     env.setdefault("OCTOS_DISABLE_STREAMING", "1")   # platform proxies reject SSE
     env.setdefault("OCTOS_DANGER_FULL_ACCESS", "1")  # the container is the sandbox
     env.setdefault("npm_config_registry", "https://registry.npmmirror.com")
@@ -1531,6 +1583,7 @@ class Flow:
         self.probe_summaries: dict = {}
         self.aliases: dict[str, str] = {}
         self.runner: AcceptanceRunner | None = None
+        self.playwright_root: Path | None = None
         self.designs: dict[str, dict] = {}
         self.test_verdict: dict[str, bool | None] = {}
         self.impl_failed: list[str] = []
@@ -1749,6 +1802,25 @@ class Flow:
                 pages[node_id] = design["pages"]
             if design.get("data_model"):
                 data_models[node_id] = design["data_model"]
+        # Preserve requirement-derived route and page expectations even before
+        # a model design turn has produced an application contract.  This keeps
+        # the context useful after a truncated skeleton and does not invent a
+        # route: every value comes from the compiled requirement evidence.
+        for node in self.requirement_contract.get("nodes") or []:
+            node_id = str(node.get("id") or "")
+            contract = node.get("acceptance_contract") or {}
+            derived_pages = []
+            for path in contract.get("entry_route") or []:
+                path = str(path)
+                if not path.startswith("/"):
+                    continue
+                route_owners.setdefault(f"GET {path}", []).append(node_id)
+                derived_pages.append({"path": path, "role_names": (contract.get("role_name") or [])[:8],
+                                      "actions": (contract.get("user_action") or [])[:4],
+                                      "visible_results": (contract.get("visible_result") or [])[:4],
+                                      "source": node.get("evidence")})
+            if derived_pages and node_id not in pages:
+                pages[node_id] = derived_pages[:8]
         ownership = {}
         for node_id, paths in self.spec_map.items():
             owner = str(node_id) if node_id is not None else "integration/shared"
@@ -2171,8 +2243,6 @@ class Flow:
         Run da9a64b32c09: an unisolated install made the platform's own
         `npx playwright test` resolve a different version whose chromium build
         was missing, and every graded test failed."""
-        if not self.tests_dir:
-            return
         env_extra: dict = {}
         root = find_playwright_root(playwright_candidates(BUNDLE_DIR, self.tests_dir, self.output_dir))
         if root is None:
@@ -2187,12 +2257,14 @@ class Flow:
         if root is None:
             log("[acceptance] Playwright unavailable; nodes will be judged by the final check only")
             return
+        self.playwright_root = root
         limit = container_memory_limit()
         self.mem_limit = limit
         workers = workers_for_memory(limit, int(os.environ.get("OCTOS_ARC_TEST_WORKERS", "2")))
-        self.runner = AcceptanceRunner(root, self.tests_dir, acceptance_work_dir(root), log,
-                                       timeout_ms=int(os.environ.get("OCTOS_ARC_TEST_TIMEOUT_MS", "10000")),
-                                       workers=workers, env_extra=env_extra)
+        if self.tests_dir:
+            self.runner = AcceptanceRunner(root, self.tests_dir, acceptance_work_dir(root), log,
+                                           timeout_ms=int(os.environ.get("OCTOS_ARC_TEST_TIMEOUT_MS", "10000")),
+                                           workers=workers, env_extra=env_extra)
         log(f"[acceptance] using Playwright at {root}; workers={workers}"
             + (f" (container memory limit {limit // (1024 * 1024)} MiB)" if limit else ""))
 
@@ -2852,6 +2924,9 @@ class Flow:
         """Run EVERY spec file together, files in parallel, like the grader does.
         Per-node runs cannot see cross-node interference through shared server
         state; this pass can, and it repairs the nodes whose tests fail."""
+        if self.shared_surface_status != "passed":
+            log("[verification] official acceptance blocked by self-test gate")
+            return
         if self.quota_gated or self.runner is None or not self.tests_dir:
             return
         all_specs = sorted(str(p.relative_to(self.tests_dir)) for p in self.tests_dir.rglob("*.spec.ts"))
@@ -3045,40 +3120,153 @@ class Flow:
             except OSError as exc:
                 log(f"[foundation] could not persist evidence: {exc}")
 
+    def write_selftest_gate(self, foundation: dict[str, object], surface: dict[str, object]) -> dict[str, object]:
+        """Persist the submission preflight as a current, fail-closed verdict."""
+        foundation_status = str(foundation.get("status") or "unknown")
+        surface_status = str(surface.get("status") or "unknown")
+        status = "passed" if foundation_status == "passed" and surface_status == "passed" else (
+            "failed" if "failed" in {foundation_status, surface_status} else "unknown")
+        gate = {
+            "schema_version": 1,
+            "status": status,
+            "official_acceptance_allowed": status == "passed",
+            "source": {"foundation": ".arc/foundation-evidence.json", "shared_surface": ".arc/shared-surface-smoke.json"},
+            "foundation_status": foundation_status,
+            "shared_surface_status": surface_status,
+            "reason": None if status == "passed" else "foundation and browser shared-surface smoke must both pass",
+            "updated_at": time.time(),
+        }
+        self.shared_surface_status = surface_status
+        try:
+            atomic_json_write(self.output_dir / ".arc" / "selftest-gate.json", gate)
+            self.update_selftest_plan(surface, gate)
+        except OSError as exc:
+            log(f"[verification] could not persist self-test gate: {exc}")
+            gate["status"] = "unknown"
+            gate["official_acceptance_allowed"] = False
+            self.shared_surface_status = "unknown"
+        return gate
+
+    def update_selftest_plan(self, surface: dict[str, object], gate: dict[str, object]) -> None:
+        """Close the compiled plan with the latest browser evidence."""
+        path = self.output_dir / ".arc" / "requirement-selftest-plan.json"
+        try:
+            plan = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return
+        status = str(surface.get("status") or "unknown")
+        for case in plan.get("cases") or []:
+            if not isinstance(case, dict):
+                continue
+            case["status"] = status
+            case["evidence"] = ".arc/shared-surface-smoke.json"
+            case["gate_status"] = gate.get("status")
+        plan["execution"] = {
+            "status": status,
+            "source": ".arc/shared-surface-smoke.json",
+            "official_acceptance_allowed": bool(gate.get("official_acceptance_allowed")),
+        }
+        atomic_json_write(path, plan)
+
+    def finalize_skill_adoption(self) -> None:
+        """Promote adoption only when a tool event names the bundled skill."""
+        path = self.output_dir / ".arc" / "skill-adoption.json"
+        events = self.output_dir / ".arc" / "octos-events.jsonl"
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return
+        observed = []
+        if events.is_file():
+            for line in events.read_text(encoding="utf-8", errors="replace").splitlines():
+                if "arc-project-context" not in line and "project_map" not in line:
+                    continue
+                try:
+                    event = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if event.get("method") in {"tool/started", "tool/completed"}:
+                    observed.append({"source": "octos-events", "method": event.get("method")})
+        if observed:
+            payload.setdefault("invocations", []).extend(observed)
+            payload["adopted"] = True
+            payload["adoption_verdict"] = "adopted_observed"
+        try:
+            atomic_json_write(path, payload)
+        except OSError as exc:
+            log(f"[skills] could not finalize adoption evidence: {exc}")
+
     def shared_surface_smoke(self) -> dict[str, object]:
-        """Probe the first explicit public entry without claiming completion."""
+        """Run a browser-level smoke for requirement-derived shared entries.
+
+        HTTP text matching is retained only as diagnostic evidence.  A smoke
+        passes only when Playwright can resolve every derived role/name exactly
+        once, see it, and complete a safe first interaction where applicable.
+        """
         probe = shared_surface_contract(self.requirement_contract)
         evidence = {"status": "unknown", "contract_hash": self.requirement_contract.get("contract_hash"),
                     "route": probe.get("route"), "entry_role": probe.get("role"),
-                    "entry_name": probe.get("name"), "entry_count": None, "errors": []}
+                    "entry_name": probe.get("name"), "entry_count": None,
+                    "entries": probe.get("entries") or [], "errors": [], "mode": "browser"}
         if not probe.get("name"):
             evidence["errors"] = ["requirement contract has no explicit accessible entry name"]
+        elif self.playwright_root is None:
+            evidence["status"] = "unknown"
+            evidence["mode"] = "browser_unavailable"
+            evidence["errors"] = ["Playwright unavailable; browser self-test cannot establish a verdict"]
         else:
-            server = self.app_server(grader_like=True)
+            source_dir = Path(tempfile.mkdtemp(prefix="octos-shared-smoke-") )
+            work_dir = Path(tempfile.mkdtemp(prefix="octos-shared-smoke-run-") )
+            server = None
             try:
+                entries = []
+                for item in (probe.get("entries") or [])[:8]:
+                    if not isinstance(item, dict) or not item.get("name"):
+                        continue
+                    role = str(item.get("role") or "")
+                    item = dict(item)
+                    item["actionable"] = role in {"button", "link", "tab"}
+                    entries.append(item)
+                spec = """import { test, expect } from '@playwright/test';
+const entries = %s;
+for (const entry of entries) {
+  test(`shared entry: ${entry.name}`, async ({ page }) => {
+    await page.goto(entry.route || '/');
+    const locator = entry.role
+      ? page.getByRole(entry.role, { name: entry.name, exact: true })
+      : page.getByText(entry.name, { exact: true });
+    await expect(locator).toHaveCount(1);
+    await expect(locator).toBeVisible();
+    if (entry.actionable) {
+      await locator.click();
+      await expect(page.locator('body')).not.toHaveText(/^\\s*$/);
+    }
+  });
+}
+""" % json.dumps(entries, ensure_ascii=False)
+                (source_dir / "shared-surface.spec.ts").write_text(spec, encoding="utf-8")
+                runner = AcceptanceRunner(
+                    self.playwright_root, source_dir, work_dir, log,
+                    timeout_ms=min(10000, int(os.environ.get("OCTOS_ARC_SELFTEST_TIMEOUT_MS", "8000"))),
+                    workers=1, env_extra=getattr(self.runner, "env_extra", {}),
+                )
+                server = self.app_server(grader_like=True)
                 err = server.build() or server.start()
                 if err:
-                    evidence["status"] = "failed"; evidence["errors"] = [err]
+                    evidence["status"] = "failed"
+                    evidence["errors"] = [err]
                 else:
-                    try:
-                        with urllib.request.urlopen(f"http://127.0.0.1:{self.smoke_port}{probe['route']}", timeout=8) as response:
-                            body = response.read(500_000).decode("utf-8", errors="replace")
-                        names = list(probe.get("names") or ([probe["name"]] if probe.get("name") else []))
-                        role = str(probe.get("role") or "")
-                        counts = {name: len(re.findall(re.escape(str(name)), body, re.I)) for name in names}
-                        evidence["entry_count"] = counts.get(str(probe.get("name")), 0)
-                        role_ok = (not role or bool(re.search(rf"role=[\\\"']{re.escape(role)}[\\\"']", body, re.I))
-                                   or role == "button" and bool(re.search(r"<button\\b", body, re.I)))
-                        missing = [name for name, count in counts.items() if count < 1]
-                        duplicate = [name for name, count in counts.items() if count > 1]
-                        evidence["status"] = "passed" if not missing and not duplicate and role_ok else "failed"
-                        if not role_ok: evidence["errors"].append("declared role not present")
-                        if missing: evidence["errors"].append("missing entry names: " + ", ".join(missing[:8]))
-                        if duplicate: evidence["errors"].append("duplicate entry names: " + ", ".join(duplicate[:8]))
-                    except (OSError, urllib.error.URLError) as exc:
-                        evidence["status"] = "failed"; evidence["errors"] = [str(exc)]
+                    summary = runner.run(["shared-surface.spec.ts"], f"http://127.0.0.1:{self.smoke_port}", workers=1)
+                    evidence["browser"] = {"passed": summary.passed, "total": summary.total,
+                                            "failed": summary.total - summary.passed, "error": summary.error}
+                    evidence["status"] = "passed" if not summary.error and summary.total > 0 and summary.passed == summary.total else "failed"
+                    if summary.error:
+                        evidence["errors"] = [summary.error]
             finally:
-                server.stop()
+                if server is not None:
+                    server.stop()
+                shutil.rmtree(source_dir, ignore_errors=True)
+                shutil.rmtree(work_dir, ignore_errors=True)
         try:
             atomic_json_write(self.output_dir / ".arc" / "shared-surface-smoke.json", evidence)
         except OSError as exc:
@@ -3222,7 +3410,7 @@ class Flow:
             protected = [p for p in (self.tests_dir, self.req_dir) if p and p.is_dir()]
             config_dir = Path(tempfile.mkdtemp(prefix="octos-config-"))
             self.start_llm_proxy()
-            env = build_octos_env(config_dir, protected, data_dir=data_dir)
+            env = build_octos_env(config_dir, protected, data_dir=data_dir, workspace_root=self.output_dir)
             write_profile_defaults(data_dir, config_dir, protected_hooks(protected))
             self.snapshot_protected()
             env["PORT"] = str(self.smoke_port)  # a bare `npm start` inside a turn must not hit the grading port
@@ -3243,13 +3431,18 @@ class Flow:
                 surface = self.shared_surface_smoke() if foundation.get("status") == "passed" else {"status": "unknown"}
                 if surface.get("status") == "failed":
                     surface = self.repair_shared_surface_once(surface)
-                atomic_json_write(self.output_dir / ".arc" / "skill-adoption.json", {
-                    "schema_version": 1, "skill": "arc-project-context",
-                    "loaded": bool(os.environ.get("OCTOS_SKILLS_PATH")),
-                    "invocations": [], "adoption_verdict": "not_observed"})
-                foundation_failed = foundation.get("status") == "failed" or surface.get("status") == "failed"
+                    # A repair changes the application; never carry forward a
+                    # pre-repair foundation result.
+                    foundation = self.foundation_gate() if self.has_app() else {"status": "inconclusive", "reason": "no_app_after_repair"}
+                gate = self.write_selftest_gate(foundation, surface)
+                if not (self.output_dir / ".arc" / "skill-adoption.json").is_file():
+                    atomic_json_write(self.output_dir / ".arc" / "skill-adoption.json", {
+                        "schema_version": 1, "skill": "arc-project-context", "staged": False,
+                        "loaded": False, "invocations": [], "adopted": False,
+                        "adoption_verdict": "not_staged", "rejected_with_reason": "skill unavailable"})
+                foundation_failed = not bool(gate.get("official_acceptance_allowed"))
                 if foundation_failed:
-                    log("[foundation] shared foundation failed; dependent nodes will be blocked")
+                    log("[foundation] self-test gate failed; dependent nodes will be blocked")
                 for index, node in enumerate(ordered, 1):
                     node_id = str(node.get("id"))
                     if foundation_failed:
@@ -3295,6 +3488,14 @@ class Flow:
                                             self.node_timeout, "final check")
                     self.commit("chore: final verification pass")
                 rehearsed = self.rehearsal()
+                # Rehearsal repairs can alter the app after the initial gate.
+                # Refresh both evidence files so a later successful repair does
+                # not leave a stale failed foundation record in the bundle.
+                if self.has_app():
+                    refreshed_foundation = self.foundation_gate()
+                    refreshed_surface = (self.shared_surface_smoke()
+                                         if refreshed_foundation.get("status") == "passed" else {"status": "unknown"})
+                    self.write_selftest_gate(refreshed_foundation, refreshed_surface)
                 if not self.acceptance_unavailable:
                     for node_id in undecided:
                         if rehearsed and final_ok is not False:
@@ -3302,6 +3503,7 @@ class Flow:
                         else:
                             self.mark("test_failed", node_id, "final check or startup rehearsal failed")
                         self.test_verdict[node_id] = bool(rehearsed and final_ok is not False)
+                self.finalize_skill_adoption()
             finally:
                 watchdog_stop.set()
                 if self.driver:

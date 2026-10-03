@@ -1,6 +1,13 @@
 - 2026-10-02：截止前修复：requirement-only 任务默认跳过独立 design turn，把调用预算留给可运行垂直切片；新增共享入口、语义角色、seed、持久化、刷新恢复和错误原子性约束，避免 `implement ok` 只代表写入而没有完整用户行为链。可通过 `OCTOS_REQUIREMENT_DESIGN=1` 显式恢复需求设计轮。
 # arc/ 适配层改动记录（工作流 A，分支 `wf-adapter`）
 
+## 2026-10-03｜只读审计缺口修复：浏览器 smoke、真实门禁与 skill 遥测
+
+- 需求派生的 shared surface 现在通过临时 Playwright 用例检查 role/name 唯一性、可见性和首动作；HTTP 探测仅保留为诊断，不构成通过证据。
+- 新增 `.arc/selftest-gate.json`，foundation 和 browser smoke 任一为 `failed/unknown` 时阻止内部 `final_acceptance()`，并记录 `official_acceptance_allowed=false`。
+- shared-surface repair 和 rehearsal 后都会重新跑 foundation/smoke 并覆盖 evidence，避免修复成功后仍保留旧失败状态。
+- `skill-adoption.json` 现在区分 staged、loaded、invoked、adopted 和 rejected reason，并执行一次只读 context skill invocation；模型是否采纳没有可观察事件时仍保持未观察状态。
+
 ## 2026-10-02｜v4 需求契约与有界续作（平台未验证）
 
 - 新增领域无关 `requirement_contract.py`：从动态 requirements YAML 提取 GIVEN/WHEN/THEN、精确文本/fixture、作用域、权限和 reload/persistence 信号，并保留 evidence/confidence；contract hash 与 requirements hash 写入 `.arc/requirement-contract.json`，不把推导 smoke 冒充官方测试。

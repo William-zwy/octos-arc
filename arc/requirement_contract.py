@@ -383,8 +383,15 @@ def evaluate_requirement_smoke_gate(gate: dict, evidence: dict | None) -> dict:
 
 
 def shared_surface_contract(contract: dict) -> dict:
-    """Derive a bounded family of public-entry probes from requirements."""
+    """Derive a bounded family of public-entry probes from requirements.
+
+    The compiler has no domain vocabulary.  It therefore carries the first
+    role candidates and exact names found in the requirement evidence, along
+    with the first action/result hints.  The runtime can use this structure for
+    a browser smoke without embedding strings from a particular benchmark.
+    """
     routes: list[str] = []; labels: list[str] = []; roles: list[str] = []; actions: list[str] = []
+    visible: list[str] = []; entries: list[dict] = []; fanout: dict[str, int] = {}
     for node in contract.get("nodes") or []:
         c = node.get("acceptance_contract") or {}
         for value in c.get("entry_route") or []:
@@ -400,8 +407,25 @@ def shared_surface_contract(contract: dict) -> dict:
             if len(labels) < 8 and value not in labels: labels.append(value)
         for value in c.get("user_action") or []:
             if value and value not in actions: actions.append(str(value))
+        for value in c.get("visible_result") or []:
+            value = _text(value)
+            if _usable_exact(value) and value not in visible:
+                visible.append(value)
+        node_role = roles[0] if roles else None
+        for label in node_labels:
+            fanout[label] = fanout.get(label, 0) + 1
+            if len(entries) < 8 and not any(item.get("name") == label for item in entries):
+                entries.append({
+                    "name": label,
+                    "role": node_role,
+                    "route": routes[0] if routes else "/",
+                    "action": actions[0] if actions else None,
+                    "expected": visible[:3],
+                    "evidence": node.get("evidence"),
+                })
         if len(labels) >= 8: break
     return {"route": routes[0] if routes else "/", "role": roles[0] if roles else None,
             "name": labels[0] if labels else None, "names": labels,
-            "action": actions[0] if actions else None,
+            "action": actions[0] if actions else None, "expected": visible[:8],
+            "entries": entries, "fanout": fanout,
             "confidence": "high" if labels else "unknown"}

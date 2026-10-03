@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from requirement_contract import compact_contract, compile_requirement_contract
+from requirement_contract import compact_contract, compile_requirement_contract, shared_surface_contract
 
 
 def tree(*nodes, name="Synthetic App"):
@@ -78,6 +78,24 @@ class RequirementContractTests(unittest.TestCase):
             {"id": "CAP-B", "type": "FOLDER", "children": [node("B-1", "b", [])]},
         ))
         self.assertEqual({item["id"] for item in contract["capabilities"]}, {"CAP-A", "CAP-B"})
+
+    def test_shared_surface_contract_derives_entries_without_domain_literals(self):
+        contract = compile_requirement_contract(tree(node(
+            "REQ-1", "Open the public workspace.", [{
+                "name": "Create workspace",
+                "steps": [
+                    {"keyword": "GIVEN", "content": "The public page is open."},
+                    {"keyword": "WHEN", "content": "Click the `Create workspace` button."},
+                    {"keyword": "THEN", "content": "The workspace is visible."},
+                ],
+            }]
+        )))
+        surface = shared_surface_contract(contract)
+        self.assertEqual(surface["route"], "/")
+        self.assertEqual(surface["entries"][0]["name"], "Create workspace")
+        self.assertEqual(surface["entries"][0]["role"], "button")
+        self.assertEqual(surface["entries"][0]["action"], "Click the `Create workspace` button.")
+        self.assertEqual(surface["fanout"]["Create workspace"], 1)
 
 
 if __name__ == "__main__":
