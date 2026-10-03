@@ -3,7 +3,7 @@
 - foundation 失败时在业务节点前执行最多两次有界 runtime repair；每次修复后重新执行 build/start，并验证同一 `PORT` 上的 `/`、`/health`、`/api/health`，覆盖 foundation evidence。rehearsal 仍作为末端复核。
 - Agent runtime contract 明确要求两个 health endpoint，且认证状态转移必须遵循需求定义的下一状态；fresh anonymous 入口需要把需求要求的 seeded destination 作为可见、可达链接呈现，不写死业务名称。
 - guard 写入检测不再把 `2>/dev/null` 等 stderr 重定向误判为产品写入；验证证据按 build/start/request 分类，并且三类命令都必须发生在最后一次成功写入之后。`last_turn_verified` 不再由单个 curl 或模型自报推导。
-- 验证：guard、主流程、需求契约定向测试 `77 passed`；`py_compile` 与 `git diff --check` 通过。
+- 验证：guard、主流程、需求契约、打包门禁定向测试 `82 passed, 1 skipped`；`py_compile` 与 `git diff --check` 通过。
 
 # 2026-10-03｜双 run 0 分回归修复：公共入口候选与实现门禁分层
 
