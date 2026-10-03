@@ -383,19 +383,25 @@ def evaluate_requirement_smoke_gate(gate: dict, evidence: dict | None) -> dict:
 
 
 def shared_surface_contract(contract: dict) -> dict:
-    """Derive one conservative public-entry probe from compiled requirements."""
+    """Derive a bounded family of public-entry probes from requirements."""
     routes: list[str] = []; labels: list[str] = []; roles: list[str] = []; actions: list[str] = []
     for node in contract.get("nodes") or []:
         c = node.get("acceptance_contract") or {}
         for value in c.get("entry_route") or []:
             if str(value).startswith("/") and value not in routes: routes.append(str(value))
+        node_labels: list[str] = []
         for value in c.get("role_name") or []:
             value = _text(value)
             if value.lower() in {"button", "link", "tab", "textbox", "heading", "row", "gridcell"}:
                 if value.lower() not in roles: roles.append(value.lower())
-            elif _usable_exact(value) and value not in labels: labels.append(value)
+            elif _usable_exact(value) and value not in node_labels:
+                node_labels.append(value)
+        for value in node_labels:
+            if len(labels) < 8 and value not in labels: labels.append(value)
         for value in c.get("user_action") or []:
             if value and value not in actions: actions.append(str(value))
+        if len(labels) >= 8: break
     return {"route": routes[0] if routes else "/", "role": roles[0] if roles else None,
-            "name": labels[0] if labels else None, "action": actions[0] if actions else None,
+            "name": labels[0] if labels else None, "names": labels,
+            "action": actions[0] if actions else None,
             "confidence": "high" if labels else "unknown"}

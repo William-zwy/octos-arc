@@ -1257,7 +1257,7 @@ This skeleton is the SHARED FOUNDATION every later feature turn extends; later t
 - A central request router/dispatcher in backend/server.js that is trivial to extend: a route table (method+path -> handler) or equivalent, so a later turn adds one entry and one handler, never rewrites routing.
 - The core data model in the JSON store: one seeded collection (even if near-empty) for EVERY top-level entity the requirements mention (e.g. users/sessions, and the main domain objects), with realistic seed rows the tests can read. Later turns add fields/rows, not whole collections.
 - A page shell / layout the feature pages slot into (shared header, nav, server-side-rendered-from-cookie if the app has sessions), plus a home page and a health endpoint.
-Keep it minimal but STRUCTURALLY COMPLETE: no feature logic yet, but the router, every entity collection, and the page shell must already exist so later turns only fill in behaviour.
+Keep it minimal but STRUCTURALLY COMPLETE: no feature logic yet, but the router, every entity collection, and the page shell must already exist so later turns only fill in behaviour. The first shared public entry family from the compiled contract is a hard deliverable: render every explicit first-screen role/name exactly once, wire the first action to a visible next state, and do not submit a placeholder or stub shell.
 Steps: create frontend/ and backend/ as specified, build the router + seed every entity collection + the page shell + health endpoint, run `npm run build` in frontend/, start the backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, then confirm SINGLE-ORIGIN serving on that ONE port: `curl http://127.0.0.1:{smoke}/` returns the built HTML AND `curl http://127.0.0.1:{smoke}/api/health` returns JSON — both from the same server. Grep the frontend sources for `127.0.0.1`, `localhost`, and `API_BASE`: if any absolute origin is hardcoded, replace it with a relative `/api/...` path now, before any feature turn inherits it. Then stop the server.
 """ + PORT_RULES
 
@@ -1938,7 +1938,7 @@ class Flow:
         top-level entity, the page shell), so it needs more room than a single
         feature node — give it the implement budget plus headroom, never below
         28."""
-        default = max(28, self.implement_request_budget() + 8)
+        default = max(36, self.implement_request_budget() + 12)
         return int(os.environ.get("OCTOS_ARC_SKELETON_REQUESTS", str(default)))
 
     def rewrite_request_budget(self) -> int:
@@ -3052,13 +3052,16 @@ class Flow:
                     try:
                         with urllib.request.urlopen(f"http://127.0.0.1:{self.smoke_port}{probe['route']}", timeout=8) as response:
                             body = response.read(500_000).decode("utf-8", errors="replace")
-                        name = str(probe["name"]); role = str(probe.get("role") or "")
-                        count = len(re.findall(re.escape(name), body, re.I)); evidence["entry_count"] = count
+                        names = list(probe.get("names") or ([probe["name"]] if probe.get("name") else []))
+                        role = str(probe.get("role") or "")
+                        counts = {name: len(re.findall(re.escape(str(name)), body, re.I)) for name in names}
+                        evidence["entry_count"] = counts.get(str(probe.get("name")), 0)
                         role_ok = (not role or bool(re.search(rf"role=[\\\"']{re.escape(role)}[\\\"']", body, re.I))
                                    or role == "button" and bool(re.search(r"<button\\b", body, re.I)))
-                        evidence["status"] = "passed" if count == 1 and role_ok else "failed"
+                        missing = [name for name, count in counts.items() if count < 1]
+                        evidence["status"] = "passed" if not missing and role_ok else "failed"
                         if not role_ok: evidence["errors"].append("declared role not present")
-                        if count != 1: evidence["errors"].append(f"entry name occurrence count={count}")
+                        if missing: evidence["errors"].append("missing entry names: " + ", ".join(missing[:8]))
                     except (OSError, urllib.error.URLError) as exc:
                         evidence["status"] = "failed"; evidence["errors"] = [str(exc)]
             finally:

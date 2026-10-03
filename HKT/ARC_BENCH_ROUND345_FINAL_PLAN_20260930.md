@@ -1072,3 +1072,9 @@ ff7 (`hackathon--github-stage-1`) 证明：当前包已经能部署，但 skelet
 - d697 的失败明细来自模板 ZIP 内嵌 `.arc/playwright-report.json`，不能因为独立 `.arc` 端点为空就标记“无测试证据”。
 - d697 与 ff7 使用相同 Agent ZIP SHA，但 task/requirements/agent commit 不同；只能用于识别共因模式，不能做严格单变量因果结论。
 - 当前最优修复顺序为：需求合同派生入口 → foundation gate → shared-surface smoke → 最小垂直切片 → truthful completion → 官方验收。
+
+### 2026-10-03 双 Run 有效性最大化调整
+
+ff7 与 d697 均证明同一类问题会跨题复现：生成预算在 skeleton/rehearsal 阶段截断，服务仍可启动，但公共入口族缺失，导致全部官方场景在首个高扇出 locator 处失败。因此本轮代码将 skeleton 默认预算提高到 36（仅为共享基础预留，不修改 feature 节点全局 cap），并要求 skeleton 明确交付需求合同派生的首屏 role/name 入口族和首个可见动作。
+
+shared-surface smoke 现在最多检查合同前若干节点派生的 8 个共享入口名称，而不是只检查单个文本；仍保持三态证据，不把结果写成 `verified`。该门禁只在 foundation build/start/readiness 通过后运行，入口族缺失时阻断后续节点，避免 24 个节点重复生成空壳。
