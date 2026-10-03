@@ -1024,3 +1024,12 @@ P1：轻量核心入口/ARIA smoke 与 disposable seed/workspace；前置能力�
 P2：更广的 requirement-only 场景生成、完整能力级调度替换、扩大评估矩阵。
 
 本节是证据与建议，不代表 P0/P1 已全部实现。`dc` 的静态资源门禁已在本轮相关代码提交中实现；c025 的 Sheet UI 缺失仍需通过通用垂直切片和需求派生 smoke 改善，不能宣称本轮已修复所有 Sheet 能力。
+
+## 2026-10-03 e27 / ae836 阶段 3-4 证据与建议
+
+- e27 sheet：0/100；template 内嵌报告显示 100 timedOut，首个公共入口 `New blank workbook` 缺失；66 次 guard forced-to-finish，REQ-4-1-2 wrote=False。
+- ae836 github-stage-1：部署前失败；template 内嵌运行文件显示 `backend/server.js:1722` 存在 `SyntaxError: Unexpected token ']'`；测试未执行，不能把它计为官方场景失败。
+- 两个 Run 共享同一上传 ZIP，但 requirements、生成 commit 与任务不同；不可做预算或模型的单变量因果结论。
+- 集成分支 P0：真实 build/start/request 证据门禁、首个公共动作 smoke、预算耗尽 checkpoint、backend 语法/启动预检。
+- main 分支 P0：保留静态资源闭环；增加 template ZIP 内嵌报告/runtime 文件提取；生成应用首页和首个动作 smoke；Agent 包契约与应用验证分离。
+- ZIP 内嵌 `.arc/playwright-report.json`、`run-identity.json`、`runner-events.jsonl`、`stdout.log` 是后续错误获取的优先证据源；平台独立端点 404 不代表 ZIP 内没有报告。
