@@ -859,6 +859,14 @@ def stage_bundled_skills(data_dir: Path, bundle_dir: Path | None = None) -> Path
         launcher = target / "main"
         launcher.chmod(launcher.stat().st_mode | 0o111)
         log(f"[skills] staged arc-project-context at {target}")
+        try:
+            manifest = (target / "manifest.json").read_bytes()
+            atomic_json_write(data_dir / "skill-adoption.json", {
+                "schema_version": 1, "skill": "arc-project-context", "version": "1.0.0",
+                "manifest_sha256": hashlib.sha256(manifest).hexdigest(), "staged": True,
+                "loaded": False, "invocations": [], "adoption_verdict": "not_observed"})
+        except OSError:
+            pass
         return target_root
     except OSError as exc:
         log(f"[skills] arc-project-context unavailable: {exc}")
@@ -3112,6 +3120,20 @@ class Flow:
             ).hexdigest()
             try:
                 atomic_json_write(self.output_dir / ".arc" / "requirement-contract.json", self.requirement_contract)
+                selftest_cases = []
+                for node in self.requirement_contract.get("nodes") or []:
+                    contract = node.get("acceptance_contract") or {}
+                    if not any(contract.get(key) for key in ("entry_route", "role_name", "user_action", "visible_result")):
+                        continue
+                    selftest_cases.append({"case_id": f"shared-{node.get('id')}", "node_id": node.get("id"),
+                        "route": (contract.get("entry_route") or ["/"])[0],
+                        "role_names": (contract.get("role_name") or [])[:8],
+                        "actions": (contract.get("user_action") or [])[:4],
+                        "expected": (contract.get("visible_result") or [])[:4],
+                        "status": "pending", "evidence": node.get("evidence")})
+                atomic_json_write(self.output_dir / ".arc" / "requirement-selftest-plan.json", {
+                    "schema_version": 1, "contract_hash": self.requirement_contract.get("contract_hash"),
+                    "cases": selftest_cases[:32], "gate": "shared_surface_before_official_acceptance"})
                 log("[contract] compiled requirement contract " + json.dumps({
                     "atomic_count": self.requirement_contract.get("atomic_count"),
                     "scenario_count": self.requirement_contract.get("scenario_count"),
@@ -3199,6 +3221,10 @@ class Flow:
                     log(f"[flow] {len(ordered)}-node tree: skeleton folded into the first node turn")
                 foundation = self.foundation_gate() if self.has_app() else {"status": "inconclusive", "reason": "no_app"}
                 surface = self.shared_surface_smoke() if foundation.get("status") == "passed" else {"status": "unknown"}
+                atomic_json_write(self.output_dir / ".arc" / "skill-adoption.json", {
+                    "schema_version": 1, "skill": "arc-project-context",
+                    "loaded": bool(os.environ.get("OCTOS_SKILLS_PATH")),
+                    "invocations": [], "adoption_verdict": "not_observed"})
                 foundation_failed = foundation.get("status") == "failed" or surface.get("status") == "failed"
                 if foundation_failed:
                     log("[foundation] shared foundation failed; dependent nodes will be blocked")
