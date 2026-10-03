@@ -1078,3 +1078,11 @@ ff7 (`hackathon--github-stage-1`) 证明：当前包已经能部署，但 skelet
 ff7 与 d697 均证明同一类问题会跨题复现：生成预算在 skeleton/rehearsal 阶段截断，服务仍可启动，但公共入口族缺失，导致全部官方场景在首个高扇出 locator 处失败。因此本轮代码将 skeleton 默认预算提高到 36（仅为共享基础预留，不修改 feature 节点全局 cap），并要求 skeleton 明确交付需求合同派生的首屏 role/name 入口族和首个可见动作。
 
 shared-surface smoke 现在最多检查合同前若干节点派生的 8 个共享入口名称，而不是只检查单个文本；仍保持三态证据，不把结果写成 `verified`。该门禁只在 foundation build/start/readiness 通过后运行，入口族缺失时阻断后续节点，避免 24 个节点重复生成空壳。
+
+### 2026-10-03 a00 / 7a07 回归证据
+
+- `7a07e49d4b66`（Sheet）在生成阶段因 `NameError: urllib is not defined` 崩溃；部署仍成功但 `Sheet1` tab 缺失，100/100 超时。该异常说明新增门禁依赖必须有模块导入/离线执行预检。
+- `a00e19ab3f65`（GitHub）部署成功，登录页面存在，但 `Sign in` 可访问链接出现两份，Playwright strict mode 直接失败；这不是“入口缺失”，而是公共入口不唯一。
+- shared-surface smoke 已加强为：合同派生入口必须存在且唯一；重复名称同样 fail-closed。新增 `urllib` 显式导入，避免 smoke 运行时 NameError。
+
+本轮边界：入口唯一性 smoke 只阻断高扇出公共入口，不把业务文案写死；官方隐藏场景仍需继续验证。

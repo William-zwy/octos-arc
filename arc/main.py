@@ -71,6 +71,8 @@ import sys
 import tempfile
 import threading
 import time
+import urllib.error
+import urllib.request
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -3067,9 +3069,11 @@ class Flow:
                         role_ok = (not role or bool(re.search(rf"role=[\\\"']{re.escape(role)}[\\\"']", body, re.I))
                                    or role == "button" and bool(re.search(r"<button\\b", body, re.I)))
                         missing = [name for name, count in counts.items() if count < 1]
-                        evidence["status"] = "passed" if not missing and role_ok else "failed"
+                        duplicate = [name for name, count in counts.items() if count > 1]
+                        evidence["status"] = "passed" if not missing and not duplicate and role_ok else "failed"
                         if not role_ok: evidence["errors"].append("declared role not present")
                         if missing: evidence["errors"].append("missing entry names: " + ", ".join(missing[:8]))
+                        if duplicate: evidence["errors"].append("duplicate entry names: " + ", ".join(duplicate[:8]))
                     except (OSError, urllib.error.URLError) as exc:
                         evidence["status"] = "failed"; evidence["errors"] = [str(exc)]
             finally:
