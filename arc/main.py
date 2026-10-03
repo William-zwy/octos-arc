@@ -1555,6 +1555,7 @@ class Flow:
         self.checkpoints = CheckpointStore(output_dir)
         self._last_structural_key: tuple[str, str] | None = None
         self.acceptance_unavailable = False
+        self.shared_surface_status = "unknown"
 
     # -- helpers ----------------------------------------------------------
     def remaining(self) -> float:

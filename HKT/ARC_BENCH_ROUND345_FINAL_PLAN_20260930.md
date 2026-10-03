@@ -1093,3 +1093,7 @@ shared-surface smoke 现在最多检查合同前若干节点派生的 8 个共�
 - `edbf7b1ff235`（GitHub）再次确认 `Sign in` 重复导致 strict mode 失败；入口存在但不唯一与入口缺失必须同等视为失败。
 - 新增一次有界 `shared-surface repair`：入口族 smoke 失败时，将合同派生入口名与错误摘要反馈给 Agent，只允许一次定向修复并重新 smoke；重复失败继续阻断共享基础，不再直接宣称完成。
 - 该修复仍不写死业务文案，且保留 build/start/readiness、入口唯一性和需求合同来源证据。
+
+### 2026-10-03 00569 / edbf self-test hard gate
+
+本轮将 self-test 从“只生成 pending 计划”升级为可阻断状态：shared-surface smoke 失败后最多触发一次有界定向修复并重新检查；结果写入 `.arc/selftest-gate.json`。只有 `passed` 才允许进入最终 acceptance；`failed/unknown` 明确记录 `official_acceptance_allowed=false`，不再把可启动 skeleton 当作已验证产品。
