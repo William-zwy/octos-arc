@@ -89,7 +89,7 @@ from codegen import FORMAT_INSTRUCTIONS, dedupe_nav_links, parse_file_blocks, wr
 from guard import TurnMonitor  # noqa: E402
 from llm_proxy import LlmProxy  # noqa: E402
 from requirement_order import ancestors_of, node_fingerprint, topo_order  # noqa: E402
-from requirement_contract import compact_contract, compile_requirement_compilation  # noqa: E402
+from requirement_contract import compact_contract, compile_requirement_compilation, shared_surface_contract  # noqa: E402
 from capability_plan import build_capability_plan  # noqa: E402
 from capability_judge import judge_round  # noqa: E402
 from run_controls import CheckpointStore, atomic_json_write  # noqa: E402
@@ -3012,6 +3012,7 @@ class Flow:
         server = self.app_server(grader_like=True)
         try:
             build_error = server.build()
+            evidence["syntax_preflight"] = getattr(server, "last_syntax_preflight", None)
             evidence["build"] = build_error is None
             if build_error:
                 evidence["status"] = "failed"
@@ -3033,6 +3034,40 @@ class Flow:
             except OSError as exc:
                 log(f"[foundation] could not persist evidence: {exc}")
 
+    def shared_surface_smoke(self) -> dict[str, object]:
+        """Probe the first explicit public entry without claiming completion."""
+        probe = shared_surface_contract(self.requirement_contract)
+        evidence = {"status": "unknown", "contract_hash": self.requirement_contract.get("contract_hash"),
+                    "route": probe.get("route"), "entry_role": probe.get("role"),
+                    "entry_name": probe.get("name"), "entry_count": None, "errors": []}
+        if not probe.get("name"):
+            evidence["errors"] = ["requirement contract has no explicit accessible entry name"]
+        else:
+            server = self.app_server(grader_like=True)
+            try:
+                err = server.build() or server.start()
+                if err:
+                    evidence["status"] = "failed"; evidence["errors"] = [err]
+                else:
+                    try:
+                        with urllib.request.urlopen(f"http://127.0.0.1:{self.smoke_port}{probe['route']}", timeout=8) as response:
+                            body = response.read(500_000).decode("utf-8", errors="replace")
+                        name = str(probe["name"]); role = str(probe.get("role") or "")
+                        count = len(re.findall(re.escape(name), body, re.I)); evidence["entry_count"] = count
+                        role_ok = (not role or bool(re.search(rf"role=[\\\"']{re.escape(role)}[\\\"']", body, re.I))
+                                   or role == "button" and bool(re.search(r"<button\\b", body, re.I)))
+                        evidence["status"] = "passed" if count == 1 and role_ok else "failed"
+                        if not role_ok: evidence["errors"].append("declared role not present")
+                        if count != 1: evidence["errors"].append(f"entry name occurrence count={count}")
+                    except (OSError, urllib.error.URLError) as exc:
+                        evidence["status"] = "failed"; evidence["errors"] = [str(exc)]
+            finally:
+                server.stop()
+        try:
+            atomic_json_write(self.output_dir / ".arc" / "shared-surface-smoke.json", evidence)
+        except OSError as exc:
+            log(f"[smoke] could not persist shared surface evidence: {exc}")
+        return evidence
     def rehearsal(self) -> bool:
         if self.quota_gated:
             log("[rehearsal] skipped: run is quota_gated")
@@ -3160,7 +3195,8 @@ class Flow:
                 elif not self.evolution:
                     log(f"[flow] {len(ordered)}-node tree: skeleton folded into the first node turn")
                 foundation = self.foundation_gate() if self.has_app() else {"status": "inconclusive", "reason": "no_app"}
-                foundation_failed = foundation.get("status") == "failed"
+                surface = self.shared_surface_smoke() if foundation.get("status") == "passed" else {"status": "unknown"}
+                foundation_failed = foundation.get("status") == "failed" or surface.get("status") == "failed"
                 if foundation_failed:
                     log("[foundation] shared foundation failed; dependent nodes will be blocked")
                 for index, node in enumerate(ordered, 1):

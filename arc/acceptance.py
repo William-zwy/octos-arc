@@ -576,6 +576,30 @@ class AppServer:
             return 127, str(exc)
         return r.returncode, ((r.stdout or "") + "\n" + (r.stderr or "")).strip()[-1500:]
 
+    def syntax_preflight(self) -> dict:
+        """Check explicit Node start entrypoints before launching the server."""
+        backend = self.project / "backend"
+        try:
+            manifest = json.loads((backend / "package.json").read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            return {"status": "unknown", "runtime": "node", "error": str(exc)}
+        script = str((manifest.get("scripts") or {}).get("start") or "").strip()
+        try:
+            parts = shlex.split(script, posix=True)
+        except ValueError as exc:
+            return {"status": "unknown", "runtime": "node", "script": script, "error": str(exc)}
+        if not parts or Path(parts[0]).name not in {"node", "node.exe"}:
+            return {"status": "unknown", "runtime": "unknown", "script": script}
+        entry = next((part for part in parts[1:] if not part.startswith("-")), None)
+        if not entry or any(ch in entry for ch in "|&;><$()"):
+            return {"status": "unknown", "runtime": "node", "script": script}
+        path = (backend / entry).resolve()
+        try: path.relative_to(backend.resolve())
+        except ValueError: return {"status": "unknown", "runtime": "node", "error": "entrypoint outside backend"}
+        if not path.is_file():
+            return {"status": "failed", "runtime": "node", "command": ["node", "--check", str(path)], "file": str(path), "exit_code": 2, "error": "entrypoint missing"}
+        rc, out = self._run(["node", "--check", str(path)], backend, 30)
+        return {"status": "passed" if rc == 0 else "failed", "runtime": "node", "command": ["node", "--check", str(path)], "file": str(path), "exit_code": rc, "error": out or None}
     def build(self) -> str | None:
         frontend, backend = self.project / "frontend", self.project / "backend"
         if not (frontend / "package.json").is_file() or not (backend / "package.json").is_file():
@@ -768,4 +792,3 @@ class AcceptanceRunner:
         self.log(f"[acceptance] {summary.passed}/{summary.total} passed in {time.time()-t0:.0f}s "
                  f"({', '.join(spec_rel_paths)})")
         return summary
-

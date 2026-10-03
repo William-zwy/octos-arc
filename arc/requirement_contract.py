@@ -378,3 +378,24 @@ def evaluate_requirement_smoke_gate(gate: dict, evidence: dict | None) -> dict:
     return {**gate, "status": "passed" if all(observed.values()) else "failed",
             "evidence": observed,
             "missing": [key for key, value in observed.items() if not value]}
+
+
+
+
+def shared_surface_contract(contract: dict) -> dict:
+    """Derive one conservative public-entry probe from compiled requirements."""
+    routes: list[str] = []; labels: list[str] = []; roles: list[str] = []; actions: list[str] = []
+    for node in contract.get("nodes") or []:
+        c = node.get("acceptance_contract") or {}
+        for value in c.get("entry_route") or []:
+            if str(value).startswith("/") and value not in routes: routes.append(str(value))
+        for value in c.get("role_name") or []:
+            value = _text(value)
+            if value.lower() in {"button", "link", "tab", "textbox", "heading", "row", "gridcell"}:
+                if value.lower() not in roles: roles.append(value.lower())
+            elif _usable_exact(value) and value not in labels: labels.append(value)
+        for value in c.get("user_action") or []:
+            if value and value not in actions: actions.append(str(value))
+    return {"route": routes[0] if routes else "/", "role": roles[0] if roles else None,
+            "name": labels[0] if labels else None, "action": actions[0] if actions else None,
+            "confidence": "high" if labels else "unknown"}

@@ -1042,3 +1042,12 @@ P2：更广的 requirement-only 场景生成、完整能力级调度替换、扩
 - 该 gate 只证明构建、进程启动和 readiness，不写 `verified`，不替代官方 acceptance。
 - 已通过定向回归：main helpers、static asset closure、capability judge 共 61 passed。
 - requirement-only 的首个可见动作 semantic smoke 仍为下一步；本轮先落地低风险的语法/启动/资源闭环门禁。
+
+### 2026-10-03 通用部署与共享入口门禁修复
+
+针对 e27（Sheet 首页缺少 `New blank workbook`，100 场景首断言超时）与 ae836（`backend/server.js:1722` 语法错误导致服务不可启动）新增两项通用门禁：
+
+- `AppServer.build()` 从 `backend/package.json` 的 `scripts.start` 派生 Node 入口，执行 `node --check`；明确语法错误在 foundation gate 前 fail-closed，并写入 `.arc/foundation-evidence.json` 的 `syntax_preflight` 字段。复杂/非 Node 启动命令保持 `unknown`，继续由真实启动门禁判断。
+- requirement-only 流程在真实 build/start/readiness 之后执行一次 `shared_surface_smoke()`，从需求合同派生首个明确可访问名称和入口路由；结果写入 `.arc/shared-surface-smoke.json`，三态为 `passed/failed/unknown`。不把 Sheet 文案写死，不写 `verified=True`，失败时阻断后续节点，避免重复消耗预算。
+
+这两项只证明部署可用和公共入口存在，不等同于官方场景通过；完整业务链路仍需垂直切片与官方验收确认。
