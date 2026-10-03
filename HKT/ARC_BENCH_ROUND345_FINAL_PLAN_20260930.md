@@ -1098,7 +1098,7 @@ shared-surface smoke 现在最多检查合同前若干节点派生的 8 个共�
 
 审计复核发现此前提交只增加了状态字段和计划文档，实际运行没有写出 `.arc/selftest-gate.json`，`final_acceptance()` 也没有读取门禁；旧包的 `skill-adoption.json` 还会在末尾被空 invocation 覆盖。以下已补齐并纳入下一包：
 
-- `shared_surface_smoke()` 生成临时 Playwright spec，对合同派生的最多 8 个入口按 role/name 做 exact count、visibility 和首动作检查；Playwright 不可用时记录 `unknown`，不把 HTTP 文本匹配当成通过。
+- `shared_surface_smoke()` 生成临时 Playwright spec，对合同派生的最多 8 个入口按 role/name 做 exact count、visibility 和首动作检查；Playwright 不可用时记录 `unknown`，不把 HTTP 探测当成通过。
 - `write_selftest_gate()` 同时检查 foundation 和 browser smoke；只有两者均为 `passed` 才写 `official_acceptance_allowed=true`。`final_acceptance()` 读取同一状态，失败/unknown 时 fail-closed。
 - shared-surface repair 后重新运行 foundation；rehearsal 结束后再次刷新 foundation、browser smoke 和 self-test gate，避免保留修复前的陈旧失败 evidence。
 - skill telemetry 分层记录 `staged/loaded/invoked/adopted/rejected_with_reason`。运行时会执行一次只读 `project_map` invocation；这能证明可加载和调用，模型是否采纳仍只在事件中可观察时记录为 adopted。

@@ -3,7 +3,7 @@
 
 ## 2026-10-03｜只读审计缺口修复：浏览器 smoke、真实门禁与 skill 遥测
 
-- 需求派生的 shared surface 现在通过临时 Playwright 用例检查 role/name 唯一性、可见性和首动作；HTTP 探测仅保留为诊断，不构成通过证据。
+- 需求派生的 shared surface 现在通过临时 Playwright 用例检查 role/name 唯一性、可见性和首动作；HTTP 探测不构成通过证据。
 - 新增 `.arc/selftest-gate.json`，foundation 和 browser smoke 任一为 `failed/unknown` 时阻止内部 `final_acceptance()`，并记录 `official_acceptance_allowed=false`。
 - shared-surface repair 和 rehearsal 后都会重新跑 foundation/smoke 并覆盖 evidence，避免修复成功后仍保留旧失败状态。
 - `skill-adoption.json` 现在区分 staged、loaded、invoked、adopted 和 rejected reason，并执行一次只读 context skill invocation；模型是否采纳没有可观察事件时仍保持未观察状态。
