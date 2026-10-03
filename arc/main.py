@@ -3002,6 +3002,37 @@ class Flow:
         return frontend_entry and backend_entry
 
     # -- final ------------------------------------------------------------
+    def foundation_gate(self) -> dict[str, object]:
+        """Run one real build/start/readiness gate before feature expansion."""
+        evidence: dict[str, object] = {"status": "inconclusive", "build": None, "process_started": None,
+                                       "readiness": None, "error": None}
+        if self.quota_gated:
+            evidence["reason"] = "quota_gated"
+            return evidence
+        server = self.app_server(grader_like=True)
+        try:
+            build_error = server.build()
+            evidence["build"] = build_error is None
+            if build_error:
+                evidence["status"] = "failed"
+                evidence["error"] = build_error
+                return evidence
+            start_error = server.start()
+            evidence["process_started"] = start_error is None
+            evidence["readiness"] = start_error is None
+            if start_error:
+                evidence["status"] = "failed"
+                evidence["error"] = start_error
+                return evidence
+            evidence["status"] = "passed"
+            return evidence
+        finally:
+            server.stop()
+            try:
+                atomic_json_write(self.output_dir / ".arc" / "foundation-evidence.json", evidence)
+            except OSError as exc:
+                log(f"[foundation] could not persist evidence: {exc}")
+
     def rehearsal(self) -> bool:
         if self.quota_gated:
             log("[rehearsal] skipped: run is quota_gated")
@@ -3128,8 +3159,17 @@ class Flow:
                     self.driver.end_scope("node")
                 elif not self.evolution:
                     log(f"[flow] {len(ordered)}-node tree: skeleton folded into the first node turn")
+                foundation = self.foundation_gate() if self.has_app() else {"status": "inconclusive", "reason": "no_app"}
+                foundation_failed = foundation.get("status") == "failed"
+                if foundation_failed:
+                    log("[foundation] shared foundation failed; dependent nodes will be blocked")
                 for index, node in enumerate(ordered, 1):
                     node_id = str(node.get("id"))
+                    if foundation_failed:
+                        self.mark("implementation_failed", node_id, "blocked: shared foundation gate failed")
+                        self.impl_failed.append(node_id)
+                        self.set_node_state(node_id, "blocked_by_shared_foundation", reason="build_or_readiness_failed")
+                        continue
                     if self.quota_gated:
                         log(f"[flow] quota gated; skipping remaining node {node_id}")
                         self.mark("implementation_started", node_id)

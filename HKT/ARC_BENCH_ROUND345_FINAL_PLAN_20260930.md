@@ -1033,3 +1033,12 @@ P2：更广的 requirement-only 场景生成、完整能力级调度替换、扩
 - 集成分支 P0：真实 build/start/request 证据门禁、首个公共动作 smoke、预算耗尽 checkpoint、backend 语法/启动预检。
 - main 分支 P0：保留静态资源闭环；增加 template ZIP 内嵌报告/runtime 文件提取；生成应用首页和首个动作 smoke；Agent 包契约与应用验证分离。
 - ZIP 内嵌 `.arc/playwright-report.json`、`run-identity.json`、`runner-events.jsonl`、`stdout.log` 是后续错误获取的优先证据源；平台独立端点 404 不代表 ZIP 内没有报告。
+
+
+## 2026-10-03 P0 代码落地：foundation gate
+
+- 在业务节点循环前新增一次 `foundation_gate()`，复用现有 `AppServer` 执行真实 build/start/readiness；证据写入 `.arc/foundation-evidence.json`。
+- foundation gate 失败时，后续节点标记 `blocked_by_shared_foundation`，不继续在不可部署基础上消耗实现预算。
+- 该 gate 只证明构建、进程启动和 readiness，不写 `verified`，不替代官方 acceptance。
+- 已通过定向回归：main helpers、static asset closure、capability judge 共 61 passed。
+- requirement-only 的首个可见动作 semantic smoke 仍为下一步；本轮先落地低风险的语法/启动/资源闭环门禁。
