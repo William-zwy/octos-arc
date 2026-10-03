@@ -3083,6 +3083,21 @@ class Flow:
         except OSError as exc:
             log(f"[smoke] could not persist shared surface evidence: {exc}")
         return evidence
+
+    def repair_shared_surface_once(self, evidence: dict[str, object]) -> dict[str, object]:
+        """Give one bounded, evidence-driven repair before feature expansion."""
+        if self.quota_gated or self.time_up():
+            return evidence
+        names = evidence.get("entry_name") or ", ".join(shared_surface_contract(self.requirement_contract).get("names") or [])
+        prompt = ("The shared public-surface self-test failed before official acceptance. "
+                  "Repair only the missing/duplicate contract-derived entry controls. "
+                  "Do not add duplicate accessible names; each required role/name must be unique. "
+                  "Then run build, start, and a real HTTP/DOM smoke. Evidence: "
+                  + json.dumps({"entry_names": names, "errors": evidence.get("errors")}, ensure_ascii=False))
+        self.turn(prompt, min(self.node_timeout, max(120, self.remaining() - self.final_reserve_seconds)),
+                  "shared-surface repair", request_budget=min(10, self.repair_request_budget()))
+        self.commit("fix: repair contract-derived shared surface")
+        return self.shared_surface_smoke()
     def rehearsal(self) -> bool:
         if self.quota_gated:
             log("[rehearsal] skipped: run is quota_gated")
@@ -3225,6 +3240,8 @@ class Flow:
                     log(f"[flow] {len(ordered)}-node tree: skeleton folded into the first node turn")
                 foundation = self.foundation_gate() if self.has_app() else {"status": "inconclusive", "reason": "no_app"}
                 surface = self.shared_surface_smoke() if foundation.get("status") == "passed" else {"status": "unknown"}
+                if surface.get("status") == "failed":
+                    surface = self.repair_shared_surface_once(surface)
                 atomic_json_write(self.output_dir / ".arc" / "skill-adoption.json", {
                     "schema_version": 1, "skill": "arc-project-context",
                     "loaded": bool(os.environ.get("OCTOS_SKILLS_PATH")),

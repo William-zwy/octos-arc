@@ -1086,3 +1086,10 @@ shared-surface smoke 现在最多检查合同前若干节点派生的 8 个共�
 - shared-surface smoke 已加强为：合同派生入口必须存在且唯一；重复名称同样 fail-closed。新增 `urllib` 显式导入，避免 smoke 运行时 NameError。
 
 本轮边界：入口唯一性 smoke 只阻断高扇出公共入口，不把业务文案写死；官方隐藏场景仍需继续验证。
+
+### 2026-10-03 00569 / edbf7b1ff235 回归与修复
+
+- `00569e623388`（Sheet）再次确认 `New blank workbook` 缺失、`Import CSV` 入口不可达；此前轻量 smoke 未形成有效阻断，且 requirement-only 运行仍可能把可启动 skeleton 送入官方测试。
+- `edbf7b1ff235`（GitHub）再次确认 `Sign in` 重复导致 strict mode 失败；入口存在但不唯一与入口缺失必须同等视为失败。
+- 新增一次有界 `shared-surface repair`：入口族 smoke 失败时，将合同派生入口名与错误摘要反馈给 Agent，只允许一次定向修复并重新 smoke；重复失败继续阻断共享基础，不再直接宣称完成。
+- 该修复仍不写死业务文案，且保留 build/start/readiness、入口唯一性和需求合同来源证据。
