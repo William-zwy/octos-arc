@@ -3445,10 +3445,13 @@ for (const entry of entries) {
                 # a missing scaffold is a hard stop here; final acceptance
                 # remains fail-closed on the complete self-test gate.
                 foundation_hard_failed = not self.has_app()
-                surface_gate_failed = not bool(gate.get("official_acceptance_allowed"))
+                foundation_runtime_failed = str(foundation.get("status") or "unknown") != "passed"
+                surface_gate_failed = str(surface.get("status") or "unknown") != "passed"
                 if foundation_hard_failed:
                     log("[foundation] no deployable scaffold; implementation nodes will be blocked")
-                elif surface_gate_failed:
+                elif foundation_runtime_failed:
+                    log("[foundation] build/readiness failed with a scaffold present; continuing bounded implementation repairs")
+                if not foundation_hard_failed and surface_gate_failed:
                     log("[foundation] shared-surface gate failed; continuing feature implementation for repair")
                 for index, node in enumerate(ordered, 1):
                     node_id = str(node.get("id"))

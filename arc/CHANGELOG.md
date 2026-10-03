@@ -1,7 +1,7 @@
 # 2026-10-03｜双 run 0 分回归修复：公共入口候选与实现门禁分层
 
 - 针对 `b18c8af37686`（github-stage-1）和 `67fcbb103855`（sheet）的共同故障，需求派生 shared-surface smoke 现在只从 `WHEN` 动作中的明确 quoted target 提取入口；不再把 `role_name` 混合字段、GIVEN fixture、THEN 结果、路径、邮箱、密码、数字、范围和表格行当成 UI 入口。保留 `Sheet1`、`Create`、`Import CSV`、认证/导航目标等需求实际动作中的名称，不硬编码任何题目文案。
-- shared-surface smoke 失败不再跳过全部业务节点；只阻断内部 grader-like `final_acceptance()` 和 verified 宣称，允许后续节点修复公共入口。骨架不存在时仍 fail-closed；rehearsal 与 full-suite repair 后重新执行 foundation/browser smoke 并覆盖旧 evidence。
+- shared-surface smoke 失败不再跳过全部业务节点；只阻断内部 grader-like `final_acceptance()` 和 verified 宣称，允许后续节点修复公共入口。骨架不存在时仍 fail-closed；已有 scaffold 但 build/readiness 失败时记录 `repair_required` 并允许有界修复，最终验收仍必须通过 fresh foundation/browser smoke。rehearsal 与 full-suite repair 后重新执行 foundation/browser smoke 并覆盖旧 evidence。
 - UI smoke route 优先选择非 `/api/` 路由，避免 API path 被用于浏览器导航；入口 role 只在距离 locator 足够近时关联，避免把后续 textbox role 借给前面的登录入口。
 - 验证：需求契约与门禁定向测试 `72 passed, 1 skipped`；`py_compile` 与 `git diff --check` 通过。全量套件另有既有 Windows 临时 Git 仓库清理 `WinError 5`，与本改动无关。
 
