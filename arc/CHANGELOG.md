@@ -1,3 +1,10 @@
+# 2026-10-03｜33738 根因修复：runtime repair、验证序列与真实写入证据
+
+- foundation 失败时在业务节点前执行最多两次有界 runtime repair；每次修复后重新执行 build/start，并验证同一 `PORT` 上的 `/`、`/health`、`/api/health`，覆盖 foundation evidence。rehearsal 仍作为末端复核。
+- Agent runtime contract 明确要求两个 health endpoint，且认证状态转移必须遵循需求定义的下一状态；fresh anonymous 入口需要把需求要求的 seeded destination 作为可见、可达链接呈现，不写死业务名称。
+- guard 写入检测不再把 `2>/dev/null` 等 stderr 重定向误判为产品写入；验证证据按 build/start/request 分类，并且三类命令都必须发生在最后一次成功写入之后。`last_turn_verified` 不再由单个 curl 或模型自报推导。
+- 验证：guard、主流程、需求契约定向测试 `77 passed`；`py_compile` 与 `git diff --check` 通过。
+
 # 2026-10-03｜双 run 0 分回归修复：公共入口候选与实现门禁分层
 
 - 针对 `b18c8af37686`（github-stage-1）和 `67fcbb103855`（sheet）的共同故障，需求派生 shared-surface smoke 现在只从 `WHEN` 动作中的明确 quoted target 提取入口；不再把 `role_name` 混合字段、GIVEN fixture、THEN 结果、路径、邮箱、密码、数字、范围和表格行当成 UI 入口。保留 `Sheet1`、`Create`、`Import CSV`、认证/导航目标等需求实际动作中的名称，不硬编码任何题目文案。

@@ -23,10 +23,34 @@ class TurnMonitorTests(unittest.TestCase):
         m = TurnMonitor(protected_prefixes=[])
         m.observe(*started("bash", {"cmd": "cd frontend && npm run build"}, "c1"))
         m.observe(*completed("c1", True))
-        m.observe(*started("bash", {"cmd": "curl -s http://127.0.0.1:43101/api/count"}, "c2"))
+        m.observe(*started("bash", {"cmd": "PORT=43101 npm start"}, "c2"))
         m.observe(*completed("c2", True))
+        m.observe(*started("bash", {"cmd": "curl -s http://127.0.0.1:43101/api/count"}, "c3"))
+        m.observe(*completed("c3", True))
         m.finish("Implemented and verified.")
+        self.assertTrue(m.verification_complete)
         self.assertEqual(m.corrections(), [])
+
+    def test_stderr_redirect_is_not_a_product_write(self):
+        m = TurnMonitor(protected_prefixes=[])
+        m.observe(*started("bash", {"cmd": "cat backend/server.js 2>/dev/null; grep health backend/server.js"}, "c1"))
+        m.observe(*completed("c1", True))
+        m.finish("Implemented and verified.")
+        self.assertFalse(m.wrote_files)
+        self.assertEqual(m.written_paths, [])
+
+    def test_verification_before_last_write_is_not_completion_evidence(self):
+        m = TurnMonitor(protected_prefixes=[])
+        m.observe(*started("bash", {"cmd": "npm run build"}, "build"))
+        m.observe(*completed("build", True))
+        m.observe(*started("write_file", {"path": "backend/server.js"}, "write"))
+        m.observe(*completed("write", True))
+        m.observe(*started("bash", {"cmd": "PORT=43101 npm start"}, "start"))
+        m.observe(*completed("start", True))
+        m.observe(*started("bash", {"cmd": "curl -s http://127.0.0.1:43101/health"}, "request"))
+        m.observe(*completed("request", True))
+        m.finish("Implemented and verified.")
+        self.assertTrue(any("after the last write" in c for c in m.corrections()))
 
     def test_failed_write_and_probe_do_not_count_as_evidence(self):
         m = TurnMonitor(protected_prefixes=[])

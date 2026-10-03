@@ -1254,6 +1254,9 @@ UI_CONTRACT_DATA = """\
 
 UI_CONTRACT_SESSION = """\
 - Sessions: after register/login navigate to `/`, show the exact username in one element and a "Sign out" link; the session survives reload. Failed login/registration shows one generic error, keeps the anonymous header, creates nothing.
+- Authentication transitions: follow the requirement's explicit next state after every mutation. If the next step opens or locates an anonymous sign-in/register/recovery surface, return to that surface instead of auto-signing-in or redirecting to a protected home page. Each route must expose only the controls needed by the current state.
+- Public entry continuity: when a scenario starts from a fresh anonymous home and opens a named seeded destination, render the required seeded collection as a visible, reachable link from that entry route. Fetching or showing it only after an unrelated authenticated navigation is not equivalent.
+- Seed credentials: every explicit account fixture must use a complete runtime-compatible password hash or equivalent deterministic verification path. Never copy redacted, placeholder, or partially generated hashes; exercise one successful login for each shared account family before implementing dependent organization/team/repository flows.
 """
 
 UI_CONTRACT = UI_CONTRACT_CORE + UI_CONTRACT_DATA + UI_CONTRACT_SESSION  # full set (multi-node tasks)
@@ -1283,7 +1286,7 @@ You have no shell in this turn — the harness runs `npm run build`, starts the 
 """
 
 VERIFY_REQUIREMENT_ONLY = """\
-No official/local acceptance spec is available for this task. Do NOT search for hidden tests, Playwright files, reports, git history or extra requirement files: they are unavailable and repeated searching only burns the turn. Treat the supplied requirement node as the contract. After writing the smallest complete vertical slice, run only harness-aligned checks: `npm run build`, start the canonical backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, verify `GET /`, `GET /api/health`, and one success plus one error request for the new route, then stop. These are inferred local probes, not an official test verdict. Finish immediately after they pass.
+No official/local acceptance spec is available for this task. Do NOT search for hidden tests, Playwright files, reports, git history or extra requirement files: they are unavailable and repeated searching only burns the turn. Treat the supplied requirement node as the contract. After writing the smallest complete vertical slice, run only harness-aligned checks: `npm run build`, start the canonical backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, verify `GET /`, `GET /health`, `GET /api/health`, and one success plus one error request for the new route, then stop. These are inferred local probes, not an official test verdict. Finish immediately after they pass.
 """
 
 CONTINUATION_PROMPT = """\
@@ -1320,7 +1323,7 @@ This skeleton is the SHARED FOUNDATION every later feature turn extends; later t
 - The core data model in the JSON store: one seeded collection (even if near-empty) for EVERY top-level entity the requirements mention (e.g. users/sessions, and the main domain objects), with realistic seed rows the tests can read. Later turns add fields/rows, not whole collections.
 - A page shell / layout the feature pages slot into (shared header, nav, server-side-rendered-from-cookie if the app has sessions), plus a home page and a health endpoint.
 Keep it minimal but STRUCTURALLY COMPLETE: no feature logic yet, but the router, every entity collection, and the page shell must already exist so later turns only fill in behaviour. The first shared public entry family from the compiled contract is a hard deliverable: render every explicit first-screen role/name exactly once, wire the first action to a visible next state, and do not submit a placeholder or stub shell.
-Steps: create frontend/ and backend/ as specified, build the router + seed every entity collection + the page shell + health endpoint, run `npm run build` in frontend/, start the backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, then confirm SINGLE-ORIGIN serving on that ONE port: `curl http://127.0.0.1:{smoke}/` returns the built HTML AND `curl http://127.0.0.1:{smoke}/api/health` returns JSON — both from the same server. Grep the frontend sources for `127.0.0.1`, `localhost`, and `API_BASE`: if any absolute origin is hardcoded, replace it with a relative `/api/...` path now, before any feature turn inherits it. Then stop the server.
+Steps: create frontend/ and backend/ as specified, build the router + seed every entity collection + the page shell + both health endpoints, run `npm run build` in frontend/, start the backend with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`, then confirm SINGLE-ORIGIN serving on that ONE port: `curl http://127.0.0.1:{smoke}/` returns the built HTML, `curl http://127.0.0.1:{smoke}/health` returns 2xx JSON, AND `curl http://127.0.0.1:{smoke}/api/health` returns JSON — all from the same server. Grep the frontend sources for `127.0.0.1`, `localhost`, and `API_BASE`: if any absolute origin is hardcoded, replace it with a relative `/api/...` path now, before any feature turn inherits it. Then stop the server.
 """ + PORT_RULES
 
 NUDGE_PROMPT = """\
@@ -1440,7 +1443,7 @@ The app failed the pre-grading startup rehearsal. The runner executes exactly:
 2. cd backend && npm install && npm start        (must bind PORT and stay up)
 Rehearsal error:
 {error}
-Fix the project so this sequence works. Inspect backend entrypoint and startup stderr/stdout first. Then run the exact same-process checks: build frontend; start with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`; curl `GET /` and `GET /api/health` with a 5-second timeout; stop that process. Do not claim repair without observed successful responses. If bindPorts is used, pass the request listener function to `http.createServer`; never pass an already-created http.Server as the handler. Keep root response non-blocking and move slow initialization out of request handling. A favicon reset is not a reason to rewrite healthy routes. Never bind {port}. Write only a product-source fix supported by observed output; if no product delta is needed, still run and report the exact commands.\
+Fix the project so this sequence works. Inspect backend entrypoint and startup stderr/stdout first. Then run the exact same-process checks: build frontend; start with `ARC_EXTRA_PORTS=0 PORT={smoke} npm start`; curl `GET /`, `GET /health`, and `GET /api/health` with a 5-second timeout; stop that process. Do not claim repair without observed successful responses. If bindPorts is used, pass the request listener function to `http.createServer`; never pass an already-created http.Server as the handler. Keep root response non-blocking and move slow initialization out of request handling. A favicon reset is not a reason to rewrite healthy routes. Never bind {port}. Write only a product-source fix supported by observed output; if no product delta is needed, still run and report the exact commands.\
 """
 
 ACCEPTANCE_TESTS_PROMPT = """\
@@ -2055,7 +2058,7 @@ class Flow:
         # This is only a model-turn smoke hint. Official/local acceptance is
         # recorded separately by acceptance_loop and must never be inferred from
         # a model's final summary or an arbitrary curl command.
-        self.last_turn_verified = bool(monitor.verified and ok
+        self.last_turn_verified = bool(monitor.verification_complete and ok
                                        and not self.last_turn_budget_exhausted)
         log(f"[flow] {label} {'ok' if ok else 'FAILED'} in {time.time()-t0:.0f}s "
             f"(tools={monitor.tool_calls} wrote={monitor.wrote_files} turn_smoke_hint={self.last_turn_verified}): {text[-240:]!r}")
@@ -3308,6 +3311,33 @@ for (const entry of entries) {
             self.commit("fix: startup rehearsal repair")
         return False
 
+    def repair_foundation_before_nodes(self, foundation: dict[str, object]) -> dict[str, object]:
+        """Repair a scaffold runtime before spending feature-node budget.
+
+        A buildable directory is not a usable foundation: the generated app
+        must serve the root and both health endpoints on the same PORT. Keep
+        this repair bounded, refresh evidence after each attempt, and leave
+        feature work available when a model cannot finish the repair.
+        """
+        if str(foundation.get("status") or "unknown") == "passed" or self.quota_gated or self.time_up():
+            return foundation
+        for attempt in range(1, 3):
+            if self.time_up() or self.quota_gated:
+                break
+            error = str(foundation.get("error") or "foundation build/readiness gate failed")
+            log(f"[foundation] runtime repair before nodes {attempt}/2")
+            self.turn(REHEARSAL_REPAIR_PROMPT.format(error=error[-1600:], port=self.web_port, smoke=self.smoke_port),
+                      min(self.node_timeout, max(120, self.remaining() - self.final_reserve_seconds)),
+                      f"foundation runtime repair {attempt}",
+                      request_budget=min(10, self.repair_request_budget()))
+            self.commit(f"fix: foundation runtime repair {attempt}")
+            foundation = self.foundation_gate() if self.has_app() else {"status": "inconclusive", "reason": "no_app_after_foundation_repair"}
+            if str(foundation.get("status") or "unknown") == "passed":
+                log("[foundation] runtime repair passed before feature nodes")
+                return foundation
+        log("[foundation] runtime repair did not pass before feature nodes")
+        return foundation
+
     # -- run --------------------------------------------------------------
     def run(self) -> int:
         self.runtime = AgentRuntime.from_env(project_dir=str(self.output_dir))
@@ -3428,6 +3458,8 @@ for (const entry of entries) {
                 elif not self.evolution:
                     log(f"[flow] {len(ordered)}-node tree: skeleton folded into the first node turn")
                 foundation = self.foundation_gate() if self.has_app() else {"status": "inconclusive", "reason": "no_app"}
+                if foundation.get("status") != "passed" and self.has_app():
+                    foundation = self.repair_foundation_before_nodes(foundation)
                 surface = self.shared_surface_smoke() if foundation.get("status") == "passed" else {"status": "unknown"}
                 if surface.get("status") == "failed":
                     surface = self.repair_shared_surface_once(surface)
