@@ -1062,3 +1062,13 @@ ff7 (`hackathon--github-stage-1`) 证明：当前包已经能部署，但 skelet
 - request budget cap-hit、`wrote=False`、无命令验证不得进入 `implemented` 或 `verified`；重复 cap-hit 后写 checkpoint 并阻断依赖节点。
 - 保留 skill 作为上下文/方法建议层，完成判定仍由 Harness 的确定性证据负责。
 - 将模板 ZIP 内嵌的 `playwright-report.json`、`runner-events.jsonl`、`stdout.log` 和 checkpoints 作为终态分析的优先证据源。
+
+### 2026-10-03 d697 Sheet 终态证据
+
+`d69748b0603b` 与 `ff7eaee7c526` 构成同包跨题证据：两次运行都能部署，但分别缺少 GitHub 认证/组织公共入口和 Sheet `Create`/`Import CSV` 公共入口。d697 的 100/100 超时再次确认，公共入口 smoke 必须在 feature 节点循环前执行。
+
+新增记录：
+
+- d697 的失败明细来自模板 ZIP 内嵌 `.arc/playwright-report.json`，不能因为独立 `.arc` 端点为空就标记“无测试证据”。
+- d697 与 ff7 使用相同 Agent ZIP SHA，但 task/requirements/agent commit 不同；只能用于识别共因模式，不能做严格单变量因果结论。
+- 当前最优修复顺序为：需求合同派生入口 → foundation gate → shared-surface smoke → 最小垂直切片 → truthful completion → 官方验收。
