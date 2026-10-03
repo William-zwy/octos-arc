@@ -392,6 +392,7 @@ def shared_surface_contract(contract: dict) -> dict:
     """
     routes: list[str] = []; labels: list[str] = []; roles: list[str] = []; actions: list[str] = []
     visible: list[str] = []; entries: list[dict] = []; fanout: dict[str, int] = {}
+    role_by_label: dict[str, str] = {}
     for node in contract.get("nodes") or []:
         c = node.get("acceptance_contract") or {}
         for value in c.get("entry_route") or []:
@@ -411,13 +412,27 @@ def shared_surface_contract(contract: dict) -> dict:
             value = _text(value)
             if _usable_exact(value) and value not in visible:
                 visible.append(value)
-        node_role = roles[0] if roles else None
+        # Recover a role/name pair only when the source scenario places them
+        # near one another (for example “the `Sign in` link”).  The aggregate
+        # contract intentionally keeps role and exact values separate, so a
+        # global first role would create false failures for mixed surfaces.
+        for scenario in node.get("scenarios") or []:
+            facts = scenario.get("facts") or {}
+            source = " ".join([str(scenario.get("name") or "")] +
+                              [str(step.get("text") or "") for step in scenario.get("steps") or []])
+            for label in facts.get("exact_values") or []:
+                label = _text(label)
+                for role in facts.get("roles") or []:
+                    role = _text(role).lower()
+                    if re.search(rf"\b{re.escape(role)}\b.{{0,100}}{re.escape(label)}", source, re.I) or \
+                            re.search(rf"{re.escape(label)}.{{0,100}}\b{re.escape(role)}\b", source, re.I):
+                        role_by_label.setdefault(label, role)
         for label in node_labels:
             fanout[label] = fanout.get(label, 0) + 1
             if len(entries) < 8 and not any(item.get("name") == label for item in entries):
                 entries.append({
                     "name": label,
-                    "role": node_role,
+                    "role": role_by_label.get(label),
                     "route": routes[0] if routes else "/",
                     "action": actions[0] if actions else None,
                     "expected": visible[:3],
